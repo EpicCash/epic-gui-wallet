@@ -10,7 +10,7 @@ import mitt from 'mitt';
 
 import './assets/css/animate.css';
 import './assets/css/bulma.min.css'
-import './assets/css/font-awesome.min.css'
+
 
 import en from './lang/en';
 import zh from './lang/zh';
