@@ -5,11 +5,13 @@ import { join } from 'path'
 import path from 'path';
 
 
+
 const util = require('util');
 const log = require('electron-log');
 const moment = require('moment');
 const homedir = os.homedir();
 const rootdir = require('app-root-dir');
+var concat = require('concat-stream');
 export const ewalletPath = path.join(homedir, '.epic')
 export const logDir = path.join(ewalletPath, 'log')
 
@@ -33,6 +35,7 @@ log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 
 
 const spawn = require('child_process').spawn;
 const exec = require('child_process').exec;
+const execFile = require('child_process').execFile;
 const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
@@ -129,28 +132,27 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     /*start the wallet in listen mode */
     /* check if wallet api can be called */
-    async execStart(cmd, password, platform){
+    async execStart(cmd, args, password, platform){
 
       return new Promise(function(resolve, reject) {
-          const ownerAPI = exec(cmd);
 
-            ownerAPI.stdout.on('data', (data)=>{
-                //console.log('data from epic-wallet:', data);
-                if(platform!='win'){ownerAPI.stdin.write(password+'\n')}
-                //localStorage.setItem('ownerAPIProcessPID', ownerAPI.pid)
+          const ownerAPI = spawn(cmd, args, {shell: platform == 'win'});
+          ownerAPI.stdout.setEncoding('utf8');
+          ownerAPI.stdout.on('data', (data) => {
 
-                if(data.includes('Error opening wallet')){
-                  resolve(false);
-                }
-                if(data.includes('listener started')){
-                  ipcRenderer.send('pid-message', ownerAPI.pid);
-                  resolve(true);
-                }
+            if(data.includes('Error opening wallet')){
+              resolve(false);
+            }
 
-            });
+            if(data.includes('listener started')){
+              ipcRenderer.send('pid-message', ownerAPI.pid);
+              resolve(true);
+            }
 
-            ownerAPI.stderr.on('data', (data) => {
+          });
 
+          ownerAPI.stderr.on('data', (data) => {
+                console.log('stderr epic-wallet:', data);
                 if(data.includes('Address already in use')){
                   resolve(true);
                 }else{

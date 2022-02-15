@@ -178,25 +178,14 @@ class WalletService {
         this.stopProcess('ownerAPI')
         enableForeignApi()
 
+        log.debug(`platform: ${platform}; start owner api cmd: ${epicPath}`)
 
-        if(platform === 'linux'){
-          //  ownerAPI = window.nodeExecFile(epicPath, ['-r', epicNode, 'owner_api'])
-        }else{
-
-            const cmd = platform==='win'? `${epicPath} -r ${epicNode} --pass ${addQuotations(password)} owner_api`: `${epicPath} -r ${epicNode} owner_api`
-            //console.log(cmd,'cmd');
-            log.debug(`platform: ${platform}; start owner api cmd: ${cmd}`)
-            //let data = await window.nodeChildProcess.spawn(epicPath, ['-r', epicNode, 'owner_api']);
-            //console.log('wallet', data);
-
-            walletOpen = await window.nodeChildProcess.execStart(cmd, password, platform);
-            if(walletOpen){
-              this.walletIsOpen = true;
-            }
-            console.log('wallet open', walletOpen);
-
-
+        walletOpen = await window.nodeChildProcess.execStart(epicPath, ['--pass',  addQuotations(password), '-r', epicNode, 'owner_api'], password, platform);
+        if(walletOpen){
+            this.walletIsOpen = true;
         }
+        console.log('wallet open', walletOpen);
+
         return walletOpen;
 
     }

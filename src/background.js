@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
+import { exec } from 'child_process'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -9,6 +10,8 @@ const ps = require('ps-node');
 let win;
 let pids = [];
 
+//[13088:0215/073859.040:ERROR:gpu_init.cc(454)] Passthrough is not supported, GL is disabled, ANGLE is
+app.disableHardwareAcceleration();
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -80,7 +83,12 @@ app.on('before-quit', (event) => {
   //TODO:: works only on linux mac ? !
   pids.forEach(function(pid) {
     // A simple pid lookup
-    ps.kill(pid);
+    if (process.platform !== 'win') {
+      exec(`taskkill /pid ${pid} /f /t`);
+    }else{
+      ps.kill(pid);
+    }
+
   });
 
 })
