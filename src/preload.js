@@ -5,13 +5,12 @@ import { join } from 'path'
 import path from 'path';
 
 
-
+const ps = require('ps-node');
 const util = require('util');
 const log = require('electron-log');
 const moment = require('moment');
 const homedir = os.homedir();
 const rootdir = require('app-root-dir');
-var concat = require('concat-stream');
 export const ewalletPath = path.join(homedir, '.epic')
 export const logDir = path.join(ewalletPath, 'log')
 
@@ -39,6 +38,35 @@ const execFile = require('child_process').execFile;
 const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
+
+
+    async kill(pid, platform){
+
+      return new Promise(function(resolve, reject) {
+        let iskilled;
+        if (platform === 'win') {
+            exec(`taskkill /pid ${pid} /f /t`, function( err ) {
+               if (err) {
+                 resolve(false);
+               }
+               else {
+                 resolve(true);
+               }
+           });
+
+        }else{
+          ps.kill(pid, function( err ) {
+              if (err) {
+                resolve(false);
+              }
+              else {
+                resolve(true);
+              }
+          });
+        }
+
+      });
+    },
     async spawn(cmd, args){
       const child = await spawn(cmd, args);
       child.stdout.setEncoding('utf8');
@@ -138,7 +166,13 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           const ownerAPI = spawn(cmd, args, {shell: platform == 'win'});
           ownerAPI.stdout.setEncoding('utf8');
+          ownerAPI.stderr.setEncoding('utf8');
           ownerAPI.stdout.on('data', (data) => {
+
+            //password prompt does not work for windows with epic-wallet.exe
+            if(data.includes('Password:') && platform != 'win'){
+              ownerAPI.stdin.write(password + "\n");
+            }
 
             if(data.includes('Error opening wallet')){
               resolve(false);
@@ -146,45 +180,45 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
             if(data.includes('listener started')){
               ipcRenderer.send('pid-message', ownerAPI.pid);
-              resolve(true);
+              resolve(ownerAPI.pid);
             }
 
           });
 
           ownerAPI.stderr.on('data', (data) => {
-                console.log('stderr epic-wallet:', data);
-                if(data.includes('Address already in use')){
-                  resolve(true);
-                }else{
-                  resolve(false);
-                  log.error('start owner_api got stderr: ' + data)
-                }
 
-            });
+            if(data.includes('Address already in use')){
+              //we have unknow process id
+              resolve(0);
+            }else{
+              log.error('start owner_api got stderr: ' + data)
+              resolve(false);
+
+            }
+
+          });
       });
     },
-    async execListen(cmd, password, platform){
+    async execListen(cmd, args, password, platform){
 
       return new Promise(function(resolve, reject) {
-          const listenProcess = exec(cmd);
-          processes['listen'] = listenProcess
-          log.debug('ownerAPIProcessPID: ' + listenProcess.pid)
-          if(platform==='win'){
-            localStorage.setItem('listenProcessPID', listenProcess.pid)
-          }
-          listenProcess.stdout.on('data', ()=>{
-              console.log('data from epic-wallet:', data);
-              if(platform!='win'){
-                  listenProcess.stdin.write(password+'\n')
-              }
-              localStorage.setItem('listenProcessPID', listenProcess.pid)
+          const listenProcess = spawn(cmd, args, {shell: platform == 'win'});
+          listenProcess.stdout.setEncoding('utf8');
+          listenProcess.stderr.setEncoding('utf8');
+          listenProcess.stdout.on('data', () => {
+              ipcRenderer.send('pid-message', listenProcess.pid);
+              resolve(listenProcess.pid);
           })
           listenProcess.stderr.on('data', (data) => {
               log.error('start wallet listen got stderr: ' + data)
+              resolve(false);
           })
 
       });
     }
+
+
+
 });
 contextBridge.exposeInMainWorld('nodeSpawnSync', require('child_process').spawnSync);
 contextBridge.exposeInMainWorld('nodeSpawn', require('child_process').spawn);
@@ -230,8 +264,8 @@ contextBridge.exposeInMainWorld('explorer', {
 });
 // Adds an object 'api' to the global window object:
 contextBridge.exposeInMainWorld('api', {
-    showSaveDialog: async (title, message) => {
-        return await ipcRenderer.invoke('show-save-dialog', title, message);
+    showSaveDialog: async (title, message, defaultPath) => {
+        return await ipcRenderer.invoke('show-save-dialog', title, message, defaultPath);
     },
     quit: () => {
       ipcRenderer.invoke('quit');

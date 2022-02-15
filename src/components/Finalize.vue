@@ -78,7 +78,10 @@ export default {
         let content
 
         try{
-          content = fs.readFileSync(fn.path).toString();
+          content = fs.readFileSync(fn.path, {
+            encoding: "utf8",
+            flag: "r"
+          });
           let data = JSON.parse(content)
           tx_id = data.id
           log.debug('tx to finalize is ' + tx_id)

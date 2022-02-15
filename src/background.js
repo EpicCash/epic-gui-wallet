@@ -18,6 +18,7 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+
 async function createWindow() {
   // Create the browser window.
 
@@ -35,6 +36,7 @@ async function createWindow() {
       webSecurity: false
     }
   })
+  
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -78,12 +80,14 @@ app.on('ready', async () => {
   createWindow()
 })
 
+
+
 app.on('before-quit', (event) => {
 
   //TODO:: works only on linux mac ? !
   pids.forEach(function(pid) {
     // A simple pid lookup
-    if (process.platform !== 'win') {
+    if (process.platform === 'win') {
       exec(`taskkill /pid ${pid} /f /t`);
     }else{
       ps.kill(pid);
@@ -109,11 +113,12 @@ if (isDevelopment) {
 }
 
 
-ipcMain.handle('show-save-dialog', async (event, title, message) => {
+ipcMain.handle('show-save-dialog', async (event, title, message, defaultPath) => {
     // do stuff
     let responce = await dialog.showSaveDialog({
       title: title,
       message: message,
+      defaultPath: defaultPath
     });
     return responce;
 });

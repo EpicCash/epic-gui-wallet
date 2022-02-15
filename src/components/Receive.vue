@@ -53,7 +53,7 @@ export default {
       this.emitter.emit('close', 'windowReceive');
     },
 
-    drop(event){
+    async drop(event){
       let fn = event.dataTransfer.files[0]
       this.toDrag = false
 
@@ -61,8 +61,13 @@ export default {
         let content
 
         try{
-          content = fs.readFileSync(fn.path).toString();
-          JSON.parse(content)
+          content = fs.readFileSync(fn.path, {
+            encoding: "utf8",
+            flag: "r"
+          });
+
+
+
         }catch(e){
           log.error('read tx file error:' + e)
           this.errors.push(this.$t('msg.fileReceive.WrongFileType'))
@@ -71,20 +76,32 @@ export default {
 
         let filePath = path.dirname(fn.path);
 
-        let fn_output = this.$electron.remote.dialog.showSaveDialog({
-          title: this.$t('msg.save'),
-          message: this.$t('msg.fileReceive.saveMsg'),
-          defaultPath: filePath
-        })
+
+        let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), filePath);
+
+
         if(fn_output){
           this.$walletService.receiveTransaction(JSON.parse(content), null, null)
               .then( (res) => {
-                console.log(res)
-                let slate = res.data.result.Ok
-                fs.writeFileSync(fn_output, JSON.stringify(slate))
-                this.emitter.emit('update')
-                this.closeModal()
-                log.debug(`Generated tx file ok; return ${res.data}`)
+                let data = res.data.result;
+
+                if(data.Ok){
+
+                  fs.writeFileSync(fn_output.filePath, JSON.stringify(data.Ok), {
+                    encoding: "utf8",
+                    flag: "w"
+                  });
+                  this.emitter.emit('update')
+                  this.closeModal()
+                  log.debug(`Generated responce file ok`)
+
+
+                }else if(data.Err){
+                  log.error(`resp.data:${data.Err}`);
+                  let e1 = data.Err;
+                  this.errors.push(e1)
+                }
+
               }).catch((error) => {
                 log.error('receiveTransaction error:' + error)
                 if (error.response) {

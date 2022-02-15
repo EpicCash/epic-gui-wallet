@@ -105,8 +105,22 @@ export default {
     //this.checkRunning()
   },
   methods: {
-    start(){
+    async start(){
+
       if((!this.starting)&&(!this.running)){
+        this.starting = true
+        const isListen = await this.$walletService.startListen();
+        if(isListen){
+          this.started = true
+          this.running = true
+          log.debug('Http listen is locally reachable.')
+          log.debug('checkRunning right now.')
+          //setTimeout(()=>this.checkRunning(), 1.5*1000)
+        }
+      }
+      //console.log('test', test);
+
+      /*if((!this.starting)&&(!this.running)){
         this.starting = true
         this.checklocalReachable().catch((error)=>{
           if(!error.response){
@@ -116,12 +130,15 @@ export default {
           log.debug('checkRunning right now.')
           setTimeout(()=>this.checkRunning(), 1.5*1000)
         })
-      }
+      }*/
     },
-    stop(){
-      this.$walletService.stopProcess('listen')
-      this.running = false
-      this.closeModal()
+    async stop(){
+      let killed = await this.$walletService.stopProcess('listen')
+      if(killed){
+        this.running = false
+        this.clearup();
+        this.closeModal()
+      }
     },
     closeModal() {
       this.clearup()

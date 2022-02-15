@@ -86,7 +86,7 @@ export default {
     },
     async send(){
       if(this.checkForm()){
-        let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'));
+        let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), '');
 
         let tx_data = {
           "src_acct_name": null,
@@ -118,7 +118,7 @@ export default {
                 if(lockResult.result){
                   fs.writeFileSync(fn_output.filePath, JSON.stringify(result.Ok), {
                     encoding: "utf8",
-                    flag: "a+"
+                    flag: "w"
                   });
                   log.debug('new send tx file generated')
                   this.emitter.emit('update')

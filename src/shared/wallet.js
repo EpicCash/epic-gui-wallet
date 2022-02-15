@@ -4,28 +4,20 @@
 
 import axios from 'axios'
 require('promise.prototype.finally').shim();
-const log = window.log;
-
-
 import {epicPath, seedPath, epicNode, epicNode2, apiSecretPath, walletTOMLPath, walletPath,  nodeExecutable, tempTxDir} from './config.js'
 
 const platform = window.config.getPlatform();
-
-
-
 const epicRsWallet = "";
+const log = window.log;
+const wallet_host = 'http://localhost:3420'
+const jsonRPCUrl = 'http://localhost:3420/v2/owner'
+const jsonRPCForeignUrl = 'http://localhost:3420/v2/foreign'
 
-
-//let listenProcess
-//let checkProcess
-//let initRProcess
 let restoreProcess
 let processes = {}
 let client
 let password_
-const wallet_host = 'http://localhost:3420'
-const jsonRPCUrl = 'http://localhost:3420/v2/owner'
-const jsonRPCForeignUrl = 'http://localhost:3420/v2/foreign'
+
 
 function enableForeignApi(){
     const re = /owner_api_include_foreign(\s)*=(\s)*false/
@@ -61,6 +53,8 @@ class WalletService {
         this.client;
         this.password = '';
         this.walletIsOpen = false;
+        this.walletIsListen = false;
+        this.processes = {};
     }
 
 
@@ -147,7 +141,7 @@ class WalletService {
         return this.jsonRPC('cancel_tx', [tx_id, tx_salte_id])
     }
 
-    receiveTransaction(slate, account, message){
+    async receiveTransaction(slate, account, message){
         return this.jsonRPC('receive_tx', [slate, account, message], true)
     }
 
@@ -159,7 +153,7 @@ class WalletService {
         return this.jsonRPC('tx_lock_outputs', params)
     }
 
-    finalizeTransaction(slate){
+    async finalizeTransaction(slate){
         return this.jsonRPC('finalize_tx',  [slate])
     }
 
@@ -167,50 +161,71 @@ class WalletService {
         return this.jsonRPC('post_tx',  [tx, isFluff])
     }
 
+    /* start a epic wallet in owner_api mode */
     async start(password){
-
+        //console.log(this.processes);
+        //this.stopProcess('ownerAPI')
         //do not start listener 2 times if wallet is open
         if(this.walletIsOpen){
           return this.walletIsOpen;
         }
 
-        let walletOpen = false;
-        this.stopProcess('ownerAPI')
+        let walletOpenId = 0;
+
         enableForeignApi()
 
         log.debug(`platform: ${platform}; start owner api cmd: ${epicPath}`)
 
-        walletOpen = await window.nodeChildProcess.execStart(epicPath, ['--pass',  addQuotations(password), '-r', epicNode, 'owner_api'], password, platform);
-        if(walletOpen){
-            this.walletIsOpen = true;
-        }
-        console.log('wallet open', walletOpen);
+        if(platform == 'win'){
+          walletOpenId = await window.nodeChildProcess.execStart(epicPath, ['--pass',  addQuotations(password), '-r', epicNode, 'owner_api'], password, platform);
 
-        return walletOpen;
-
-    }
-
-    async startListen(password=password_){
-        this.stopProcess('listen')
-        if(platform==='linux'){
-            //listenProcess =  window.nodeExecFile(epicPath, ['-e', 'listen'])
         }else{
-            const cmd = platform==='win'? `${epicPath} -e --pass ${addQuotations(password)} listen`: `${epicPath} -e listen`
-            let walletListen = await window.nodeChildProcess.execListen(cmd, password, platform);
-            console.log('wallet listen', walletListen);
+          walletOpenId = await window.nodeChildProcess.execStart(epicPath, ['-r', epicNode, 'owner_api'], password, platform);
+
         }
+
+
+        if(walletOpenId > 0){
+            this.processes['ownerAPI'] = walletOpenId;
+            this.walletIsOpen = true;
+            return true;
+        }
+
+
+        return false;
+
+    }
+    /* start a epic wallet in listen mode */
+    async startListen(password=password_){
+
+        console.log('start wallet listener');
+        //do not start listener 2 times if wallet is open
+        if(this.walletIsListen){
+          return this.walletIsListen;
+        }
+
+        let walletListenId = 0;
+
+        if(platform == 'win'){
+          walletListenId = await window.nodeChildProcess.execListen(epicPath, ['--pass',  addQuotations(password), '-e', 'listen'], password, platform);
+
+        }else{
+          walletListenId = await window.nodeChildProcess.execListen(epicPath, ['-e', 'listen'], password, platform);
+
+        }
+        if(walletListenId > 0){
+            this.walletIsListen = true;
+            this.processes['listen'] = walletListenId;
+            console.log('wallet listen', walletListenId);
+            return true;
+        }
+
+
+        return false;
+
 
     }
 
-    stopAll(){
-        for(var ps in processes){
-            log.debug('stopall ps: '+ ps)
-            if(processes[ps]){
-                log.debug('stopall try to kill '+ ps)
-                this.stopProcess(ps)
-            }
-        }
-    }
     isExist(){
       return new Promise((resolve) => {
         window.nodeFs.stat(seedPath, function(err) {
@@ -220,8 +235,6 @@ class WalletService {
             resolve(false);
         });
       });
-
-      //  return window.nodeFs.existsSync(seedPath)?true:false
     }
 
     async new(password){
@@ -240,30 +253,14 @@ class WalletService {
         return execPromise(cmd)
     }
 
-    createSlate(amount, version){
-        //fse.ensureDirSync(tempTxDir)
-
-        return new Promise(function(resolve, reject) {
-            let fn = window.nodePath.join(tempTxDir, String(Math.random()).slice(2) + '.temp.tx')
-            this.send(amount, 'file', fn, version).then(()=>{
-                window.nodeFs.readFile(fn, function(err, buffer) {
-                    if (err) return reject(err)
-                    //fse.remove(fn)
-                    return resolve(JSON.parse(buffer.toString()))
-                });
-            }).catch((err)=>{
-                return reject(err)
-            })
-        })
-    }
-
+    /* remove ????*/
     finalize(fn){
         let fn_ = '"' + window.nodePath.resolve(fn) + '"'
         const cmd = `${epicPath} -r ${epicNode} -p ${addQuotations(password_)} finalize -i ${fn_}`
         //log.debug(cmd)
         return execPromise(cmd)
     }
-
+    /* remove ????*/
     finalizeSlate(slate){
         let fn = window.nodePath.join(tempTxDir, String(Math.random()).slice(2) + '.temp.tx.resp')
         window.nodeFs.writeFileSync(fn, JSON.stringify(slate))
@@ -355,56 +352,30 @@ class WalletService {
         });
     }
 
-    //https://github.com/mimblewimble/epic-wallet/issues/110
-    //static initR(seeds, newPassword){
-    //    log.debug(epicPath)
-    //    initRProcess = window.nodeSpawnSync(epicPath, ['init', '-r']);
-    //    localStorage.setItem('initRProcessPID', initRProcess.pid)
-    //    initRProcess.stdout.on('data', (data) => {
-    //        let output = data.toString()
-    //        log.debug('Wallet initR process return: ' + output)
-    //        if (output.includes("Please enter your recovery phrase:")){
-    //            log.debug('function initR: time to entry seeds.')
-    //            initRProcess.stdin.write(seeds + "\n");
-    //        }
-    //        if (output.includes("Recovery word phrase is invalid")){
-    //            log.debug('function initR: invalid seeds.')
-    //            stopProcess('initR')
-    //            return this.emitter.$emit('invalidSeeds')
-    //        }
-    //        if (output.startsWith("Password:")){
-    //            log.debug('function initR: time to entry password.')
-    //            initRProcess.stdin.write(newPassword + "\n");
-    //            initRProcess.stdin.write(newPassword + "\n");
-    //        }
-    //        if(output.includes("Command 'init' completed successfully")){
-    //            log.debug('function initR: wallet initRed.')
-    //            return this.emitter.$emit('walletInitRed')
-    //        }
-    //    })
-    //}
 
-    stopProcess(processName){
-        let pidName = `${processName}ProcessPID`
-        const pid = localStorage.getItem(pidName)
-        log.debug(`try to kill ${processName} with pid (get from ${pidName}) : ${pid}`)
-        localStorage.removeItem(pidName)
+    async stopProcess(processName){
 
-        if(platform==='win'&&pid){
-            return window.nodeExec(`taskkill /pid ${pid} /f /t`)
-        }
 
-        if(processes[processName]){
-            processes[processName].kill('SIGKILL')
-            log.debug(`kill ${processName}`)
-        }
-        if(pid) {
-            try{
-                process.kill(pid, 'SIGKILL')
-            }catch(e){
-                log.error(`error when kill ${processName} ${pid}: ${e}` )
+          if(this.processes[processName] > 0){
+
+
+            let processKilled = await window.nodeChildProcess.kill(this.processes[processName], platform);
+
+            console.log('stop process', this.processes[processName], processKilled);
+            if(processKilled && processName === 'listen'){
+              this.walletIsListen = false;
+              delete this.processes[processName];
+
             }
-        }
+            if(processKilled && processName === 'ownerAPI'){
+              this.walletIsOpen = false;
+              delete this.processes[processName];
+
+            }
+
+            return processKilled;
+          }
+
     }
 }
 
