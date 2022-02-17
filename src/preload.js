@@ -38,8 +38,6 @@ const execFile = require('child_process').execFile;
 const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
-
-
     async kill(pid, platform){
 
       return new Promise(function(resolve, reject) {
@@ -256,9 +254,9 @@ contextBridge.exposeInMainWorld('config', {
 
 });
 contextBridge.exposeInMainWorld('explorer', {
-
-  open(block_height){
-      shell.openExternal('https://explorer.epic.tech/blockdetail/' + parseInt(block_height));
+  //can be block height or commit
+  open(data){
+      shell.openExternal('https://explorer.epic.tech/blockdetail/' + data);
   }
 
 });

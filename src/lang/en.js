@@ -68,12 +68,12 @@ const messages = {
     },
 
     app:{
-      create: 'Create transaction file',
-      finalize: 'Finalize transaction',
+      create: 'Create transaction (File)',
+      finalize: 'Finalize transaction (File)',
       httpSend: 'Send via HTTP/HTTPS',
-      createRespFile: 'Create transaction response file',
-      httpReceive: 'Open HTTP listener to receive',
-      height:'Height',
+      createRespFile: 'Import transaction (File)',
+      httpReceive: 'Receive via HTTP/HTTPS',
+      height:'Block Height',
       updateTitle: 'Found new version',
       updateMsg: 'Found new version of Epic wallet. Please update Right NOW.',
       yes: 'yes',
@@ -97,7 +97,7 @@ const messages = {
     },
 
     commit:{
-      unspentCmt: 'Unspent output commit',
+      unspentCmt: 'Unspent outputs',
       heightCreated: 'Block height when Created',
       unspent: 'Unspent',
       spent: 'Spent',
@@ -189,10 +189,10 @@ const messages = {
       checking: 'Re-checking, be patient ...',
       stop: 'Stop Check',
 
-      tip:'Worth the wait? Up to you :)',
+      tip:'... continue?',
       introTitle: 'Info',
 
-      intro1: 'This may take a while...Fasten your seat belts...',
+      intro1: 'This will scan the entire Blockchain for the unspent outputs that belongs to your wallet.',
       intro2: "",
 
       start: 'Start',
@@ -204,6 +204,10 @@ const messages = {
       title: 'Select language',
       lang: 'Language',
       select: 'Select'
+    },
+
+    settings: {
+      title: 'Settings'
     }
 
   }

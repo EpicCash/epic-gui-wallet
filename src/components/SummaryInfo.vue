@@ -1,5 +1,5 @@
 <template>
-  <div id="balances" class="notification is-warning" style="width:260px;">
+  <div id="balances" class="notification is-warning" >
    <div id="balances-content">
     <p class="subtitle is-5">{{ $t("msg.info.total") }}:</p>
     <p class="title" v-bind:class="{'is-2':!smallTitle, 'is-4':smallTitle}">{{total}} EPIC</p>
@@ -38,7 +38,10 @@
 
     created () {
 
-      this.emitter.on("update", ()=>this.getSummaryinfo());
+      this.emitter.on("update", () => {
+      console.log("this.emitter on update");
+        this.getSummaryinfo();
+      });
     },
     methods: {
       getSummaryinfo: function() {
@@ -67,19 +70,17 @@
 </script>
 
 <style>
-#balances {
-  min-height: 210px;
-  padding: 0;
-  z-index: 1;
-  background-color: #FFDD57;
-  background-repeat: no-repeat;
-  background-image: url("../assets/epic-logo.svg");
-  background-position: 45% 35%;
-  background-size: 150%;
-}
+  #balances {
+    min-height: 210px;
+    padding: 0;
+    z-index: 1;
+    background-color: #FFDD57;
+    background-repeat: no-repeat;
+    background-image: url("../assets/epic-logo.svg");
+    background-position: 45% 35%;
+  }
 
-#balances-content {
-  padding: 10px;
-}
-
+  #balances-content {
+    padding: 10px;
+  }
 </style>

@@ -13,7 +13,7 @@ const messages = {
     confirmed: '已确认',
     unconfirmed: '等待确认',
     locked: '已锁定',
-    
+
     send: '发送',
     receive: '接收',
 
@@ -23,7 +23,7 @@ const messages = {
     msg: '消息',
     more: '更多',
     back: '返回',
-
+    
     login: {
       walletExist: '发现已有Grin钱包存在；请用原有的密码登陆吧 :-)',
     },
@@ -141,7 +141,7 @@ const messages = {
       NoSavePlace: '请选择生成交易文件的位置',
       WrongFileType: '交易文件类型错误',
     },
-    
+
     finalize: {
       finalize: '完结交易',
       success: '交易成功',
@@ -193,13 +193,13 @@ const messages = {
       checking: '正在同步，请耐心等待 ...',
       stop: '停止同步',
 
-      
+
       tip:'完成同步余额可能需要10-30分钟.',
       introTitle: '介绍',
 
       intro1: '当你的本地钱包余额 和 Grin区块链上的余额不一致(可能是由于交易被取消或者发送失败等原因)时，可以使用 "同步余额" 功能.',
       intro2: '同步时，在Grin区块链的所有未花费的输出(uxtos)中，找到你可以使用的未花费的输出，相加就得到你的余额.',
-      
+
       start: '开始同步',
       stopCheckMsg: '同步已经取消',
       checkedMsg: '同步完成'
@@ -209,6 +209,10 @@ const messages = {
       title: '选择语言',
       lang: '语言',
       select: '选择'
+    },
+
+    settings: {
+      title: 'Settings'
     }
 
   }

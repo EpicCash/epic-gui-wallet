@@ -146,7 +146,7 @@ class WalletService {
     }
 
     async issueSendTransaction(tx_data){
-        return this.jsonRPC('init_send_tx',  {'args': tx_data})
+        return this.jsonRPC('init_send_tx', { args: tx_data})
     }
 
     async lock_outputs(params){
@@ -157,9 +157,7 @@ class WalletService {
         return this.jsonRPC('finalize_tx',  [slate])
     }
 
-    postTransaction(tx, isFluff){
-        return this.jsonRPC('post_tx',  [tx, isFluff])
-    }
+
 
     /* start a epic wallet in owner_api mode */
     async start(password){

@@ -12,7 +12,7 @@
               <p class="is-size-7 tag is-warning animated" v-bind:class="{headShake: isAnimate}" style="animation-iteration-count:3">
               {{ $t("msg.app.height") }}: {{height}}</p>
               &nbsp;
-              <!--<a class="button is-small is-link is-outlined" @click.prevent="logout">{{ $t("msg.logout") }}</a>-->
+
               <div class="dropdown is-right" v-bind:class="{'is-active':isDroppingDown3}" style="padd">
                 <div class="dropdown-trigger">
                   <button class="button is-small is-warning is-outlined" aria-haspopup="true" aria-controls="dropdown-menu" @click="isDroppingDown3=!isDroppingDown3;isDroppingDown=false;isDroppingDown2=false" style="width:50px">
@@ -26,6 +26,9 @@
                     </a>
                     <a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openLang=true">
                       {{ $t("msg.lang.title") }}
+                    </a>
+                    <a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openSettings=true">
+                      {{ $t("msg.settings.title") }}
                     </a>
 
                     <hr class="dropdown-divider">
@@ -65,6 +68,7 @@
 
           <check :showModal="openCheck"></check>
           <lang :showModal="openLang"></lang>
+          <settings :showModal="openSettings"></settings>
         </div>
       </div> <!-- // columns -->
     </div>
@@ -91,9 +95,8 @@ import Finalize from './components/Finalize.vue'
 
 import Check from './components/Check.vue'
 import Lang from './components/Lang.vue'
+import Settings from './components/Settings.vue'
 import Landing from './components/Landing.vue'
-//import HedwigV1 from './components/HedwigV1.vue'
-//-> not used import checkUpdate from './shared/updateChecker.js'
 import {locale} from './shared/config.js'
 
 import mixin from './mixin.js'
@@ -114,6 +117,7 @@ export default {
     Finalize,
     Check,
     Lang,
+    Settings,
     Landing
   },
     data(){
@@ -125,7 +129,8 @@ export default {
         openFinalize: false,
         openHedwigV1: false,
         openCheck: false,
-        openLang:false,
+        openLang: false,
+        openSettings: false,
         isDroppingDown: false,
         isDroppingDown2: false,
         isDroppingDown3: false,
@@ -179,6 +184,9 @@ export default {
         }
         if(window =='windowLang'){
           this.openLang = false
+        }
+        if(window =='windowSettings'){
+          this.openSettings = false
         }
       });
 
@@ -318,7 +326,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 
 #wallet_menu {

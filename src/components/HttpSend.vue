@@ -29,7 +29,7 @@
         <br/>
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-link" v-bind:class="{'is-loading':sending}" @click="send3">{{ $t("msg.send") }}</button>
+            <button class="button is-link" v-bind:class="{'is-loading':sending}" @click="send">{{ $t("msg.send") }}</button>
           </div>
           <div class="control">
             <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
@@ -46,9 +46,6 @@
 </template>
 <script>
 const log = window.log
-const axios = require('axios')
-const urljoin = require('url-join');
-
 
 export default {
   name: "http-send",
@@ -119,179 +116,61 @@ export default {
         return true;
       }
     },
-    send(){
-      if(this.checkForm()&&!this.sending){
-        let tx_id
+    async send(){
+      if(this.checkForm() && !this.sending){
+
         this.sending = true
+
         let tx_data = {
+
+          "src_acct_name": null,
           "amount": this.amount * 100000000,
+          "message": "",
           "minimum_confirmations": 10,
-          "method": "http",
-          "dest": this.address,
           "max_outputs": 500,
           "num_change_outputs": 1,
           "selection_strategy_is_use_all": false,
-          "target_slate_version": parseInt(this.slateVersion)
+          "target_slate_version": null,
+          "ttl_blocks": null,
+          "payment_proof_recipient_address": null,
+          "send_args": {
+            "method": "http",
+            "dest": this.address,
+            "finalize": true,
+            "post_tx": true,
+            "fluff": false
+          }
+
         }
 
-        let send = async function(){
-          try{
-            let res = await this.$walletService.issueSendTransaction(tx_data)
-            tx_id = res.data.id
+
+
+        let res = await this.$walletService.issueSendTransaction(tx_data)
+        if(res && res.data.result){
+
+
+          if(res.data.result.Ok){
+            let tx_id = res.data.result.Ok.id
             log.debug(`issue tx ${tx_id} ok; return:${res.data}`)
-            let res2 = await this.$walletService.postTransaction(res.data, true)
             this.sent = true
             this.$dbService.addPostedUnconfirmedTx(tx_id)
-            log.debug(`httpsend post tx ok; return:${res2.data}`)
-          }catch(error){
-            log.error('http send error:' + error)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
-            }
-            this.errors.push(this.$t('msg.httpSend.TxFailed'))
-          }finally{
             this.sending = false
             this.emitter.emit('update')
           }
-        }
-        send.call(this)
-      }
-    },
-    send2(){
-      if(this.$walletService.passwordUndefined()){
-        log.debug('Use send1.')
-        return this.send()
-      }
-      if(this.checkForm()&&!this.sending){
-        let tx_id
-        this.sending = true
-        let send2Async = async function(){
-          try{
-            const slate = await this.$walletService.createSlate(this.amount, 1)
-            tx_id = slate.id
-            if(!tx_id){
-              this.errors.push(this.$t('msg.httpSend.TxCreateFailed'))
-            }else{
-              let url = urljoin(this.address, '/v1/wallet/foreign/receive_tx')
-              log.debug('http send to: ' + url)
-              const res = await axios.post(url, {
-                method: 'post',
-                //contentType: "application/json",
-                contentType: '',
-                dataType: 'json',
-                timeout: '10s',
-                content: JSON.stringify(slate),
-                //data:JSON.stringify(slate),
-                //headers: {
-                //   'User-Agent': 'epic-client',
-                //'transfer-encoding': ''
-                //},
-              });
-              if (res && res.data && res.data.id === tx_id) {
-                log.debug(`post transaction ok, start to finalize transaction ${tx_id}`);
-                let result = await this.$walletService.finalizeSlate(res.data)
-                this.sent = true
-                this.$dbService.addPostedUnconfirmedTx(tx_id)
-                log.debug(`httpsend post tx ok; return:${JSON.stringify(result)}`)
-              }else{
-                log.debug('post transaction return bad response: ' + JSON.stringify(res))
-                this.errors.push(this.$t('msg.httpSend.TxResponseFailed'))
-              }
-            }
-          }catch(error){
-            log.error('http send error:' + error)
-            log.error(error.stack)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
-            }
+
+
+        }else{
+          if(res && res.data.error){
             this.errors.push(this.$t('msg.httpSend.TxFailed'))
-          }finally{
-            this.sending = false
-            this.emitter.emit('update')
           }
+          log.error('http send error:', res)
+
         }
-        send2Async.call(this)
+
+
       }
     },
 
-    send3(){
-      if(this.checkForm()&&!this.sending){
-        let tx_id
-        this.sending = true
-
-        let tx_data = {
-          "amount": this.amount * 100000000,
-          "minimum_confirmations": 10,
-          "max_outputs": 500,
-          "num_change_outputs": 1,
-          "selection_strategy_is_use_all": true,
-          "method": "http",
-          "dest": this.address,
-        }
-
-        let send3Async = async function(){
-          try{
-            let res = await this.$walletService.issueSendTransaction2(tx_data)
-            let slate = res.data.result.Ok
-            tx_id = slate.id
-            if(!tx_id){
-              this.errors.push(this.$t('msg.httpSend.TxCreateFailed'))
-            }else{
-              log.debug('Generate slate file: ' + tx_id)
-
-              let url = urljoin(this.address, '/v2/foreign')
-              const payload = {
-                jsonrpc: "2.0",
-                id: +new Date(),
-                method: 'receive_tx',
-                params: [slate, null, null],
-              }
-              const res = await axios.post(url, {
-                method: 'post',
-                contentType: "application/json",
-                dataType: 'json',
-                timeout: '10s',
-                //data: payload,
-                content: JSON.stringify(payload)
-              });
-              let slate2 = res.data.result.Ok
-              if(slate2){
-                log.debug('Got slate2 file from receiver')
-
-                let res = await this.$walletService.lock_outputs(slate, 0)
-                log.debug('output locked.')
-
-                res = await this.$walletService.finalizeTransaction2(slate2)
-                let tx = res.data.result.Ok.tx
-                log.debug('finalized.')
-
-                res = await this.$walletService.postTransaction(tx, true)
-                log.debug('posted.')
-
-                this.sent = true
-                this.$dbService.addPostedUnconfirmedTx(tx_id)
-              }
-            }
-
-          }catch(error){
-            log.error('http send error:' + error)
-            log.error(error.stack)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
-            }
-            this.errors.push(this.$t('msg.httpSend.TxFailed'))
-          }finally{
-            this.sending = false
-            this.emitter.emit('update')
-          }
-        }
-        send3Async.call(this)
-      }
-
-    },
     closeModal() {
       this.clearup()
       this.emitter.emit('close', 'windowHttpSend');
