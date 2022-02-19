@@ -4,8 +4,8 @@
 </template>
 
 <script>
-  import Login from '@/components/Login'
-  import New from '@/components/New'
+  import Login from './Login.vue'
+  import New from './New.vue'
 
   export default {
     name: 'landing',
@@ -17,8 +17,12 @@
       walletExist: {
         type: Boolean,
         default: false
+      },
+      nodeOnline:{
+        type: Boolean,
+        default: false
       }
-      
+
     },
 }
 </script>

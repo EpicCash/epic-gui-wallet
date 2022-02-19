@@ -7,7 +7,7 @@ const path = window.nodePath;
 export const platform = window.config.getPlatform()
 
 export const chainType = 'main'
-export const epicNode = "http://127.0.0.1:3413"
+export const defaultEpicNode = "http://127.0.0.1:3413"
 export const epicNode2 = "http://ip:3413"
 export const epicDIR = path.join(userHomedir, '.epic')
 export const seedPath = path.join(userHomedir, '.epic', chainType, 'wallet_data/wallet.seed')
@@ -21,10 +21,10 @@ export const configPath = path.join(ewalletPath, 'config.json')
 
 
 const binariesPath = path.join(window.config.getResourcePath(), 'bin', platform)
-const epicBinaries = platform ==='win' ? 'epic-wallet.exe' : 'epic-wallet';
+const epicWalletBinary = platform ==='win' ? 'epic-wallet.exe' : 'epic-wallet';
 
-export let epicBinPath = path.join(binariesPath, epicBinaries);
-if(platform=='win'){
+export let epicBinPath = path.join(binariesPath, epicWalletBinary);
+if(platform == 'win'){
   epicBinPath = '"' + path.resolve(epicBinPath) + '"'
 }
 
@@ -33,14 +33,10 @@ export const logLevel = 'debug'
 export function getConfig(){
 
   try{
-
-    //console.log(window.nodeFs.readFileSync(configPath, {encoding:'utf8', flag:'r'}));
     return JSON.parse(window.nodeFs.readFileSync(configPath, {encoding:'utf8', flag:'r'}))
-
   }catch (e) {
     console.log('getConfig',e);
     return {}
-
   }
 }
 export function setConfig(data){
@@ -48,7 +44,7 @@ export function setConfig(data){
       encoding: "utf8",
       flag: "w",
       mode: 0o666
-    })
+  })
 }
 export function updateConfig(data){
   let data_ = getConfig()

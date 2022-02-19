@@ -24,6 +24,7 @@ const messages = {
     back: 'Back',
     msg: 'Message',
     more: 'More',
+    wrongAddressFormat: 'wrong address format',
     remove: {
       warning: 'Warning',
       info: 'Info',
@@ -207,7 +208,9 @@ const messages = {
     },
 
     settings: {
-      title: 'Settings'
+      title: 'Settings',
+      check_node_api_http_addr: 'Node api address',
+      node_api_addr_hint: 'where the wallet should find a running node'
     }
 
   }

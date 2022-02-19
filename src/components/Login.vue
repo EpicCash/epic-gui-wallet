@@ -1,4 +1,5 @@
 <template>
+
   <section class="hero is-fullheight" style="background: black;">
     <div class="hero-body">
       <div class="container">
@@ -24,17 +25,23 @@
               <div class="field">
                 <label class="label">{{ $t("msg.password") }}</label>
                 <div class="control">
-                  <input class="input" type="password" placeholder="********" required
-                      :class="{'is-warning': error}" v-model="password">
-                  </div>
-                  <p style="color:red;" class="help is-warning" v-if="error">{{ $t("msg.wrongPassword") }}</p>
-                  <p style="color:red;" class="help is-warningapi" v-if="errorapi">{{ "Error: starting api" }}</p>
+                  <input class="input" type="password" placeholder="********" required :class="{'is-warning': error}" v-model="password">
                 </div>
+                <p style="color:red;" class="help is-warning" v-if="error">{{ $t("msg.wrongPassword") }}</p>
+                <p style="color:red;" class="help is-warningapi" v-if="errorapi">{{ "Error: starting api" }}</p>
+              </div>
 
-                <div class="field">
-                  <button class="button is-link" @click.prevent="tryLogin">
-                    {{ $t("msg.login_") }}
-                  </button>
+                <div class="field is-grouped">
+                  <div class="control">
+                    <button class="button is-link" @click.prevent="tryLogin">
+                      {{ $t("msg.login_") }}
+                    </button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-link" @click.prevent="openSettings">
+                      {{ $t("msg.settings.title") }}
+                    </button>
+                  </div>
                 </div>
             </form>
 
@@ -81,19 +88,25 @@ export default {
 
   },
   methods: {
-
+    async openSettings(){
+      console.log('open settings');
+      this.emitter.emit('open', 'windowSettings');
+    },
     async tryLogin(){
 
       this.resetErrors()
-      let loginSucccess = await this.$walletService.start(this.password)
+      this.$walletService.setPassword(this.password);
+      let loginSucccess = await this.$walletService.start();
 
       if(loginSucccess){
 
         let apiCallable = await this.$walletService.getNodeHeight();
-        if(!apiCallable){
+        console.log('Login apiCallable', apiCallable.data);
+
+        if( !apiCallable ){
           return this.errorapi = true;
         }
-        this.$walletService.setPassword(this.password);
+
         this.emitter.emit('logined')
 
       }else{

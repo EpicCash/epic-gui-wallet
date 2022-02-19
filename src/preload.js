@@ -161,7 +161,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
     async execStart(cmd, args, password, platform){
 
       return new Promise(function(resolve, reject) {
-
+          console.log('start wallet cmd:', cmd);
+          console.log('start wallet args', args);
           const ownerAPI = spawn(cmd, args, {shell: platform == 'win'});
           ownerAPI.stdout.setEncoding('utf8');
           ownerAPI.stderr.setEncoding('utf8');

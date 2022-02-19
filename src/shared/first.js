@@ -9,7 +9,10 @@ export function checkFirstTime(){
         window.nodeFs.mkdirSync(ewalletPath)
         window.nodeFs.mkdirSync(logDir)
         window.nodeFs.mkdirSync(tempTxDir)
-        setConfig({'firstTime':true})
+        setConfig({
+          'firstTime':true,
+          'check_node_api_http_addr': 'http://116.203.211.229:3413'
+        })
     }
     else{
         updateConfig({'firstTime':false})

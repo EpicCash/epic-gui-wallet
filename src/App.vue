@@ -1,7 +1,19 @@
 <template>
+<p class="nodeInfo"  >
+  Node ({{ this.epicNode }}):
+  <span v-if="nodeOnline" class="dotGreen"></span><span v-if="nodeOnline">&nbsp;online</span>
+  <span v-if="nodeOnline==false" class="dotRed"></span><span v-if="nodeOnline==false">&nbsp;offline</span>
 
+  <span v-if="walletListen" class="walletListenInfo" >{{ $t("msg.app.httpReceive") }}
+    <span v-if="nodeOnline" class="dotGreen"></span>
+  </span>
+</p>
+
+  <settings :showModal="openSettings"></settings>
   <div class="has-background-black">
     <div class="section" v-if="ownerApiRunning" style="padding: 1.5rem 1.5rem;">
+
+
       <div class="columns">
         <div class="column is-one-quarter">
 
@@ -68,7 +80,7 @@
 
           <check :showModal="openCheck"></check>
           <lang :showModal="openLang"></lang>
-          <settings :showModal="openSettings"></settings>
+
         </div>
       </div> <!-- // columns -->
     </div>
@@ -81,6 +93,9 @@
 const log = window.log;
 
 
+
+
+import {epicPath, seedPath, defaultEpicNode, epicNode2, apiSecretPath, walletTOMLPath, getConfig} from './shared/config.js'
 
 
 
@@ -140,13 +155,28 @@ export default {
         walletExist:false,
         hedwigRunning:false,
         hedwigFailed:false,
-        isRu: false
+        isRu: false,
+        nodeOnline: false,
+        epicNode: '',
+        walletListen: false
     }},
     async mounted() {
 
+        let config = getConfig();
+
+
+        //first check if wallet files and folders exist.
         this.walletExist = await this.$walletService.isExist();
         console.log('wallet exist?', this.walletExist);
-        log.debug(`Render main window mounted:height ${this.height}; owner_api running? ${this.ownerApiRunning}; wallet exists? ${this.walletExist}`)
+
+
+        if(this.walletExist){
+          //check first if node is online
+          this.epicNode = config['check_node_api_http_addr'];
+          this.nodeOnline = await this.$nodeService.nodeOnline();
+          console.log('node online?', this.nodeOnline);
+          log.debug(`Render main window mounted:height ${this.height}; owner_api running? ${this.ownerApiRunning}; wallet exists? ${this.walletExist}`)
+        }
 
     },
     created () {
@@ -190,6 +220,14 @@ export default {
         }
       });
 
+      this.emitter.on('open', (window)=>{
+
+        if(window =='windowSettings'){
+          console.log('emit open settings');
+          this.openSettings = true
+        }
+      });
+
       this.emitter.on('restoredThenLogin', ()=>{
         log.info('wallet restored and now to login')
         this.walletExist = true
@@ -212,6 +250,13 @@ export default {
         log.warn('Found walletExisted during init new one')
         this.walletExist = true
       });
+
+      this.emitter.on('walletListen', ()=>{
+        this.walletListen = this.$walletService.isListen();
+      });
+
+
+
 
       /*this.emitter.on('hedwigRunning', ()=>{
         this.hedwigRunning = true
@@ -271,6 +316,7 @@ export default {
 
         this.$walletService.getNodeHeight().then(
           (res) =>{
+          console.log('getHeight', res.data.result.Ok);
             this.height = parseInt(res.data.result.Ok.height)
             return true;
           }).catch((error)=>{
@@ -369,4 +415,33 @@ export default {
     font-size: 0.675rem;
 }
 
+.dotRed {
+  height: 14px;
+  width: 14px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align:middle;
+}
+.dotGreen {
+  height: 14px;
+  width: 14px;
+  background-color: green;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align:middle;
+}
+.nodeInfo{
+  padding:10px;
+  font-weight:bold;
+  text-align:right;
+  padding-right:14px;
+  background:black;
+  text-color:white;
+  color:white;
+  font-size:12px;
+}
+.walletListenInfo{
+  padding-left:10px;
+}
 </style>

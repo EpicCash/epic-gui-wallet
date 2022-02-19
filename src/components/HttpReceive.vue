@@ -21,7 +21,7 @@
         </div>
         <button class="button is-link is-outlined"  @click="closeModal" >ok</button>
         &nbsp;&nbsp;
-        <button class="button is-link is-outlined"  @click="stop" v-show="!started">
+        <button class="button is-link" v-bind:class="{'is-loading': stopping }" @click="stop" v-show="!started">
           {{ $t("msg.httpReceive.close") }}
         </button>
 
@@ -41,19 +41,11 @@
               <p>{{ $t("msg.httpReceive.reachableMsg") }}</p>
             </div>
           </div>
-          <!--
-          <div class="field">
-            <label class="label">{{ $t("msg.httpReceive.password") }}</label>
-            <div class="control">
-              <input class="input" type="password" placeholder="********" required
-                :class="{'is-warning': errors.length>0}" v-model="password">
-            </div>
-          </div>-->
 
           <div class="center">
             <div class="field is-grouped ">
               <div class="control">
-                <button class="button is-link" v-bind:class="{'is-loading':starting}" @click="start">
+                <button class="button is-link" v-bind:class="{'is-loading': starting}" @click="start">
                   {{ $t("msg.httpReceive.start") }}
                 </button>
               </div>
@@ -71,17 +63,7 @@
 </template>
 <script>
 const log = window.log
-//import { setTimeout } from 'timers';
-//const fs = require('fs');
-//const publicIp = require('public-ip');
-//const extIP = require('external-ip');
 
-
-/*function isValidIP(str) {
-  const octet = '(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?|0)';
-  const regex = new RegExp(`^${octet}\\.${octet}\\.${octet}\\.${octet}$`);
-  return regex.test(str);
-}*/
 
 export default {
   name: "http-receive",
@@ -94,52 +76,44 @@ export default {
   data() {
     return {
       errors: [],
-      starting:false,
-      started:false,
+      starting: false,
+      stopping: false,
+      started: false,
       localReachable: false,
-      running:false,
+      running: false,
       ip: this.$t('msg.httpReceive.ip')
     }
   },
-  mounted() {
-    //this.checkRunning()
-  },
   methods: {
+
     async start(){
 
-      if((!this.starting)&&(!this.running)){
+      if(!this.starting && !this.running){
         this.starting = true
         const isListen = await this.$walletService.startListen();
         if(isListen){
           this.started = true
           this.running = true
           log.debug('Http listen is locally reachable.')
-          log.debug('checkRunning right now.')
-          //setTimeout(()=>this.checkRunning(), 1.5*1000)
+          this.emitter.emit('walletListen')
+
         }
       }
-      //console.log('test', test);
 
-      /*if((!this.starting)&&(!this.running)){
-        this.starting = true
-        this.checklocalReachable().catch((error)=>{
-          if(!error.response){
-            this.$walletService.startListen()
-          }
-          log.debug('Http listen is locally reachable.')
-          log.debug('checkRunning right now.')
-          setTimeout(()=>this.checkRunning(), 1.5*1000)
-        })
-      }*/
+
     },
     async stop(){
+
+      this.stopping = true;
       let killed = await this.$walletService.stopProcess('listen')
       if(killed){
         this.running = false
+        this.emitter.emit('walletListen')
         this.clearup();
         this.closeModal()
       }
     },
+
     closeModal() {
       this.clearup()
       this.emitter.emit('close', 'windowHttpReceive');
@@ -148,81 +122,10 @@ export default {
     clearup(){
       this.errors = []
       this.starting = false
+      this.stopping = false
       this.started = false
     },
 
-    getIP(){
-      return '127.0.0.1';
-      /*return new Promise(function(resolve, reject) {
-
-
-
-        publicIp.v4().then((ip)=>{
-          return resolve(ip)
-        }).catch((err)=>{
-          log.error('Failed to get ip use publicIp: ' + err)
-          return reject(err)
-
-          externalip(function (err, ip) {
-          if(ip){
-            return resolve(ip)
-          }else{
-            log.error('Failed to get ip use externalip: ' + err)
-            return reject(err)
-          }
-          })
-
-        })
-      })*/
-    },
-
-    checklocalReachable(){
-      /*const url = 'http://127.0.0.1:3415'
-      log.debug('Try to test if http listen locally reachable?')
-      return this.$http.get(url, {timeout: 5000})*/
-    },
-
-    checkRunning(){
-      this.checklocalReachable().catch((err)=>{
-        if(err.response){
-          this.localReachable = true
-        }
-      })
-      this.getIP(log).then((ip)=>{
-        this.ip = ip
-        log.debug('Get ip: ' + ip)
-        const url = `http://${ip}:3415`
-        log.debug(`Try to test ${url} ?`)
-        this.$http.get(url, {timeout: 4000}).catch((error)=>{
-          if(error.response){
-            this.running = true
-            if(this.starting){
-              this.started = true
-              this.starting = false
-            }
-            log.debug('wallet HTTP listen works.')
-          }else{
-            if(this.starting){
-              this.starting = false
-              if(this.localReachable){
-                this.errors.push(this.$t('msg.httpReceive.failed4'))
-              }else{
-                this.errors.push(this.$t('msg.httpReceive.failed2'))
-              }
-            }
-            this.running = false
-            log.debug('Failed to connect ', url)
-          }
-        })
-      }).catch(
-        (err)=>{
-          log.error('Error when try to get ip: ' + err)
-          this.errors.push(this.$t('msg.httpReceive.failed3'))
-          this.starting = false
-          this.running = false
-        }
-      )
-    }
   }
 }
 </script>

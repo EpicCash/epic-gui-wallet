@@ -5,6 +5,7 @@ import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n/index'
 import { locale } from './shared/config.js';
 import walletService from './shared/wallet.js';
+import nodeService from './shared/node.js';
 import dbService from './db.js';
 import App from './App.vue'
 import mitt from 'mitt';
@@ -32,6 +33,7 @@ const i18n = createI18n({
 
 app.use(i18n);
 app.config.globalProperties.$walletService = new walletService();
+app.config.globalProperties.$nodeService = new nodeService();
 app.config.globalProperties.$dbService = dbService;
 app.config.globalProperties.$filters = {
   truncate(text, length) {
