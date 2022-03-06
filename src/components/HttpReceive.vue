@@ -7,6 +7,9 @@
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.receive") }}(HTTP/HTTPS)</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
+
+
+
     <section class="modal-card-body" style="height:380px;background-color: whitesmoke;">
       <div v-if="running">
         <div class="message is-link">
@@ -18,6 +21,8 @@
               &nbsp; &nbsp; http://{{ip}}:3415 </p>
             <p>{{ $t("msg.httpReceive.reachableMsg2") }}</p>
           </div>
+
+
         </div>
         <button class="button is-link is-outlined"  @click="closeModal" >ok</button>
         &nbsp;&nbsp;
@@ -27,6 +32,8 @@
 
       </div>
       <div v-else>
+
+
         <div class="notification is-warning" v-if="errors.length">
           <p v-for="error in errors" :key="error">{{ error }}</p>
         </div>
@@ -41,8 +48,56 @@
               <p>{{ $t("msg.httpReceive.reachableMsg") }}</p>
             </div>
           </div>
+          <div class="field">
+            <label class="label">{{ $t("msg.password") }}</label>
+            <div class="control">
+              <input class="input" type="password" placeholder="********" required v-model="password">
+            </div>
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label is-normal">
+              <label class="label">Method</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
 
+                <div class="control">
+
+                  <div class="select">
+                    <select>
+                      <option>http</option>
+                      <option>Keybase</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">TOR</label>
+            </div>
+            <div class="field-body">
+              <div class="field is-narrow">
+                <div class="control">
+                  <label class="checkbox">
+                    <input type="checkbox" name="tor">
+                    enable
+                  </label>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
           <div class="center">
+
             <div class="field is-grouped ">
               <div class="control">
                 <button class="button is-link" v-bind:class="{'is-loading': starting}" @click="start">
@@ -81,6 +136,7 @@ export default {
       started: false,
       localReachable: false,
       running: false,
+      password: '',
       ip: this.$t('msg.httpReceive.ip')
     }
   },
@@ -90,13 +146,12 @@ export default {
 
       if(!this.starting && !this.running){
         this.starting = true
-        const isListen = await this.$walletService.startListen();
+        const isListen = await this.$walletService.startListen(this.password);
         if(isListen){
           this.started = true
           this.running = true
           log.debug('Http listen is locally reachable.')
           this.emitter.emit('walletListen')
-
         }
       }
 

@@ -7,9 +7,25 @@
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.settings.title") }}</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
-    <section class="modal-card-body" style="height:200px;background-color: whitesmoke;">
+    <section class="modal-card-body" style="">
+
+
         <div class="notification is-warning" v-if="errors.length">
           <p v-for="error in errors" :key="error">{{ error }}</p>
+        </div>
+
+
+        <div class="field">
+          <label class="label">{{ $t("msg.settings.network") }}</label>
+          <div class="control">
+            <div class="select" >
+                <select v-model="network">
+                  <option value="mainnet">Mainnet</option>
+                  <option value="floonet">Floonet</option>
+                </select>
+
+            </div>
+          </div>
         </div>
 
         <div class="field">
@@ -18,6 +34,18 @@
             <input class="input" type="text" v-model="check_node_api_http_addr" placeholder="http://127.0.0.1:3413">
             <p class="hint">{{ $t("msg.settings.node_api_addr_hint") }}</p>
 
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">{{ $t("msg.lang.lang") }}</label>
+
+          <div class="control">
+            <div class="select">
+              <select v-model="localeSelected">
+                <option v-for="(lang, locale) in langs" :value="locale" :key="lang">{{lang}}</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -37,9 +65,8 @@
 
 </template>
 <script>
-  import { updateConfig, getConfig } from '../shared/config.js'
-  let config = getConfig();
-  let nodeaddr = config['check_node_api_http_addr'] ? config['check_node_api_http_addr'] : 'http://127.0.0.1:3413';
+
+  let nodeaddr;
 
   export default {
     name: "settings",
@@ -50,32 +77,71 @@
       }
     },
     data() {
+      let config = this.configService.config;
+      nodeaddr = config['check_node_api_http_addr'] ? config['check_node_api_http_addr'] : 'http://127.0.0.1:3413';
 
       let address = nodeaddr
+      let network = config['network'] ? config['network'] : 'mainnet'
+      let locale = this.configService.config.locale;
       return {
         errors: [],
         check_node_api_http_addr: address,
+        network: network,
+        locale: locale,
+        localeSelected: locale
       }
     },
     methods: {
       async save(){
         if(this.checkForm()){
 
+          if(this.configService.config.firstTime == true){
 
-          if(this.nodeaddr !== this.check_node_api_http_addr){
-            updateConfig({check_node_api_http_addr: this.check_node_api_http_addr});
-            await this.$walletService.updateConfig();
-            let killed = await this.$walletService.stopProcess('ownerAPI');
-            console.log('wallet killed after change address', killed);
-            if(killed){
-              let started = await this.$walletService.start();
-              console.log('wallet started after change address', started);
+            let configSaved =  await this.configService.updateConfig({
+              check_node_api_http_addr: this.check_node_api_http_addr,
+              network: this.network,
+              locale: this.localeSelected,
+              firstTime: false
+
+            });
+            console.log('firsttime saved', configSaved);
+            this.emitter.emit('restoredThenLogin');
+
+
+          }else{
+
+            console.log(this.network);
+
+            if(this.nodeaddr !== this.check_node_api_http_addr){
+
+              await this.configService.updateConfig({
+                check_node_api_http_addr: this.check_node_api_http_addr,
+                network: this.network,
+                locale: this.localeSelected
+              });
+
+              let nodeRestarted = await this.$nodeService.reconnectNode();
+
+
+              console.log('nodeRestarted', nodeRestarted);
+
+
+              let killed = await this.$walletService.stopProcess('ownerAPI');
+              console.log('wallet killed after change address', killed);
+              if(killed){
+                let started = await this.$walletService.start();
+                console.log('wallet started after change address', started);
+              }
+
             }
+            this.emitter.emit('close', 'windowSettings');
 
           }
 
 
-          this.emitter.emit('close', 'windowSettings');
+
+
+
 
         }
       },
@@ -113,4 +179,7 @@
   }
 </script>
 <style>
+label{
+  text-align:left;
+}
 </style>

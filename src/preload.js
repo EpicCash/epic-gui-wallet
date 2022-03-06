@@ -4,7 +4,8 @@ import os from 'os'
 import { join } from 'path'
 import path from 'path';
 
-
+const base32 = require('rfc-3548-b32');
+const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
 const util = require('util');
 const log = require('electron-log');
@@ -32,7 +33,10 @@ log.transports.file.streamConfig = {flags: 'w'};
 log.transports.console.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}'
 log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
 
+
+
 const spawn = require('child_process').spawn;
+const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
 const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
@@ -48,6 +52,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
                  resolve(false);
                }
                else {
+                 ipcRenderer.send('pid-remove', pid);
                  resolve(true);
                }
            });
@@ -58,6 +63,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
                 resolve(false);
               }
               else {
+                ipcRenderer.send('pid-remove', pid);
                 resolve(true);
               }
           });
@@ -77,51 +83,64 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     },
 
-    async execNew(cmd, password, platform){
-
+    async execNew(cmd, args, platform){
+      console.log('execNew cmd:', cmd);
+      console.log('execNew args:', args);
       return new Promise(function(resolve, reject) {
-          const createProcess = exec(cmd);
+
+          const createProcess = spawn(cmd, args, {shell: platform == 'win'});
+          let newSeedData = '';
+          let errorData = '';
+          let recordData = false;
+
+          createProcess.stdout.setEncoding('utf8');
+          createProcess.stderr.setEncoding('utf8');
+
           createProcess.stdout.on('data', (data) => {
-
-            let output = data.toString()
-            //log.debug('init process return: '+output)
-            if (output.includes("Please enter a password for your new wallet")){
-                log.debug('function new: time to entry password.')
-                createProcess.stdin.write(password + "\n");
-                createProcess.stdin.write(password + "\n");
+            console.log('stdout', data);
+            //start recording data
+            if(data.includes('Please back-up these words in a non-digital format.') || recordData){
+              recordData = true;
+              newSeedData += data;
             }
-            if(output.includes("Invalid Arguments: Not creating wallet - Wallet seed file exists")){
-                log.debug('function new: walletExisted')
-                //reject({'walletExisted'})
-                ipcRenderer.send('walletExisted');
-                resolve(false)
-                //return this.emitter.$emit('walletExisted')
-            }
-            if(output.includes("Please back-up these words in a non-digital format.")){
-                var wordSeed = data.toString();
 
-                wordSeed = wordSeed.replace("Your recovery phrase is:","");
-                wordSeed = wordSeed.replace("Please back-up these words in a non-digital format.","");
-
-                wordSeed = wordSeed.replace(/(\r\n|\n|\r)/gm, "");
-                wordSeed = wordSeed.replace("wallet.seed","wallet.seed ==   ");
-                var wordSeedWithLog = wordSeed;
-                var wordSeedWithoutLog = wordSeedWithLog.substring(wordSeedWithLog.indexOf("==")+1);
-                wordSeedWithoutLog = wordSeedWithoutLog.trim();
-                wordSeedWithoutLog = wordSeedWithoutLog.replace("= ","").trim();
-                //log.debug(`wordSeed: ${wordSeed}; wordSeedWithoutLog: ${wordSeedWithoutLog}`)
-                log.debug(`function new: walletCreated with seed of length ${wordSeedWithoutLog.length}.`)
-                //return this.emitter.$emit('walletCreated', wordSeedWithoutLog)
-                ipcRenderer.send('walletCreated', wordSeedWithoutLog);
-                resolve(true)
-            }
 
           });
 
           createProcess.stderr.on('data', (data) => {
-            log.error('Process:init new wallet got stderr: ' + data)
-            ipcRenderer.send('walletCreateFailed');
-            resolve(false)
+            errorData += data;
+
+            if(data.includes('Recovery word phrase is invalid.')){
+              recover.stdin.pause();
+              recover.kill();
+              resolve({success: false, msg: errorData});
+            }
+
+          });
+
+          createProcess.stdout.on('end', function () {
+
+            if(errorData != ''){
+
+              resolve({success: false, msg: errorData});
+
+            }else if(newSeedData != ''){
+              let wordSeed = newSeedData;
+
+              //TODO replace with a preg match replace
+              wordSeed = wordSeed.replace("Your recovery phrase is:", "");
+              wordSeed = wordSeed.replace("Please back-up these words in a non-digital format.", "");
+              wordSeed = wordSeed.replace("Command 'init' completed successfully", "");
+              wordSeed = wordSeed.replace(/(\r\n|\n|\r)/gm, "");
+              wordSeed = wordSeed.replace("wallet.seed", "wallet.seed ==   ");
+              let wordSeedWithLog = wordSeed;
+              let wordSeedWithoutLog = wordSeedWithLog.substring(wordSeedWithLog.indexOf("==") +1);
+              wordSeedWithoutLog = wordSeedWithoutLog.trim();
+              wordSeedWithoutLog = wordSeedWithoutLog.replace("= ", "").trim();
+              resolve({success: true, msg: wordSeedWithoutLog});
+            }else{
+              resolve({success: false, msg: 'unknow error'})
+            }
 
           });
 
@@ -156,36 +175,29 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
     },
 
 
-    /*start the wallet in listen mode */
-    /* check if wallet api can be called */
-    async execStart(cmd, args, password, platform){
+
+    /* start wallet api */
+    async execStart(cmd, args, platform){
 
       return new Promise(function(resolve, reject) {
-          console.log('start wallet cmd:', cmd);
-          console.log('start wallet args', args);
+          //console.log('start wallet cmd:', cmd);
+          //console.log('start wallet args', args);
           const ownerAPI = spawn(cmd, args, {shell: platform == 'win'});
           ownerAPI.stdout.setEncoding('utf8');
           ownerAPI.stderr.setEncoding('utf8');
+
           ownerAPI.stdout.on('data', (data) => {
+            //console.log(data);
 
-            //password prompt does not work for windows with epic-wallet.exe
-            if(data.includes('Password:') && platform != 'win'){
-              ownerAPI.stdin.write(password + "\n");
-            }
-
-            if(data.includes('Error opening wallet')){
-              resolve(false);
-            }
-
-            if(data.includes('listener started')){
-              ipcRenderer.send('pid-message', ownerAPI.pid);
+            if(data.includes('HTTP Owner listener started')){
+              ipcRenderer.send('pid-add', ownerAPI.pid);
               resolve(ownerAPI.pid);
             }
 
           });
 
           ownerAPI.stderr.on('data', (data) => {
-
+            console.log('ownerAPI.stderr', data);
             if(data.includes('Address already in use')){
               //we have unknow process id
               resolve(0);
@@ -198,6 +210,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           });
       });
     },
+    /* start wallet listen */
     async execListen(cmd, args, password, platform){
 
       return new Promise(function(resolve, reject) {
@@ -205,7 +218,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           listenProcess.stdout.setEncoding('utf8');
           listenProcess.stderr.setEncoding('utf8');
           listenProcess.stdout.on('data', () => {
-              ipcRenderer.send('pid-message', listenProcess.pid);
+              ipcRenderer.send('pid-add', listenProcess.pid);
               resolve(listenProcess.pid);
           })
           listenProcess.stderr.on('data', (data) => {
@@ -214,11 +227,80 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           })
 
       });
-    }
+    },
+
+    async execRecover(cmd, args, platform, seeds, password){
+
+      return new Promise(function(resolve, reject) {
+
+          const recover = spawn(cmd, args, {shell: platform == 'win'});
+          let newSeedData = '';
+          let errorData = '';
+          let recordData = false;
+          recover.stdout.setEncoding('utf8');
+          recover.stdin.setEncoding('utf8');
+          recover.stderr.setEncoding('utf8');
+          recover.stdout.on('data', (data) => {
+
+            if(data.includes('Please enter your recovery phrase')){
+              recover.stdin.write(seeds+"\n");
+            }else{
+
+              //start recording data
+              if(data.includes('Your recovery phrase is:') || recordData){
+                recordData = true;
+                newSeedData += data;
+              }
 
 
+            }
+
+          });
+
+          recover.stderr.on('data', (data) => {
+
+            errorData += data;
+
+            if(data.includes('Recovery word phrase is invalid.')){
+              recover.stdin.pause();
+              recover.kill();
+              resolve({success: false, msg: errorData});
+            }
+
+          });
+
+          recover.stdout.on('end', function () {
+
+            if(errorData != ''){
+
+              resolve({success: false, msg: errorData});
+
+            }else if(newSeedData != ''){
+              let wordSeed = newSeedData;
+
+              //TODO replace with a preg match replace
+              wordSeed = wordSeed.replace("Your recovery phrase is:", "");
+              wordSeed = wordSeed.replace("Please back-up these words in a non-digital format.", "");
+              wordSeed = wordSeed.replace("Command 'init' completed successfully", "");
+              wordSeed = wordSeed.replace(/(\r\n|\n|\r)/gm, "");
+              wordSeed = wordSeed.replace("wallet.seed", "wallet.seed ==   ");
+              let wordSeedWithLog = wordSeed;
+              let wordSeedWithoutLog = wordSeedWithLog.substring(wordSeedWithLog.indexOf("==") +1);
+              wordSeedWithoutLog = wordSeedWithoutLog.trim();
+              wordSeedWithoutLog = wordSeedWithoutLog.replace("= ", "").trim();
+              resolve({success: true, msg: wordSeedWithoutLog});
+            }else{
+              resolve({success: false, msg: 'unknow error'})
+            }
+
+          });
+
+      });
+    },
 
 });
+
+
 contextBridge.exposeInMainWorld('nodeSpawnSync', require('child_process').spawnSync);
 contextBridge.exposeInMainWorld('nodeSpawn', require('child_process').spawn);
 contextBridge.exposeInMainWorld('nodeExec', require('child_process').exec);
@@ -251,6 +333,18 @@ contextBridge.exposeInMainWorld('config', {
             return 'win';
         }
   },
+  getOnionV3(address){
+
+    const chekcsumstr = Buffer.from(".onion checksum","utf8");
+    const onion_version = Buffer.from("03","hex");
+
+    let pubKey = Buffer.from(address, 'hex');
+
+    let checksum = Buffer.from(sha3_256.create().update(Buffer.concat([chekcsumstr, pubKey, onion_version])).digest()).slice(0,2);
+    return base32.encode(Buffer.concat([pubKey, checksum, onion_version])).toLowerCase();
+
+  }
+
 
 
 });
@@ -265,6 +359,9 @@ contextBridge.exposeInMainWorld('explorer', {
 contextBridge.exposeInMainWorld('api', {
     showSaveDialog: async (title, message, defaultPath) => {
         return await ipcRenderer.invoke('show-save-dialog', title, message, defaultPath);
+    },
+    showOpenDialog: async () => {
+        return await ipcRenderer.invoke('show-open-dialog');
     },
     quit: () => {
       ipcRenderer.invoke('quit');

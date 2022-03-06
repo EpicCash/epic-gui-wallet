@@ -8,7 +8,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 const ps = require('ps-node');
 let win;
-let pids = [];
+let pids = {};
 
 //[13088:0215/073859.040:ERROR:gpu_init.cc(454)] Passthrough is not supported, GL is disabled, ANGLE is
 app.disableHardwareAcceleration();
@@ -36,7 +36,7 @@ async function createWindow() {
       webSecurity: false
     }
   })
-  
+
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -85,12 +85,12 @@ app.on('ready', async () => {
 app.on('before-quit', (event) => {
 
   //TODO:: works only on linux mac ? !
-  pids.forEach(function(pid) {
+  Object.keys(pids).forEach(pid => {
     // A simple pid lookup
     if (process.platform === 'win') {
-      exec(`taskkill /pid ${pid} /f /t`);
+      exec(`taskkill /pid ${pids[pid]} /f /t`);
     }else{
-      ps.kill(pid);
+      ps.kill(pids[pid]);
     }
 
   });
@@ -122,13 +122,26 @@ ipcMain.handle('show-save-dialog', async (event, title, message, defaultPath) =>
     });
     return responce;
 });
+
+ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) => {
+    // do stuff
+    let responce = await dialog.showOpenDialog({
+      properties:["openDirectory", "showHiddenFiles", "createDirectory"]
+    });
+    return responce;
+});
+
 ipcMain.handle('quit', () => {
   app.quit()
 });
 
-ipcMain.on('pid-message', function(event, arg) {
-  console.log('Main:', arg);
-  pids.push(arg);
+ipcMain.on('pid-add', function(event, arg) {
+  pids[String(arg)] = arg;
+  console.log('pid-add:', arg, pids);
+});
+ipcMain.on('pid-remove', function(event, arg) {
+  delete pids[String(arg)];
+  console.log('pid-remove:', arg, pids);
 });
 
 ipcMain.on('scan-stdout', (event, data) => {

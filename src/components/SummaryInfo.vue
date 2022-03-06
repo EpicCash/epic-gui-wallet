@@ -43,27 +43,27 @@
         this.getSummaryinfo();
       });
     },
-    methods: {
-      getSummaryinfo: function() {
-        this.$walletService.getSummaryInfo(10)
-          .then( (res) => {
-            let data = res.data.result.Ok
-            this.spendable = data[1]['amount_currently_spendable']/100000000
-            this.total = data[1]['total']/100000000
-            this.unconfirmed = data[1]['amount_awaiting_confirmation']/100000000
-            this.locked = data[1]['amount_locked']/100000000
-            this.unfinalization = data[1]['amount_awaiting_finalization']/100000000
-            this.immature = data[1]['amount_immature']/100000000
-            this.$dbService.setSpendable(this.spendable)
+     methods: {
+        getSummaryinfo: async function() {
 
-            if(this.spendable.toString().length > 6)this.smallTitle=true
-          }).catch((error) => {
-            log.error('getSummaryinfo error:' + error)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
-            }
-          })
+        let info = await this.$walletService.getSummaryInfo(10);
+        if(info && info.result){
+          let data = info.result.Ok
+          this.spendable = data[1]['amount_currently_spendable']/100000000
+          this.total = data[1]['total']/100000000
+          this.unconfirmed = data[1]['amount_awaiting_confirmation']/100000000
+          this.locked = data[1]['amount_locked']/100000000
+          this.unfinalization = data[1]['amount_awaiting_finalization']/100000000
+          this.immature = data[1]['amount_immature']/100000000
+          this.$dbService.setSpendable(this.spendable)
+
+          if(this.spendable.toString().length > 6)this.smallTitle=true
+        }else if(info && info.error){
+          console.log('error getSummaryinfo', info.error);
+        }else{
+          console.log('error getSummaryinfo', info);
+        }
+
       }
     }
   }

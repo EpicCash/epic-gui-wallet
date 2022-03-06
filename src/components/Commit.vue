@@ -157,11 +157,10 @@
         this.showCopy = -1
       },
 
-      getCommits() {
-        this.$walletService.getCommits(false, true, null)
-          .then((res) => {
-
-            this.total_commits = this.processCommits(res.data.result.Ok[1].reverse())
+      async getCommits() {
+          let commits = await this.$walletService.getCommits(false, true, null);
+          if(commits && commits.result && commits.result.Ok){
+            this.total_commits = this.processCommits(commits.result.Ok[1].reverse())
 
             this.current_commits = this.total_commits.slice(0, this.count_per_page)
             if (this.total_commits.length%this.count_per_page ==0){
@@ -169,14 +168,12 @@
             }else{
               this.pages_count = parseInt(this.total_commits.length/this.count_per_page) + 1
             }
+          }else{
+            let resp = commits.error
+            console.log('commits error', commits.error);
           }
-          ).catch((error) => {
-            log.error('getCommits error:' + error)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
-            }
-          })
+
+
       },
 
       processCommits(cts){

@@ -3,43 +3,45 @@
   <section class="hero is-fullheight" style="background: black;">
     <div class="hero-body">
       <div class="container">
-        <div class="columns is-mobile is-centered">
-          <div class="column is-6" >
-            <img src="../assets/logo.png" style="width:128px" class="is-pulled-left">
+
+        <div class="columns is-centered is-multiline">
+          <div class="block">
+            <img src="../assets/logo.png" style="width:20%;height:auto;">
             <h2 class="title" style="margin-top:24px; margin-left:70px;font-size:1.6rem" >{{ $t("msg.title") }}</h2>
           </div>
         </div>
 
-        <div class="columns is-mobile is-centered">
-          <div class="column"  v-bind:class="{'is-8': firstTime, 'is-6': !firstTime }">
-            <div class="message is-warning is-small" v-show="firstTime" >
-              <div class="message-header">
-                <p>{{ $t("msg.welcome") }}</p>
-                <button class="delete" aria-label="delete" @click="firstTime=false"></button>
-              </div>
-              <div class="message-body">
-                <p>{{ $t("msg.login.walletExist") }}</p>
-              </div>
-            </div>
+        <div class="columns is-centered">
+          <div class="column is-6" >
+
             <form class="box">
+              <div class="field">
+                <label class="label">{{ $t("msg.account") }}</label>
+                <div class="control">
+                  <input class="input" type="account" placeholder="default" required :class="{'is-danger': error}" v-model="account">
+                </div>
+
+              </div>
               <div class="field">
                 <label class="label">{{ $t("msg.password") }}</label>
                 <div class="control">
-                  <input class="input" type="password" placeholder="********" required :class="{'is-warning': error}" v-model="password">
+                  <input class="input" type="password" placeholder="********" required :class="{'is-danger': error}" v-model="password">
                 </div>
                 <p style="color:red;" class="help is-warning" v-if="error">{{ $t("msg.wrongPassword") }}</p>
-                <p style="color:red;" class="help is-warningapi" v-if="errorapi">{{ "Error: starting api" }}</p>
+                <p style="color:red;" class="help is-warningapi" v-if="errorapi">{{ this.errorapiMsg }}</p>
+                <p class="help is-warningapi" v-if="errorapi">Code: {{ this.errorCode }}</p>
               </div>
 
                 <div class="field is-grouped">
                   <div class="control">
-                    <button class="button is-link" @click.prevent="tryLogin">
+                    <button class="button is-link" @click.prevent="login">
                       {{ $t("msg.login_") }}
                     </button>
                   </div>
                   <div class="control">
-                    <button class="button is-link" @click.prevent="openSettings">
-                      {{ $t("msg.settings.title") }}
+
+                    <button class="button is-link" @click.prevent="create">
+                      {{ $t("msg.new.create") }}
                     </button>
                   </div>
                 </div>
@@ -50,8 +52,6 @@
           </div>
         </div>
 
-      <remove :showModal="openRemove"></remove>
-
       </div>
     </div>
   </section>
@@ -59,49 +59,47 @@
 
 <script>
 const log = window.log
-import {checkFirstTime, isFirstTime} from '../shared/first.js'
-import Remove from './Remove.vue'
 
 export default {
   name: "login",
 
-  components: {
-    Remove
-  },
-
   data() {
     return {
-      firstTime:false,
       password: '',
+      account: '',
       error: false,
       errorapi: false,
-      openRemove: false
+      errorapiMsg: '',
+      errorCode: '',
     }
   },
   created(){
-    this.emitter.on('closeWindowRemove',()=>{this.openRemove = false})
+    this.emitter.on('wallet_error', ({msg, code})=>{
+        this.errorapi = true;
+        this.errorapiMsg = msg;
+        this.errorCode = code;
+    });
   },
-  mounted(){
-    checkFirstTime();
-    this.firstTime = isFirstTime();
-    log.info('Login.vue: firstTime: ', this.firstTime )
 
-  },
   methods: {
-    async openSettings(){
-      console.log('open settings');
-      this.emitter.emit('open', 'windowSettings');
+    create(){
+      console.log('new create');
+      this.emitter.emit('initMode', 'create');
     },
-    async tryLogin(){
+    async login(){
 
       this.resetErrors()
-      this.$walletService.setPassword(this.password);
-      let loginSucccess = await this.$walletService.start();
+
+      let loginSucccess = await this.$walletService.start(this.password, this.account);
+      this.password = '';
+      this.account = '';
+
 
       if(loginSucccess){
 
         let apiCallable = await this.$walletService.getNodeHeight();
-        console.log('Login apiCallable', apiCallable.data);
+
+        console.log('Login apiCallable', apiCallable);
 
         if( !apiCallable ){
           return this.errorapi = true;

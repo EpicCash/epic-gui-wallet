@@ -3,9 +3,10 @@
 
 import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n/index'
-import { locale } from './shared/config.js';
-import walletService from './shared/wallet.js';
-import nodeService from './shared/node.js';
+import walletService from './shared/walletService.js';
+import nodeService from './shared/nodeService.js';
+import configService from './shared/configService.js';
+import {words} from './shared/words.js';
 import dbService from './db.js';
 import App from './App.vue'
 import mitt from 'mitt';
@@ -27,14 +28,20 @@ const messages = {
 const emitter = mitt();
 const app = createApp(App);
 const i18n = createI18n({
-  locale: locale,
+  locale: 'en',
   messages
 })
 
 app.use(i18n);
-app.config.globalProperties.$walletService = new walletService();
-app.config.globalProperties.$nodeService = new nodeService();
+
+let config = new configService(emitter);
+
+app.config.globalProperties.$walletService = new walletService(emitter, config);
+app.config.globalProperties.$nodeService = new nodeService(emitter, config);
+app.config.globalProperties.configService = config;
 app.config.globalProperties.$dbService = dbService;
+app.config.globalProperties.mnemonicWords = words;
+app.config.globalProperties.langs = {'en':'English', 'ru':'Russian', 'zh': 'Chinese'}
 app.config.globalProperties.$filters = {
   truncate(text, length) {
     if (text.length > length) {

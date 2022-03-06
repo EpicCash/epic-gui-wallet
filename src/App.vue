@@ -1,16 +1,54 @@
 <template>
-<p class="nodeInfo"  >
-  Node ({{ this.epicNode }}):
-  <span v-if="nodeOnline" class="dotGreen"></span><span v-if="nodeOnline">&nbsp;online</span>
-  <span v-if="nodeOnline==false" class="dotRed"></span><span v-if="nodeOnline==false">&nbsp;offline</span>
 
-  <span v-if="walletListen" class="walletListenInfo" >{{ $t("msg.app.httpReceive") }}
-    <span v-if="nodeOnline" class="dotGreen"></span>
-  </span>
-</p>
-
+  <div class="has-background-black" v-if="!checkservice">
   <settings :showModal="openSettings"></settings>
-  <div class="has-background-black">
+
+  <div class="columns ">
+    <div class="column is-half">
+      <p class="addressInfo">
+        <span v-if="address" class="" >Proof address: <button class="button is-small is-rounded">{{ address }}</button>
+          &nbsp;<span @click="copyAdress()">
+
+              <font-awesome-icon :icon="['fas', 'copy']"/>
+
+          </span>
+          <span v-if="!showCopyAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
+        </span>
+
+
+      </p>
+      <p class="addressInfo">
+        <span v-if="address" class="" >Onion address: <button class="button is-small is-rounded">{{ onionAddress }}</button>
+          &nbsp;<span @click="copyOnionAdress()">
+
+              <font-awesome-icon :icon="['fas', 'copy']"/>
+
+          </span>
+          <span v-if="!showCopyOnionAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
+        </span>
+
+
+      </p>
+    </div>
+    <div class="column">
+        <p class="nodeInfo">
+          Node ({{ this.epicNode }}):
+          <span v-if="nodeOnline && nodeIsSync" class="dotGreen"></span><span v-if="nodeOnline && nodeIsSync">&nbsp;online</span>
+          <span v-if="nodeOnline && nodeIsSync == false" class="dotYellow"></span><span v-if="nodeOnline && nodeIsSync == false">&nbsp;syncing</span><span v-if="nodeOnline && nodeIsSync == false">&nbsp;{{ sync_status }}&nbsp;{{ current_height}}/{{ highest_height}}</span>
+          <span v-if="nodeOnline == false" class="dotRed"></span><span v-if="nodeOnline==false">&nbsp;offline</span>
+
+          <span v-if="walletListen" class="walletListenInfo" >{{ $t("msg.app.httpReceive") }}
+            <span v-if="nodeOnline" class="dotGreen"></span>
+          </span>
+          <span>&nbsp;&nbsp;</span>
+          <button class="button is-small is-rounded" @click="openSettings=true">
+            <font-awesome-icon :icon="['fas', 'gear']"/>
+          </button>
+        </p>
+
+    </div>
+  </div>
+
     <div class="section" v-if="ownerApiRunning" style="padding: 1.5rem 1.5rem;">
 
 
@@ -69,36 +107,67 @@
 
         <div class="column is-three-quarters">
 
-          <transaction v-bind:count_per_page="3"></transaction>
-          <br/>
-          <commit v-bind:count_per_page="3" v-bind:nodeHeight="height"></commit>
-          <receive :showModal="openReceive"></receive>
-          <http-receive :showModal="openHttpReceive"></http-receive>
-          <http-send :showModal="openHttpSend"></http-send>
-          <file-send :showModal="openFileSend"></file-send>
-          <finalize :showModal="openFinalize"></finalize>
+          <div class="tabs is-boxed">
+            <ul>
+              <li v-bind:class="{'is-active':transactionTab}"><a @click="openTab('transactionTab')">Transaction</a></li>
+              <li v-bind:class="{'is-active':commitTab}"><a @click="openTab('commitTab')">Commits</a></li>
+            </ul>
+          </div>
 
-          <check :showModal="openCheck"></check>
-          <lang :showModal="openLang"></lang>
+          <div v-if="transactionTab" class="content-tab" >
+            <transaction v-bind:count_per_page="3"></transaction>
+          </div>
+          <div v-if="commitTab" class="content-tab" >
+            <commit v-bind:count_per_page="3" v-bind:nodeHeight="height"></commit>
+          </div>
+
 
         </div>
+
+
+
       </div> <!-- // columns -->
     </div>
-    <landing v-bind:walletExist="walletExist" v-else></landing>
+
+
+
+
+    <login v-if="!checkservice && !ownerApiRunning && action !== 'create'"></login>
+
+
+
+
   </div>
+  <receive :showModal="openReceive"></receive>
+  <http-receive :showModal="openHttpReceive"></http-receive>
+  <http-send :showModal="openHttpSend"></http-send>
+  <file-send :showModal="openFileSend"></file-send>
+  <finalize :showModal="openFinalize"></finalize>
+
+  <check :showModal="openCheck"></check>
+  <lang :showModal="openLang"></lang>
+  <checkService v-if="action === 'check'"></checkService>
+  <create v-if="action === 'create'"></create>
+  <restore v-if="action === 'restore'"></restore>
+  <new v-if="action === 'init'"></new>
+
+
 </template>
 
 <script>
 
 const log = window.log;
+const clipboard = window.clipboard;
 
-
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faGear as FasGear } from '@fortawesome/free-solid-svg-icons'
+library.add(FasGear)
 
 import {epicPath, seedPath, defaultEpicNode, epicNode2, apiSecretPath, walletTOMLPath, getConfig} from './shared/config.js'
 
 
-
+import CheckService from './components/CheckService.vue'
 import SummaryInfo from './components/SummaryInfo.vue'
 import Transaction from './components/Transaction.vue'
 import Commit from './components/Commit.vue'
@@ -108,10 +177,15 @@ import HttpReceive from './components/HttpReceive.vue'
 import FileSend from './components/FileSend.vue'
 import Finalize from './components/Finalize.vue'
 
+import New from './components/New.vue'
+import Restore from './components/Restore.vue'
+import Create from './components/Create.vue'
+import Login from './components/Login.vue'
+
+
 import Check from './components/Check.vue'
 import Lang from './components/Lang.vue'
 import Settings from './components/Settings.vue'
-import Landing from './components/Landing.vue'
 import {locale} from './shared/config.js'
 
 import mixin from './mixin.js'
@@ -133,10 +207,16 @@ export default {
     Check,
     Lang,
     Settings,
-    Landing
+    FontAwesomeIcon,
+    CheckService,
+    New,
+    Restore,
+    Create,
+    Login
   },
     data(){
       return {
+        checkservice: true,
         openReceive: false,
         openHttpReceive:false,
         openHttpSend: false,
@@ -157,25 +237,44 @@ export default {
         hedwigFailed:false,
         isRu: false,
         nodeOnline: false,
+        nodeIsSync: false,
         epicNode: '',
-        walletListen: false
+        walletListen: false,
+        address: '',
+        onionAddress: '',
+        showCopyAddress: true,
+        showCopyOnionAddress: true,
+        error: '',
+        action: 'check',
+        current_height: 0,
+        highest_height: 0,
+        sync_status: '',
+        transactionTab:true,
+        commitTab:false,
     }},
     async mounted() {
 
-        let config = getConfig();
+        //let config = getConfig();
 
 
-        //first check if wallet files and folders exist.
-        this.walletExist = await this.$walletService.isExist();
-        console.log('wallet exist?', this.walletExist);
 
+        this.action = await this.configService.startCheck();
+        console.log('app action configService', this.action);
+        if(this.action === 'settings'){
+          console.log('open settings now');
+          this.checkservice = false;
+          this.openSettings = true;
 
-        if(this.walletExist){
+        }
+
+        if(this.action === 'ok'){
+          this.checkservice = false;
           //check first if node is online
-          this.epicNode = config['check_node_api_http_addr'];
-          this.nodeOnline = await this.$nodeService.nodeOnline();
-          console.log('node online?', this.nodeOnline);
-          log.debug(`Render main window mounted:height ${this.height}; owner_api running? ${this.ownerApiRunning}; wallet exists? ${this.walletExist}`)
+          this.epicNode = this.configService.config['check_node_api_http_addr'];
+          this.getNode();
+          log.debug(`Render main window mounted:height ${this.height}; owner_api running? ${this.ownerApiRunning}; wallet exists? `)
+
+
         }
 
     },
@@ -184,6 +283,12 @@ export default {
       if(locale==='ru'){
         this.isRu = true
       }
+
+      this.emitter.on('initMode', (action)=>{
+        console.log(action);
+        this.action = action;
+      })
+
       this.emitter.on('selectLocale', (locale)=>{
         if(locale==='ru')this.isRu = true
         else{
@@ -191,81 +296,74 @@ export default {
         }
       })
       this.emitter.on('close', (window)=>{
-        if(window =='windowReceive'){
+        if(window == 'windowReceive'){
           this.openReceive = false
         }
-        if(window =='windowHttpSend'){
+        if(window == 'windowHttpSend'){
           this.openHttpSend = false
         }
-        if(window =='windowFileSend'){
+        if(window == 'windowFileSend'){
           this.openFileSend = false
         }
-        if(window =='windowFinalize'){
+        if(window == 'windowFinalize'){
           this.openFinalize = false
         }
-        if(window =='windowHttpReceive'){
+        if(window == 'windowHttpReceive'){
           this.openHttpReceive = false
         }
-        if(window =='windowHedwigV1'){
+        if(window == 'windowHedwigV1'){
           this.openHedwigV1 = false
         }
-        if(window =='windowCheck'){
+        if(window == 'windowCheck'){
           this.openCheck = false
         }
-        if(window =='windowLang'){
+        if(window == 'windowLang'){
           this.openLang = false
         }
-        if(window =='windowSettings'){
+        if(window == 'windowSettings'){
           this.openSettings = false
         }
       });
 
       this.emitter.on('open', (window)=>{
 
-        if(window =='windowSettings'){
+        if(window == 'windowSettings'){
           console.log('emit open settings');
           this.openSettings = true
         }
       });
 
+      this.emitter.on('restoredThenSettings', ()=>{
+        log.info('wallet restored and now to login');
+        this.action = 'settings';
+        this.openSettings = true;
+        this.checkservice = false;
+      });
+
       this.emitter.on('restoredThenLogin', ()=>{
-        log.info('wallet restored and now to login')
-        this.walletExist = true
+        log.info('wallet restored and now to login');
+        this.openSettings = false;
+        this.checkservice = false;
       });
 
       this.emitter.on('logined', ()=>{
         log.info('app.vue got user logined event')
         this.ownerApiRunning = true
         this.getHeight()
+        this.getAddress()
       });
 
-      this.emitter.on('update', () => this.getHeight());
+      this.emitter.on('update', () => {
+        console.log('emit on update');
+        this.getNode();
+        this.getHeight();
 
-      this.emitter.on('walletCreateFinished', ()=>{
-        log.info('app.vue got walletCreateFinished event')
-        this.walletExist = true
-      });
-
-      window.nodeChildProcess.on('walletExisted', () => {
-        log.warn('Found walletExisted during init new one')
-        this.walletExist = true
       });
 
       this.emitter.on('walletListen', ()=>{
         this.walletListen = this.$walletService.isListen();
       });
 
-
-
-
-      /*this.emitter.on('hedwigRunning', ()=>{
-        this.hedwigRunning = true
-        this.hedwigFailed = false
-      })
-      this.emitter.on('hedwigFailed', ()=>{
-        this.hedwigRunning= false
-        this.hedwigFailed = true
-      })*/
 
     },
 
@@ -297,6 +395,7 @@ export default {
       ownerApiRunning:function(newVal){
         if(newVal){
           //window.ipcRenderer.send('resize', 1160, 850)
+
           this.autoRefresh(60*2.5*1000)
         }else{
           //window.ipcRenderer.send('resize', 1160, 850)
@@ -309,15 +408,87 @@ export default {
       }
     },
     methods: {
+
+      openTab(tabName) {
+          if(tabName == 'transactionTab'){
+            this.transactionTab = true;
+            this.commitTab = false;
+          }else{
+          this.transactionTab = false;
+          this.commitTab = true;
+          }
+      },
+
+
+      copyAdress(){
+        clipboard.writeText(this.address);
+        this.showCopyAddress = false;
+        setTimeout(()=> {
+          this.showCopyAddress = true;
+        }, 2000)
+
+
+      },
+      copyOnionAdress(){
+        clipboard.writeText(this.onionAddress);
+        this.showCopyOnionAddress = false;
+        setTimeout(()=> {
+          this.showCopyOnionAddress = true;
+        }, 2000)
+
+
+      },
+
+      async getAddress(){
+        let addressRes = await this.$walletService.getPubliProofAddress();
+        if(addressRes.result.Ok){
+
+          this.address = addressRes.result.Ok;
+
+          if(this.address != ''){
+            this.onionAddress = window.config.getOnionV3(this.address);
+          }
+
+        }
+      },
+
+      async getNode(){
+        this.nodeOnline = await this.$nodeService.nodeOnline();
+
+
+        if(this.nodeOnline.sync_info){
+          this.current_height = this.nodeOnline.sync_info.current_height
+          this.highest_height = this.nodeOnline.sync_info.highest_height
+
+        }
+        if(this.nodeOnline.sync_status == 'no_sync'){
+          this.nodeIsSync = true;
+        }else{
+          this.nodeIsSync = false;
+        }
+
+        switch(this.nodeOnline.sync_status){
+          case 'header_sync':
+            this.sync_status = 'Block Headers'
+          break;
+          case 'body_sync':
+            this.sync_status = 'Block Bodies'
+          break;
+        }
+
+
+      },
+
       lang(){
         this.$i18n.locale = 'en'
       },
+
       getHeight(){
 
         this.$walletService.getNodeHeight().then(
           (res) =>{
-          console.log('getHeight', res.data.result.Ok);
-            this.height = parseInt(res.data.result.Ok.height)
+
+            this.height = parseInt(res.result.Ok.height)
             return true;
           }).catch((error)=>{
             log.error(error)
@@ -331,30 +502,13 @@ export default {
       },
       autoRefresh(interval){
         setInterval(()=>{
+
+
           if(this.ownerApiRunning){
             this.emitter.emit('update')
           }
         }, interval)
       },
-
-      /*async checkNewVersion(){
-        let toUpdate = await checkUpdate()
-        if(toUpdate){
-          this.$electron.remote.dialog.showMessageBox({
-            type: 'info',
-            title: this.$t('msg.app.updateTitle'),
-            buttons: [this.$t('msg.app.yes'), this.$t('msg.app.no')],
-            message: this.$t('msg.app.updateMsg'),
-          }, (res) => {
-          if (res === 0) {
-            this.$electron.shell.openExternal(downloadUrl)
-            log.debug('User choose to update. now quit app.')
-            //window.ipcRenderer.send('quit')
-          }else{
-            log.info('User chosed to don not update.')
-          }})
-        }
-      }*/
     },
   }
 
@@ -365,13 +519,14 @@ export default {
 
 </script>
 
-<style>
+<style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #ffffff;
+  background-color:#000000;
 }
 
 #wallet_menu {
@@ -431,6 +586,14 @@ export default {
   display: inline-block;
   vertical-align:middle;
 }
+.dotYellow {
+  height: 14px;
+  width: 14px;
+  background-color: yellow;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align:middle;
+}
 .nodeInfo{
   padding:10px;
   font-weight:bold;
@@ -440,8 +603,24 @@ export default {
   text-color:white;
   color:white;
   font-size:12px;
+  line-height:28px;
+}
+.addressInfo{
+  font-weight:bold;
+  padding:10px;
+  text-align:left;
+  padding-left:14px;
+  text-color:white;
+  color:white;
+  font-size:12px;
+  line-height:28px;
 }
 .walletListenInfo{
   padding-left:10px;
 }
+
+h1.title{
+  color:#ffffff;
+}
+
 </style>

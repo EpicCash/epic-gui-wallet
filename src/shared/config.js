@@ -3,10 +3,14 @@
 const userHomedir = window.config.getUserHomedir();
 const path = window.nodePath;
 
+export const ewalletPath = path.join(userHomedir, '.epic')
+export const configPath = path.join(ewalletPath, 'config.json')
+const config = getConfig();
+
 
 export const platform = window.config.getPlatform()
 
-export const chainType = 'main'
+export const chainType = config['network'] == 'mainnet' ? 'main' : 'floo';
 export const defaultEpicNode = "http://127.0.0.1:3413"
 export const epicNode2 = "http://ip:3413"
 export const epicDIR = path.join(userHomedir, '.epic')
@@ -14,10 +18,10 @@ export const seedPath = path.join(userHomedir, '.epic', chainType, 'wallet_data/
 export const walletTOMLPath = path.join(userHomedir, '.epic', chainType, 'epic-wallet.toml')
 export const walletPath = path.join(userHomedir, '.epic', chainType)
 export const apiSecretPath = path.join(userHomedir, '.epic', chainType, '.api_secret')
-export const ewalletPath = path.join(userHomedir, '.epic')
+
 export const logDir = path.join(ewalletPath, 'log')
 export const tempTxDir = path.join(ewalletPath, 'temp_tx')
-export const configPath = path.join(ewalletPath, 'config.json')
+
 
 
 const binariesPath = path.join(window.config.getResourcePath(), 'bin', platform)
@@ -30,6 +34,8 @@ if(platform == 'win'){
 
 export const epicPath = epicBinPath;
 export const logLevel = 'debug'
+
+
 export function getConfig(){
 
   try{
@@ -39,6 +45,9 @@ export function getConfig(){
     return {}
   }
 }
+
+
+
 export function setConfig(data){
   return window.nodeFs.writeFileSync(configPath, JSON.stringify(data), {
       encoding: "utf8",

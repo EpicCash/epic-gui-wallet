@@ -2,6 +2,7 @@ const messages = {
   msg: {
     title: '',
     password: 'Password',
+    account: 'Account',
     passwordAgain: 'Enter password again',
     wrongPassword: 'Wrong password',
     login_: 'Login',
@@ -22,6 +23,8 @@ const messages = {
 
     welcome: 'Welcome to use Epic wallet',
     back: 'Back',
+    reset: 'Reset',
+    addall: 'Add all from above',
     msg: 'Message',
     more: 'More',
     wrongAddressFormat: 'wrong address format',
@@ -37,17 +40,20 @@ const messages = {
     },
     create:{
       seedPhrase: 'Seed Phrase',
-      toNewMsg: 'No wallet exists Found. Create a New One.',
+      toNewMsg: 'Create a New Wallet.',
       newWallet: 'Create new wallet',
       backupNote: 'Import！Please backup your seed phrase to restore your wallet',
       backupFinish: 'Ok, I backed up my seed phrase. Login my wallet',
       errorPasswdEmpty: 'Password cannot be empty',
       errorPasswdConsistency: 'Please enter the same password',
-      errorCreateFailed: 'Error when try to create new wallet. Maybe restart wallet and Try it later.',
+      errorCreateFailed: 'Error when try to create new wallet.',
+      errorAccountEmpty: 'Account cannot be empty',
+      errorAccountExist: 'Account already exist'
     },
 
-    new_:{
+    new:{
       create: 'Create new wallet',
+      restore: 'Restore wallet',
 
     },
 
@@ -64,8 +70,8 @@ const messages = {
       reAdd: 'Re-enter seed phrase ',
       recovered: 'Wallet recovered, it is time to check balance from Epic blockchain',
       restoring: 'It will take 10-30 minites to finish check. Be patient ......',
-      restored: 'Wallet recovered and balance checked.',
-      login: 'Login Wallet',
+      restored: 'Wallet successfully recovered.',
+      login: 'Login to Wallet',
     },
 
     app:{
@@ -210,7 +216,8 @@ const messages = {
     settings: {
       title: 'Settings',
       check_node_api_http_addr: 'Node api address',
-      node_api_addr_hint: 'where the wallet should find a running node'
+      node_api_addr_hint: 'where the wallet should find a running node',
+      network: 'Network'
     }
 
   }
