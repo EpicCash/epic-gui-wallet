@@ -58,7 +58,6 @@
 <script>
 const log = window.log
 import Message from './Message.vue'
-import { setTimeout } from 'timers';
 
 export default {
   name: "check",

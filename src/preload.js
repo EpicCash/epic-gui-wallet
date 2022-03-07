@@ -5,6 +5,11 @@ import { join } from 'path'
 import path from 'path';
 
 const base32 = require('rfc-3548-b32');
+
+const crypto = require('crypto-browserify');
+import * as secp256k1 from "@noble/secp256k1";
+
+
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
 const util = require('util');
@@ -300,7 +305,41 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
 });
 
+const aes256gcm = (shared_secret) => {
+  const ALGO = 'aes-256-gcm';
 
+  // encrypt returns base64-encoded ciphertext
+  const encrypt = (str, nonce) => {
+    let key = Buffer.from(shared_secret, 'hex')
+    const cipher = crypto.createCipheriv(ALGO, key, nonce)
+    const enc = Buffer.concat([cipher.update(str, 'utf8'), cipher.final()])
+    const tag = cipher.getAuthTag()
+    return Buffer.concat([enc, tag]).toString('base64')
+  };
+
+  // decrypt decodes base64-encoded ciphertext into a utf8-encoded string
+  const decrypt = (enc, nonce) => {
+    //key,nonce is all buffer type; data is base64-encoded string
+    let key = Buffer.from(shared_secret, 'hex')
+    const data_ = Buffer.from(enc, 'base64')
+    const decipher = crypto.createDecipheriv(ALGO, key, nonce)
+    const len = data_.length
+    const tag = data_.slice(len-16, len)
+    const text = data_.slice(0, len-16)
+    decipher.setAuthTag(tag)
+    const dec = decipher.update(text, 'binary', 'utf8') + decipher.final('utf8');
+    return dec
+  };
+
+  return {
+    encrypt,
+    decrypt,
+  };
+};
+
+contextBridge.exposeInMainWorld('nodeCrypto', require('crypto'));
+contextBridge.exposeInMainWorld('nodeSecp256k1', secp256k1);
+contextBridge.exposeInMainWorld('nodeAes256gcm', aes256gcm);
 contextBridge.exposeInMainWorld('nodeSpawnSync', require('child_process').spawnSync);
 contextBridge.exposeInMainWorld('nodeSpawn', require('child_process').spawn);
 contextBridge.exposeInMainWorld('nodeExec', require('child_process').exec);

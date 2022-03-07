@@ -1,67 +1,13 @@
 
-//const fse = require('fs-extra')
+import axios from 'axios';
+const Buffer = require('buffer').Buffer;
+const crypto = window.nodeCrypto;
 
-
-import axios from 'axios'
-const crypto = require('crypto');
 require('promise.prototype.finally').shim();
-import {walletTOMLPath} from './config.js'
-
-const platform = window.config.getPlatform();
 
 const log = window.log;
-
 const jsonRPCUrl = 'http://127.0.0.1:3420/v3/owner'
 const jsonRPCForeignUrl = 'http://localhost:3420/v3/foreign'
-
-let processes = {}
-
-const aes256gcm = (shared_secret) => {
-  const ALGO = 'aes-256-gcm';
-
-  // encrypt returns base64-encoded ciphertext
-  const encrypt = (str, nonce) => {
-    let key = Buffer.from(shared_secret, 'hex')
-    const cipher = crypto.createCipheriv(ALGO, key, nonce)
-    const enc = Buffer.concat([cipher.update(str, 'utf8'), cipher.final()])
-    const tag = cipher.getAuthTag()
-    return Buffer.concat([enc, tag]).toString('base64')
-  };
-
-  // decrypt decodes base64-encoded ciphertext into a utf8-encoded string
-  const decrypt = (enc, nonce) => {
-    //key,nonce is all buffer type; data is base64-encoded string
-    let key = Buffer.from(shared_secret, 'hex')
-    const data_ = Buffer.from(enc, 'base64')
-    const decipher = crypto.createDecipheriv(ALGO, key, nonce)
-    const len = data_.length
-    const tag = data_.slice(len-16, len)
-    const text = data_.slice(0, len-16)
-    decipher.setAuthTag(tag)
-    const dec = decipher.update(text, 'binary', 'utf8') + decipher.final('utf8');
-    return dec
-  };
-
-  return {
-    encrypt,
-    decrypt,
-  };
-};
-
-
-
-
-function enableForeignApi(){
-    const re = /owner_api_include_foreign(\s)*=(\s)*false/
-    if(window.nodeFs.existsSync(walletTOMLPath)){
-        let c = window.nodeFs.readFileSync(walletTOMLPath).toString()
-        if(c.search(re) != -1){
-            log.debug('Enable ForeignApi to true')
-            c = c.replace(re, 'owner_api_include_foreign = true')
-            window.nodeFs.writeFileSync(walletTOMLPath, c)
-        }
-    }
-}
 
 
 function addQuotations(s){
@@ -85,12 +31,15 @@ class WalletService {
     async initSecure(url) {
 
       let emitter = this.emitter;
-      let ecdh = crypto.createECDH('secp256k1')
-      ecdh.generateKeys()
-      let publicKey = ecdh.getPublicKey('hex', 'compressed')
+      let secp256k1 = window.nodeSecp256k1;
+
+
+      let privateKey = secp256k1.utils.randomPrivateKey();
+      let publicKey = secp256k1.getPublicKey(privateKey);
+
 
       const params = {
-          'ecdh_pubkey': publicKey
+          'ecdh_pubkey': Buffer.from(publicKey).toString('hex')
       }
 
       const headers = {
@@ -103,14 +52,15 @@ class WalletService {
           method: 'init_secure_api',
           params: params,
       }
-      console.log(url);
 
       let response = await this.client.post(url, body, headers).catch(function (error) {
             emitter.emit('wallet_error', {msg: error, code: '0x1645779384'})
             return false;
 
       });
-      return ecdh.computeSecret(response.data.result.Ok, 'hex', 'hex')
+
+      let key = secp256k1.getSharedSecret(privateKey, response.data.result.Ok);
+      return Buffer.from(key).toString('hex').substr(2, 64);
     }
 
     initClient() {
@@ -162,7 +112,7 @@ class WalletService {
         }
 
         //console.log('jsonRPC body', body);
-        const aesCipher = aes256gcm(this.shared_key);
+        const aesCipher = window.nodeAes256gcm(this.shared_key);
         const nonce = new Buffer.from(crypto.randomBytes(12));
         let enc = aesCipher.encrypt(JSON.stringify(body), nonce);
 
@@ -294,27 +244,25 @@ class WalletService {
 
         let walletOpenId = 0;
 
-        enableForeignApi()
+
 
         if(this.configService.config['network'] == 'floonet'){
           args = [
             '--floonet',
             '-r', this.configService.config['check_node_api_http_addr'],
-            //'-t', this.configService.homedir,
             'owner_api',
             '-c', this.configService.defaultAccountWalletdir
           ];
         }else{
           args = [
             '-r', this.configService.config['check_node_api_http_addr'],
-            //'-t', this.configService.homedir,
             'owner_api',
             '-c', this.configService.defaultAccountWalletdir
           ];
         }
 
 
-        walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, platform);
+        walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
 
         if(walletOpenId === 0 && this.token){
           this.walletIsOpen = true;
@@ -372,7 +320,7 @@ class WalletService {
           ];
         }
         console.log(args);
-        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, password, platform);
+        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, password, this.configService.platform);
 
         if(walletListenId > 0){
             this.walletIsListen = true;
@@ -462,12 +410,12 @@ class WalletService {
 
     async check(){
         const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -p ${addQuotations(this.password)} scan`;
-        await window.nodeChildProcess.execScan(cmd, platform);
+        await window.nodeChildProcess.execScan(cmd, this.configService.platform);
     }
 
     async stopProcess(processName){
           if(this.processes[processName] > 0){
-            let processKilled = await window.nodeChildProcess.kill(this.processes[processName], platform);
+            let processKilled = await window.nodeChildProcess.kill(this.processes[processName], this.configService.platform);
 
             console.log('stop process', this.processes[processName], processKilled);
             if(processKilled && processName === 'listen'){
