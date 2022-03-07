@@ -1,6 +1,4 @@
 <template>
-  <div class="card" >
-    <div class="card-content">
 
       <div class="level">
         <div class="level-left">
@@ -22,41 +20,55 @@
           </form>
         </div>
       </div>
-      <div v-for="tx in current_txs"  :key="tx.id" style="margin-top: 20px">
-        <div class="level">
-          <div class="level-left">
-            <div>
-              <p class="title is-6 is-marginless">
-                <img v-if="tx.type=='receive'" src="../assets/imgs/arrow-alt-circle-right.svg" style="width:18px"/>
-                <img v-if="tx.type=='send'" src="../assets/imgs/arrow-alt-circle-left.svg" style="width:18px"/>
-                {{tx.tx_slate_id}}
-              </p>
-              <small>{{ tx.creation_ts }} </small>
-            </div>
-          </div>
-          <div class="level-right">
-            <div class="has-text-right">
-              <p class="title is-6 is-marginless">
+      <table class="table is-fullwidth is-hoverable">
+        <thead>
+          <tr class="th">
+            <th>#</th>
+            <th>Slate ID</th>
+            <th>Creation date</th>
+            <th>Payment proof</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr v-for="tx in current_txs" :key="tx.id" >
+            <td >
+              <img v-if="tx.type=='receive'" src="../assets/imgs/arrow-alt-circle-right.svg" style="width:18px;vertical-align:middle;"/>
+              <img v-if="tx.type=='send'" src="../assets/imgs/arrow-alt-circle-left.svg" style="width:18px;vertical-align:middle;"/>
+
+            </td>
+            <td>{{tx.tx_slate_id}}</td>
+            <td>{{ $filters.datetimeFormat(tx.creation_ts) }}</td>
+            <td>{{ tx.payment_proof }}</td>
+            <td>
                 <span v-if="tx.type=='send'">-{{(tx.amount_debited-tx.amount_credited-tx.fee)/100000000}}
                   ({{tx.fee/100000000}})
                 </span>
                 <span v-else>+{{ tx.amount_credited/100000000 }}</span>
-              </p>
-              <span v-if="tx.status=='confirmed'" class="tag is-success">{{ $t("msg.confirmed") }}</span>
-              <div v-if="tx.status=='unconfirmed'" >
-                <span class="tag is-warning">{{ $t("msg.unconfirmed") }}</span>
-                <button v-if="tx.cancelable" class="button is-small is-link is-outlined" @click="cancel(`${tx.tx_slate_id}`)">
-                  {{ $t("msg.cancel") }}
-                </button>
-              </div>
-              <span v-if="tx.status=='cancelled'" class="tag is-warning">{{ $t("msg.txs.canceled") }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+            </td>
+            <td>{{ tx.type }}</td>
+            <td>
+              <span v-if="tx.status=='confirmed'" class="tag is-success is-rounded">{{ $t("msg.confirmed") }}</span>
+              <span v-if="tx.status=='unconfirmed'" class="tag is-warning is-rounded">{{ $t("msg.unconfirmed") }}</span>
+              <span v-if="tx.status=='cancelled'" class="tag is-warning is-rounded">{{ $t("msg.txs.canceled") }}</span>
+            </td>
+            <td>
+              <button v-if="tx.cancelable" class="button is-small is-link is-outlined" @click="cancel(`${tx.tx_slate_id}`)">
+                {{ $t("msg.cancel") }}
+              </button>
 
-      <br/>
-      <br/>
+            </td>
+
+
+          </tr>
+
+        </tbody>
+      </table>
+
 
       <div v-if="pages_count>1 && !searched" class="level">
         <div class="level-left">
@@ -80,11 +92,11 @@
 
       <p v-if="searched && current_txs.length == 0"> {{ $t("msg.txs.noTxFound") }}</p>
       <p v-if="current_txs.length == 0 && !searched"> {{ $t("msg.txs.noTx") }}</p>
-    </div>
+
   <message :showMsg="openMsg" v-on:close="openMsg = false"
     v-bind:msg=msg v-bind:showTime="5" msgType="link">
   </message>
-  </div>
+
 </template>
 
 <script>
@@ -122,13 +134,15 @@
       this.emitter.on('update', ()=>this.getTxs())
     },
     methods: {
+
       getTxs() {
         this.$walletService.getTransactions(true, null, null)
           .then((res) => {
             let data = res.result.Ok[1].reverse()
+
             this.total_txs = this.processTxs(data)
             this.current_txs = this.total_txs.slice(0, this.count_per_page)
-            if (this.total_txs.length%this.count_per_page ==0){
+            if (this.total_txs.length % this.count_per_page == 0){
               this.pages_count = parseInt(this.total_txs.length/this.count_per_page)
             }else{
               this.pages_count = parseInt(this.total_txs.length/this.count_per_page) + 1
@@ -219,27 +233,14 @@
         this.current_txs = this.total_txs.slice(s, s+this.count_per_page)
       },
 
-      cancel(tx_slate_id){
-        this.$walletService.cancelTransactions(null, tx_slate_id)
-          .then((res) => {
-            if(res.data.result.Ok === null){
-              this.emitter.emit('update')
-              this.openMsg = true
-              log.debug(`Cancel tx TXID ok return:${res.data}`)
-              //TODO:
-              //tx_id is not defined
-              //log.debug(`Cancel tx ${tx_id} ok return:${res.data}`)
-            }else{
-              log.error('cancelTransactions ' + tx_slate_id + ' error:' + JSON.stringify(res))
-            }
-          })
-          .catch((error) => {
-            log.error('cancelTransactions error:' + error)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
-            }
-          })
+      async cancel(tx_slate_id){
+        let res = await this.$walletService.cancelTransactions(null, tx_slate_id);
+        if(res && res.result.Ok == null){
+          this.emitter.emit('update')
+          this.openMsg = true
+        }else if(res && res.result.error){
+          log.error(`res.result.error:${res.result.error};`)
+        }
       },
     }
   }

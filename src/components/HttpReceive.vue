@@ -2,15 +2,13 @@
 
 <div class="modal" :class="{'is-active': showModal}">
   <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" style="width:480px">
+  <div class="modal-card" >
     <header class="modal-card-head">
-      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.receive") }}(HTTP/HTTPS)</p>
+      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.receive") }} (HTTP/HTTPS)</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
 
-
-
-    <section class="modal-card-body" style="height:380px;background-color: whitesmoke;">
+    <section class="modal-card-body" >
       <div v-if="running">
         <div class="message is-link">
           <div class="message-header" v-if="started"><p>{{ $t("msg.httpReceive.launchSucess") }}</p></div>
@@ -48,34 +46,29 @@
               <p>{{ $t("msg.httpReceive.reachableMsg") }}</p>
             </div>
           </div>
-          <div class="field">
-            <label class="label">{{ $t("msg.password") }}</label>
-            <div class="control">
-              <input class="input" type="password" placeholder="********" required v-model="password">
+
+
+          <div class="field is-horizontal">
+            <div class="field-label is-normal"><label class="label">{{ $t("msg.password") }}</label></div>
+            <div class="field-body">
+
+              <input class="input" type="password" placeholder="********" required v-model="password" :class="{'is-danger': error}">
+
             </div>
           </div>
+
           <div class="field is-horizontal">
             <div class="field-label is-normal">
               <label class="label">Method</label>
             </div>
             <div class="field-body">
-              <div class="field">
-
-                <div class="control">
-
                   <div class="select">
-                    <select>
-                      <option>http</option>
-                      <option>Keybase</option>
+                    <select v-model="method">
+                      <option value="http">Http</option>
+                      <option value="keybase">Keybase</option>
                     </select>
                   </div>
-                </div>
-              </div>
-
-
             </div>
-
-
           </div>
 
           <div class="field is-horizontal">
@@ -83,17 +76,27 @@
               <label class="label">TOR</label>
             </div>
             <div class="field-body">
-              <div class="field is-narrow">
-                <div class="control">
                   <label class="checkbox">
-                    <input type="checkbox" name="tor">
+                    <input type="checkbox" name="tor" v-model="tor">
                     enable
                   </label>
-
-                </div>
-              </div>
             </div>
           </div>
+
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">TOR Onion address</label>
+            </div>
+            <div class="field-body">
+            <span v-if="onionAddress" class="" >
+              <button class="button is-small is-rounded">{{ onionAddress }}</button>
+              &nbsp;<span @click="copyOnionAdress()"><font-awesome-icon :icon="['fas', 'copy']"/></span>
+              <span v-if="!showCopyOnionAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
+            </span>
+            </div>
+          </div>
+
+
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           <div class="center">
@@ -108,6 +111,10 @@
                 <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
               </div>
             </div>
+
+          </div>
+          <div class="center">
+            <p class="help is-danger" v-if="error">{{errorInfo}}</p>
           </div>
         </div>
       </div>
@@ -117,16 +124,28 @@
 
 </template>
 <script>
-const log = window.log
 
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
+library.add(faCopy)
+
+
+
+const log = window.log
+const clipboard = window.clipboard;
 
 export default {
   name: "http-receive",
+  components: {
+    FontAwesomeIcon
+  },
   props: {
     showModal: {
       type: Boolean,
       default: false
-    }
+    },
+    onionAddress: String
   },
   data() {
     return {
@@ -137,22 +156,54 @@ export default {
       localReachable: false,
       running: false,
       password: '',
-      ip: this.$t('msg.httpReceive.ip')
+      method: 'http',
+      tor: false,
+      ip: this.$t('msg.httpReceive.ip'),
+      showCopyOnionAddress: true,
+      error: false
     }
   },
   methods: {
 
+    copyOnionAdress(){
+      clipboard.writeText(this.onionAddress);
+      this.showCopyOnionAddress = false;
+      setTimeout(()=> {
+        this.showCopyOnionAddress = true;
+      }, 2000)
+
+
+    },
     async start(){
 
+      this.clearup();
+
+      if(this.password.length == 0 ){
+        this.error = true
+        this.errorInfo = this.$t('msg.create.errorPasswdEmpty')
+        return
+      }
+
       if(!this.starting && !this.running){
+
         this.starting = true
-        const isListen = await this.$walletService.startListen(this.password);
-        if(isListen){
+        const isListen = await this.$walletService.startListen(this.password, this.tor, this.method);
+
+        if(isListen.success){
+
           this.started = true
           this.running = true
           log.debug('Http listen is locally reachable.')
           this.emitter.emit('walletListen')
+
+        }else if(isListen.success == false){
+
+          this.starting = false;
+          this.error = true;
+          this.errorInfo = isListen.msg;
+
         }
+
       }
 
 
@@ -175,10 +226,12 @@ export default {
     },
 
     clearup(){
-      this.errors = []
-      this.starting = false
-      this.stopping = false
-      this.started = false
+      this.errors = [];
+      this.errorInfo = '';
+      this.error = false;
+      this.starting = false;
+      this.stopping = false;
+      this.started = false;
     },
 
   }

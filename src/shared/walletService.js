@@ -188,8 +188,15 @@ class WalletService {
           }, false)
     }
 
-    cancelTransactions(tx_id, tx_salte_id){
-      return this.jsonRPC('cancel_tx', [tx_id, tx_salte_id])
+    async cancelTransactions(tx_id, tx_salte_id){
+      return await this.jsonRPC(
+          'cancel_tx',
+          {
+            token: this.token,
+            tx_id: tx_id,
+            tx_slate_id: tx_salte_id
+          }
+      )
     }
 
     async receiveTransaction(slate, account, message){
@@ -197,11 +204,24 @@ class WalletService {
     }
 
     async issueSendTransaction(tx_data){
-      return this.jsonRPC('init_send_tx', { args: tx_data})
+      return await this.jsonRPC(
+        'init_send_tx',
+        {
+          token: this.token,
+          args: tx_data
+        })
     }
 
     async lock_outputs(params){
-      return this.jsonRPC('tx_lock_outputs', params)
+
+      return await this.jsonRPC(
+        'tx_lock_outputs',
+        {
+          token: this.token,
+          slate: params,
+          participant_id: 0
+        }
+      )
     }
 
     async finalizeTransaction(slate){
@@ -292,13 +312,15 @@ class WalletService {
     }
 
     /* start a epic wallet in listen mode */
-    async startListen(password){
+    async startListen(password, tor, method){
+
+        console.log(tor,method);
         let args = [];
         console.log('start wallet listener');
 
         //do not start listener 2 times if wallet is already open
         if(this.walletIsListen){
-          return this.walletIsListen;
+          return { success:true, msg:this.walletIsListen };
         }
 
         let walletListenId = 0;
@@ -308,27 +330,35 @@ class WalletService {
             '--floonet',
             '--pass', password,
             '-t', this.configService.defaultAccountWalletdir,
-            '-e','listen',
-            '-c', this.configService.defaultAccountWalletdir
+            'listen',
+            '-c', this.configService.defaultAccountWalletdir,
+            '--method', (method == 'http' ? 'http' : 'keybase'),
+
+
           ];
         }else{
           args = [
-            '--pass',  password,
+            '--pass', password,
             '-t', this.configService.defaultAccountWalletdir,
-            '-e','listen',
-            '-c', this.configService.defaultAccountWalletdir
+            'listen',
+            '-c', this.configService.defaultAccountWalletdir,
+            '--method', (method == 'http' ? 'http' : 'keybase')
+
           ];
-        }
-        console.log(args);
-        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, password, this.configService.platform);
 
-        if(walletListenId > 0){
+        }
+        if(tor == false || method == 'keybse'){
+          args.push('--no_tor');
+        }
+
+        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform);
+
+        if(walletListenId && walletListenId.msg > 0){
             this.walletIsListen = true;
-            this.processes['listen'] = walletListenId;
-
-            return true;
+            this.processes['listen'] = walletListenId.msg;
         }
-        return false;
+
+        return walletListenId;
     }
 
     isListen(){
@@ -408,9 +438,13 @@ class WalletService {
 
     }
 
-    async check(){
-        const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -p ${addQuotations(this.password)} scan`;
-        await window.nodeChildProcess.execScan(cmd, this.configService.platform);
+    async check(password){
+
+        const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -t ${this.configService.defaultAccountWalletdir} --pass ${addQuotations(password)} scan`;
+
+
+        await window.nodeChildProcess.execScan(cmd);
+
     }
 
     async stopProcess(processName){

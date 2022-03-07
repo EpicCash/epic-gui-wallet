@@ -2,12 +2,12 @@
 
 <div class="modal" :class="{'is-active': showModal}">
   <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" style="width:500px">
+  <div class="modal-card" >
     <header class="modal-card-head">
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.hedwig.title") }}</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
-    <section class="modal-card-body" style="height:380px;background-color: whitesmoke;">
+    <section class="modal-card-body" >
       <div v-if="internetReachable">
         <div class="message is-link">
           <div class="message-header" v-if="started"><p>{{ $t("msg.hedwig.launchSucess") }}</p></div>

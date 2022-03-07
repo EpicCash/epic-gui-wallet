@@ -10,11 +10,12 @@ import {words} from './shared/words.js';
 import dbService from './db.js';
 import App from './App.vue'
 import mitt from 'mitt';
+import moment from 'moment'
 
+//import './assets/css/animate.css';
+//import './assets/css/bulma.min.css'
+import './assets/css/main-styles.scss';
 import './assets/css/animate.css';
-import './assets/css/bulma.min.css'
-
-
 import en from './lang/en';
 import zh from './lang/zh';
 import ru from './lang/ru';
@@ -43,6 +44,9 @@ app.config.globalProperties.$dbService = dbService;
 app.config.globalProperties.mnemonicWords = words;
 app.config.globalProperties.langs = {'en':'English', 'ru':'Russian', 'zh': 'Chinese'}
 app.config.globalProperties.$filters = {
+  datetimeFormat(date) {
+    return moment(date).format('YYYY-MM-DD, hh:mm:ss')
+  },
   truncate(text, length) {
     if (text.length > length) {
         return text.substring(0, length);

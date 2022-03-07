@@ -1,24 +1,40 @@
 <template>
-  <section class="hero is-fullheight" style="background: black">
+  <section class="hero" >
     <div class="hero-body">
-      <div class="container ">
-        <div class="columns is-centered is-multiline">
-          <div class="block">
-            <img src="../assets/logo.png" style="width:20%;height:auto;" >
-            <h2 class="title" style="margin-top: 24px; margin-left:70px" >{{ $t("msg.title") }}</h2>
-          </div>
-        </div>
-        <div class="columns is-centered">
-          <div class="field is-grouped">
-            <div class="control">
-              <a class="button is-link is-inverted is-outlined" @click="create">{{ $t("msg.new.create") }}</a>
-            </div>
+      <div class="container">
 
-            <div class="control">
-              <a class="button is-link is-inverted is-outlined" @click="restore">{{ $t("msg.new.restore") }}</a>
+
+        <div class="columns is-centered">
+
+          <div class="column is-8" >
+            <div class="columns is-centered is-multiline">
+                <img src="../assets/logo.png" style="width:30%;height:auto;">
+
             </div>
+            <p>&nbsp;</p>
+
+            <h2 class="title">{{ $t('msg.welcome') }}</h2>
+
+              <div class="box">
+                <div class="field is-grouped">
+                  <div class="control">
+                    <a class="button is-link is-inverted is-outlined" @click="create">{{ $t("msg.new.create") }}</a>
+                  </div>
+
+                  <div class="control">
+                    <a class="button is-link is-inverted is-outlined" @click="restore">{{ $t("msg.new.restore") }}</a>
+                  </div>
+
+                </div>
+              </div>
+
+
+
           </div>
+
         </div>
+
+
       </div>
     </div>
   </section>

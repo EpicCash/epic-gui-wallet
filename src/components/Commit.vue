@@ -1,6 +1,4 @@
 <template>
-  <div class="card" >
-    <div class="card-content">
 
       <div class="level">
         <div class="level-left">
@@ -24,46 +22,65 @@
         </div>
 
       </div>
+      <table class="table is-fullwidth is-hoverable">
+        <thead>
+          <tr class="th">
+            <th></th>
+            <th>Commit</th>
+            <th>{{ $t("msg.commit.heightCreated") }}</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
 
-      <div v-for="(ct, index) in current_commits" :key="ct.id" style="margin-top: 20px">
-        <div class="level">
-          <div class="level-left">
-            <div>
-              <p class="title is-6 is-marginless" @mouseover="(event)=>mouseover(index)" @mouseleave="mouseLeave" >
-                <span v-if="ct.status=='Unconfirmed'" >{{ $filters.truncate(ct.commit, 35 ) }}</span>
-                <a v-else @click="open(`${ct.commit}`)">{{ $filters.truncate(ct.commit, 35 ) }}</a>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <span v-if="showCopy===index" @click="copy(index)">
+          <tr v-for="(ct, index) in current_commits" :key="ct.id" >
+                  <td @mouseover="(event)=>mouseover(index)" @mouseleave="mouseLeave" style="width:46px;">
 
-                    <font-awesome-icon :icon="['fas', 'copy']"/>
+                      <span v-if="showCopy===index" @click="copy(index)">
+                          <font-awesome-icon :icon="['fas', 'copy']"/>
+                      </span>
+                      <span v-if="copied===index">
 
-                </span>
-                <span v-if="copied===index">
-                  <span class="tag is-black" style="font-size:0.7rem">{{ $t("msg.commit.copied") }}</span>
-                </span>
-                &nbsp;&nbsp;&nbsp;&nbsp;
+                          <font-awesome-icon :icon="['fas', 'circle-check']" style="color:white;" />
 
-              </p>
-              <small>{{ $t("msg.commit.heightCreated") }}:
-                <span  v-if="ct.status=='Unconfirmed'">{{ct.height}}</span>
-               <a v-else @click="open(`${ct.height}`)">{{ct.height}}</a>
-              </small>
-            </div>
-          </div>
-          <div class="level-right">
-            <div class="has-text-right">
-              <p class="title is-6 is-marginless">
-                {{ ct.value/100000000 }}
-              </p>
-              <span v-if="ct.status=='Unspent'" class="tag is-link">{{ $t("msg.commit.unspent") }}</span>
-              <span v-if="ct.status=='toUnspent'" class="tag is-warning">({{ct.confirmed_count+'/10'}}) {{ $t("msg.unconfirmed") }} </span>
-              <span v-if="ct.status=='Unconfirmed'" class="tag is-warning">{{ $t("msg.unconfirmed") }}</span>
-              <span v-if="ct.status=='Locked'" class="tag is-warning">{{ $t("msg.locked") }}</span>
-              <span v-if="ct.status=='Spent'" class="tag is-warning">{{ $t("msg.commit.spent") }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+                      </span>
+
+                  </td>
+                  <td>
+
+                    <span v-if="ct.status=='Unconfirmed'" >{{ $filters.truncate(ct.commit, 35 ) }}</span>
+                    <a v-else @click="open(`${ct.commit}`)">{{ $filters.truncate(ct.commit, 35 ) }}</a>
+
+                  </td>
+                  <td>
+
+                    <span  v-if="ct.status=='Unconfirmed'">{{ct.height}}</span>
+                   <a v-else @click="open(`${ct.height}`)">{{ct.height}}</a>
+
+                  </td>
+                  <td>{{ ct.value/100000000 }}</td>
+                  <td>
+                    <span v-if="ct.status=='Unspent'" class="tag is-success is-rounded">{{ $t("msg.commit.unspent") }}</span>
+                    <span v-if="ct.status=='toUnspent'" class="tag is-warning is-rounded">({{ct.confirmed_count+'/10'}}) {{ $t("msg.unconfirmed") }} </span>
+                    <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-rounded">{{ $t("msg.unconfirmed") }}</span>
+                    <span v-if="ct.status=='Locked'" class="tag is-danger is-rounded">{{ $t("msg.locked") }}</span>
+                    <span v-if="ct.status=='Spent'" class="tag is-warning is-rounded">{{ $t("msg.commit.spent") }}</span>
+                  </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+
+
+
+
+
+
+
+
+
 
       <br/>
       <br/>
@@ -90,15 +107,17 @@
 
       <p v-if="searched && current_commits.length == 0"> {{ $t("msg.commit.noCmtFound") }}</p>
       <p v-if="current_commits.length == 0 && !searched"> {{ $t("msg.commit.noCmt") }}</p>
-    </div>
-  </div>
+
 </template>
 
 <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faCopy as FasCopy } from '@fortawesome/free-solid-svg-icons'
-  library.add(FasCopy)
+  import { faCircleCheck, faCopy } from '@fortawesome/free-solid-svg-icons'
+  library.add(faCopy)
+  library.add(faCircleCheck)
+
+
   const log = window.log
   const clipboard = window.clipboard
 

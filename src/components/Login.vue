@@ -1,13 +1,19 @@
 <template>
 
-  <section class="hero is-fullheight" style="background: black;">
+  <section class="hero">
     <div class="hero-body">
       <div class="container">
 
-        <div class="columns is-centered is-multiline">
-          <div class="block">
-            <img src="../assets/logo.png" style="width:20%;height:auto;">
-            <h2 class="title" style="margin-top:24px; margin-left:70px;font-size:1.6rem" >{{ $t("msg.title") }}</h2>
+        <div class="columns is-centered">
+          <div class="column is-6">
+            <div class="block" >
+              <div class="card-image has-text-centered">
+                <figure class="image is-inline-block">
+                  <img src="../assets/logo.png" style="width:36%;height:auto;">
+                </figure>
+              </div>
+              <h2 class="title" style="margin-top:24px; margin-left:70px;font-size:1.6rem" >{{ $t("msg.title") }}</h2>
+            </div>
           </div>
         </div>
 
@@ -34,7 +40,7 @@
 
                 <div class="field is-grouped">
                   <div class="control">
-                    <button class="button is-link" @click.prevent="login">
+                    <button class="button is-link blue" @click.prevent="login">
                       {{ $t("msg.login_") }}
                     </button>
                   </div>
@@ -122,6 +128,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

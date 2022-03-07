@@ -6,7 +6,7 @@
     <header class="modal-card-head">
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.check.title") }}</p>
     </header>
-    <section class="modal-card-body" style="height:380px;background-color: whitesmoke;">
+    <section class="modal-card-body" >
       <div v-if="checking">
         <div class="message is-link">
           <div class="message-header" v-if="checking"><p>{{ $t("msg.check.checking") }}</p></div>
@@ -36,7 +36,18 @@
             <p class="has-text-link has-text-weight-semibold">{{ $t("msg.check.tip") }}</p>
           </div>
         </div>
+
+        <div class="field is-horizontal">
+          <div class="field-label is-normal"><label class="label">{{ $t("msg.password") }}</label></div>
+          <div class="field-body">
+
+            <input class="input" type="password" placeholder="********" required v-model="password" :class="{'is-danger': error}">
+
+          </div>
+        </div>
+
         <div class="center">
+
           <div class="field is-grouped " >
             <div class="control">
               <button class="button is-link" v-bind:class="{'is-loading':checking}" @click="start">
@@ -48,7 +59,13 @@
             </div>
           </div>
         </div>
+
+
+        <div class="center">
+          <p class="help is-danger" v-if="error">{{errorInfo}}</p>
+        </div>
       </div>
+
     </section>
     <message :showMsg="openStopMsg" v-on:close="openStopMsg = false" v-bind:msg=stopMsg v-bind:showTime="5" msgType="link"></message>
   </div>
@@ -77,6 +94,9 @@ export default {
       checkOutputs: [],
       openStopMsg: false,
       stopMsg: this.$t("msg.check.stopCheckMsg"),
+      password: '',
+      error: false,
+      errorInfo: ''
     }
   },
   created() {
@@ -95,9 +115,15 @@ export default {
   },
   methods: {
     start(){
+      if(this.password.length == 0 ){
+        this.error = true
+        this.errorInfo = this.$t('msg.create.errorPasswdEmpty')
+        return
+      }
+
       this.checking = true
       this.checked = false
-      this.$walletService.check(this.updateOutput)
+      this.$walletService.check(this.password)
     },
 
     stop(){
@@ -119,6 +145,9 @@ export default {
     },
 
     clearup(){
+      this.password = '';
+      this.error = false;
+      this.errorInfo = '';
       this.checking = false
       this.checked = false
       this.checkOutputs = []

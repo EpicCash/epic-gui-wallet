@@ -3,7 +3,7 @@ import { contextBridge, ipcRenderer, clipboard, shell} from 'electron'
 import os from 'os'
 import { join } from 'path'
 import path from 'path';
-
+const moment = require('moment');
 const base32 = require('rfc-3548-b32');
 
 const crypto = require('crypto-browserify');
@@ -14,7 +14,6 @@ const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
 const util = require('util');
 const log = require('electron-log');
-const moment = require('moment');
 const homedir = os.homedir();
 const rootdir = require('app-root-dir');
 export const ewalletPath = path.join(homedir, '.epic')
@@ -26,6 +25,7 @@ const resourcePath =
     ? process.resourcesPath // Live Mode
     : path.join(__dirname, '../resources/'); // Dev Mode
 
+console.log(resourcePath);
 
 let logFile = `${moment(new Date()).format('YYYY_MM_D')}.log`
 let logPath = join(logDir, logFile);
@@ -151,7 +151,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       });
     },
-    async execScan(cmd, platform){
+    async execScan(cmd){
 
       return new Promise(function(resolve, reject) {
           const scanProcess = exec(cmd);
@@ -216,19 +216,23 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
     /* start wallet listen */
-    async execListen(cmd, args, password, platform){
+    async execListen(cmd, args, platform){
 
       return new Promise(function(resolve, reject) {
           const listenProcess = spawn(cmd, args, {shell: platform == 'win'});
           listenProcess.stdout.setEncoding('utf8');
           listenProcess.stderr.setEncoding('utf8');
-          listenProcess.stdout.on('data', () => {
-              ipcRenderer.send('pid-add', listenProcess.pid);
-              resolve(listenProcess.pid);
+          listenProcess.stdout.on('data', (data) => {
+              console.log(data);
+              if(data.includes('HTTP Foreign listener started.')){
+                ipcRenderer.send('pid-add', listenProcess.pid);
+                resolve({success: true, msg: listenProcess.pid});
+              }
+
           })
           listenProcess.stderr.on('data', (data) => {
               log.error('start wallet listen got stderr: ' + data)
-              resolve(false);
+              resolve({success: false, msg: data});
           })
 
       });

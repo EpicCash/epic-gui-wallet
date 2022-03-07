@@ -2,12 +2,12 @@
 
 <div class="modal" :class="{'is-active': showModal}">
   <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" style="width:480px">
+  <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.send") }}</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
-    <section class="modal-card-body" style="height:300px;background-color: whitesmoke;">
+    <section class="modal-card-body">
 
       <div class="notification is-warning" v-if="errors.length">
         <p v-for="error in errors" :key="error">{{ error }}</p>
@@ -33,8 +33,10 @@
 
 </template>
 <script>
+
 const log = window.log
 const fs = window.nodeFs;
+
 export default {
   name: "file-send",
   props: {
@@ -101,47 +103,41 @@ export default {
           "ttl_blocks": null,
           "send_args": null
         }
+        let res = await this.$walletService.issueSendTransaction(tx_data);
 
-        this.$walletService.issueSendTransaction(tx_data).then(
-          (res) => {
-            let result = res.data.result;
+        if(res && res.result.Ok){
+          let result = res.result.Ok;
+          if (fn_output.filePath){
 
-            if (fn_output.filePath && result.Ok){
+            let lock = await this.$walletService.lock_outputs(result);
 
+            if(lock && lock.result.Ok == null){
 
-              let params = [result.Ok, 0];
+              fs.writeFileSync(fn_output.filePath, JSON.stringify(result), {
+                encoding: "utf8",
+                flag: "w"
+              });
 
-              this.$walletService.lock_outputs(params).then((resLock)=>{
-                let lockResult = resLock.data;
-                console.log('resLock', lockResult);
+              log.debug('new send tx file generated')
+              this.emitter.emit('update')
+              this.closeModal()
 
-                if(lockResult.result){
-                  fs.writeFileSync(fn_output.filePath, JSON.stringify(result.Ok), {
-                    encoding: "utf8",
-                    flag: "w"
-                  });
-                  log.debug('new send tx file generated')
-                  this.emitter.emit('update')
-                  this.closeModal()
-                }else{
-                  log.error('issueSendTransaction error:' + lockResult.error)
-                  this.errors.push(lockResult.error.message)
-                }
-
-
-              })
-
-            }else if(result.error){
-              log.error('issueSendTransaction error:' + result.error)
-              this.errors.push(result.error.message)
+            }else if(lock && lock.result.error){
+              this.errors.push(lock.result.error.message)
+            }else{
+              this.errors.push(this.$t('msg.fileSend.CreateFailed'))
             }
-          }).catch((error) => {
-            log.error('issueSendTransaction error:' + error)
-            this.errors.push(this.$t('msg.fileSend.CreateFailed'))
-          })
+
+          }
+        }else if(res && res.result.error){
+          this.errors.push(res.result.error.message)
+        }else{
+          this.errors.push(this.$t('msg.fileSend.CreateFailed'))
         }
 
-      },
+      }
+
+    },
     closeModal() {
       this.clearup()
       this.emitter.emit('close', 'windowFileSend');

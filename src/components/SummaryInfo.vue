@@ -1,5 +1,5 @@
 <template>
-  <div id="balances" class="notification is-warning" >
+  <div id="balances" class="box" >
    <div id="balances-content">
     <p class="subtitle is-5">{{ $t("msg.info.total") }}:</p>
     <p class="title" v-bind:class="{'is-2':!smallTitle, 'is-4':smallTitle}">{{total}} EPIC</p>
@@ -74,10 +74,7 @@
     min-height: 210px;
     padding: 0;
     z-index: 1;
-    background-color: #FFDD57;
-    background-repeat: no-repeat;
-    background-image: url("../assets/epic-logo.svg");
-    background-position: 45% 35%;
+
   }
 
   #balances-content {

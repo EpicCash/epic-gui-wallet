@@ -2,12 +2,12 @@
 
 <div class="modal" :class="{'is-active': showModal}">
   <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" style="width:480px">
+  <div class="modal-card" >
     <header class="modal-card-head">
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.receive") }}</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
-    <section class="modal-card-body" style="height:320px;background-color: whitesmoke;">
+    <section class="modal-card-body" >
       <div class="notification is-warning" v-if="errors.length">
         <p v-for="error in errors" :key="error">{{ error }}</p>
       </div>

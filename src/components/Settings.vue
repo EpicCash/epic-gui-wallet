@@ -7,7 +7,7 @@
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.settings.title") }}</p>
       <button class="delete" aria-label="close" @click="closeModal"></button>
     </header>
-    <section class="modal-card-body" style="">
+    <section class="modal-card-body">
 
 
         <div class="notification is-warning" v-if="errors.length">

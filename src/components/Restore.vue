@@ -2,23 +2,28 @@
 
 
 
-  <section class="hero is-fullheight" style="background: black;">
+  <section class="hero">
     <div class="hero-body">
       <div class="container">
-        <div class="columns is-mobile is-centered">
-          <div class="column is-6" >
 
-            <h1 class="title">{{ $t('msg.restore.title') }}</h1>
-            <div v-if="page==='addSeeds'">
-              <p class="animated bounce has-text-weight-semibold has-text-warning"
-                style="animation-iteration-count:2;margin-bottom:12px">
-                {{ $t('msg.restore.addSeedsInfo') }} ({{seeds.length}}/{{total}})
-              </p>
 
-                <div class="block" style="min-height:130px;max-height:130px;overflow-y: scroll;">
-                  <div class="tags are-small">
-                    <span class="tag" v-for="item in wordList" :key="item.item">
-                      <a @click="add(item)" >{{ item }}</a>
+        <div class="columns is-centered">
+          <div class="column is-8" >
+            <div class="columns is-centered is-multiline">
+                <img src="../assets/logo.png" style="width:30%;height:auto;">
+            </div>
+            <p>&nbsp;</p>
+            <h2 class="title">{{ $t('msg.restore.title') }}</h2>
+            <div class="box" v-if="page==='addSeeds'">
+                <p class="animated bounce has-text-weight-semibold has-text-warning"
+                  style="animation-iteration-count:2;margin-bottom:12px">
+                  {{ $t('msg.restore.addSeedsInfo') }} ({{seeds.length}}/{{total}})
+                </p>
+
+                <div style="min-height:130px;max-height:130px;overflow-y: scroll;">
+                  <div class="tags">
+                    <span class="tag is-light is-medium is-rounded is-link" v-for="item in wordList" :key="item.item">
+                      <a style="color:#000000" @click="add(item)" >{{ item }}</a>
                     </span>
                     <p v-if="wordList.length == 0">
                       ...
@@ -44,8 +49,8 @@
 
               <br/>
               <br/>
-              <div class="tags are-small">
-                <span class="tag" v-for="seed in seeds" :key="seed">{{seed}}</span>
+              <div class="tags">
+                <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}</span>
               </div>
               <a class="button is-link is-inverted is-outlined" v-show="enoughSeeds" @click="page='addPassword'">
                 {{ $t('msg.restore.added') }}
@@ -53,12 +58,12 @@
             </div>
 
             <div v-else-if="page==='addPassword'">
+
+              <div class="box">
               <p class="has-text-weight-semibold has-text-warning"
                 style="margin-bottom:12px">
                 {{ $t('msg.restore.newPassword') }}
               </p>
-              <div class="box">
-
                 <div class="field">
                   <label class="label">{{ $t('msg.account') }}</label>
                   <div class="control">
@@ -251,7 +256,7 @@ export default {
 
     },
     delete_(){
-      if(this.seeds.length>0)this.seeds.pop()
+      if(this.seeds.length > 0)this.seeds.pop()
     },
     addall(){
       this.seeds = this.wordList;
@@ -266,7 +271,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

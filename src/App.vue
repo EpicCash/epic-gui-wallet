@@ -1,11 +1,18 @@
 <template>
 
-  <div class="has-background-black" v-if="!checkservice">
+  <div  v-if="!checkservice">
   <settings :showModal="openSettings"></settings>
 
+
   <div class="columns ">
+
     <div class="column is-half">
-      <p class="addressInfo">
+      <div v-if="ownerApiRunning" class="hero-head" style="padding: 1.5rem;">
+        <figure  class="image ">
+          <img src="./assets/logo.png" style="width:36%;height:auto;">
+        </figure>
+      </div>
+      <!-- p class="addressInfo">
         <span v-if="address" class="" >Proof address: <button class="button is-small is-rounded">{{ address }}</button>
           &nbsp;<span @click="copyAdress()">
 
@@ -14,24 +21,13 @@
           </span>
           <span v-if="!showCopyAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
         </span>
+      </p -->
 
-
-      </p>
-      <p class="addressInfo">
-        <span v-if="address" class="" >Onion address: <button class="button is-small is-rounded">{{ onionAddress }}</button>
-          &nbsp;<span @click="copyOnionAdress()">
-
-              <font-awesome-icon :icon="['fas', 'copy']"/>
-
-          </span>
-          <span v-if="!showCopyOnionAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
-        </span>
-
-
-      </p>
     </div>
     <div class="column">
-        <p class="nodeInfo">
+
+        <div class="hero-head nodeInfo">
+
           Node ({{ this.epicNode }}):
           <span v-if="nodeOnline && nodeIsSync" class="dotGreen"></span><span v-if="nodeOnline && nodeIsSync">&nbsp;online</span>
           <span v-if="nodeOnline && nodeIsSync == false" class="dotYellow"></span><span v-if="nodeOnline && nodeIsSync == false">&nbsp;syncing</span><span v-if="nodeOnline && nodeIsSync == false">&nbsp;{{ sync_status }}&nbsp;{{ current_height}}/{{ highest_height}}</span>
@@ -41,10 +37,12 @@
             <span v-if="nodeOnline" class="dotGreen"></span>
           </span>
           <span>&nbsp;&nbsp;</span>
+          <span v-if="ownerApiRunning" class="is-small tag is-warning is-rounded animated" v-bind:class="{headShake: isAnimate}" style="animation-iteration-count:3">
+          {{ $t("msg.app.height") }}: {{height}}</span>&nbsp;
           <button class="button is-small is-rounded" @click="openSettings=true">
             <font-awesome-icon :icon="['fas', 'gear']"/>
           </button>
-        </p>
+        </div>
 
     </div>
   </div>
@@ -57,39 +55,7 @@
 
           <summary-info></summary-info>
 
-          <div style="padding-bottom: 25px; padding-right: 0;">
-            <div class="level">
-              <p class="is-size-7 tag is-warning animated" v-bind:class="{headShake: isAnimate}" style="animation-iteration-count:3">
-              {{ $t("msg.app.height") }}: {{height}}</p>
-              &nbsp;
 
-              <div class="dropdown is-right" v-bind:class="{'is-active':isDroppingDown3}" style="padd">
-                <div class="dropdown-trigger">
-                  <button class="button is-small is-warning is-outlined" aria-haspopup="true" aria-controls="dropdown-menu" @click="isDroppingDown3=!isDroppingDown3;isDroppingDown=false;isDroppingDown2=false" style="width:50px">
-                    <span>{{ $t("msg.more") }}</span>
-                  </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu" style="min-width:0">
-                  <div class="dropdown-content">
-                    <a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openCheck = true">
-                      {{ $t("msg.check.title") }}
-                    </a>
-                    <a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openLang=true">
-                      {{ $t("msg.lang.title") }}
-                    </a>
-                    <a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openSettings=true">
-                      {{ $t("msg.settings.title") }}
-                    </a>
-
-                    <hr class="dropdown-divider">
-                    <a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click.prevent="logout">
-                      {{ $t("msg.logout") }}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <aside class="menu" id="wallet_menu">
             <p class="menu-label">{{ $t("msg.send") }}</p>
             <ul class="menu-list">
@@ -102,6 +68,30 @@
               <li><a href="#" class="dropdown-item" @click="openReceive = true">{{ $t("msg.app.createRespFile") }}</a></li>
               <li><a class="dropdown-item" @click="openHttpReceive = true">{{ $t("msg.app.httpReceive") }}</a></li>
             </ul>
+            <p class="menu-label"> Misc</p>
+            <ul class="menu-list">
+              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openCheck = true">
+                {{ $t("msg.check.title") }}
+              </a>
+              </li>
+              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openLang=true">
+                {{ $t("msg.lang.title") }}
+              </a>
+              </li>
+              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openSettings=true">
+                {{ $t("msg.settings.title") }}
+              </a>
+              </li>
+            </ul>
+
+            <p class="menu-label">Account</p>
+            <ul class="menu-list">
+              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click.prevent="logout">
+                {{ $t("msg.logout") }}
+              </a>
+              </li>
+            </ul>
+
           </aside>
         </div>
 
@@ -109,16 +99,16 @@
 
           <div class="tabs is-boxed">
             <ul>
-              <li v-bind:class="{'is-active':transactionTab}"><a @click="openTab('transactionTab')">Transaction</a></li>
+              <li v-bind:class="{'is-active':transactionTab}"><a @click="openTab('transactionTab')">Transactions</a></li>
               <li v-bind:class="{'is-active':commitTab}"><a @click="openTab('commitTab')">Commits</a></li>
             </ul>
           </div>
 
           <div v-if="transactionTab" class="content-tab" >
-            <transaction v-bind:count_per_page="3"></transaction>
+            <transaction v-bind:count_per_page="10"></transaction>
           </div>
           <div v-if="commitTab" class="content-tab" >
-            <commit v-bind:count_per_page="3" v-bind:nodeHeight="height"></commit>
+            <commit v-bind:count_per_page="10" v-bind:nodeHeight="height"></commit>
           </div>
 
 
@@ -129,17 +119,11 @@
       </div> <!-- // columns -->
     </div>
 
-
-
-
     <login v-if="!checkservice && !ownerApiRunning && action !== 'create'"></login>
-
-
-
 
   </div>
   <receive :showModal="openReceive"></receive>
-  <http-receive :showModal="openHttpReceive"></http-receive>
+  <http-receive :showModal="openHttpReceive" :onion-address="onionAddress"></http-receive>
   <http-send :showModal="openHttpSend"></http-send>
   <file-send :showModal="openFileSend"></file-send>
   <finalize :showModal="openFinalize"></finalize>
@@ -163,8 +147,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faGear as FasGear } from '@fortawesome/free-solid-svg-icons'
 library.add(FasGear)
-
-import {epicPath, seedPath, defaultEpicNode, epicNode2, apiSecretPath, walletTOMLPath, getConfig} from './shared/config.js'
 
 
 import CheckService from './components/CheckService.vue'
@@ -243,7 +225,6 @@ export default {
         address: '',
         onionAddress: '',
         showCopyAddress: true,
-        showCopyOnionAddress: true,
         error: '',
         action: 'check',
         current_height: 0,
@@ -253,10 +234,6 @@ export default {
         commitTab:false,
     }},
     async mounted() {
-
-        //let config = getConfig();
-
-
 
         this.action = await this.configService.startCheck();
         console.log('app action configService', this.action);
@@ -429,15 +406,7 @@ export default {
 
 
       },
-      copyOnionAdress(){
-        clipboard.writeText(this.onionAddress);
-        this.showCopyOnionAddress = false;
-        setTimeout(()=> {
-          this.showCopyOnionAddress = true;
-        }, 2000)
 
-
-      },
 
       async getAddress(){
         let addressRes = await this.$walletService.getPubliProofAddress();
@@ -520,55 +489,6 @@ export default {
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Verdana, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #ffffff;
-  background-color:#000000;
-}
-
-#wallet_menu {
-  color: #FFFFFF;
-}
-
-#wallet_menu .menu-label {
-  color: #FFDD57;
-}
-
-#wallet_menu .menu-list a {
-  color: #FFFFFF;
-}
-
-#wallet_menu .menu-list a:hover {
-  color: #000000;
-}
-
-.icon-running{
-  background: #00aa72;
-  border-color: #e5f8f1;
-}
-.icon-failed{
-  background: #D8000C;
-  border-color: #FFBABA;
-}
-.icon-status{
-  display: inline-block;
-  -webkit-border-radius: 25px;
-  -moz-border-radius: 25px;
-  border-radius: 25px;
-  height: 15px;
-  width: 15px;
-  border-width: 4px;
-  border-style: solid;
-  margin-right: 4px;
-  vertical-align: top;
-}
-.button.is-small2 {
-    border-radius: 2px;
-    font-size: 0.675rem;
-}
 
 .dotRed {
   height: 14px;
@@ -599,28 +519,15 @@ export default {
   font-weight:bold;
   text-align:right;
   padding-right:14px;
-  background:black;
   text-color:white;
   color:white;
   font-size:12px;
   line-height:28px;
 }
-.addressInfo{
-  font-weight:bold;
-  padding:10px;
-  text-align:left;
-  padding-left:14px;
-  text-color:white;
-  color:white;
-  font-size:12px;
-  line-height:28px;
-}
+
 .walletListenInfo{
   padding-left:10px;
 }
 
-h1.title{
-  color:#ffffff;
-}
 
 </style>

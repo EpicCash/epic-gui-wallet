@@ -151,32 +151,33 @@ class ConfigService {
       console.log('this.defaultAccountWalletdir ', this.defaultAccountWalletdir );
       await delay(sleepTime);
 
+      //check if config file exist
+      let configFile = path.join(defaultAccountWalletdir, 'config.json');
+      if (window.nodeFs.existsSync(configFile)) {
+          this.emitter.emit('checkSuccess', 'wallet config file exist');
+      } else {
+          initWallet = true;
+          this.emitter.emit('checkFail', 'wallet config file does not exist');
+          //copy default config json to new wallet dir
+          let defaultConfigFile = path.join(window.config.getResourcePath(), "default.config.json");
+
+          window.nodeFs.copyFile(defaultConfigFile, configFile, (err) => {
+            if (err){
+              this.emitter.emit('checkFail', err);
+            }
+            this.emitter.emit('checkSuccess', 'default wallet config file created');
+          });
+      }
+      this.configFile = configFile;
+      await delay(sleepTime);
+      
       //if we dont have any epic wallet data prompt user for init or recover a wallet
       if(initWallet){
           this.emitter.emit('checkSuccess', 'create new or recover wallet');
           return 'init'
 
       }else{
-        //check if config file exist
-        let configFile = path.join(defaultAccountWalletdir, 'config.json');
-        if (window.nodeFs.existsSync(configFile)) {
-            this.emitter.emit('checkSuccess', 'wallet config file exist');
-        } else {
-            initWallet = true;
-            this.emitter.emit('checkFail', 'wallet config file does not exist');
-            //copy default config json to new wallet dir
-            let defaultConfigFile = path.join(window.config.getResourcePath(), "default.config.json");
 
-            window.nodeFs.copyFile(defaultConfigFile, configFile, (err) => {
-              if (err){
-                this.emitter.emit('checkFail', err);
-                return false;
-              }
-              this.emitter.emit('checkSuccess', 'default wallet config file created');
-            });
-        }
-        this.configFile = configFile;
-        await delay(sleepTime);
 
         let config;
         if(window.nodeFs.readFileSync(configFile, {encoding:'utf8', flag:'r'})){
@@ -240,15 +241,15 @@ class ConfigService {
 
 
             //rewrite some toml properties to work with owner_api lifecycle
-            const re = /owner_api_include_foreign(\s)*=(\s)*false/
+          //  const re = /owner_api_include_foreign(\s)*=(\s)*false/
             const re2 = /data_file_dir(\s)*=(\s).*/
 
             let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
             //console.log('tomlContent', tomlContent);
-            if(tomlContent.search(re) != -1){
+            /*if(tomlContent.search(re) != -1){
                 console.log('Enable ForeignApi to true')
                 tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
-            }
+            }*/
 
             if(tomlContent.search(re2) != -1){
                 console.log('change wallet default path to ', this.userhomedir)

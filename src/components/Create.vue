@@ -1,11 +1,15 @@
 <template>
-  <section class="hero is-fullheight" style="background: black;">
+  <section class="hero" >
     <div class="hero-body">
       <div class="container">
-        <div class="columns is-mobile is-centered">
-          <div v-if="walletCreated" class="column is-10" >
+        <div class="columns is-centered">
 
-            <h1 class="title">{{ $t('msg.create.seedPhrase') }}</h1>
+          <div v-if="walletCreated" class="column is-8" >
+              <div class="columns is-centered is-multiline">
+                  <img src="../assets/logo.png" style="width:30%;height:auto;">
+              </div>
+              <p>&nbsp;</p>
+              <h1 class="title">{{ $t('msg.create.seedPhrase') }}</h1>
 
               <p class="animated bounce has-text-weight-semibold has-text-warning" style="animation-iteration-count:3">
                 {{ $t('msg.create.backupNote') }}
@@ -16,17 +20,16 @@
                 <span class="tag" v-for="seed in seeds" :key="seed">{{seed}}</span>
               </div>
               <a class="button is-link is-inverted is-outlined" @click="toLogin">{{ $t('msg.create.backupFinish') }}</a>
-              
+
           </div>
 
           <div v-else class="column is-8" >
 
             <div class="columns is-centered is-multiline">
-              <div class="block">
-                <img src="../assets/logo.png" style="width:20%;height:auto;">
-                <h2 class="title" style="margin-top:24px; margin-left:70px;font-size:1.6rem" >{{ $t("msg.create.toNewMsg") }}</h2>
-              </div>
+                <img src="../assets/logo.png" style="width:30%;height:auto;">
             </div>
+            <p>&nbsp;</p>
+            <h2 class="title" >{{ $t("msg.create.toNewMsg") }}</h2>
 
             <form class="box">
               <div class="field">

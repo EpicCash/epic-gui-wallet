@@ -21,6 +21,8 @@
     "@noble/secp256k1": "^1.5.5",
     "app-root-dir": "^1.0.2",
     "axios": "^0.25.0",
+    "bulma": "^0.9.3",
+    "bulmaswatch": "^0.8.1",
     "core-js": "^3.6.5",
     "cross-spawn": "^7.0.3",
     "crypto-browserify": "^3.12.0",
