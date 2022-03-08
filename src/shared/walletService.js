@@ -26,6 +26,7 @@ class WalletService {
         this.processes = {};
         this.shared_key;
         this.token;
+        this.account;
     }
 
     async initSecure(url) {
@@ -249,9 +250,22 @@ class WalletService {
       )
     }
 
+    async getMnemonic(password){
+
+      return this.jsonRPC(
+        'get_mnemonic',
+        {
+          "name": this.account,
+          "password": password
+        }
+
+      )
+    }
+
 
     /* start a epic wallet in owner_api mode */
     async start(password, account){
+        this.account = account ? account : 'default';
         let args = [];
         console.log('start', this.configService);
         //this.stopProcess('ownerAPI')
@@ -438,11 +452,14 @@ class WalletService {
 
     }
 
-    async check(password){
+    async check(password, delete_unconfirmed){
 
-        const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -t ${this.configService.defaultAccountWalletdir} --pass ${addQuotations(password)} scan`;
+        let delete_flag = '';
+        if(delete_unconfirmed == true){
+          delete_flag = '--delete_unconfirmed';
+        }
 
-
+        const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -t ${this.configService.defaultAccountWalletdir} --pass ${addQuotations(password)} scan ${delete_flag}`;
         await window.nodeChildProcess.execScan(cmd);
 
     }

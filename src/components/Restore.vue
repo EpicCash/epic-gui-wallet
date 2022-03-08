@@ -45,6 +45,7 @@
                   <button class="button is-link is-inverted is-outlined" @click="delete_">{{ $t('msg.restore.delete') }}</button>
                   <button class="button is-link is-inverted is-outlined" @click="reset">{{ $t("msg.reset") }}</button>
                   <button class="button is-link is-inverted is-outlined" @click="addall">{{ $t("msg.addall") }}</button>
+                  <button class="button is-text" @click="back">{{ $t("msg.back") }}</button>
                 </div>
 
               <br/>
@@ -254,6 +255,10 @@ export default {
     add(word){
       this.seeds.push(word)
 
+    },
+    back(){
+      this.clearup()
+      this.emitter.emit('restoredThenLogin')
     },
     delete_(){
       if(this.seeds.length > 0)this.seeds.pop()

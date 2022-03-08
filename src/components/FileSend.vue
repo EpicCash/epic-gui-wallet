@@ -12,12 +12,29 @@
       <div class="notification is-warning" v-if="errors.length">
         <p v-for="error in errors" :key="error">{{ error }}</p>
       </div>
+
+
       <div class="field">
         <label class="label">{{ $t("msg.fileSend.sendAmount") }}</label>
         <div class="control">
           <input class="input" type="text" v-model="amount" placeholder="1">
         </div>
       </div>
+      <div class="field">
+        <label class="label">Proof address from recipient</label>
+        <div class="control">
+          <input class="input" type="text" v-model="proof_address_recipient" >
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Message</label>
+        <div class="control">
+          <input class="input" type="text" v-model="message" >
+        </div>
+      </div>
+
+
+
        <br/>
       <div class="field is-grouped">
         <div class="control">
@@ -49,6 +66,8 @@ export default {
     return {
       errors: [],
       amount: null,
+      proof_address_recipient: null,
+      message: '',
       slateVersion: 0
     }
   },
@@ -75,9 +94,17 @@ export default {
       if (this.amount && this.validAmount(this.amount) && !this.enough(this.amount)) {
         this.errors.push(this.$t('msg.fileSend.NotEnough'));
       }
+
+      if(this.proof_address_recipient != null && this.proof_address_recipient.length != 64){
+        this.errors.push(this.$t('msg.fileSend.proof_address_recipient'));
+      }
+
       if (!this.errors.length) {
         return true;
       }
+
+
+
     },
     enough(amount){
       let spendable = this.$dbService.getSpendable()
@@ -97,8 +124,8 @@ export default {
           "max_outputs": 500,
           "num_change_outputs": 1,
           "selection_strategy_is_use_all": false,
-          "message": "",
-          "payment_proof_recipient_address": null,
+          "message": this.message,
+          "payment_proof_recipient_address": this.proof_address_recipient,
           "target_slate_version": null,
           "ttl_blocks": null,
           "send_args": null

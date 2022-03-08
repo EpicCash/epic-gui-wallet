@@ -50,6 +50,12 @@
                       {{ $t("msg.new.create") }}
                     </button>
                   </div>
+                  <div class="control">
+
+                    <button class="button is-link" @click.prevent="restore">
+                      {{ $t("msg.restore.recover") }}
+                    </button>
+                  </div>
                 </div>
             </form>
 
@@ -91,6 +97,10 @@ export default {
     create(){
       console.log('new create');
       this.emitter.emit('initMode', 'create');
+    },
+    restore(){
+      console.log('restore');
+      this.emitter.emit('initMode', 'restore');
     },
     async login(){
 

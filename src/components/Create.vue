@@ -35,7 +35,7 @@
               <div class="field">
                 <label class="label">{{ $t("msg.account") }}</label>
                 <div class="control">
-                  <input class="input" type="account" placeholder="" required :class="{'is-danger': error}" v-model="account">
+                  <input class="input" type="account" placeholder="" :class="{'is-danger': error}" v-model="account">
                 </div>
 
               </div>
@@ -182,6 +182,10 @@ export default {
     toLogin(){
       this.clearup()
       this.emitter.emit('restoredThenSettings')
+    },
+    back(){
+      this.clearup()
+      this.emitter.emit('restoredThenLogin')
     }
 
   }

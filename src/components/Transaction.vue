@@ -41,9 +41,9 @@
               <img v-if="tx.type=='send'" src="../assets/imgs/arrow-alt-circle-left.svg" style="width:18px;vertical-align:middle;"/>
 
             </td>
-            <td>{{tx.tx_slate_id}}</td>
+            <td>{{  $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</td>
             <td>{{ $filters.datetimeFormat(tx.creation_ts) }}</td>
-            <td>{{ tx.payment_proof }}</td>
+            <td>{{ $filters.truncateMid($filters.paymentProof(tx.payment_proof, 'receiver_address'), 19) }}</td>
             <td>
                 <span v-if="tx.type=='send'">-{{(tx.amount_debited-tx.amount_credited-tx.fee)/100000000}}
                   ({{tx.fee/100000000}})

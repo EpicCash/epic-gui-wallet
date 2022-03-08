@@ -82,12 +82,16 @@ class ConfigService {
       if(appConfig[configKey]){
         appConfig[configKey].forEach(function(element, key){
           if(appConfig[configKey][key].account == data.account){
+
             appConfig[configKey][key].userhomedir = data.userhomedir;
-            appConfig[configKey][key].network = data.network;
-            appConfig[configKey][key].isdefault = data.isdefault;
+            appConfig[configKey][key].network     = data.network;
+            appConfig[configKey][key].isdefault   = data.isdefault;
             return false;
+
           }else{
-            appConfig[configKey].push(userdata)
+
+            appConfig[configKey].push(userdata);
+
           }
         });
       }
@@ -117,9 +121,6 @@ class ConfigService {
             }
         });
       }
-      console.log('defaultAccountWalletdir', defaultAccountWalletdir);
-
-
 
       let initWallet = false;
       await delay(sleepTime);
@@ -148,7 +149,6 @@ class ConfigService {
       }
       this.userhomedir = userHomedir;
       this.defaultAccountWalletdir = defaultAccountWalletdir;
-      console.log('this.defaultAccountWalletdir ', this.defaultAccountWalletdir );
       await delay(sleepTime);
 
       //check if config file exist
@@ -170,7 +170,7 @@ class ConfigService {
       }
       this.configFile = configFile;
       await delay(sleepTime);
-      
+
       //if we dont have any epic wallet data prompt user for init or recover a wallet
       if(initWallet){
           this.emitter.emit('checkSuccess', 'create new or recover wallet');
@@ -215,10 +215,6 @@ class ConfigService {
 
         await delay(sleepTime);
 
-        //
-
-
-
         //check if owner api secret file exist
         let ownerApiSecretFile = path.join(defaultAccountWalletdir, '.owner_api_secret');
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
@@ -241,7 +237,7 @@ class ConfigService {
 
 
             //rewrite some toml properties to work with owner_api lifecycle
-          //  const re = /owner_api_include_foreign(\s)*=(\s)*false/
+            //  const re = /owner_api_include_foreign(\s)*=(\s)*false/
             const re2 = /data_file_dir(\s)*=(\s).*/
 
             let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
@@ -271,13 +267,7 @@ class ConfigService {
 
 
         this.defaultEpicNode = this.config['check_node_api_http_addr'] != '' ? this.config['check_node_api_http_addr'] : 'http://127.0.0.1'
-        console.log('defaultEpicNode', this.defaultEpicNode);
-
-
-
-        console.log('this.apisecret', this.apisecret);
         await delay(sleepTime);
-
 
         //check if we run the first time
         //make some settings
@@ -285,16 +275,11 @@ class ConfigService {
 
           return 'settings'
 
-
         }
 
       }
 
-
-      console.log('config', this.config);
-
-
-      return 'ok';
+      return 'login';
 
   }
 

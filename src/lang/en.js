@@ -38,6 +38,10 @@ const messages = {
     login: {
       walletExist: 'Epic wallet data exists; login with original password :)',
     },
+    seed:{
+      errorGetMnemonic: 'Error getting Mnemonic. Is password correct?',
+      mnemonic: 'Mnemonic Words'
+    },
     create:{
       seedPhrase: 'Seed Phrase',
       toNewMsg: 'Create a New Wallet.',
@@ -119,7 +123,8 @@ const messages = {
       WrongAmount: 'Wrong amount',
       NotEnough: 'Not enough balance',
       saveMsg: 'Save transaction file created',
-      CreateFailed: 'Failed to create new transaction file'
+      CreateFailed: 'Failed to create new transaction file',
+      proof_address_recipient: 'Wrong proof address length',
     },
 
     httpSend:{

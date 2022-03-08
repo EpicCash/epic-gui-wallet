@@ -54,6 +54,27 @@ app.config.globalProperties.$filters = {
         return text;
     }
   },
+  truncateMid(fullStr, strLen){
+    if (fullStr.length <= strLen) return fullStr;
+
+    let separator = '...';
+
+    var sepLen = separator.length,
+        charsToShow = strLen - sepLen,
+        frontChars = Math.ceil(charsToShow/2),
+        backChars = Math.floor(charsToShow/2);
+
+    return fullStr.substr(0, frontChars) +
+           separator +
+           fullStr.substr(fullStr.length - backChars);
+  },
+  paymentProof(data, field){
+    if(data && data[field]){
+      return data[field];
+    }else{
+      return ''
+    }
+  }
 
 }
 app.config.globalProperties.emitter = emitter;

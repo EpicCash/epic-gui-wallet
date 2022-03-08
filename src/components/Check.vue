@@ -2,7 +2,7 @@
 
 <div class="modal" :class="{'is-active': showModal}">
   <div class="modal-background"></div>
-  <div class="modal-card" style="width:500px">
+  <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.check.title") }}</p>
     </header>
@@ -37,18 +37,26 @@
           </div>
         </div>
 
-        <div class="field is-horizontal">
-          <div class="field-label is-normal"><label class="label">{{ $t("msg.password") }}</label></div>
-          <div class="field-body">
-
+        <div class="field">
+          <label class="label">{{ $t("msg.password") }}</label>
+          <div class="control">
             <input class="input" type="password" placeholder="********" required v-model="password" :class="{'is-danger': error}">
-
           </div>
+          <p class="help is-danger" v-if="error">{{errorInfo}}</p>
+
+        </div>
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input type="checkbox" name="delete_unconfirmed" v-model="delete_unconfirmed"> Delete unconfirmed outputs
+            </label>
+          </div>
+
         </div>
 
         <div class="center">
 
-          <div class="field is-grouped " >
+          <div class="field is-grouped" >
             <div class="control">
               <button class="button is-link" v-bind:class="{'is-loading':checking}" @click="start">
                 {{ $t("msg.check.start") }}
@@ -57,13 +65,13 @@
             <div class="control">
               <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
             </div>
+
           </div>
+
         </div>
 
 
-        <div class="center">
-          <p class="help is-danger" v-if="error">{{errorInfo}}</p>
-        </div>
+
       </div>
 
     </section>
@@ -95,6 +103,7 @@ export default {
       openStopMsg: false,
       stopMsg: this.$t("msg.check.stopCheckMsg"),
       password: '',
+      delete_unconfirmed: null,
       error: false,
       errorInfo: ''
     }
@@ -116,14 +125,15 @@ export default {
   methods: {
     start(){
       if(this.password.length == 0 ){
-        this.error = true
-        this.errorInfo = this.$t('msg.create.errorPasswdEmpty')
-        return
+        this.error = true;
+        this.errorInfo = this.$t('msg.create.errorPasswdEmpty');
+        return;
       }
 
-      this.checking = true
-      this.checked = false
-      this.$walletService.check(this.password)
+      this.checking = true;
+      this.checked = false;
+      console.log('this.delete_unconfirmed', this.delete_unconfirmed);
+      this.$walletService.check(this.password, this.delete_unconfirmed);
     },
 
     stop(){

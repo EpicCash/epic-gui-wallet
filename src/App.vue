@@ -70,23 +70,15 @@
             </ul>
             <p class="menu-label"> Misc</p>
             <ul class="menu-list">
-              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openCheck = true">
-                {{ $t("msg.check.title") }}
-              </a>
-              </li>
-              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openLang=true">
-                {{ $t("msg.lang.title") }}
-              </a>
-              </li>
-              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click="openSettings=true">
-                {{ $t("msg.settings.title") }}
-              </a>
-              </li>
+              <li><a href="#" class="dropdown-item" @click="openCheck = true">{{ $t("msg.check.title") }}</a></li>
+              <li><a href="#" class="dropdown-item" @click="openSeed = true">{{ $t("msg.seed.mnemonic") }}</a></li>
+              <li><a href="#" class="dropdown-item" @click="openLang = true">{{ $t("msg.lang.title") }}</a></li>
+              <li><a href="#" class="dropdown-item" @click="openSettings = true">{{ $t("msg.settings.title") }}</a></li>
             </ul>
 
             <p class="menu-label">Account</p>
             <ul class="menu-list">
-              <li><a href="#" class="dropdown-item" style="line-height: 1.2;font-size: 0.8rem;" @click.prevent="logout">
+              <li><a href="#" class="dropdown-item" @click.prevent="logout">
                 {{ $t("msg.logout") }}
               </a>
               </li>
@@ -100,7 +92,7 @@
           <div class="tabs is-boxed">
             <ul>
               <li v-bind:class="{'is-active':transactionTab}"><a @click="openTab('transactionTab')">Transactions</a></li>
-              <li v-bind:class="{'is-active':commitTab}"><a @click="openTab('commitTab')">Commits</a></li>
+              <li v-bind:class="{'is-active':commitTab}"><a @click="openTab('commitTab')">Outputs</a></li>
             </ul>
           </div>
 
@@ -119,7 +111,7 @@
       </div> <!-- // columns -->
     </div>
 
-    <login v-if="!checkservice && !ownerApiRunning && action !== 'create'"></login>
+    <login v-if="!checkservice && !ownerApiRunning && action == 'login'"></login>
 
   </div>
   <receive :showModal="openReceive"></receive>
@@ -128,6 +120,8 @@
   <file-send :showModal="openFileSend"></file-send>
   <finalize :showModal="openFinalize"></finalize>
 
+
+  <seed :showModal="openSeed"></seed>
   <check :showModal="openCheck"></check>
   <lang :showModal="openLang"></lang>
   <checkService v-if="action === 'check'"></checkService>
@@ -166,6 +160,7 @@ import Login from './components/Login.vue'
 
 
 import Check from './components/Check.vue'
+import Seed from './components/Seed.vue'
 import Lang from './components/Lang.vue'
 import Settings from './components/Settings.vue'
 import {locale} from './shared/config.js'
@@ -187,6 +182,7 @@ export default {
     FileSend,
     Finalize,
     Check,
+    Seed,
     Lang,
     Settings,
     FontAwesomeIcon,
@@ -206,6 +202,7 @@ export default {
         openFinalize: false,
         openHedwigV1: false,
         openCheck: false,
+        openSeed: false,
         openLang: false,
         openSettings: false,
         isDroppingDown: false,
@@ -231,7 +228,7 @@ export default {
         highest_height: 0,
         sync_status: '',
         transactionTab:true,
-        commitTab:false,
+        commitTab:false
     }},
     async mounted() {
 
@@ -244,7 +241,7 @@ export default {
 
         }
 
-        if(this.action === 'ok'){
+        if(this.action === 'login'){
           this.checkservice = false;
           //check first if node is online
           this.epicNode = this.configService.config['check_node_api_http_addr'];
@@ -294,6 +291,9 @@ export default {
         if(window == 'windowCheck'){
           this.openCheck = false
         }
+        if(window == 'windowSeed'){
+          this.openSeed = false
+        }
         if(window == 'windowLang'){
           this.openLang = false
         }
@@ -319,6 +319,7 @@ export default {
 
       this.emitter.on('restoredThenLogin', ()=>{
         log.info('wallet restored and now to login');
+        this.action = 'login';
         this.openSettings = false;
         this.checkservice = false;
       });
