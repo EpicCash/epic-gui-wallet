@@ -8,7 +8,7 @@
 
           <div class="column is-8" >
             <div class="columns is-centered is-multiline">
-                <img src="../assets/logo.png" style="width:30%;height:auto;">
+                <img src="../assets/epiccash_logo.png" style="width:30%;height:auto;">
 
             </div>
             <p>&nbsp;</p>

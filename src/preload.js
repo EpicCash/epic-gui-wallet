@@ -192,7 +192,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           ownerAPI.stderr.setEncoding('utf8');
 
           ownerAPI.stdout.on('data', (data) => {
-            //console.log(data);
+            console.log(data);
 
             if(data.includes('HTTP Owner listener started')){
               ipcRenderer.send('pid-add', ownerAPI.pid);

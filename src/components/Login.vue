@@ -9,7 +9,7 @@
             <div class="block" >
               <div class="card-image has-text-centered">
                 <figure class="image is-inline-block">
-                  <img src="../assets/logo.png" style="width:36%;height:auto;">
+                  <img src="../assets/epiccash_logo.png" style="width:36%;height:auto;">
                 </figure>
               </div>
               <h2 class="title" style="margin-top:24px; margin-left:70px;font-size:1.6rem" >{{ $t("msg.title") }}</h2>
@@ -25,6 +25,7 @@
                 <label class="label">{{ $t("msg.account") }}</label>
                 <div class="control">
                   <input class="input" type="account" placeholder="default" required :class="{'is-danger': error}" v-model="account">
+                  <p style="color:red;" class="help is-warning" v-if="errorAccount">Account does not exist</p>
                 </div>
 
               </div>
@@ -83,6 +84,7 @@ export default {
       errorapi: false,
       errorapiMsg: '',
       errorCode: '',
+      errorAccount: false
     }
   },
   created(){
@@ -90,6 +92,11 @@ export default {
         this.errorapi = true;
         this.errorapiMsg = msg;
         this.errorCode = code;
+    });
+    this.emitter.on('wallet_error_clean',()=>{
+        this.errorapi = false;
+        this.errorapiMsg = '';
+        this.errorCode = '';
     });
   },
 
@@ -104,36 +111,48 @@ export default {
     },
     async login(){
 
+
       this.resetErrors()
+      //check if acount exist.
+      let account = this.account ? this.account : 'default';
 
-      let loginSucccess = await this.$walletService.start(this.password, this.account);
-      this.password = '';
-      this.account = '';
+      if(this.configService.accountExist(account)){
+
+        let loginSucccess = await this.$walletService.start(this.password, account);
+        this.password = '';
+        this.account = '';
+        account = '';
 
 
-      if(loginSucccess){
+        if(loginSucccess){
 
-        let apiCallable = await this.$walletService.getNodeHeight();
+          let apiCallable = await this.$walletService.getNodeHeight();
 
-        console.log('Login apiCallable', apiCallable);
+          console.log('Login apiCallable', apiCallable);
 
-        if( !apiCallable ){
-          return this.errorapi = true;
+          if( !apiCallable ){
+            return this.errorapi = true;
+          }
+
+          this.emitter.emit('logined')
+
+        }else{
+
+          return this.error = true
+
         }
-
-        this.emitter.emit('logined')
-
       }else{
-
-        return this.error = true
-
+        return this.errorAccount = true;
       }
+
+
 
 
     },
     resetErrors(){
       this.error = false;
       this.errorapi = false;
+      this.errorAccount = false;
     }
   }
 }

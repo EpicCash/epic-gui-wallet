@@ -37,7 +37,7 @@
 
           <div class="field is-grouped" >
             <div class="control">
-              <button class="button is-link" v-bind:class="{'is-loading':checking}" @click="start">
+              <button class="button is-link" @click="start">
                 {{ $t("msg.check.start") }}
               </button>
             </div>
@@ -68,7 +68,7 @@ export default {
   },
   data() {
     return {
-      checked:false,
+      checked: false,
       password: '',
       error: false,
       errorInfo: '',
@@ -99,7 +99,7 @@ export default {
     },
 
     closeModal() {
-      if(!this.checking)this.clearup()
+      this.clearup()
       this.emitter.emit('close', 'windowSeed');
     },
 

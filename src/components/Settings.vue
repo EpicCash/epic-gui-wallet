@@ -83,30 +83,35 @@
       let address = nodeaddr
       let network = config['network'] ? config['network'] : 'mainnet'
       let locale = this.configService.config.locale;
+
       return {
+
         errors: [],
         check_node_api_http_addr: address,
         network: network,
         locale: locale,
-        localeSelected: locale
+        localeSelected: config.locale,
+        langs: this.configService.langs
+
       }
     },
     methods: {
       async save(){
-        if(this.checkForm()){
 
+
+        if(this.checkForm()){
+          this.emitter.emit('selectLocale', this.localeSelected);
           if(this.configService.config.firstTime == true){
 
-            let configSaved =  await this.configService.updateConfig({
+            this.configService.updateConfig({
               check_node_api_http_addr: this.check_node_api_http_addr,
               network: this.network,
               locale: this.localeSelected,
               firstTime: false
 
             });
-            console.log('firsttime saved', configSaved);
+            this.emitter.emit('restartNode');
             this.emitter.emit('restoredThenLogin');
-
 
           }else{
 
@@ -114,17 +119,11 @@
 
             if(this.nodeaddr !== this.check_node_api_http_addr){
 
-              await this.configService.updateConfig({
+              this.configService.updateConfig({
                 check_node_api_http_addr: this.check_node_api_http_addr,
                 network: this.network,
                 locale: this.localeSelected
               });
-
-              let nodeRestarted = await this.$nodeService.reconnectNode();
-
-
-              console.log('nodeRestarted', nodeRestarted);
-
 
               let killed = await this.$walletService.stopProcess('ownerAPI');
               console.log('wallet killed after change address', killed);
@@ -135,13 +134,9 @@
 
             }
             this.emitter.emit('close', 'windowSettings');
+            this.emitter.emit('restartNode');
 
           }
-
-
-
-
-
 
         }
       },

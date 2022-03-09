@@ -68,6 +68,9 @@ class WalletService {
 
       let baseURL = this.configService.defaultEpicNode;
       let password = this.configService.ownerApisecret;
+
+
+
       console.log('wallet init client password', password);
       return new Promise(function(resolve, reject) {
                 console.log('initClient', password);
@@ -267,7 +270,7 @@ class WalletService {
     async start(password, account){
         this.account = account ? account : 'default';
         let args = [];
-        console.log('start', this.configService);
+
         //this.stopProcess('ownerAPI')
         //do not start listener 2 times if wallet is open
 
@@ -284,31 +287,33 @@ class WalletService {
           args = [
             '--floonet',
             '-r', this.configService.config['check_node_api_http_addr'],
-            'owner_api',
-            '-c', this.configService.defaultAccountWalletdir
+            '-c', this.configService.defaultAccountWalletdir,
+            'owner_api'
+
           ];
         }else{
           args = [
             '-r', this.configService.config['check_node_api_http_addr'],
-            'owner_api',
-            '-c', this.configService.defaultAccountWalletdir
+            '-c', this.configService.defaultAccountWalletdir,
+            'owner_api'
+
           ];
         }
 
-
+        console.log('wallet start', this.configService.epicPath, args, this.configService.platform);
         walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
-
+        console.log('wallet start walletOpenId', walletOpenId);
         if(walletOpenId === 0 && this.token){
           this.walletIsOpen = true;
           return true;
         }
 
         let userTopDir = await this.jsonRPC('set_top_level_directory', {dir: this.configService.defaultAccountWalletdir}, false)
-
+        console.log('wallet start  userTopDir', userTopDir);
         if(userTopDir.result){
 
             let tokenResponse =  await this.jsonRPC('open_wallet', {"name": account, password: password}, false)
-
+            console.log('wallet start  tokenResponse', tokenResponse);
             if(tokenResponse.result){
               this.token = tokenResponse.result.Ok;
             }
@@ -344,9 +349,9 @@ class WalletService {
             '--floonet',
             '--pass', password,
             '-t', this.configService.defaultAccountWalletdir,
-            'listen',
             '-c', this.configService.defaultAccountWalletdir,
-            '--method', (method == 'http' ? 'http' : 'keybase'),
+            'listen',
+            '--method', (method == 'http' ? 'http' : 'keybase')
 
 
           ];
@@ -354,8 +359,8 @@ class WalletService {
           args = [
             '--pass', password,
             '-t', this.configService.defaultAccountWalletdir,
-            'listen',
             '-c', this.configService.defaultAccountWalletdir,
+            'listen',
             '--method', (method == 'http' ? 'http' : 'keybase')
 
           ];
@@ -388,14 +393,14 @@ class WalletService {
           args = [
             '--floonet',
             '--pass', password,
-            '-t', userhomedir,
+            '-c', userhomedir,
             'init'
           ];
 
         }else{
           args = [
             '--pass', password,
-            '-t', userhomedir,
+            '-c', userhomedir,
             'init'
           ];
         }

@@ -28,6 +28,7 @@ const messages = {
 
 const emitter = mitt();
 const app = createApp(App);
+
 const i18n = createI18n({
   locale: 'en',
   messages
@@ -42,7 +43,6 @@ app.config.globalProperties.$nodeService = new nodeService(emitter, config);
 app.config.globalProperties.configService = config;
 app.config.globalProperties.$dbService = dbService;
 app.config.globalProperties.mnemonicWords = words;
-app.config.globalProperties.langs = {'en':'English', 'ru':'Russian', 'zh': 'Chinese'}
 app.config.globalProperties.$filters = {
   datetimeFormat(date) {
     return moment(date).format('YYYY-MM-DD, hh:mm:ss')

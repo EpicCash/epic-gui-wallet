@@ -43,7 +43,7 @@ module.exports = {
           ]
         },
         "mac": {
-          "icon": "build/icons/icon.icns",
+          "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": "pkg",
           "extraFiles": [
             {
@@ -62,11 +62,25 @@ module.exports = {
                 "!test.js",
                 "!node.exe"
               ]
+            },
+            {
+              "from": "resources/default.app.json",
+              "to": "Resources/default.app.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/default.config.json",
+              "to": "Resources/default.config.json",
+              "filter": [
+                "**/*"
+              ]
             }
           ]
         },
         "win": {
-          "icon": "build/icons/icon.ico",
+          "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": "nsis",
           "extraFiles": [
             {
@@ -84,6 +98,20 @@ module.exports = {
                 "!native",
                 "!test.js"
               ]
+            },
+            {
+              "from": "resources/default.app.json",
+              "to": "Resources/default.app.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/default.config.json",
+              "to": "Resources/default.config.json",
+              "filter": [
+                "**/*"
+              ]
             }
           ]
         },
@@ -92,7 +120,7 @@ module.exports = {
           "allowToChangeInstallationDirectory": true
         },
         "linux": {
-          "icon": "build/icons",
+          "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": [
             "deb",
             "appImage"
@@ -101,6 +129,20 @@ module.exports = {
             {
               "from": "resources/bin/linux",
               "to": "resources/bin/linux",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/default.app.json",
+              "to": "resources/default.app.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/default.config.json",
+              "to": "resources/default.config.json",
               "filter": [
                 "**/*"
               ]

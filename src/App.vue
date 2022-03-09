@@ -9,7 +9,7 @@
     <div class="column is-half">
       <div v-if="ownerApiRunning" class="hero-head" style="padding: 1.5rem;">
         <figure  class="image ">
-          <img src="./assets/logo.png" style="width:36%;height:auto;">
+          <img src="./assets/epiccash_logo.png" style="width:36%;height:auto;">
         </figure>
       </div>
       <!-- p class="addressInfo">
@@ -72,7 +72,6 @@
             <ul class="menu-list">
               <li><a href="#" class="dropdown-item" @click="openCheck = true">{{ $t("msg.check.title") }}</a></li>
               <li><a href="#" class="dropdown-item" @click="openSeed = true">{{ $t("msg.seed.mnemonic") }}</a></li>
-              <li><a href="#" class="dropdown-item" @click="openLang = true">{{ $t("msg.lang.title") }}</a></li>
               <li><a href="#" class="dropdown-item" @click="openSettings = true">{{ $t("msg.settings.title") }}</a></li>
             </ul>
 
@@ -123,7 +122,6 @@
 
   <seed :showModal="openSeed"></seed>
   <check :showModal="openCheck"></check>
-  <lang :showModal="openLang"></lang>
   <checkService v-if="action === 'check'"></checkService>
   <create v-if="action === 'create'"></create>
   <restore v-if="action === 'restore'"></restore>
@@ -161,13 +159,11 @@ import Login from './components/Login.vue'
 
 import Check from './components/Check.vue'
 import Seed from './components/Seed.vue'
-import Lang from './components/Lang.vue'
 import Settings from './components/Settings.vue'
-import {locale} from './shared/config.js'
+
 
 import mixin from './mixin.js'
-
-
+import { useI18n } from 'vue-i18n/index'
 
 export default {
   name: 'App',
@@ -183,7 +179,6 @@ export default {
     Finalize,
     Check,
     Seed,
-    Lang,
     Settings,
     FontAwesomeIcon,
     CheckService,
@@ -203,7 +198,6 @@ export default {
         openHedwigV1: false,
         openCheck: false,
         openSeed: false,
-        openLang: false,
         openSettings: false,
         isDroppingDown: false,
         isDroppingDown2: false,
@@ -230,10 +224,17 @@ export default {
         transactionTab:true,
         commitTab:false
     }},
+    setup () {
+      const { locale } = useI18n()
+      return {
+        locale
+      }
+    },
     async mounted() {
 
         this.action = await this.configService.startCheck();
-        console.log('app action configService', this.action);
+        this.locale = this.configService.config.locale;
+
         if(this.action === 'settings'){
           console.log('open settings now');
           this.checkservice = false;
@@ -254,20 +255,13 @@ export default {
     },
     created () {
 
-      if(locale==='ru'){
-        this.isRu = true
-      }
-
       this.emitter.on('initMode', (action)=>{
         console.log(action);
         this.action = action;
       })
 
       this.emitter.on('selectLocale', (locale)=>{
-        if(locale==='ru')this.isRu = true
-        else{
-          this.isRu = false
-        }
+        this.locale = locale;
       })
       this.emitter.on('close', (window)=>{
         if(window == 'windowReceive'){
@@ -294,9 +288,6 @@ export default {
         if(window == 'windowSeed'){
           this.openSeed = false
         }
-        if(window == 'windowLang'){
-          this.openLang = false
-        }
         if(window == 'windowSettings'){
           this.openSettings = false
         }
@@ -309,7 +300,16 @@ export default {
           this.openSettings = true
         }
       });
+      this.emitter.on('restartNode', async ()=>{
 
+        let nodeRestarted = await this.$nodeService.reconnectNode();
+        this.emitter.emit('wallet_error_clean');
+        this.epicNode = this.configService.config['check_node_api_http_addr'];
+        this.getNode();
+
+
+
+      });
       this.emitter.on('restoredThenSettings', ()=>{
         log.info('wallet restored and now to login');
         this.action = 'settings';
@@ -425,7 +425,6 @@ export default {
       async getNode(){
         this.nodeOnline = await this.$nodeService.nodeOnline();
 
-
         if(this.nodeOnline.sync_info){
           this.current_height = this.nodeOnline.sync_info.current_height
           this.highest_height = this.nodeOnline.sync_info.highest_height
@@ -483,52 +482,4 @@ export default {
   }
 
 
-
-
-
-
 </script>
-
-<style lang="scss">
-
-.dotRed {
-  height: 14px;
-  width: 14px;
-  background-color: red;
-  border-radius: 50%;
-  display: inline-block;
-  vertical-align:middle;
-}
-.dotGreen {
-  height: 14px;
-  width: 14px;
-  background-color: green;
-  border-radius: 50%;
-  display: inline-block;
-  vertical-align:middle;
-}
-.dotYellow {
-  height: 14px;
-  width: 14px;
-  background-color: yellow;
-  border-radius: 50%;
-  display: inline-block;
-  vertical-align:middle;
-}
-.nodeInfo{
-  padding:10px;
-  font-weight:bold;
-  text-align:right;
-  padding-right:14px;
-  text-color:white;
-  color:white;
-  font-size:12px;
-  line-height:28px;
-}
-
-.walletListenInfo{
-  padding-left:10px;
-}
-
-
-</style>

@@ -6,7 +6,7 @@
 
           <div v-if="walletCreated" class="column is-8" >
               <div class="columns is-centered is-multiline">
-                  <img src="../assets/logo.png" style="width:30%;height:auto;">
+                  <img src="../assets/epiccash_logo.png" style="width:30%;height:auto;">
               </div>
               <p>&nbsp;</p>
               <h1 class="title">{{ $t('msg.create.seedPhrase') }}</h1>
@@ -26,7 +26,7 @@
           <div v-else class="column is-8" >
 
             <div class="columns is-centered is-multiline">
-                <img src="../assets/logo.png" style="width:30%;height:auto;">
+                <img src="../assets/epiccash_logo.png" style="width:30%;height:auto;">
             </div>
             <p>&nbsp;</p>
             <h2 class="title" >{{ $t("msg.create.toNewMsg") }}</h2>
@@ -147,7 +147,9 @@ export default {
             userhomedir: this.configService.userhomedir,
             network: this.network,
             isdefault: true
-          }) ){
+          }) )
+          {
+
           if(await this.configService.startCheck(this.account)){
             this.walletCreated = true
             this.seeds = created.msg.split(' ')
@@ -164,10 +166,6 @@ export default {
         this.errorInfo = created.msg;
       }
 
-    },
-    finish(){
-      this.clearup()
-      this.emitter.emit('walletCreateFinished')
     },
     resetErrors(){
       this.error = false;
