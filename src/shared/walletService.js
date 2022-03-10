@@ -147,7 +147,7 @@ class WalletService {
           //console.log('decrypt', dec, typeof dec);
           if(dec != ''){
             let response = JSON.parse(dec);
-            console.log('return decoded responce', response);
+            console.log('return decoded responce', method, response);
             return response;
           }
       }else{
@@ -162,7 +162,7 @@ class WalletService {
         if(response){
           return response;
         }else{
-          log('foreign response error', response);
+          console.log('return responce', method, response);
         }
 
       }
@@ -245,11 +245,21 @@ class WalletService {
     }
 
     async finalizeTransaction(slate){
-      return this.jsonRPC(
+      return await this.jsonRPC(
         'finalize_tx',
         {
           token: this.token,
-          slate:slate
+          slate: slate
+        }, false);
+    }
+
+    async postTransaction(tx){
+      return await this.jsonRPC(
+        'post_tx',
+        {
+          token: this.token,
+          tx: tx,
+          fluff: true
         }, false);
     }
 

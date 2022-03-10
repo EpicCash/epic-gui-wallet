@@ -93,8 +93,7 @@
       <p v-if="searched && current_txs.length == 0"> {{ $t("msg.txs.noTxFound") }}</p>
       <p v-if="current_txs.length == 0 && !searched"> {{ $t("msg.txs.noTx") }}</p>
 
-  <message :showMsg="openMsg" v-on:close="openMsg = false"
-    v-bind:msg=msg v-bind:showTime="5" msgType="link">
+  <message :showMsg="openMsg" v-on:close="openMsg = false" v-bind:msg=msg v-bind:showTime="5" msgType="link">
   </message>
 
 </template>
@@ -235,10 +234,12 @@
 
       async cancel(tx_slate_id){
         let res = await this.$walletService.cancelTransactions(null, tx_slate_id);
-        if(res && res.result.Ok == null){
+        if(res && res.result && res.result.Ok == null){
           this.emitter.emit('update')
           this.openMsg = true
-        }else if(res && res.result.error){
+        }else if(res && res.error){
+          this.msg = res.error.message;
+          this.openMsg = true;
           log.error(`res.result.error:${res.result.error};`)
         }
       },

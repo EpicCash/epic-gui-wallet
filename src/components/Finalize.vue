@@ -93,46 +93,35 @@ export default {
 
         this.isSending = true
         let send = async function(){
-          try{
-            let res = await this.$walletService.finalizeTransaction(JSON.parse(content))
-            console.log(res)
-            tx_id = res.data.result.Ok.id
-            let tx = res.data.result.Ok.tx
-            let res2 = await this.$walletService.postTransaction(tx, true)
-            this.isSent = true
-            this.$dbService.addPostedUnconfirmedTx(tx_id)
-            log.debug(`finalize tx ${tx_id} ok; return:${res.data}`)
-            log.debug(`post tx ok; return:${res2.data}`)
-          }catch(error){
-            log.error('finalize or post error:' + error)
-            if (error.response) {
-              let resp = error.response
-              log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
+
+          let res = await this.$walletService.finalizeTransaction(JSON.parse(content));
+          console.log('finalize', res);
+          if(res && res.result && res.result.Ok){
+            //TODO: implement fluff true/false (Dandelion)
+            let tx = res.result.Ok.tx;
+            let res2 = await this.$walletService.postTransaction(tx);
+            if(res2 && res2.result && res2.result.Ok == null ){
+              this.isSent = true
+              tx_id = res.result.Ok;
+
+              this.$dbService.addPostedUnconfirmedTx(tx_id)
+            }else{
+              this.errors.push(res2.error.message);
             }
-            this.errors.push(this.$t('msg.finalize.TxFailed'))
-          }finally{
-            this.isSending = false
-            this.emitter.emit('update')
+
+
+
+
+          }else{
+            this.errors.push(res.error.message);
           }
+
+
+          this.isSending = false;
+          this.emitter.emit('update')
         }
         send.call(this)
-        //let finalize = async function(){
-        //  try{
-        //    let res = await this.$walletService.finalize(fn.path)
-        //    this.isSent = true
-        //    if(tx_id)this.$dbService.addPostedUnconfirmedTx(tx_id)
-        //    log.debug(`finalize tx ${tx_id} ok; return:${res}`)
-        //  }catch(error){
-        //    log.error('finalize or post error:' + error)
-        //    this.errors.push(this.$t('msg.finalize.TxFailed'))
-        //  }finally{
-        //    this.isSending = false
-        //    this.emitter.emit('update')
-        //  }
-        //}
-        //finalize.call(this)
-      //}else{
-        //this.errors.push(this.$t('msg.finalize.WrongFileType'))
+
       }
     },
     clearup(){
