@@ -112,8 +112,14 @@ class ConfigService {
         }*/
 
         if(tomlContent.search(re2) != -1){
-            console.log('change wallet default path to ', this.userhomedir)
-            tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir + '"')
+            console.log('change wallet default path to ', this.userhomedir);
+            if(this.platform == 'win'){
+              //double escaped path
+              tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir.replace(/\\/g, '\\\\') + '"');
+            }else{
+              tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir + '"');
+            }
+
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
