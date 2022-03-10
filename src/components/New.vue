@@ -18,11 +18,11 @@
               <div class="box">
                 <div class="field is-grouped">
                   <div class="control">
-                    <a class="button is-link is-inverted is-outlined" @click="create">{{ $t("msg.new.create") }}</a>
+                    <a class="button is-link is-outlined" @click="create">{{ $t("msg.new.create") }}</a>
                   </div>
 
                   <div class="control">
-                    <a class="button is-link is-inverted is-outlined" @click="restore">{{ $t("msg.new.restore") }}</a>
+                    <a class="button is-link is-outlined" @click="restore">{{ $t("msg.new.restore") }}</a>
                   </div>
 
                 </div>

@@ -42,9 +42,9 @@
 
 
                 <div class="buttons is-centered">
-                  <button class="button is-link is-inverted is-outlined" @click="delete_">{{ $t('msg.restore.delete') }}</button>
-                  <button class="button is-link is-inverted is-outlined" @click="reset">{{ $t("msg.reset") }}</button>
-                  <button class="button is-link is-inverted is-outlined" @click="addall">{{ $t("msg.addall") }}</button>
+                  <button class="button is-link is-outlined" @click="delete_">{{ $t('msg.restore.delete') }}</button>
+                  <button class="button is-link is-outlined" @click="reset">{{ $t("msg.reset") }}</button>
+                  <button class="button is-link is-outlined" @click="addall">{{ $t("msg.addall") }}</button>
                   <button class="button is-text" @click="back">{{ $t("msg.back") }}</button>
                 </div>
 
@@ -53,7 +53,7 @@
               <div class="tags">
                 <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}</span>
               </div>
-              <a class="button is-link is-inverted is-outlined" v-show="enoughSeeds" @click="page='addPassword'">
+              <a class="button is-link is-outlined" v-show="enoughSeeds" @click="page='addPassword'">
                 {{ $t('msg.restore.added') }}
               </a>
             </div>
@@ -113,7 +113,7 @@
                 style="animation-iteration-count:2;margin-bottom:40px">
                 {{ $t('msg.restore.restored') }}
             </p>
-            <a class="button is-link is-inverted is-outlined" @click="toLogin">{{ $t('msg.restore.login') }}</a>
+            <a class="button is-link is-outlined" @click="toLogin">{{ $t('msg.restore.login') }}</a>
           </div>
 
 

@@ -19,7 +19,7 @@
               <div class="tags are-medium">
                 <span class="tag" v-for="seed in seeds" :key="seed">{{seed}}</span>
               </div>
-              <a class="button is-link is-inverted is-outlined" @click="toLogin">{{ $t('msg.create.backupFinish') }}</a>
+              <a class="button is-link is-outlined" @click="toLogin">{{ $t('msg.create.backupFinish') }}</a>
 
           </div>
 
