@@ -7,7 +7,7 @@ require('promise.prototype.finally').shim();
 
 const log = window.log;
 const jsonRPCUrl = 'http://127.0.0.1:3420/v3/owner'
-const jsonRPCForeignUrl = 'http://localhost:3420/v3/foreign'
+const jsonRPCForeignUrl = 'http://127.0.0.1:3420/v2/foreign'
 
 
 function addQuotations(s){
@@ -103,7 +103,7 @@ class WalletService {
             params: params,
         }
 
-        const url = jsonRPCUrl;//isForeign ? jsonRPCForeignUrl :
+        const url = isForeign ? jsonRPCForeignUrl : jsonRPCUrl
 
 
         if(this.client == undefined){
@@ -115,41 +115,59 @@ class WalletService {
 
         }
 
-        //console.log('jsonRPC body', body);
-        const aesCipher = window.nodeAes256gcm(this.shared_key);
-        const nonce = new Buffer.from(crypto.randomBytes(12));
-        let enc = aesCipher.encrypt(JSON.stringify(body), nonce);
+        //do not enrypt receive_tx
+        if(!isForeign){
+          //console.log('jsonRPC body', body);
+          const aesCipher = window.nodeAes256gcm(this.shared_key);
+          const nonce = new Buffer.from(crypto.randomBytes(12));
+          let enc = aesCipher.encrypt(JSON.stringify(body), nonce);
 
-        let encParams = {
-          'nonce': nonce.toString('hex'),
-          'body_enc': enc,
-        }
-        const encBody = {
-          jsonrpc: "2.0",
-          id: + new Date(),
-          method: 'encrypted_request_v3',
-          params: encParams,
-        }
+          let encParams = {
+            'nonce': nonce.toString('hex'),
+            'body_enc': enc,
+          }
+          const encBody = {
+            jsonrpc: "2.0",
+            id: + new Date(),
+            method: 'encrypted_request_v3',
+            params: encParams,
+          }
 
 
-        let response = await this.client.post(url, encBody, headers,{withCredentials:true})
+          let response = await this.client.post(url, encBody, headers,{withCredentials:true})
+          .catch(error => {
+                console.log('error', error);
+                return false;
+          });
+
+          const nonce2 = Buffer.from(response.data.result.Ok.nonce, 'hex');
+          const data = Buffer.from(response.data.result.Ok.body_enc, 'base64');
+
+          let dec = aesCipher.decrypt(data, nonce2)
+          //console.log('decrypt', dec, typeof dec);
+          if(dec != ''){
+            let response = JSON.parse(dec);
+            console.log('return decoded responce', response);
+            return response;
+          }
+      }else{
+
+        let response = await this.client.post(url, body, headers, {withCredentials:true})
         .catch(error => {
               console.log('error', error);
               return false;
         });
 
-        const nonce2 = Buffer.from(response.data.result.Ok.nonce, 'hex');
-        const data = Buffer.from(response.data.result.Ok.body_enc, 'base64');
 
-        let dec = aesCipher.decrypt(data, nonce2)
-        //console.log('decrypt', dec, typeof dec);
-        if(dec != ''){
-          let response = JSON.parse(dec);
-          console.log('return decoded responce', response);
+        if(response){
           return response;
+        }else{
+          log('foreign response error', response);
         }
 
-        return false;
+      }
+
+      return false;
 
     }
 
@@ -158,7 +176,7 @@ class WalletService {
           'node_height',
           {
             token: this.token
-          }, false)
+          }, false);
     }
 
     async getSummaryInfo(minimum_confirmations){
@@ -178,7 +196,7 @@ class WalletService {
             refresh_from_node: toRefresh,
             tx_id: tx_id,
             tx_slate_id: tx_salte_id
-          }, false)
+          }, false);
     }
 
     async getCommits(include_spent, toRefresh, tx_id){
@@ -189,7 +207,7 @@ class WalletService {
             include_spent: include_spent,
             refresh_from_node: toRefresh,
             tx_id: tx_id
-          }, false)
+          }, false);
     }
 
     async cancelTransactions(tx_id, tx_salte_id){
@@ -199,8 +217,7 @@ class WalletService {
             token: this.token,
             tx_id: tx_id,
             tx_slate_id: tx_salte_id
-          }
-      )
+          }, false);
     }
 
     async receiveTransaction(slate, account, message){
@@ -213,7 +230,7 @@ class WalletService {
         {
           token: this.token,
           args: tx_data
-        })
+        }, false);
     }
 
     async lock_outputs(params){
@@ -224,12 +241,16 @@ class WalletService {
           token: this.token,
           slate: params,
           participant_id: 0
-        }
-      )
+        }, false);
     }
 
     async finalizeTransaction(slate){
-      return this.jsonRPC('finalize_tx',  [slate])
+      return this.jsonRPC(
+        'finalize_tx',
+        {
+          token: this.token,
+          slate:slate
+        }, false);
     }
 
     async getPubliProofAddress(){
@@ -238,9 +259,7 @@ class WalletService {
         {
           "token": this.token,
           "derivation_index": 0
-        }
-
-      )
+        }, false);
     }
 
     async getProofAddressFromOnionV3(address_v3){
@@ -248,9 +267,7 @@ class WalletService {
         'proof_address_from_onion_v3',
         {
           "address_v3": address_v3
-        }
-
-      )
+        }, false);
     }
 
     async getMnemonic(password){
@@ -260,9 +277,7 @@ class WalletService {
         {
           "name": this.account,
           "password": password
-        }
-
-      )
+        }, false);
     }
 
 

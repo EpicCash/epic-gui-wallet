@@ -100,16 +100,15 @@ class ConfigService {
         this.emitter.emit('checkSuccess', 'wallet toml "' + tomlFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');
 
 
-        //rewrite some toml properties to work with owner_api lifecycle
-        //  const re = /owner_api_include_foreign(\s)*=(\s)*false/
+        //rewrite some toml properties to work with owner_api lifecycle and foreign receive
+        const re = /owner_api_include_foreign(\s)*=(\s)*false/
         const re2 = /data_file_dir(\s)*=(\s).*/
 
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
-        //console.log('tomlContent', tomlContent);
-        /*if(tomlContent.search(re) != -1){
+        if(tomlContent.search(re) != -1){
             console.log('Enable ForeignApi to true')
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
-        }*/
+        }
 
         if(tomlContent.search(re2) != -1){
             console.log('change wallet default path to ', this.userhomedir);
