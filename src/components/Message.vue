@@ -1,7 +1,7 @@
 <template>
   <div class="modal" :class="{'is-active': showMsg}">
     <div class="modal-background"></div>
-    <div class="modal-content" style="width:400px">
+    <div class="modal-content">
      <article class="message" v-bind:class="msgClass" >
       <div class="message-header">
         <p>{{ $t("msg.msg") }}</p>

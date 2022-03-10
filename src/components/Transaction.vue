@@ -35,10 +35,11 @@
         </thead>
         <tbody>
 
-          <tr v-for="tx in current_txs" :key="tx.id" >
+          <tr v-for="tx in current_txs" :key="tx.id" @click="detail(tx)"  >
             <td >
-              <img v-if="tx.type=='receive'" src="../assets/imgs/arrow-alt-circle-right.svg" style="width:18px;vertical-align:middle;"/>
-              <img v-if="tx.type=='send'" src="../assets/imgs/arrow-alt-circle-left.svg" style="width:18px;vertical-align:middle;"/>
+
+              <font-awesome-icon v-if="tx.type=='send'" :icon="['fas', 'circle-arrow-left']"/>
+              <font-awesome-icon v-if="tx.type=='receive'" :icon="['fas', 'circle-arrow-right']"/>
 
             </td>
             <td>{{  $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</td>
@@ -93,15 +94,20 @@
       <p v-if="searched && current_txs.length == 0"> {{ $t("msg.txs.noTxFound") }}</p>
       <p v-if="current_txs.length == 0 && !searched"> {{ $t("msg.txs.noTx") }}</p>
 
-  <message :showMsg="openMsg" v-on:close="openMsg = false" v-bind:msg=msg v-bind:showTime="5" msgType="link">
-  </message>
+  <message :showMsg="openMsg" v-on:close="openMsg = false" v-bind:msg=msg v-bind:showTime="5" msgType="link"></message>
+  <transaction-detail :showMsg="openDetail" v-on:close="openDetail = false" v-bind:tx=txDetail v-bind:showTime="0" msgType="link"></transaction-detail>
 
 </template>
 
 <script>
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faCircleArrowLeft, faCircleArrowRight  } from '@fortawesome/free-solid-svg-icons'
+  library.add(faCircleArrowLeft, faCircleArrowRight)
 
   const log = window.log;
   import Message from '@/components/Message'
+  import TransactionDetail from '@/components/TransactionDetail'
   export default {
     name: 'transaction',
     props:{
@@ -109,7 +115,9 @@
     },
 
     components: {
-      Message
+      Message,
+      TransactionDetail,
+      FontAwesomeIcon,
     },
 
 
@@ -123,6 +131,8 @@
         keyword: "",
         searched: false,
         openMsg: false,
+        openDetail: false,
+        txDetail: {},
         msg: this.$t("msg.txs.cancelSuccess")
       }
     },
@@ -133,7 +143,11 @@
       this.emitter.on('update', ()=>this.getTxs())
     },
     methods: {
-
+      detail(tx){
+        console.log(JSON.stringify(tx));
+        this.txDetail = tx;
+        this.openDetail = true;
+      },
       getTxs() {
         this.$walletService.getTransactions(true, null, null)
           .then((res) => {
@@ -247,4 +261,9 @@
   }
 </script>
 <style>
+
+tr:hover{
+pointer:cursor;
+}
+
 </style>

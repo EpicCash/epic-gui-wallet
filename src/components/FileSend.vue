@@ -33,9 +33,6 @@
         </div>
       </div>
 
-
-
-       <br/>
       <div class="field is-grouped">
         <div class="control">
           <button class="button is-link" @click="send">{{ $t("msg.fileSend.createTxFile") }}</button>

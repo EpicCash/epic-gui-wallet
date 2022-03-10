@@ -25,8 +25,13 @@
             <input class="input" type="text" v-model="amount" placeholder="1">
           </div>
         </div>
+        <div class="field">
+          <label class="label">Message</label>
+          <div class="control">
+            <input class="input" type="text" v-model="message" >
+          </div>
+        </div>
 
-        <br/>
         <div class="field is-grouped">
           <div class="control">
             <button class="button is-link" v-bind:class="{'is-loading':sending}" @click="send">{{ $t("msg.send") }}</button>
@@ -60,6 +65,7 @@ export default {
       errors: [],
       amount: null,
       address: '',
+      message: '',
       slateVersion: 0,
       sending: false,
       sent: false
@@ -135,7 +141,7 @@ export default {
 
           "src_acct_name": null,
           "amount": this.amount * 100000000,
-          "message": "",
+          "message": this.message,
           "minimum_confirmations": 10,
           "max_outputs": 500,
           "num_change_outputs": 1,
@@ -148,29 +154,23 @@ export default {
             "dest": this.address,
             "finalize": true,
             "post_tx": true,
-            "fluff": false
+            "fluff": true
           }
 
         }
 
-
-
         let res = await this.$walletService.issueSendTransaction(tx_data)
-        if(res && res.data.result){
+        if(res && res.result && res.result.Ok){
 
-
-          if(res.data.result.Ok){
-            let tx_id = res.data.result.Ok.id
+            let tx_id = res.result.Ok.id
             log.debug(`issue tx ${tx_id} ok; return:${res.data}`)
             this.sent = true
             this.$dbService.addPostedUnconfirmedTx(tx_id)
             this.sending = false
             this.emitter.emit('update')
-          }
-
 
         }else{
-          if(res && res.data.error){
+          if(res && res.error){
             this.errors.push(this.$t('msg.httpSend.TxFailed'))
           }
           log.error('http send error:', res)
