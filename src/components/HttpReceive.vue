@@ -205,6 +205,7 @@ export default {
         }
 
       }
+      this.password = '';
 
 
     },
@@ -232,6 +233,7 @@ export default {
       this.starting = false;
       this.stopping = false;
       this.started = false;
+
     },
 
   }

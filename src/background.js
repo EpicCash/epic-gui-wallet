@@ -1,14 +1,17 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog, Menu } from 'electron'
 import { exec } from 'child_process'
+
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 const ps = require('ps-node');
+const findProcess = require('find-process');
 let win;
-let pids = {};
+
 
 //[13088:0215/073859.040:ERROR:gpu_init.cc(454)] Passthrough is not supported, GL is disabled, ANGLE is
 app.disableHardwareAcceleration();
@@ -36,7 +39,32 @@ async function createWindow() {
       webSecurity: false
     }
   })
+  win.on('before-close',  function(e){
+    if (modificationEnCours){
+      e.preventDefault()
 
+      if(msgBoxVerifieSauvegarde('Question','Voulez-vous enregistrer avant de quitter ?')) {
+        modificationEnCours=false
+        app.quit()
+      }
+    } else if (process.platform !== 'darwin') {
+      modificationEnCours=false
+      app.quit()
+      mainWindow = null
+    }
+  /*  let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+    console.log(plist);
+
+    for(process in plist){
+      if (process.platform === 'win32') {
+        exec(`taskkill /pid ${plist[process].pid} /f /t`);
+      }else{
+        ps.kill(plist[process].pid);
+      }
+    };
+    e.preventDefault();
+    */
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -47,16 +75,58 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+  if (!isDevelopment) {
+    var menu = Menu.buildFromTemplate([
+        {
+            label: 'Menu',
+            submenu: [
+                //{label:'Adjust Notification Value'},
+                //{label:'CoinMarketCap'},
+                {
+                    label:'Exit',
+                    async click() {
+                        let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+
+                         for(var pItem in plist){
+                           if (process.platform === 'win32') {
+
+                               try{
+                                 exec(`taskkill /pid ${plist[pItem].pid} /f /t`);
+                               }catch(e){
+                                 console.log('taskkill failed', e);
+                               }
+                           }else{
+                             try{
+                                ps.kill(plist[pItem].pid);
+                              }catch(e){
+                                console.log('taskkill failed', e);
+                              }
+                           }
+                         };
+                         app.quit()
+                    }
+                }
+            ]
+        }
+    ])
+    Menu.setApplicationMenu(menu);
+  }
 }
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
+
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
   }
-})
+
+});
+
+
 
 
 app.on('activate', () => {
@@ -81,22 +151,6 @@ app.on('ready', async () => {
 })
 
 
-
-app.on('before-quit', (event) => {
-
-  //TODO:: works only on linux mac ? !
-  Object.keys(pids).forEach(pid => {
-    // A simple pid lookup
-    if (process.platform === 'win') {
-      exec(`taskkill /pid ${pids[pid]} /f /t`);
-    }else{
-      ps.kill(pids[pid]);
-    }
-
-  });
-
-})
-
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
@@ -107,6 +161,7 @@ if (isDevelopment) {
     })
   } else {
     process.on('SIGTERM', () => {
+
       app.quit()
     })
   }
@@ -133,15 +188,6 @@ ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) =>
 
 ipcMain.handle('quit', () => {
   app.quit()
-});
-
-ipcMain.on('pid-add', function(event, arg) {
-  pids[String(arg)] = arg;
-  console.log('pid-add:', arg, pids);
-});
-ipcMain.on('pid-remove', function(event, arg) {
-  delete pids[String(arg)];
-  console.log('pid-remove:', arg, pids);
 });
 
 ipcMain.on('scan-stdout', (event, data) => {

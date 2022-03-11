@@ -1,6 +1,7 @@
 /* check required files and folder on on app start */
 const defaultUserdir = 'does not exist';//window.config.getUserHomedir();
 const path = window.nodePath;
+const nodeChildProcess = window.nodeChildProcess;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sleepTime = 50;
 
@@ -52,12 +53,21 @@ class ConfigService {
   }
   accountExist(account){
     let accountExist = false;
+    let foundAccount = [];
     this.appConfig['account_dirs'].forEach(function(existingAccount){
         if(existingAccount['account'] == account ){
           accountExist = true;
+          foundAccount = existingAccount;
           return;
         }
     });
+    console.log('set new wallet dir on login', foundAccount);
+    if(foundAccount && foundAccount['userhomedir']){
+
+      this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'), foundAccount['account']);
+
+    }
+    console.log('set new wallet dir on login',   this.defaultAccountWalletdir);
     return accountExist;
 
   }
@@ -101,15 +111,14 @@ class ConfigService {
 
 
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
-        const re = /owner_api_include_foreign(\s)*=(\s)*false/
-        const re2 = /data_file_dir(\s)*=(\s).*/
-
+        const re = /owner_api_include_foreign(\s)*=(\s)*false/;
+        const re2 = /data_file_dir(\s)*=(\s).*/;
+        const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
         if(tomlContent.search(re) != -1){
             console.log('Enable ForeignApi to true')
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
         }
-
         if(tomlContent.search(re2) != -1){
             console.log('change wallet default path to ', this.userhomedir);
             if(this.platform == 'win'){
@@ -118,7 +127,10 @@ class ConfigService {
             }else{
               tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir + '"');
             }
-
+        }
+        if(tomlContent.search(re3) != -1){
+            console.log('change where wallet should find a running node', this.config.check_node_api_http_addr)
+            tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr  = "' + this.config.check_node_api_http_addr + '"');
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -164,55 +176,64 @@ class ConfigService {
       return this.saveAppConfig();
   }
 
-  async startCheck(account){
+  async killWalletProcess(){
 
+    let plist = await window.nodeFindProcess('name',/.*?epic-wallet.*(owner_api|listen)/);
+    plist.forEach(async function(process){
+      let killed = await nodeChildProcess.kill(process.pid);
+      console.log('startCheck killed process', killed, process);
+    })
+
+  }
+
+  
+
+  async startCheck(account, skip, selecteHomedir){
       let userHomedir = defaultUserdir;
       let defaultAccountWalletdir = '';
+      let initWallet = false;
+      if(!skip){
 
-      //this fails if user create a wallet without default name
-      if(account){
+        await this.killWalletProcess();
+        //this fails if user create a wallet without default name
+        if(account){
+            this.appConfig['account_dirs'].forEach(function(existingAccount){
+                if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
+                  userHomedir = existingAccount['userhomedir'];
+                  defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account'])
+                }
+            });
+
+        }else{
           this.appConfig['account_dirs'].forEach(function(existingAccount){
-              if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
+              if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
                 userHomedir = existingAccount['userhomedir'];
                 defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account'])
               }
           });
+        }
 
+
+        await delay(sleepTime);
+
+
+        //check if user home dir exist.
+        //if home dir is not found then user have to select one
+        if (window.nodeFs.existsSync(userHomedir)) {
+            this.emitter.emit('checkSuccess', 'user wallet dir exist');
+        } else {
+            initWallet = true;
+            this.emitter.emit('checkFail', 'user wallet dir does not exist');
+            this.emitter.emit('selectUserhomedir');
+            return 'check';
+
+        }
+        this.userhomedir = userHomedir;
       }else{
-        this.appConfig['account_dirs'].forEach(function(existingAccount){
-            if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
-              userHomedir = existingAccount['userhomedir'];
-              defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account'])
-            }
-        });
+        this.userhomedir = selecteHomedir;
       }
 
-      let initWallet = false;
-      await delay(sleepTime);
 
-
-      //check if user home dir exist.
-      //if home dir is not found then user have to select one
-      if (window.nodeFs.existsSync(userHomedir)) {
-          this.emitter.emit('checkSuccess', 'user homedir exist');
-      } else {
-          initWallet = true;
-          this.emitter.emit('checkFail', 'user homedir does not exist');
-          let customHomedir = await window.api.showOpenDialog();
-          if(customHomedir.canceled == false){
-
-            userHomedir = customHomedir.filePaths[0];
-            if(userHomedir){
-              this.emitter.emit('checkSuccess', 'user homedir selected');
-            }
-
-          }else{
-            this.emitter.emit('checkFail', 'please select a folder for your wallet data');
-            return false;
-          }
-
-      }
-      this.userhomedir = userHomedir;
       this.defaultAccountWalletdir = defaultAccountWalletdir;
 
       console.log('defaultAccountWalletdir', this.defaultAccountWalletdir);
@@ -260,6 +281,7 @@ class ConfigService {
       }else{
         initWallet = true;
       }
+
       //if we dont have any epic wallet data prompt user for init or recover a wallet
       if(initWallet && !account){
           this.emitter.emit('checkSuccess', 'create new or recover wallet');

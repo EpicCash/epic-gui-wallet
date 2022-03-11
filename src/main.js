@@ -1,6 +1,4 @@
 
-
-
 import { createApp } from 'vue'
 import { createI18n } from 'vue-i18n/index'
 import walletService from './shared/walletService.js';
@@ -11,14 +9,12 @@ import dbService from './db.js';
 import App from './App.vue'
 import mitt from 'mitt';
 import moment from 'moment'
-
-//import './assets/css/animate.css';
-//import './assets/css/bulma.min.css'
 import './assets/css/main-styles.scss';
 import './assets/css/animate.css';
 import en from './lang/en';
 import zh from './lang/zh';
 import ru from './lang/ru';
+
 
 const messages = {
   en,
@@ -28,7 +24,6 @@ const messages = {
 
 const emitter = mitt();
 const app = createApp(App);
-
 const i18n = createI18n({
   locale: 'en',
   messages
@@ -37,7 +32,6 @@ const i18n = createI18n({
 app.use(i18n);
 
 let config = new configService(emitter);
-
 app.config.globalProperties.$walletService = new walletService(emitter, config);
 app.config.globalProperties.$nodeService = new nodeService(emitter, config);
 app.config.globalProperties.configService = config;

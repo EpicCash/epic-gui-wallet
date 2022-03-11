@@ -13,8 +13,8 @@
             </div>
             <p>&nbsp;</p>
 
-            <h2 class="title">{{ $t('msg.welcome') }}</h2>
-
+            <h1 class="title has-text-centered">{{ $t('msg.welcome') }}</h1>
+              
               <div class="box">
                 <div class="field is-grouped">
                   <div class="control">

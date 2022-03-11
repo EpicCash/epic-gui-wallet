@@ -25,7 +25,6 @@ const resourcePath =
     ? process.resourcesPath // Live Mode
     : path.join(__dirname, '../resources/'); // Dev Mode
 
-console.log(resourcePath);
 
 let logFile = `${moment(new Date()).format('YYYY_MM_D')}.log`
 let logPath = join(logDir, logFile);
@@ -47,17 +46,16 @@ const execFile = require('child_process').execFile;
 const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
-    async kill(pid, platform){
-
+    async kill(pid){
       return new Promise(function(resolve, reject) {
         let iskilled;
-        if (platform === 'win') {
+        if (process.platform === 'win32') {
             exec(`taskkill /pid ${pid} /f /t`, function( err ) {
                if (err) {
                  resolve(false);
                }
                else {
-                 ipcRenderer.send('pid-remove', pid);
+
                  resolve(true);
                }
            });
@@ -68,12 +66,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
                 resolve(false);
               }
               else {
-                ipcRenderer.send('pid-remove', pid);
+
                 resolve(true);
               }
           });
         }
-
       });
     },
     async spawn(cmd, args){
@@ -195,7 +192,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
             console.log(data);
 
             if(data.includes('HTTP Owner listener started')){
-              ipcRenderer.send('pid-add', ownerAPI.pid);
+
               resolve(ownerAPI.pid);
             }
 
@@ -225,7 +222,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           listenProcess.stdout.on('data', (data) => {
               console.log(data);
               if(data.includes('HTTP Foreign listener started.')){
-                ipcRenderer.send('pid-add', listenProcess.pid);
+
                 resolve({success: true, msg: listenProcess.pid});
               }
 
@@ -341,6 +338,7 @@ const aes256gcm = (shared_secret) => {
   };
 };
 
+contextBridge.exposeInMainWorld('nodeFindProcess', require('find-process'));
 contextBridge.exposeInMainWorld('nodeCrypto', require('crypto'));
 contextBridge.exposeInMainWorld('nodeSecp256k1', secp256k1);
 contextBridge.exposeInMainWorld('nodeAes256gcm', aes256gcm);

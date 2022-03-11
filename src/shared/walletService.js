@@ -9,7 +9,6 @@ const log = window.log;
 const jsonRPCUrl = 'http://127.0.0.1:3420/v3/owner'
 const jsonRPCForeignUrl = 'http://127.0.0.1:3420/v2/foreign'
 
-
 function addQuotations(s){
     return '"' + s +'"'
 }
@@ -29,6 +28,12 @@ class WalletService {
         this.account;
     }
 
+    logoutClient(){
+      this.client = undefined;
+      this.shared_key = undefined;
+      this.walletIsOpen = false;
+      this.walletIsListen = false;
+    }
     async initSecure(url) {
 
       let emitter = this.emitter;
@@ -293,6 +298,8 @@ class WalletService {
 
     /* start a epic wallet in owner_api mode */
     async start(password, account){
+
+        
         this.account = account ? account : 'default';
         let args = [];
 
@@ -341,6 +348,9 @@ class WalletService {
             console.log('wallet start  tokenResponse', tokenResponse);
             if(tokenResponse.result){
               this.token = tokenResponse.result.Ok;
+            }else if(tokenResponse.error){
+              console.log(tokenResponse.error.mesage);
+              return false;
             }
 
             if(walletOpenId > 0 && this.token){
@@ -434,28 +444,6 @@ class WalletService {
 
     }
 
-
-    /* remove ????*/
-    /*send(amount, method, dest, version){
-        let dest_ = '"' + window.nodePath.resolve(dest) + '"'
-        const cmd = `${this.configService.epicPath} -r ${epicNode} -p ${addQuotations(password_)} send -m ${method} -d ${dest_} -v ${version} ${amount}`
-        //log.debug(cmd)
-        return execPromise(cmd)
-    }
-
-    finalize(fn){
-        let fn_ = '"' + window.nodePath.resolve(fn) + '"'
-        const cmd = `${this.configService.epicPath} -r ${epicNode} -p ${addQuotations(password_)} finalize -i ${fn_}`
-        //log.debug(cmd)
-        return execPromise(cmd)
-    }
-
-    finalizeSlate(slate){
-        let fn = window.nodePath.join(tempTxDir, String(Math.random()).slice(2) + '.temp.tx.resp')
-        window.nodeFs.writeFileSync(fn, JSON.stringify(slate))
-        return this.finalize(fn)
-    }*/
-
     async recover(seeds, password, network, userhomedir){
 
         let args = [];
@@ -476,10 +464,7 @@ class WalletService {
           ];
         }
 
-
         return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds);
-
-
     }
 
     async check(password, delete_unconfirmed){

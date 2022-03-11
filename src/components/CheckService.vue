@@ -4,7 +4,9 @@
     <div class="container" style="height:100vh" >
       <div class="columns is-centered ">
         <div class="column is-half " >
+          <h1 v-if="selectHomedir" class="title has-text-centered">Checking environment</h1>
           <div class="box" >
+
               <ul id="check-list">
                 <li v-for="msg in msgs" :key="msg.message">
                     <font-awesome-icon :icon="['fas', 'circle-check']"  v-if="msg.success"/>
@@ -12,6 +14,11 @@
                    {{ msg.message }}
                 </li>
               </ul>
+              <div class="field has-addons" v-if="selectHomedir">
+                <div class="control">
+                  <button class="button" @click="showDialog" >Please select your wallet folder</button>
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -41,7 +48,8 @@
     },
     data() {
       return {
-        msgs: []
+        msgs: [],
+        selectHomedir: false,
 
       }
     },
@@ -58,11 +66,32 @@
         this.msgs.push( {message: msg, success:false} );
       });
 
-      this.emitter.on('selectUserhomedir', () => {
-
+      this.emitter.on('selectUserhomedir', async() => {
+        this.selectHomedir = true;
       });
 
 
+
+
+    },
+    methods: {
+      async showDialog(){
+          let customHomedir = await window.api.showOpenDialog();
+          if(customHomedir.canceled == false){
+
+            let userHomedir = customHomedir.filePaths[0];
+            if(userHomedir){
+              this.selectHomedir = false;
+              this.emitter.emit('checkSuccess', 'user homedir selected');
+              let action = await this.configService.startCheck(false, true, userHomedir);
+              this.emitter.emit('initMode', action);
+            }
+
+          }else{
+            this.emitter.emit('checkFail', 'please select a folder for your wallet data');
+            return false;
+          }
+      }
 
     }
   }

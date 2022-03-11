@@ -249,7 +249,6 @@ export default {
           this.getNode();
           log.debug(`Render main window mounted:height ${this.height}; owner_api running? ${this.ownerApiRunning}; wallet exists? `)
 
-
         }
 
     },
@@ -310,8 +309,14 @@ export default {
 
 
       });
-      this.emitter.on('restoredThenSettings', ()=>{
+      this.emitter.on('restoredThenSettings', async ()=>{
         log.info('wallet restored and now to login');
+
+        this.$walletService.logoutClient();
+        await this.configService.killWalletProcess();
+        await this.$nodeService.reconnectNode();
+
+        this.ownerApiRunning = false;
         this.action = 'settings';
         this.openSettings = true;
         this.checkservice = false;
@@ -319,6 +324,10 @@ export default {
 
       this.emitter.on('restoredThenLogin', ()=>{
         log.info('wallet restored and now to login');
+
+
+
+
         this.action = 'login';
         this.openSettings = false;
         this.checkservice = false;
@@ -465,14 +474,20 @@ export default {
           })
           return false;
       },
-      logout(){
-        log.debug('logout')
-        window.api.quit();
+      async logout(){
+        log.debug('logout');
+        this.$walletService.logoutClient();
+        await this.configService.killWalletProcess();
+        await this.$nodeService.reconnectNode();
+        this.action = 'login';
+        this.ownerApiRunning = false;
+
+
+
+
       },
       autoRefresh(interval){
         setInterval(()=>{
-
-
           if(this.ownerApiRunning){
             this.emitter.emit('update')
           }

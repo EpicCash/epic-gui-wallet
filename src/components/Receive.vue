@@ -66,8 +66,6 @@ export default {
             flag: "r"
           });
 
-
-
         }catch(e){
           log.error('read tx file error:' + e)
           this.errors.push(this.$t('msg.fileReceive.WrongFileType'))
@@ -75,10 +73,7 @@ export default {
         }
 
         let filePath = path.dirname(fn.path);
-
-
         let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), filePath);
-
 
         if(fn_output){
           this.$walletService.receiveTransaction(JSON.parse(content), null, null)
@@ -120,9 +115,10 @@ export default {
       }
     },
     clearup(){
-      this.errors = []
-      this.toDrag = true
-      this.isDragOver = false
+      this.errors = [];
+      this.toDrag = true;
+      this.isDragOver = false;
+
     },
     fileTypeIsSupported(file){
       if( !file.type || file.type.search('text')!=-1 ||	 file.type.search('json')!=-1){
