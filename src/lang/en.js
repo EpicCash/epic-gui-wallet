@@ -21,7 +21,7 @@ const messages = {
     cancel:'Cancel',
     save: 'Save',
 
-    welcome: 'Welcome to use Epic wallet',
+    welcome: 'Welcome to Epic wallet',
     back: 'Back',
     reset: 'Reset',
     addall: 'Add all from above',
@@ -37,6 +37,7 @@ const messages = {
     },
     login: {
       walletExist: 'Epic wallet data exists; login with original password :)',
+      errorPasswdEmpty: 'No password.',
     },
     seed:{
       errorGetMnemonic: 'Error getting Mnemonic. Is password correct?',
@@ -58,7 +59,10 @@ const messages = {
     new:{
       create: 'Create new wallet',
       restore: 'Restore wallet',
-
+      select: 'Select existing wallet location',
+      selectErr: 'selected folder has no "wallet_data" dir and wallet config.',
+      networkErr: 'Network type can not be determined.<br/>Please select one.',
+      selectNetwork: 'continue',
     },
 
     restore:{

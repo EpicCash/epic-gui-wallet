@@ -37,17 +37,7 @@ class ConfigService {
       this.ownerApiSecretPath = '';
       this.ownerApisecret = '';
       this.walletTOMLPath = '';
-      let appConfigContent = '';
-      //this should never fail or app is not working
-      this.appConfigFile = path.join(window.config.getResourcePath(), 'app.json');
-      if (!window.nodeFs.existsSync(this.appConfigFile)) {
-          //copy default config json to new wallet dir
-          let defaultAppFile = path.join(window.config.getResourcePath(), "default.app.json");
-          window.nodeFs.copyFileSync(defaultAppFile, this.appConfigFile);
-      }
-
-      appConfigContent = window.nodeFs.readFileSync(this.appConfigFile, {encoding:'utf8', flag:'r'})
-      this.appConfig = JSON.parse(appConfigContent);
+      this.walletTOMLName = 'epic-wallet.toml';
 
 
   }
@@ -61,17 +51,38 @@ class ConfigService {
           return;
         }
     });
-    console.log('set new wallet dir on login', foundAccount);
-    if(foundAccount && foundAccount['userhomedir']){
 
+    if(foundAccount && foundAccount['userhomedir']){
+      //console.log('set new wallet dir on login', foundAccount);
       this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'), foundAccount['account']);
 
     }
-    console.log('set new wallet dir on login',   this.defaultAccountWalletdir);
+    //console.log('set new wallet dir on login', this.defaultAccountWalletdir, this.userhomedir);
+    //return false;
     return accountExist;
 
   }
+  loadConfig(configPath){
 
+    let config;
+    if(window.nodeFs.readFileSync(configPath, {encoding:'utf8', flag:'r'})){
+
+      let configContent = window.nodeFs.readFileSync(configPath, {encoding:'utf8', flag:'r'});
+
+      try {
+        config = JSON.parse(configContent);
+        this.emitter.emit('checkSuccess', 'wallet config readable');
+
+      } catch (e) {
+        this.emitter.emit('checkFail', 'Wallet config ' + e);
+      }
+
+    } else {
+      this.emitter.emit('checkFail', 'wallet config is empty');
+    }
+    return config;
+
+  }
   saveConfig(){
 
     try{
@@ -105,7 +116,7 @@ class ConfigService {
   checkTomlFile(defaultAccountWalletdir){
 
     //check if toml file exist
-    let tomlFile = path.join(defaultAccountWalletdir, 'epic-wallet.toml');
+    let tomlFile = path.join(defaultAccountWalletdir, this.walletTOMLName);
     if (window.nodeFs.existsSync(tomlFile) && window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'})) {
         this.emitter.emit('checkSuccess', 'wallet toml "' + tomlFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');
 
@@ -179,24 +190,176 @@ class ConfigService {
   async killWalletProcess(){
 
     let plist = await window.nodeFindProcess('name',/.*?epic-wallet.*(owner_api|listen)/);
-    plist.forEach(async function(process){
-      let killed = await nodeChildProcess.kill(process.pid);
-      console.log('startCheck killed process', killed, process);
-    })
+
+    for(let walletProcess of plist) {
+      let killed = await nodeChildProcess.kill(walletProcess.pid);
+      console.log('startCheck killed process', killed, walletProcess);
+    }
+
+    return true;
+  }
+
+
+  /* check if the select dir is a valid epic wallet dir */
+  async walletDirExist(selectedDir, network){
+
+      let walletDir = path.join(selectedDir, 'wallet_data');
+      let tomlFile = path.join(selectedDir, this.walletTOMLName);
+      let configFile = path.join(selectedDir, 'config.json');
+      let walletDirSegements = selectedDir.split(path.sep).reverse();
+      if(walletDirSegements.length <= 0){
+        console.log('wallet dir has no segments');
+        return false;
+      }
+      let userdata;
+
+      if(!window.nodeFs.existsSync(walletDir)){
+        return false;
+      }
+      if(!window.nodeFs.existsSync(tomlFile)){
+        return false;
+      }
+
+      if(window.nodeFs.existsSync(configFile)){
+
+        let config = this.loadConfig(configFile);
+        if(config && config.version == '3.0.0'){
+
+            let account = walletDirSegements[0];
+            if(account == 'main' || account == 'floo'){
+              account = 'default';
+            }else{
+              walletDirSegements.shift();
+            }
+
+            let networkShortname = walletDirSegements[0];
+            network = config.network;
+            if(networkShortname == 'main'){
+              network = 'mainnet';
+              walletDirSegements.shift();
+            }else if(networkShortname == 'floo'){
+              network = 'floonet';
+              walletDirSegements.shift();
+            }
+
+            userdata = {
+              account: account,
+              userhomedir: walletDirSegements.reverse().join(path.sep),
+              network: network,
+              isdefault:false,
+            }
+
+        }else{
+
+          let account = walletDirSegements[0];
+          if(account == 'main' || account == 'floo'){
+            account = 'default';
+          }else{
+            walletDirSegements.shift();
+          }
+
+          let networkShortname = walletDirSegements[0];
+          if(networkShortname == 'main'){
+            network = 'mainnet';
+            walletDirSegements.shift();
+          }else if(networkShortname == 'floo'){
+            network = 'floonet';
+            walletDirSegements.shift();
+          }
+
+          if(network == undefined){
+            let selectedNetwork = await this.emitter.emit('selectNetwork');
+          }
+          userdata = {
+            account: 'default',
+            userhomedir: walletDirSegements.reverse().join(path.sep),
+            network: network,
+            isdefault:false,
+          }
+
+        }
+
+      }else{
+
+        let account = walletDirSegements[0];
+        if(account == 'main' || account == 'floo'){
+          account = 'default';
+        }else{
+          walletDirSegements.shift();
+        }
+
+        let networkShortname = walletDirSegements[0];
+        if(networkShortname == 'main'){
+          network = 'mainnet';
+          walletDirSegements.shift();
+        }else if(networkShortname == 'floo'){
+          network = 'floonet';
+          walletDirSegements.shift();
+        }
+
+        if(network == undefined){
+          let selectedNetwork = await this.emitter.emit('selectNetwork');
+        }
+        userdata = {
+          account: account,
+          userhomedir: walletDirSegements.reverse().join(path.sep),
+          network: network,
+          isdefault:false,
+        }
+
+      }
+
+      if(userdata){
+        this.updateAppConfig('account_dirs', userdata);
+      }
+
+      return true;
+
+  }
+  /* check if app has its config file */
+  appHasAccounts(){
+
+    let appConfig = true;
+
+    //this should never fail or app is not working
+    this.appConfigFile = path.join(window.config.getResourcePath(), 'app.json');
+    if (!window.nodeFs.existsSync(this.appConfigFile)) {
+      appConfig = false;
+      //copy default config json to new wallet dir
+      let defaultAppFile = path.join(window.config.getResourcePath(), "default.app.json");
+      window.nodeFs.copyFileSync(defaultAppFile, this.appConfigFile);
+      this.appConfig = {'account_dirs':[]}
+    }else{
+
+      let appConfigContent = window.nodeFs.readFileSync(this.appConfigFile, {encoding:'utf8', flag:'r'})
+
+      try{
+        this.appConfig = JSON.parse(appConfigContent);
+        if(this.appConfig['account_dirs'].length <= 0){
+          appConfig = false;
+        }
+      }catch(e){
+        console.log('cannot parse app config', e);
+        return false;
+      }
+
+    }
+
+    return appConfig;
 
   }
 
-  
-
   async startCheck(account, skip, selecteHomedir){
+
+
       let userHomedir = defaultUserdir;
       let defaultAccountWalletdir = '';
       let initWallet = false;
-      if(!skip){
-
+      /*if(!skip){
         await this.killWalletProcess();
-        //this fails if user create a wallet without default name
-        if(account){
+      }*/
+      //this fails if user create a wallet without default name
+      if(account){
             this.appConfig['account_dirs'].forEach(function(existingAccount){
                 if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
                   userHomedir = existingAccount['userhomedir'];
@@ -204,36 +367,29 @@ class ConfigService {
                 }
             });
 
-        }else{
+      }else{
           this.appConfig['account_dirs'].forEach(function(existingAccount){
               if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
                 userHomedir = existingAccount['userhomedir'];
                 defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account'])
               }
           });
-        }
-
-
-        await delay(sleepTime);
-
-
-        //check if user home dir exist.
-        //if home dir is not found then user have to select one
-        if (window.nodeFs.existsSync(userHomedir)) {
-            this.emitter.emit('checkSuccess', 'user wallet dir exist');
-        } else {
-            initWallet = true;
-            this.emitter.emit('checkFail', 'user wallet dir does not exist');
-            this.emitter.emit('selectUserhomedir');
-            return 'check';
-
-        }
-        this.userhomedir = userHomedir;
-      }else{
-        this.userhomedir = selecteHomedir;
       }
 
+      await delay(sleepTime);
 
+      //check if user home dir exist.
+      //if home dir is not found then user have to select one
+      if (window.nodeFs.existsSync(userHomedir)) {
+          this.emitter.emit('checkSuccess', 'user wallet dir exist');
+      } else {
+          initWallet = true;
+          this.emitter.emit('checkFail', 'user wallet dir does not exist');
+          this.emitter.emit('selectUserhomedir');
+          return 'check';
+
+      }
+      this.userhomedir = userHomedir;
       this.defaultAccountWalletdir = defaultAccountWalletdir;
 
       console.log('defaultAccountWalletdir', this.defaultAccountWalletdir);
@@ -259,23 +415,10 @@ class ConfigService {
         this.configFile = configFile;
         await delay(sleepTime);
 
-        let config;
-        if(window.nodeFs.readFileSync(configFile, {encoding:'utf8', flag:'r'})){
 
-          let configContent = window.nodeFs.readFileSync(configFile, {encoding:'utf8', flag:'r'});
+        this.config = this.loadConfig(this.configFile);
 
-          try {
-            config = JSON.parse(configContent);
-            this.emitter.emit('checkSuccess', 'wallet config readable');
 
-          } catch (e) {
-            this.emitter.emit('checkFail', 'Wallet config ' + e);
-          }
-
-        } else {
-          this.emitter.emit('checkFail', 'wallet config is empty');
-        }
-        this.config = config;
         await delay(sleepTime);
 
       }else{

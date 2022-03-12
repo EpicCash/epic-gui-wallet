@@ -258,7 +258,7 @@ export default {
     },
     back(){
       this.clearup()
-      this.emitter.emit('restoredThenLogin')
+      this.emitter.emit('toLogin')
     },
     delete_(){
       if(this.seeds.length > 0)this.seeds.pop()
@@ -271,7 +271,7 @@ export default {
     },
     toLogin(){
       this.clearup()
-      this.emitter.emit('restoredThenSettings')
+      this.emitter.emit('toLogin')
     }
   }
 }

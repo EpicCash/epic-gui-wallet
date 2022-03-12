@@ -26,7 +26,7 @@
     </div>
     <div class="column">
 
-        <div class="hero-head nodeInfo">
+        <div v-if="userLoggedIn"  class="hero-head nodeInfo">
 
           Node ({{ this.epicNode }}):
           <span v-if="nodeOnline && nodeIsSync" class="dotGreen"></span><span v-if="nodeOnline && nodeIsSync">&nbsp;online</span>
@@ -77,9 +77,9 @@
 
             <p class="menu-label">Account</p>
             <ul class="menu-list">
-              <li><a href="#" class="dropdown-item" @click.prevent="logout">
+              <li><button class="button is-link is-outlined" @click.prevent="logout" v-bind:class="{'is-loading': isLoading }">
                 {{ $t("msg.logout") }}
-              </a>
+              </button>
               </li>
             </ul>
 
@@ -222,7 +222,9 @@ export default {
         highest_height: 0,
         sync_status: '',
         transactionTab:true,
-        commitTab:false
+        commitTab:false,
+        userLoggedIn: false,
+        isLoading: false,
     }},
     setup () {
       const { locale } = useI18n()
@@ -231,25 +233,8 @@ export default {
       }
     },
     async mounted() {
-
-        this.action = await this.configService.startCheck();
-        this.locale = this.configService.config.locale;
-
-        if(this.action === 'settings'){
-          console.log('open settings now');
-          this.checkservice = false;
-          this.openSettings = true;
-
-        }
-
-        if(this.action === 'login'){
-          this.checkservice = false;
-          //check first if node is online
-          this.epicNode = this.configService.config['check_node_api_http_addr'];
-          this.getNode();
-          log.debug(`Render main window mounted:height ${this.height}; owner_api running? ${this.ownerApiRunning}; wallet exists? `)
-
-        }
+      window.api.resize(1160, 850);
+      this.checkAccountOnStart();
 
     },
     created () {
@@ -305,45 +290,30 @@ export default {
         this.emitter.emit('wallet_error_clean');
         this.epicNode = this.configService.config['check_node_api_http_addr'];
         this.getNode();
-
-
-
-      });
-      this.emitter.on('restoredThenSettings', async ()=>{
-        log.info('wallet restored and now to login');
-
-        this.$walletService.logoutClient();
-        await this.configService.killWalletProcess();
-        await this.$nodeService.reconnectNode();
-
-        this.ownerApiRunning = false;
-        this.action = 'settings';
-        this.openSettings = true;
-        this.checkservice = false;
       });
 
-      this.emitter.on('restoredThenLogin', ()=>{
-        log.info('wallet restored and now to login');
-
-
-
-
-        this.action = 'login';
-        this.openSettings = false;
-        this.checkservice = false;
+      this.emitter.on('toLogin', async ()=>{
+        this.checkAccountOnStart();
       });
+
 
       this.emitter.on('logined', ()=>{
         log.info('app.vue got user logined event')
-        this.ownerApiRunning = true
-        this.getHeight()
-        this.getAddress()
+        this.ownerApiRunning = true;
+        this.isLoading = false;
+        this.userLoggedIn = true;
+        this.epicNode = this.configService.config['check_node_api_http_addr'];
+        this.getNode();
+        this.getHeight();
+        this.getAddress();
       });
 
       this.emitter.on('update', () => {
         console.log('emit on update');
-        this.getNode();
-        this.getHeight();
+        if(this.ownerApiRunning){
+          this.getNode();
+          this.getHeight();
+        }
 
       });
 
@@ -381,21 +351,26 @@ export default {
       },
       ownerApiRunning:function(newVal){
         if(newVal){
-          //window.ipcRenderer.send('resize', 1160, 850)
-
           this.autoRefresh(60*2.5*1000)
-        }else{
-          //window.ipcRenderer.send('resize', 1160, 850)
         }
       },
       height: function(){
-
         this.isAnimate = true
         setTimeout(()=>{this.isAnimate = false}, 1000)
       }
     },
     methods: {
-
+      async checkAccountOnStart(){
+        await this.configService.killWalletProcess();
+        if(this.configService.appHasAccounts()){
+          console.log('app has accounts', this.configService.appConfig);
+          this.checkservice = false;
+          this.action = 'login';
+        }else{
+          this.checkservice = false;
+          this.action = 'init';
+        }
+      },
       openTab(tabName) {
           if(tabName == 'transactionTab'){
             this.transactionTab = true;
@@ -474,13 +449,15 @@ export default {
           })
           return false;
       },
+
       async logout(){
-        log.debug('logout');
+        this.isLoading = true;
         this.$walletService.logoutClient();
-        await this.configService.killWalletProcess();
-        await this.$nodeService.reconnectNode();
-        this.action = 'login';
-        this.ownerApiRunning = false;
+        if(await this.configService.killWalletProcess()){
+          this.action = 'login';
+          this.ownerApiRunning = false;
+          this.userLoggedIn = false;
+        }
 
 
 

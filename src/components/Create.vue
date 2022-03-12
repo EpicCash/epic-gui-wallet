@@ -179,11 +179,11 @@ export default {
     },
     toLogin(){
       this.clearup()
-      this.emitter.emit('restoredThenSettings')
+      this.emitter.emit('toLogin')
     },
     back(){
       this.clearup()
-      this.emitter.emit('restoredThenLogin')
+      this.emitter.emit('toLogin')
     }
 
   }

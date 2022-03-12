@@ -31,6 +31,7 @@ class WalletService {
     logoutClient(){
       this.client = undefined;
       this.shared_key = undefined;
+      this.token = undefined;
       this.walletIsOpen = false;
       this.walletIsListen = false;
     }
@@ -144,9 +145,15 @@ class WalletService {
                 console.log('error', error);
                 return false;
           });
-
-          const nonce2 = Buffer.from(response.data.result.Ok.nonce, 'hex');
-          const data = Buffer.from(response.data.result.Ok.body_enc, 'base64');
+          let nonce2;
+          let data;
+          if(response.data && response.data.result){
+            nonce2 = Buffer.from(response.data.result.Ok.nonce, 'hex');
+            data = Buffer.from(response.data.result.Ok.body_enc, 'base64');
+          }else{
+            console.log('jsonRPC error', response);
+            return false;
+          }
 
           let dec = aesCipher.decrypt(data, nonce2)
           //console.log('decrypt', dec, typeof dec);
@@ -159,7 +166,7 @@ class WalletService {
 
         let response = await this.client.post(url, body, headers, {withCredentials:true})
         .catch(error => {
-              console.log('error', error);
+              console.log('jsonRPC error', error);
               return false;
         });
 
@@ -299,7 +306,7 @@ class WalletService {
     /* start a epic wallet in owner_api mode */
     async start(password, account){
 
-        
+
         this.account = account ? account : 'default';
         let args = [];
 
@@ -333,6 +340,8 @@ class WalletService {
         }
 
         console.log('wallet start', this.configService.epicPath, args, this.configService.platform);
+
+
         walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
         console.log('wallet start walletOpenId', walletOpenId);
         if(walletOpenId === 0 && this.token){

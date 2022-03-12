@@ -98,7 +98,6 @@
     methods: {
       async save(){
 
-
         if(this.checkForm()){
           this.emitter.emit('selectLocale', this.localeSelected);
           if(this.configService.config.firstTime == true){
@@ -111,7 +110,7 @@
 
             });
             this.emitter.emit('restartNode');
-            this.emitter.emit('restoredThenLogin');
+            this.emitter.emit('continueLogin');
 
           }else{
 

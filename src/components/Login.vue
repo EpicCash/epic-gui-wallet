@@ -35,13 +35,14 @@
                   <input class="input" type="password" placeholder="********" required :class="{'is-danger': error}" v-model="password">
                 </div>
                 <p style="color:red;" class="help is-warning" v-if="error">{{ $t("msg.wrongPassword") }}</p>
+                <p style="color:red;" class="help is-warning" v-if="errorEmpty">{{ $t("msg.login.errorPasswdEmpty") }}</p>
                 <p style="color:red;" class="help is-warningapi" v-if="errorapi">{{ this.errorapiMsg }}</p>
                 <p class="help is-warningapi" v-if="errorapi">Code: {{ this.errorCode }}</p>
               </div>
 
                 <div class="field is-grouped">
                   <div class="control">
-                    <button class="button is-link blue" @click.prevent="login">
+                    <button class="button is-link" v-bind:class="{'is-loading': isLoading }" @click.prevent="login">
                       {{ $t("msg.login_") }}
                     </button>
                   </div>
@@ -81,10 +82,12 @@ export default {
       password: '',
       account: '',
       error: false,
+      errorEmpty: false,
       errorapi: false,
       errorapiMsg: '',
       errorCode: '',
-      errorAccount: false
+      errorAccount: false,
+      isLoading: false,
     }
   },
   created(){
@@ -98,9 +101,39 @@ export default {
         this.errorapiMsg = '';
         this.errorCode = '';
     });
+    this.emitter.on('continueLogin',()=>{
+      this.continueLogin();
+    });
+
   },
 
   methods: {
+    async continueLogin(){
+      let account = this.account ? this.account : 'default';
+      let loginSucccess = await this.$walletService.start(this.password, account);
+      this.password = '';
+      this.account = '';
+      account = '';
+
+      if(loginSucccess){
+
+        let apiCallable = await this.$walletService.getNodeHeight();
+
+        console.log('Login apiCallable', apiCallable);
+
+        if( !apiCallable ){
+          this.isLoading = false;
+          return this.errorapi = true;
+        }
+
+        this.emitter.emit('logined')
+
+      }else{
+        this.isLoading = false;
+        return this.error = true
+
+      }
+    },
     create(){
       console.log('new create');
       this.emitter.emit('initMode', 'create');
@@ -111,41 +144,33 @@ export default {
     },
     async login(){
 
-
       this.resetErrors()
       //check if acount exist.
       let account = this.account ? this.account : 'default';
 
+
+      if(this.password.length == 0 ){
+        this.errorEmpty = true
+        return
+      }
+
       if(this.configService.accountExist(account)){
 
-        let loginSucccess = await this.$walletService.start(this.password, account);
-        this.password = '';
-        this.account = '';
-        account = '';
-
-
-        if(loginSucccess){
-
-          let apiCallable = await this.$walletService.getNodeHeight();
-
-          console.log('Login apiCallable', apiCallable);
-
-          if( !apiCallable ){
-            return this.errorapi = true;
-          }
-
-          this.emitter.emit('logined')
-
+        //check now requires settings
+        this.isLoading = true;
+        let action = await this.configService.startCheck(account, true);
+        if(action === 'settings'){
+          this.isLoading = false;
+          this.emitter.emit('open', 'windowSettings');
         }else{
-
-          return this.error = true
-
+          this.continueLogin();
         }
+
+
+
       }else{
         return this.errorAccount = true;
       }
-
-
 
 
     },
@@ -153,6 +178,8 @@ export default {
       this.error = false;
       this.errorapi = false;
       this.errorAccount = false;
+      this.errorEmpty = false;
+      this.isLoading = false;
     }
   }
 }

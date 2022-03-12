@@ -39,32 +39,7 @@ async function createWindow() {
       webSecurity: false
     }
   })
-  win.on('before-close',  function(e){
-    if (modificationEnCours){
-      e.preventDefault()
 
-      if(msgBoxVerifieSauvegarde('Question','Voulez-vous enregistrer avant de quitter ?')) {
-        modificationEnCours=false
-        app.quit()
-      }
-    } else if (process.platform !== 'darwin') {
-      modificationEnCours=false
-      app.quit()
-      mainWindow = null
-    }
-  /*  let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
-    console.log(plist);
-
-    for(process in plist){
-      if (process.platform === 'win32') {
-        exec(`taskkill /pid ${plist[process].pid} /f /t`);
-      }else{
-        ps.kill(plist[process].pid);
-      }
-    };
-    e.preventDefault();
-    */
-  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -190,9 +165,15 @@ ipcMain.handle('quit', () => {
   app.quit()
 });
 
+ipcMain.handle('resize', (event, width, height) => {
+  let browserWindow = BrowserWindow.fromWebContents(event.sender)
+  browserWindow.setSize(width,height);
+});
+
 ipcMain.on('scan-stdout', (event, data) => {
   event.reply('scan-stdout', { data });
 });
+
 ipcMain.on('scan-finish', (event, data) => {
   event.reply('scan-finish', { data });
 });
@@ -200,9 +181,11 @@ ipcMain.on('scan-finish', (event, data) => {
 ipcMain.on('walletCreated', (event, data) => {
   event.reply('walletCreated', { data });
 });
+
 ipcMain.on('walletExisted', (event, data) => {
   event.reply('walletExisted', {  });
 });
+
 ipcMain.on('walletCreateFailed', (event, data) => {
   event.reply('walletCreateFailed', {  });
 });
