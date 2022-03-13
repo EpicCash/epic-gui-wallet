@@ -14,11 +14,7 @@
                    {{ msg.message }}
                 </li>
               </ul>
-              <div class="field has-addons" v-if="selectHomedir">
-                <div class="control">
-                  <button class="button" @click="showDialog" >Please select your wallet folder</button>
-                </div>
-              </div>
+
           </div>
         </div>
       </div>
@@ -66,34 +62,9 @@
         this.msgs.push( {message: msg, success:false} );
       });
 
-      this.emitter.on('selectUserhomedir', async() => {
-        this.selectHomedir = true;
-      });
-
-
-
 
     },
-    methods: {
-      async showDialog(){
-          let customHomedir = await window.api.showOpenDialog();
-          if(customHomedir.canceled == false){
 
-            let userHomedir = customHomedir.filePaths[0];
-            if(userHomedir){
-              this.selectHomedir = false;
-              this.emitter.emit('checkSuccess', 'user homedir selected');
-              let action = await this.configService.startCheck(false, true, userHomedir);
-              this.emitter.emit('initMode', action);
-            }
-
-          }else{
-            this.emitter.emit('checkFail', 'please select a folder for your wallet data');
-            return false;
-          }
-      }
-
-    }
   }
 
 </script>

@@ -53,7 +53,7 @@
         <p>&nbsp;</p>
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-link" @click="save">{{ $t("msg.save") }}</button>
+            <button class="button is-link" @click="save" v-bind:class="{'is-loading': isLoading }">{{ $t("msg.save") }}</button>
           </div>
           <div class="control">
             <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
@@ -66,40 +66,46 @@
 </template>
 <script>
 
-  let nodeaddr;
-
   export default {
     name: "settings",
     props: {
       showModal: {
         type: Boolean,
         default: false
+      },
+      config:{
+        type: Object,
       }
     },
     data() {
-      let config = this.configService.config;
-      nodeaddr = config['check_node_api_http_addr'] ? config['check_node_api_http_addr'] : 'http://127.0.0.1:3413';
-
-      let address = nodeaddr
-      let network = config['network'] ? config['network'] : 'mainnet'
-      let locale = this.configService.config.locale;
 
       return {
 
         errors: [],
-        check_node_api_http_addr: address,
-        network: network,
-        locale: locale,
-        localeSelected: config.locale,
-        langs: this.configService.langs
+        check_node_api_http_addr: '',
+        network: '',
+        locale: 'en',
+        localeSelected: this.configService.config.locale,
+        langs: this.configService.langs,
+        isLoading: false,
 
       }
     },
+    mounted(){
+      if(this.config){
+        this.check_node_api_http_addr = this.config['check_node_api_http_addr'];
+        this.network = this.config['network'];
+        this.locale = this.config['local'];
+      }
+    },
     methods: {
+
       async save(){
+        this.isLoading = true;
 
         if(this.checkForm()){
           this.emitter.emit('selectLocale', this.localeSelected);
+
           if(this.configService.config.firstTime == true){
 
             this.configService.updateConfig({
@@ -109,14 +115,12 @@
               firstTime: false
 
             });
-            this.emitter.emit('restartNode');
+
+
             this.emitter.emit('continueLogin');
+            return;
 
           }else{
-
-            console.log(this.network);
-
-            if(this.nodeaddr !== this.check_node_api_http_addr){
 
               this.configService.updateConfig({
                 check_node_api_http_addr: this.check_node_api_http_addr,
@@ -124,29 +128,28 @@
                 locale: this.localeSelected
               });
 
-              let killed = await this.$walletService.stopProcess('ownerAPI');
-              console.log('wallet killed after change address', killed);
-              if(killed){
-                let started = await this.$walletService.start();
-                console.log('wallet started after change address', started);
+
+
+              this.configService.checkTomlFile();
+              let started = await this.$walletService.start();
+              console.log('wallet started after change address', started);
+              if(started){
+                this.emitter.emit('restartNode');
               }
 
-            }
-            this.emitter.emit('close', 'windowSettings');
-            this.emitter.emit('restartNode');
 
+              this.emitter.emit('close', 'windowSettings');
           }
 
         }
       },
       clearup(){
         this.errors = []
-        this.check_node_api_http_addr = nodeaddr;
-
       },
       closeModal() {
         this.clearup();
         this.emitter.emit('close', 'windowSettings');
+
       },
 
       validAddress(address) {
@@ -172,8 +175,3 @@
     }
   }
 </script>
-<style>
-label{
-  text-align:left;
-}
-</style>

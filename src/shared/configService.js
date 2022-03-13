@@ -38,7 +38,7 @@ class ConfigService {
       this.ownerApisecret = '';
       this.walletTOMLPath = '';
       this.walletTOMLName = 'epic-wallet.toml';
-
+      this.appConfigAccount;
 
   }
   accountExist(account){
@@ -55,7 +55,7 @@ class ConfigService {
     if(foundAccount && foundAccount['userhomedir']){
       //console.log('set new wallet dir on login', foundAccount);
       this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'), foundAccount['account']);
-
+      this.appConfigAccount = foundAccount;
     }
     //console.log('set new wallet dir on login', this.defaultAccountWalletdir, this.userhomedir);
     //return false;
@@ -115,10 +115,11 @@ class ConfigService {
   }
   checkTomlFile(defaultAccountWalletdir){
 
+    let walletDir = defaultAccountWalletdir ? defaultAccountWalletdir : this.defaultAccountWalletdir;
     //check if toml file exist
-    let tomlFile = path.join(defaultAccountWalletdir, this.walletTOMLName);
+    let tomlFile = path.join(walletDir, this.walletTOMLName);
     if (window.nodeFs.existsSync(tomlFile) && window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'})) {
-        this.emitter.emit('checkSuccess', 'wallet toml "' + tomlFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');
+        this.emitter.emit('checkSuccess', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file exist and readable');
 
 
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
@@ -151,7 +152,7 @@ class ConfigService {
 
 
     } else {
-        this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(defaultAccountWalletdir, '~') + '" file does not exist or readable');
+        this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file does not exist or readable');
     }
     return tomlFile;
 
@@ -165,25 +166,28 @@ class ConfigService {
 
         if(appConfig[configKey].length >= 1){
           appConfig[configKey].forEach(function(element, key){
+
             if(appConfig[configKey][key].account == data.account){
 
               appConfig[configKey][key].userhomedir = data.userhomedir;
               appConfig[configKey][key].network     = data.network;
               appConfig[configKey][key].isdefault   = data.isdefault;
+              data = undefined;
               return false;
-
-            }else{
-
-              appConfig[configKey].push(userdata);
 
             }
           });
         }else{
           appConfig[configKey].push(userdata);
         }
+
+        if(data != undefined){
+          appConfig[configKey].push(data);
+        }
       }
 
       this.appConfig = appConfig;
+      console.log('updateAppConfig', this.appConfig);
       return this.saveAppConfig();
   }
 
@@ -385,9 +389,7 @@ class ConfigService {
       } else {
           initWallet = true;
           this.emitter.emit('checkFail', 'user wallet dir does not exist');
-          this.emitter.emit('selectUserhomedir');
-          return 'check';
-
+          return 'init';
       }
       this.userhomedir = userHomedir;
       this.defaultAccountWalletdir = defaultAccountWalletdir;
@@ -474,7 +476,8 @@ class ConfigService {
         //check if we run the first time
         //make some settings
         if(this.config['firstTime']){
-
+          console.log('starting first time', account);
+          this.accountExist(account);
           return 'settings'
 
         }

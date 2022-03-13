@@ -44,6 +44,8 @@ const messages = {
       mnemonic: 'Mnemonic Words'
     },
     create:{
+      select: 'Select directory for your wallet',
+      selectErr: 'No directory for wallet selected',
       seedPhrase: 'Seed Phrase',
       toNewMsg: 'Create a New Wallet.',
       newWallet: 'Create new wallet',

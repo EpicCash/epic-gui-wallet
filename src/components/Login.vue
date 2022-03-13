@@ -109,6 +109,7 @@ export default {
 
   methods: {
     async continueLogin(){
+      
       let account = this.account ? this.account : 'default';
       let loginSucccess = await this.$walletService.start(this.password, account);
       this.password = '';

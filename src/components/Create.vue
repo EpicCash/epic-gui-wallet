@@ -33,6 +33,11 @@
 
             <form class="box">
               <div class="field">
+                <a class="button is-link is-outlined" @click="selectDir">{{ $t("msg.create.select") }}</a>
+
+                <p class="button is-link is-success is-outlined" v-if="userHomedir != ''"><br/><strong>{{ userHomedir }}</strong></p>
+              </div>
+              <div class="field">
                 <label class="label">{{ $t("msg.account") }}</label>
                 <div class="control">
                   <input class="input" type="account" placeholder="" :class="{'is-danger': error}" v-model="account">
@@ -97,13 +102,32 @@ export default {
       walletCreating: false,
       error: false,
       errorInfo: '',
+      userHomedir: '',
       seeds: []
     }
   },
+
   methods: {
+
+    async selectDir(){
+
+
+        let customHomedir = await window.api.showOpenDialog();
+
+        if(customHomedir.canceled == false){
+          this.userHomedir = customHomedir.filePaths[0];
+        }
+
+    },
     async create(){
 
       this.resetErrors()
+      if(this.userHomedir == ''){
+        this.error = true;
+        this.errorInfo = this.$t('msg.create.selectErr');
+        return
+      }
+
       if(this.account.length == 0 ){
         this.error = true
         this.errorInfo = this.$t('msg.create.errorAccountEmpty')
@@ -133,20 +157,23 @@ export default {
 
       let userhomedir = '';
       if(this.network == 'floonet'){
-        userhomedir = window.nodePath.join(this.configService.userhomedir, 'floo', this.account);
+        userhomedir = window.nodePath.join(this.userHomedir, 'floo', this.account);
       }else{
-        userhomedir = window.nodePath.join(this.configService.userhomedir, 'main', this.account);
+        userhomedir = window.nodePath.join(this.userHomedir, 'main', this.account);
       }
 
 
       let created = await this.$walletService.new(this.password, this.network, userhomedir);
       if(created && created.success){
         console.log('created', created);
+
+
+
         if(await this.configService.updateAppConfig('account_dirs', {
             account: this.account,
-            userhomedir: this.configService.userhomedir,
+            userhomedir: this.userHomedir,
             network: this.network,
-            isdefault: true
+            isdefault: false
           }) )
           {
 
@@ -176,6 +203,7 @@ export default {
       this.walletCreating = false
       this.error = false,
       this.errorInfo = ''
+      this.userHomedir = ''
     },
     toLogin(){
       this.clearup()

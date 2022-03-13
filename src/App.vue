@@ -1,7 +1,7 @@
 <template>
 
   <div  v-if="!checkservice">
-  <settings :showModal="openSettings"></settings>
+  <settings :showModal="openSettings" :config="config" :key="resetKey"></settings>
 
 
   <div class="columns ">
@@ -39,7 +39,7 @@
           <span>&nbsp;&nbsp;</span>
           <span v-if="ownerApiRunning" class="is-small tag is-warning is-rounded animated" v-bind:class="{headShake: isAnimate}" style="animation-iteration-count:3">
           {{ $t("msg.app.height") }}: {{height}}</span>&nbsp;
-          <button class="button is-small is-rounded" @click="openSettings=true">
+          <button class="button is-small is-rounded" @click="openWalletSettings">
             <font-awesome-icon :icon="['fas', 'gear']"/>
           </button>
         </div>
@@ -189,7 +189,7 @@ export default {
   },
     data(){
       return {
-        checkservice: true,
+        checkservice: false,
         openReceive: false,
         openHttpReceive:false,
         openHttpSend: false,
@@ -217,7 +217,7 @@ export default {
         onionAddress: '',
         showCopyAddress: true,
         error: '',
-        action: 'check',
+        action: '',
         current_height: 0,
         highest_height: 0,
         sync_status: '',
@@ -225,6 +225,9 @@ export default {
         commitTab:false,
         userLoggedIn: false,
         isLoading: false,
+        config: {},
+        resetKey: 0,
+
     }},
     setup () {
       const { locale } = useI18n()
@@ -233,13 +236,14 @@ export default {
       }
     },
     async mounted() {
+      console.log('app mounted');
       window.api.resize(1160, 850);
       this.checkAccountOnStart();
 
     },
     created () {
 
-      this.emitter.on('initMode', (action)=>{
+      this.emitter.on('initMode', (action) => {
         console.log(action);
         this.action = action;
       })
@@ -278,43 +282,45 @@ export default {
       });
 
       this.emitter.on('open', (window)=>{
-
         if(window == 'windowSettings'){
-          console.log('emit open settings');
-          this.openSettings = true
+          this.openWalletSettings();
         }
       });
       this.emitter.on('restartNode', async ()=>{
-
         let nodeRestarted = await this.$nodeService.reconnectNode();
-        this.emitter.emit('wallet_error_clean');
         this.epicNode = this.configService.config['check_node_api_http_addr'];
         this.getNode();
       });
 
-      this.emitter.on('toLogin', async ()=>{
+      this.emitter.on('toLogin', ()=>{
         this.checkAccountOnStart();
       });
 
 
       this.emitter.on('logined', ()=>{
         log.info('app.vue got user logined event')
+
+        this.openSettings = false;
         this.ownerApiRunning = true;
         this.isLoading = false;
         this.userLoggedIn = true;
+        this.config = this.configService.config;
         this.epicNode = this.configService.config['check_node_api_http_addr'];
         this.getNode();
-        this.getHeight();
-        this.getAddress();
+
+        if(this.nodeOnline){
+          this.getHeight();
+          this.getAddress();
+        }
+
       });
 
       this.emitter.on('update', () => {
-        console.log('emit on update');
-        if(this.ownerApiRunning){
+        console.log('emit on update', this.nodeOnline);
+        if(this.nodeOnline && this.userLoggedIn){
           this.getNode();
           this.getHeight();
         }
-
       });
 
       this.emitter.on('walletListen', ()=>{
@@ -349,35 +355,51 @@ export default {
             5*1000)
         }
       },
-      ownerApiRunning:function(newVal){
+      /*ownerApiRunning:function(newVal){
         if(newVal){
           this.autoRefresh(60*2.5*1000)
         }
-      },
+      },*/
       height: function(){
         this.isAnimate = true
         setTimeout(()=>{this.isAnimate = false}, 1000)
       }
     },
     methods: {
+
+
+      openWalletSettings(){
+        this.resetKey += 1;
+        this.openSettings=true;
+        this.config = this.configService.config;
+      },
+
+
+
       async checkAccountOnStart(){
-        await this.configService.killWalletProcess();
-        if(this.configService.appHasAccounts()){
-          console.log('app has accounts', this.configService.appConfig);
-          this.checkservice = false;
-          this.action = 'login';
-        }else{
-          this.checkservice = false;
-          this.action = 'init';
+
+
+
+        if(await this.configService.killWalletProcess()){
+          if(this.configService.appHasAccounts()){
+            console.log('app has accounts', this.configService.appConfig);
+            this.checkservice = false;
+            this.ownerApiRunning = false;
+            this.action = 'login';
+          }else{
+            this.checkservice = false;
+            this.action = 'init';
+          }
         }
+
       },
       openTab(tabName) {
           if(tabName == 'transactionTab'){
             this.transactionTab = true;
             this.commitTab = false;
           }else{
-          this.transactionTab = false;
-          this.commitTab = true;
+            this.transactionTab = false;
+            this.commitTab = true;
           }
       },
 
@@ -408,7 +430,7 @@ export default {
 
       async getNode(){
         this.nodeOnline = await this.$nodeService.nodeOnline();
-
+        console.log('async getNode', this.nodeOnline);
         if(this.nodeOnline.sync_info){
           this.current_height = this.nodeOnline.sync_info.current_height
           this.highest_height = this.nodeOnline.sync_info.highest_height
@@ -450,19 +472,14 @@ export default {
           return false;
       },
 
-      async logout(){
+      logout(){
         this.isLoading = true;
         this.$walletService.logoutClient();
-        if(await this.configService.killWalletProcess()){
-          this.action = 'login';
-          this.ownerApiRunning = false;
-          this.userLoggedIn = false;
-        }
-
-
-
-
+        this.userLoggedIn = false;
+        this.emitter.emit('toLogin');
       },
+
+
       autoRefresh(interval){
         setInterval(()=>{
           if(this.ownerApiRunning){

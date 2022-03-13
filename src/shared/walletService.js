@@ -306,71 +306,75 @@ class WalletService {
     /* start a epic wallet in owner_api mode */
     async start(password, account){
 
+        this.client = undefined;
+        this.shared_key = undefined;
+        this.token = undefined;
+        this.walletIsOpen = false;
+        this.walletIsListen = false;
+        if(await this.configService.killWalletProcess()){
+          this.account = account ? account : 'default';
+          let args = [];
 
-        this.account = account ? account : 'default';
-        let args = [];
+          //this.stopProcess('ownerAPI')
+          //do not start listener 2 times if wallet is open
 
-        //this.stopProcess('ownerAPI')
-        //do not start listener 2 times if wallet is open
+          if(this.walletIsOpen){
 
-        if(this.walletIsOpen){
+            return this.walletIsOpen;
+          }
 
-          return this.walletIsOpen;
+          let walletOpenId = 0;
+
+          if(this.configService.config['network'] == 'floonet'){
+            args = [
+              '--floonet',
+            //  '-r', this.configService.config['check_node_api_http_addr'],
+              '-c', this.configService.defaultAccountWalletdir,
+              'owner_api'
+
+            ];
+          }else{
+            args = [
+            //  '-r', this.configService.config['check_node_api_http_addr'],
+              '-c', this.configService.defaultAccountWalletdir,
+              'owner_api'
+
+            ];
+          }
+
+          console.log('wallet start', this.configService.epicPath, args, this.configService.platform, this.configService.userhomedir);
+
+
+          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
+          console.log('wallet start walletOpenId', walletOpenId);
+          if(walletOpenId === 0 && this.token){
+            this.walletIsOpen = true;
+            return true;
+          }
+
+          let userTopDir = await this.jsonRPC('set_top_level_directory', {dir: this.configService.defaultAccountWalletdir}, false)
+          console.log('wallet start  userTopDir', userTopDir);
+          if(userTopDir.result){
+
+              let tokenResponse =  await this.jsonRPC('open_wallet', {"name": account, password: password}, false)
+              console.log('wallet start  tokenResponse', tokenResponse);
+              if(tokenResponse.result){
+                this.token = tokenResponse.result.Ok;
+              }else if(tokenResponse.error){
+                console.log(tokenResponse.error.mesage);
+                return false;
+              }
+
+              if(walletOpenId > 0 && this.token){
+                  this.processes['ownerAPI'] = walletOpenId;
+                  this.walletIsOpen = true;
+                  return true;
+              }
+
+          }
+
+          return false;
         }
-
-        let walletOpenId = 0;
-
-
-
-        if(this.configService.config['network'] == 'floonet'){
-          args = [
-            '--floonet',
-            '-r', this.configService.config['check_node_api_http_addr'],
-            '-c', this.configService.defaultAccountWalletdir,
-            'owner_api'
-
-          ];
-        }else{
-          args = [
-            '-r', this.configService.config['check_node_api_http_addr'],
-            '-c', this.configService.defaultAccountWalletdir,
-            'owner_api'
-
-          ];
-        }
-
-        console.log('wallet start', this.configService.epicPath, args, this.configService.platform);
-
-
-        walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
-        console.log('wallet start walletOpenId', walletOpenId);
-        if(walletOpenId === 0 && this.token){
-          this.walletIsOpen = true;
-          return true;
-        }
-
-        let userTopDir = await this.jsonRPC('set_top_level_directory', {dir: this.configService.defaultAccountWalletdir}, false)
-        console.log('wallet start  userTopDir', userTopDir);
-        if(userTopDir.result){
-
-            let tokenResponse =  await this.jsonRPC('open_wallet', {"name": account, password: password}, false)
-            console.log('wallet start  tokenResponse', tokenResponse);
-            if(tokenResponse.result){
-              this.token = tokenResponse.result.Ok;
-            }else if(tokenResponse.error){
-              console.log(tokenResponse.error.mesage);
-              return false;
-            }
-
-            if(walletOpenId > 0 && this.token){
-                this.processes['ownerAPI'] = walletOpenId;
-                this.walletIsOpen = true;
-                return true;
-            }
-
-        }
-
-        return false;
 
     }
 
