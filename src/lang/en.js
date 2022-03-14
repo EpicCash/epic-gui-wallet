@@ -82,6 +82,7 @@ const messages = {
       restoring: 'It will take 10-30 minites to finish check. Be patient ......',
       restored: 'Wallet successfully recovered.',
       login: 'Login to Wallet',
+      walletLocation: 'Wallet location'
     },
 
     app:{

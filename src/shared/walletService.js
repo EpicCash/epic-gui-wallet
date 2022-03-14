@@ -201,8 +201,8 @@ class WalletService {
           }, false);
     }
 
-    getTransactions(toRefresh, tx_id, tx_salte_id){
-        return this.jsonRPC('retrieve_txs',
+    async getTransactions(toRefresh, tx_id, tx_salte_id){
+        return await this.jsonRPC('retrieve_txs',
           {
             token: this.token,
             refresh_from_node: toRefresh,
@@ -465,14 +465,14 @@ class WalletService {
           args = [
             '--floonet',
             '--pass', password,
-            '-t', userhomedir,
+            '-c', userhomedir,
             'init', '-r'
           ];
 
         }else{
           args = [
             '--pass', password,
-            '-t', userhomedir,
+            '-c', userhomedir,
             'init', '-r'
           ];
         }

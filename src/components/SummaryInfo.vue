@@ -27,25 +27,26 @@
         unfinalization: 0,
         immature: 0,
         locked: 0,
-        smallTitle: true
+        smallTitle: true,
+        updating: false,
       }
     },
-
     mounted () {
-      this.getSummaryinfo()
+      if(!this.updating){
+        this.getSummaryinfo();
+      }
     },
-
-
     created () {
 
-      this.emitter.on("update", () => {
-      console.log("this.emitter on update");
-        this.getSummaryinfo();
+      this.emitter.on('updateSummary', () => {
+        if(!this.updating){
+          this.getSummaryinfo();
+        }
       });
     },
      methods: {
         getSummaryinfo: async function() {
-
+        this.updating = true;
         let info = await this.$walletService.getSummaryInfo(10);
         if(info && info.result){
           let data = info.result.Ok
@@ -63,7 +64,7 @@
         }else{
           console.log('error getSummaryinfo', info);
         }
-
+        this.updating = false;
       }
     }
   }

@@ -101,13 +101,16 @@
     methods: {
 
       async save(){
-        this.isLoading = true;
+
 
         if(this.checkForm()){
+          this.isLoading = true;
           this.emitter.emit('selectLocale', this.localeSelected);
 
           if(this.configService.config.firstTime == true){
 
+
+            //change app user settings and update wallet toml
             this.configService.updateConfig({
               check_node_api_http_addr: this.check_node_api_http_addr,
               network: this.network,
@@ -115,29 +118,22 @@
               firstTime: false
 
             });
+            this.configService.checkTomlFile();
 
-
-            this.emitter.emit('continueLogin');
+            this.emitter.emit('continueLoginFirst');
             return;
 
           }else{
 
+              //change app user settings and update wallet toml
               this.configService.updateConfig({
                 check_node_api_http_addr: this.check_node_api_http_addr,
                 network: this.network,
                 locale: this.localeSelected
               });
-
-
-
               this.configService.checkTomlFile();
-              let started = await this.$walletService.start();
-              console.log('wallet started after change address', started);
-              if(started){
-                this.emitter.emit('restartNode');
-              }
 
-
+              this.emitter.emit('restartNode');
               this.emitter.emit('close', 'windowSettings');
           }
 

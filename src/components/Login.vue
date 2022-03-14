@@ -101,21 +101,26 @@ export default {
         this.errorapiMsg = '';
         this.errorCode = '';
     });
-    this.emitter.on('continueLogin',()=>{
-      this.continueLogin();
+    this.emitter.on('continueLogin', async() =>{
+      await this.continueLogin(false);
+    });
+    this.emitter.on('continueLoginFirst', async() =>{
+      console.log('continueLoginFirst');
+      await this.continueLogin(true);
     });
 
   },
 
   methods: {
-    async continueLogin(){
-      
+    async continueLogin(firstlogin){
+
       let account = this.account ? this.account : 'default';
       let loginSucccess = await this.$walletService.start(this.password, account);
       this.password = '';
       this.account = '';
       account = '';
 
+      //we have a valid login to wallet
       if(loginSucccess){
 
         let apiCallable = await this.$walletService.getNodeHeight();
@@ -127,7 +132,21 @@ export default {
           return this.errorapi = true;
         }
 
-        this.emitter.emit('logined')
+        if(firstlogin){
+          console.log('after api start this is firstlogin');
+          //call txs for first wallet scan outputs
+          //because a recovered wallet makes a scan on first start
+          //bug if multible
+          let txs = await this.$walletService.getTransactions(true, null, null);
+          if(txs){
+            this.emitter.emit('logined');
+          }
+
+        }else{
+          this.emitter.emit('logined');
+        }
+
+
 
       }else{
         this.isLoading = false;
@@ -164,7 +183,9 @@ export default {
           this.isLoading = false;
           this.emitter.emit('open', 'windowSettings');
         }else{
-          this.continueLogin();
+
+          await this.continueLogin(false);
+
         }
 
 

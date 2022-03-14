@@ -148,15 +148,22 @@
         keyword: "",
         searched: false,
         showCopy: -1,
-        copied: -1
+        copied: -1,
+        updating: false
       }
     },
     mounted () {
-      this.getCommits()
+      if(!this.updating){
+        this.getCommits()
+      }
     },
 
     created () {
-      this.emitter.on('update', ()=>this.getCommits())
+      this.emitter.on('updateCommits', ()=> {
+        if(!this.updating){
+          this.getCommits()
+        }
+      })
     },
 
     methods: {
@@ -177,6 +184,7 @@
       },
 
       async getCommits() {
+          this.updating = true
           let commits = await this.$walletService.getCommits(false, true, null);
           if(commits && commits.result && commits.result.Ok){
             this.total_commits = this.processCommits(commits.result.Ok[1].reverse())
@@ -191,6 +199,7 @@
             let resp = commits.error
             console.log('commits error', commits.error);
           }
+          this.updating = false;
 
 
       },

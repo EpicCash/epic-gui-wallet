@@ -177,8 +177,6 @@ class ConfigService {
 
             }
           });
-        }else{
-          appConfig[configKey].push(userdata);
         }
 
         if(data != undefined){

@@ -31,14 +31,12 @@
                   </div>
                 </div>
                 <div class="field has-addons-fullwidth">
+
                   <div class="control">
                       <input v-model="search" placeholder="type to search" style="width:100%;" type="text" class="input"  @keyup="keyEvent" v-on:keyup.enter="add" />
-
                   </div>
 
                 </div>
-
-
 
 
                 <div class="buttons is-centered">
@@ -67,10 +65,11 @@
               </p>
 
                 <div class="field">
-                  <a class="button is-link is-outlined" @click="selectDir">{{ $t("msg.create.select") }}</a>
-
+                  <label class="label">{{ $t('msg.restore.walletLocation') }}</label>
                   <p class="button is-link is-success is-outlined" v-if="userHomedir != ''"><br/><strong>{{ userHomedir }}</strong></p>
+                  <a class="button is-link is-outlined" @click="selectDir">{{ $t("msg.create.select") }}</a>
                 </div>
+
                 <div class="field">
                   <label class="label">{{ $t('msg.account') }}</label>
                   <div class="control">
@@ -111,6 +110,7 @@
                   <button class="button is-text" @click="page='addSeeds'">{{ $t("msg.back") }}</button>
                 </div>
                 <p class="help is-danger" v-if="error">{{ this.recoverErrorInfo }}</p>
+
               </div>
             </div>
 
@@ -141,6 +141,7 @@ export default {
     let config = this.configService.config;
     let network = config['network'] ? config['network'] : 'mainnet';
     let account = 'default';
+
     return {
       wordList: [],
       currentSeed: '',
@@ -230,6 +231,8 @@ export default {
         this.recoverErrorInfo = this.$t('msg.create.selectErr');
         return
       }
+
+
       if(this.account.length == 0 ){
         this.error = true
         this.errorInfo = this.$t('msg.create.errorAccountEmpty')
@@ -237,7 +240,7 @@ export default {
       }else{
         var self = this;
         this.configService.appConfig.account_dirs.forEach(function(existingAccount){
-
+          console.log('configService', existingAccount);
           if(existingAccount['account'] == self.account && existingAccount['network'] == self.network){
             self.error = true
             self.errorInfo = self.$t('msg.create.errorAccountExist')
@@ -246,6 +249,8 @@ export default {
 
         });
       }
+
+
       if(this.password.length == 0 ){
         this.errorPassword = true
         this.errorInfoPassword = this.$t('msg.create.errorPasswdEmpty')
@@ -266,6 +271,7 @@ export default {
       }
 
       let recovered = await this.$walletService.recover(this.seeds.join(' '), this.password, this.network, userhomedir)
+
       if(recovered && recovered.success){
         if(await this.configService.updateAppConfig('account_dirs', {
             account: this.account,

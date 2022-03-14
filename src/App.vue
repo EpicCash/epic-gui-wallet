@@ -297,7 +297,7 @@ export default {
       });
 
 
-      this.emitter.on('logined', ()=>{
+      this.emitter.on('logined', async()=>{
         log.info('app.vue got user logined event')
 
         this.openSettings = false;
@@ -313,9 +313,10 @@ export default {
           this.getAddress();
         }
 
+
       });
 
-      this.emitter.on('update', () => {
+      this.emitter.on('updateNode', () => {
         console.log('emit on update', this.nodeOnline);
         if(this.nodeOnline && this.userLoggedIn){
           this.getNode();
@@ -327,6 +328,17 @@ export default {
         this.walletListen = this.$walletService.isListen();
       });
 
+
+      this.emitter.on('update', async()=>{
+
+        if(this.ownerApiRunning && this.userLoggedIn){
+          await this.emitter.emit('updateSummary');
+          await this.emitter.emit('updateNode');
+          await this.emitter.emit('updateCommits');
+          await this.emitter.emit('updateTxs');
+        }
+
+      });
 
     },
 
@@ -355,11 +367,11 @@ export default {
             5*1000)
         }
       },
-      /*ownerApiRunning:function(newVal){
+      ownerApiRunning:function(newVal){
         if(newVal){
-          this.autoRefresh(60*2.5*1000)
+          this.autoRefresh(15*1000)
         }
-      },*/
+      },
       height: function(){
         this.isAnimate = true
         setTimeout(()=>{this.isAnimate = false}, 1000)
@@ -377,8 +389,6 @@ export default {
 
 
       async checkAccountOnStart(){
-
-
 
         if(await this.configService.killWalletProcess()){
           if(this.configService.appHasAccounts()){
@@ -482,9 +492,7 @@ export default {
 
       autoRefresh(interval){
         setInterval(()=>{
-          if(this.ownerApiRunning){
-            this.emitter.emit('update')
-          }
+          this.emitter.emit('update');
         }, interval)
       },
     },

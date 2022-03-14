@@ -133,14 +133,21 @@
         openMsg: false,
         openDetail: false,
         txDetail: {},
-        msg: this.$t("msg.txs.cancelSuccess")
+        msg: this.$t("msg.txs.cancelSuccess"),
+        updating: false
       }
     },
     mounted () {
-      this.getTxs()
+      if(!this.updating){
+        this.getTxs();
+      }
     },
     created () {
-      this.emitter.on('update', ()=>this.getTxs())
+      this.emitter.on('updateTxs', () => {
+        if(!this.updating){
+          this.getTxs();
+        }
+      })
     },
     methods: {
       detail(tx){
@@ -148,22 +155,24 @@
         this.txDetail = tx;
         this.openDetail = true;
       },
-      getTxs() {
-        this.$walletService.getTransactions(true, null, null)
-          .then((res) => {
-            let data = res.result.Ok[1].reverse()
-
-            this.total_txs = this.processTxs(data)
-            this.current_txs = this.total_txs.slice(0, this.count_per_page)
-            if (this.total_txs.length % this.count_per_page == 0){
-              this.pages_count = parseInt(this.total_txs.length/this.count_per_page)
-            }else{
-              this.pages_count = parseInt(this.total_txs.length/this.count_per_page) + 1
-            }
+      async getTxs() {
+        console.log('updateTxs called');
+        this.updating = true;
+        let txs = await this.$walletService.getTransactions(true, null, null);
+        if(txs && txs.result && txs.result.Ok){
+          let data = txs.result.Ok[1].reverse()
+          this.total_txs = this.processTxs(data)
+          this.current_txs = this.total_txs.slice(0, this.count_per_page)
+          if (this.total_txs.length % this.count_per_page == 0){
+            this.pages_count = parseInt(this.total_txs.length/this.count_per_page)
+          }else{
+            this.pages_count = parseInt(this.total_txs.length/this.count_per_page) + 1
           }
-          ).catch((error) => {
-            log.error('getTxs error:' + error)
-          })
+        }else{
+          log.error('getTxs error:' + txs.error)
+        }
+        this.updating = false;
+
       },
       processTxs(txs) {
         let posted = this.$dbService.getPostedUnconfirmedTxs()
