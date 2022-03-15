@@ -304,13 +304,15 @@ export default {
         this.ownerApiRunning = true;
         this.isLoading = false;
         this.userLoggedIn = true;
+
         this.config = this.configService.config;
+        this.getAddress();
         this.epicNode = this.configService.config['check_node_api_http_addr'];
         this.getNode();
 
         if(this.nodeOnline){
           this.getHeight();
-          this.getAddress();
+
         }
 
 
