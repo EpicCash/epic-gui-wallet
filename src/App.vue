@@ -12,16 +12,6 @@
           <img src="./assets/epiccash_logo.png" style="width:36%;height:auto;">
         </figure>
       </div>
-      <!-- p class="addressInfo">
-        <span v-if="address" class="" >Proof address: <button class="button is-small is-rounded">{{ address }}</button>
-          &nbsp;<span @click="copyAdress()">
-
-              <font-awesome-icon :icon="['fas', 'copy']"/>
-
-          </span>
-          <span v-if="!showCopyAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
-        </span>
-      </p -->
 
     </div>
     <div class="column">
@@ -77,9 +67,17 @@
 
             <p class="menu-label">Account</p>
             <ul class="menu-list">
-              <li><button class="button is-link is-outlined" @click.prevent="logout" v-bind:class="{'is-loading': isLoading }">
+              <li><a href="#" class="dropdown-item"  @click.prevent="showProofAddress" >
+                Proof Address<font-awesome-icon :icon="['fas', 'circle-notch spin']"/><i class="fas fa-circle-notch fa-spin"></i>
+              </a>
+              </li>
+              <li>
+              <a href="#" class="dropdown-item" @click.prevent="logout" >
                 {{ $t("msg.logout") }}
-              </button>
+                <span v-if="isLoading">
+                  <font-awesome-icon :icon="['fas', 'spinner']"/>
+                </span>
+              </a>
               </li>
             </ul>
 
@@ -126,7 +124,7 @@
   <create v-if="action === 'create'"></create>
   <restore v-if="action === 'restore'"></restore>
   <new v-if="action === 'init'"></new>
-
+  <message :showMsg="openProofAddressMsg" v-on:close="openProofAddressMsg = false" v-bind:msg=proofAddressMsg msgType="link"></message>
 
 </template>
 
@@ -137,8 +135,8 @@ const clipboard = window.clipboard;
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faGear as FasGear } from '@fortawesome/free-solid-svg-icons'
-library.add(FasGear)
+import { faSpinner, faGear } from '@fortawesome/free-solid-svg-icons'
+library.add(faSpinner, faGear)
 
 
 import CheckService from './components/CheckService.vue'
@@ -161,6 +159,7 @@ import Check from './components/Check.vue'
 import Seed from './components/Seed.vue'
 import Settings from './components/Settings.vue'
 
+import Message from './components/Message.vue'
 
 import mixin from './mixin.js'
 import { useI18n } from 'vue-i18n/index'
@@ -185,7 +184,8 @@ export default {
     New,
     Restore,
     Create,
-    Login
+    Login,
+    Message
   },
     data(){
       return {
@@ -195,7 +195,6 @@ export default {
         openHttpSend: false,
         openFileSend: false,
         openFinalize: false,
-        openHedwigV1: false,
         openCheck: false,
         openSeed: false,
         openSettings: false,
@@ -206,8 +205,6 @@ export default {
         height:null,
         isAnimate:false,
         walletExist:false,
-        hedwigRunning:false,
-        hedwigFailed:false,
         isRu: false,
         nodeOnline: false,
         nodeIsSync: false,
@@ -227,6 +224,9 @@ export default {
         isLoading: false,
         config: {},
         resetKey: 0,
+        openProofAddressMsg: false,
+        proofAddressMsg: '',
+        refresh: undefined
 
     }},
     setup () {
@@ -237,6 +237,7 @@ export default {
     },
     async mounted() {
       console.log('app mounted');
+      this.clearup();
       window.api.resize(1160, 850);
       this.checkAccountOnStart();
 
@@ -266,9 +267,6 @@ export default {
         }
         if(window == 'windowHttpReceive'){
           this.openHttpReceive = false
-        }
-        if(window == 'windowHedwigV1'){
-          this.openHedwigV1 = false
         }
         if(window == 'windowCheck'){
           this.openCheck = false
@@ -309,11 +307,7 @@ export default {
         this.getAddress();
         this.epicNode = this.configService.config['check_node_api_http_addr'];
         this.getNode();
-
-        if(this.nodeOnline){
-          this.getHeight();
-
-        }
+        this.getHeight();
 
 
       });
@@ -331,14 +325,14 @@ export default {
       });
 
 
-      this.emitter.on('update', async()=>{
+      this.emitter.on('update', ()=>{
 
-        if(this.ownerApiRunning && this.userLoggedIn){
-          await this.emitter.emit('updateSummary');
-          await this.emitter.emit('updateNode');
-          await this.emitter.emit('updateCommits');
-          await this.emitter.emit('updateTxs');
-        }
+
+          this.emitter.emit('updateSummary');
+          this.emitter.emit('updateNode');
+          this.emitter.emit('updateCommits');
+          this.emitter.emit('updateTxs');
+
 
       });
 
@@ -371,7 +365,7 @@ export default {
       },
       ownerApiRunning:function(newVal){
         if(newVal){
-          this.autoRefresh(15*1000)
+          this.autoRefresh((2*60)*1000)
         }
       },
       height: function(){
@@ -380,8 +374,17 @@ export default {
       }
     },
     methods: {
+      showProofAddress(){
 
+        this.openProofAddressMsg = true;
+        this.proofAddressMsg = this.address;
+      },
+      clearup(){
+        this.nodeOnline = false;
+        this.ownerApiRunning = false;
+        this.userLoggedIn = false;
 
+      },
       openWalletSettings(){
         this.resetKey += 1;
         this.openSettings=true;
@@ -493,9 +496,18 @@ export default {
 
 
       autoRefresh(interval){
-        setInterval(()=>{
-          this.emitter.emit('update');
+
+        if(this.refresh != undefined){
+          clearInterval(this.refresh);
+        }
+        this.refresh = setInterval(()=>{
+
+          if(this.ownerApiRunning && this.userLoggedIn){
+            this.emitter.emit('update');
+          }
         }, interval)
+
+
       },
     },
   }

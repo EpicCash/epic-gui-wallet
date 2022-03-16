@@ -31,11 +31,12 @@
             <th>Type</th>
             <th>Status</th>
             <th>&nbsp;</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
 
-          <tr v-for="tx in current_txs" :key="tx.id" @click="detail(tx)"  >
+          <tr v-for="tx in current_txs" :key="tx.id"   >
             <td >
 
               <font-awesome-icon v-if="tx.type=='send'" :icon="['fas', 'circle-arrow-left']"/>
@@ -60,6 +61,12 @@
             <td>
               <button v-if="tx.cancelable" class="button is-small is-link is-outlined" @click="cancel(`${tx.tx_slate_id}`)">
                 {{ $t("msg.cancel") }}
+              </button>
+
+            </td>
+            <td>
+              <button class="button is-small is-link is-outlined" @click="detail(tx)">
+                Details
               </button>
 
             </td>
@@ -144,6 +151,7 @@
     },
     created () {
       this.emitter.on('updateTxs', () => {
+
         if(!this.updating){
           this.getTxs();
         }
@@ -156,7 +164,7 @@
         this.openDetail = true;
       },
       async getTxs() {
-        console.log('updateTxs called');
+
         this.updating = true;
         let txs = await this.$walletService.getTransactions(true, null, null);
         if(txs && txs.result && txs.result.Ok){
@@ -258,7 +266,6 @@
       async cancel(tx_slate_id){
         let res = await this.$walletService.cancelTransactions(null, tx_slate_id);
         if(res && res.result && res.result.Ok == null){
-          this.emitter.emit('update')
           this.openMsg = true
         }else if(res && res.error){
           this.msg = res.error.message;

@@ -9,10 +9,12 @@ $grey: #595a67;
 $grey-light: #eaeaec;
 $grey-lighter: #ffffff;
 
-$orange: #ca9f5b;
-$yellow: #f0ad4e;
-$green: #5cb85c;
-$blue: #5bc0de;
+$orange: #FFD500;
+/*$orange: #ca9f5b;*/
+$yellow: #FFD500;
+$green: #005BBB;
+/*$green: #5cb85c;*/
+$blue: #005BBB;
 $red: #d9534f;
 
 $primary: $orange !default;
@@ -107,7 +109,15 @@ $panel-heading-background-color: $grey-dark;
 /*@import "~bulmaswatch/superhero/_variables.scss";*/
 @import '~bulma/bulma.sass';
 @import "~bulmaswatch/superhero/_overrides.scss";
-
+/* Define an animation behavior */
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+/* This is the class name given by the Font Awesome component when icon contains 'spinner' */
+.fa-spinner {
+  /* Apply 'spinner' keyframes looping once every second (1s)  */
+  animation: spinner 1s linear infinite;
+}
 .dotRed {
   height: 14px;
   width: 14px;
