@@ -136,7 +136,7 @@ const messages = {
 
     httpSend:{
       sendAmount: 'Amount to send',
-      address:'Address',
+      address:'Recipient Address',
       WrongAmount: 'Wrong amount',
       NotEnough: 'Not enough balance.',
       WrongAddress: 'Wrong address',

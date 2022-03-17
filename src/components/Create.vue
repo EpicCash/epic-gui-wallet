@@ -33,8 +33,8 @@
 
             <form class="box">
               <div class="field">
+                <label class="label">{{ $t('msg.restore.walletLocation') }}</label>
                 <a class="button is-link is-outlined" @click="selectDir">{{ $t("msg.create.select") }}</a>
-
                 <p class="button is-link is-success is-outlined" v-if="userHomedir != ''"><br/><strong>{{ userHomedir }}</strong></p>
               </div>
               <div class="field">
@@ -71,7 +71,7 @@
                   </div>
                 </div>
                 <div class="field">
-                  <button class="button is-link" @click.prevent="create" v-bind:class="{'is-loading':walletCreating}">{{ $t('msg.create.newWallet') }}</button>
+                  <button class="button" @click.prevent="create" v-bind:class="{'is-loading':walletCreating}">{{ $t('msg.create.newWallet') }}</button>
                   <button class="button is-text" @click="back">{{ $t("msg.back") }}</button>
                 </div>
                   <p class="help is-danger" v-if="error">{{errorInfo}}</p>

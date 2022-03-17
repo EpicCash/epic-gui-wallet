@@ -42,19 +42,19 @@
 
                 <div class="field is-grouped">
                   <div class="control">
-                    <button class="button is-link" v-bind:class="{'is-loading': isLoading }" @click.prevent="login">
-                      {{ $t("msg.login_") }}
+                    <button class="button" @click.prevent="login">
+                      {{ $t("msg.login_") }}<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/>&nbsp;</span>
                     </button>
                   </div>
                   <div class="control">
 
-                    <button class="button is-link" @click.prevent="create">
+                    <button class="button" @click.prevent="create">
                       {{ $t("msg.new.create") }}
                     </button>
                   </div>
                   <div class="control">
 
-                    <button class="button is-link" @click.prevent="restore">
+                    <button class="button" @click.prevent="restore">
                       {{ $t("msg.restore.recover") }}
                     </button>
                   </div>
@@ -72,11 +72,19 @@
 </template>
 
 <script>
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSpinner, faGear } from '@fortawesome/free-solid-svg-icons'
+library.add(faSpinner, faGear)
+
 const log = window.log
 
 export default {
   name: "login",
-
+  components: {
+    FontAwesomeIcon
+  },
   data() {
     return {
       password: '',
@@ -90,7 +98,10 @@ export default {
       isLoading: false,
     }
   },
+
   created(){
+
+
     this.emitter.on('wallet_error', ({msg, code})=>{
         this.errorapi = true;
         this.errorapiMsg = msg;
@@ -101,12 +112,14 @@ export default {
         this.errorapiMsg = '';
         this.errorCode = '';
     });
-    this.emitter.on('continueLogin', async() =>{
-      await this.continueLogin(false);
+    this.emitter.on('continueLogin', () => {
+       this.continueLogin(false);
     });
-    this.emitter.on('continueLoginFirst', async() =>{
+
+
+    this.emitter.on('continueLoginFirst', () => {
       console.log('continueLoginFirst');
-      await this.continueLogin(true);
+      this.continueLogin(true);
     });
 
   },
@@ -119,7 +132,7 @@ export default {
       this.password = '';
       this.account = '';
       account = '';
-
+      this.isLoading = false;
       //we have a valid login to wallet
       if(loginSucccess){
 
@@ -149,7 +162,7 @@ export default {
 
 
       }else{
-        this.isLoading = false;
+
         return this.error = true
 
       }

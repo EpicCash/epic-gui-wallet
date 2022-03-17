@@ -103,8 +103,8 @@
 
             <div class="field is-grouped ">
               <div class="control">
-                <button class="button is-link" v-bind:class="{'is-loading': starting}" @click="start">
-                  {{ $t("msg.httpReceive.start") }}
+                <button class="button is-link" @click="start">
+                  {{ $t("msg.httpReceive.start") }}<span v-if="starting"><font-awesome-icon :icon="['fas', 'spinner']"/>&nbsp;</span>
                 </button>
               </div>
               <div class="control">
@@ -127,8 +127,8 @@
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
-library.add(faCopy)
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+library.add(faSpinner)
 
 
 

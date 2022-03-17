@@ -1,6 +1,6 @@
 <template>
 
-  <div  v-if="!checkservice">
+  <div  v-show="!checkservice">
   <settings :showModal="openSettings" :config="config" :key="resetKey"></settings>
 
 
@@ -68,15 +68,12 @@
             <p class="menu-label">Account</p>
             <ul class="menu-list">
               <li><a href="#" class="dropdown-item"  @click.prevent="showProofAddress" >
-                Proof Address<font-awesome-icon :icon="['fas', 'circle-notch spin']"/><i class="fas fa-circle-notch fa-spin"></i>
+                Proof Address
               </a>
               </li>
               <li>
               <a href="#" class="dropdown-item" @click.prevent="logout" >
-                {{ $t("msg.logout") }}
-                <span v-if="isLoading">
-                  <font-awesome-icon :icon="['fas', 'spinner']"/>
-                </span>
+                {{ $t("msg.logout") }}<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/>&nbsp;</span>
               </a>
               </li>
             </ul>
@@ -108,7 +105,7 @@
       </div> <!-- // columns -->
     </div>
 
-    <login v-if="!checkservice && !ownerApiRunning && action == 'login'"></login>
+    <login v-show="!checkservice && !ownerApiRunning && action == 'login'"></login>
 
   </div>
   <receive :showModal="openReceive"></receive>
@@ -120,10 +117,10 @@
 
   <seed :showModal="openSeed"></seed>
   <check :showModal="openCheck"></check>
-  <checkService v-if="action === 'check'"></checkService>
-  <create v-if="action === 'create'"></create>
-  <restore v-if="action === 'restore'"></restore>
-  <new v-if="action === 'init'"></new>
+  <checkService v-show="action === 'check'"></checkService>
+  <create v-show="action === 'create'"></create>
+  <restore v-show="action === 'restore'"></restore>
+  <new v-show="action === 'init'"></new>
   <message :showMsg="openProofAddressMsg" v-on:close="openProofAddressMsg = false" v-bind:msg=proofAddressMsg msgType="link"></message>
 
 </template>
@@ -226,7 +223,8 @@ export default {
         resetKey: 0,
         openProofAddressMsg: false,
         proofAddressMsg: '',
-        refresh: undefined
+        refresh: undefined,
+
 
     }},
     setup () {

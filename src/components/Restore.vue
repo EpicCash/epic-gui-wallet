@@ -43,7 +43,7 @@
                   <button class="button is-link is-outlined" @click="delete_">{{ $t('msg.restore.delete') }}</button>
                   <button class="button is-link is-outlined" @click="reset">{{ $t("msg.reset") }}</button>
                   <button class="button is-link is-outlined" @click="addall">{{ $t("msg.addall") }}</button>
-                  <button class="button is-text" @click="back">{{ $t("msg.back") }}</button>
+                  <button class="button is-text" @click="toLogin">{{ $t("msg.back") }}</button>
                 </div>
 
               <br/>
@@ -191,7 +191,13 @@ export default {
       valueChunks.forEach(element => {
 
         if(element.length >= 2) {
-          let filtered = this.mnemonicWords.filter(function (str) { return new RegExp('^' + element + '$').test(str); });
+          let filtered = this.mnemonicWords.filter(function (str) { return new RegExp('^' + element).test(str); });
+
+          //if user paste more than one word then find only exact matches
+          if(valueChunks.length >= 2){
+            filtered = this.mnemonicWords.filter(function (str) { return new RegExp('^' + element + '$').test(str); });
+          }
+
           //merge arrays
           this.wordList = [...this.wordList, ...filtered];
 
@@ -297,10 +303,6 @@ export default {
     add(word){
       this.seeds.push(word)
 
-    },
-    back(){
-      this.clearup()
-      this.emitter.emit('toLogin')
     },
     delete_(){
       if(this.seeds.length > 0)this.seeds.pop()

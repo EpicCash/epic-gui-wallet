@@ -13,18 +13,41 @@
         <p v-for="error in errors" :key="error">{{ error }}</p>
       </div>
       <div v-if="!sent">
-        <div class="field">
-          <label class="label">{{ $t("msg.httpSend.address") }}(HTTP/HTTPS)</label>
-          <div class="control">
-            <input class="input" type="text" v-model="address" placeholder="eg: https://receiveripaddress:3415">
-          </div>
-        </div>
+
         <div class="field">
           <label class="label">{{ $t("msg.httpSend.sendAmount") }}</label>
           <div class="control">
             <input class="input" type="text" v-model="amount" placeholder="1">
           </div>
         </div>
+
+        <div class="field">
+
+          <label class="label">Method</label>
+          <div class="field">
+                <div class="select">
+                  <select v-model="method">
+                    <option value="http">Http</option>
+                    <option value="keybase">Keybase</option>
+                  </select>
+                </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">{{ $t("msg.httpSend.address") }}</label>
+          <div class="control">
+            <input class="input" type="text" v-model="address" placeholder="eg: https://receiveripaddress:3415">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Proof address from recipient</label>
+          <div class="control">
+            <input class="input" type="text" v-model="proof_address_recipient" >
+          </div>
+        </div>
+
         <div class="field">
           <label class="label">Message</label>
           <div class="control">
@@ -65,6 +88,8 @@ export default {
       errors: [],
       amount: null,
       address: '',
+      proof_address_recipient: null,
+      method: 'http',
       message: '',
       slateVersion: 0,
       sending: false,
@@ -128,6 +153,9 @@ export default {
       if (this.validAmount(this.amount) && !this.enough(this.amount)) {
         this.errors.push(this.$t('msg.httpSend.NotEnough'));
       }
+      if(this.proof_address_recipient != null && this.proof_address_recipient.length != 64){
+        this.errors.push(this.$t('msg.fileSend.proof_address_recipient'));
+      }
       if (!this.errors.length) {
         return true;
       }
@@ -148,9 +176,9 @@ export default {
           "selection_strategy_is_use_all": false,
           "target_slate_version": null,
           "ttl_blocks": null,
-          "payment_proof_recipient_address": null,
+          "payment_proof_recipient_address": this.proof_address_recipient,
           "send_args": {
-            "method": "http",
+            "method": this.method,
             "dest": this.address,
             "finalize": true,
             "post_tx": true,
