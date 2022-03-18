@@ -1,13 +1,13 @@
 <template>
 
-  <div  v-show="!checkservice">
+  <div v-show="!checkservice">
   <settings :showModal="openSettings" :config="config" :key="resetKey"></settings>
 
 
   <div class="columns ">
 
     <div class="column is-half">
-      <div v-if="ownerApiRunning" class="hero-head" style="padding: 1.5rem;">
+      <div v-show="ownerApiRunning" class="hero-head" style="padding: 1.5rem;">
         <figure  class="image ">
           <img src="./assets/epiccash_logo.png" style="width:36%;height:auto;">
         </figure>
@@ -16,7 +16,7 @@
     </div>
     <div class="column">
 
-        <div v-if="userLoggedIn"  class="hero-head nodeInfo">
+        <div v-show="userLoggedIn"  class="hero-head nodeInfo">
 
           Node ({{ this.epicNode }}):
           <span v-if="nodeOnline && nodeIsSync" class="dotGreen"></span><span v-if="nodeOnline && nodeIsSync">&nbsp;online</span>
@@ -37,7 +37,7 @@
     </div>
   </div>
 
-    <div class="section" v-if="ownerApiRunning" style="padding: 1.5rem 1.5rem;">
+    <div class="section" v-show="ownerApiRunning" style="padding: 1.5rem 1.5rem;">
 
 
       <div class="columns">
@@ -90,10 +90,10 @@
             </ul>
           </div>
 
-          <div v-if="transactionTab" class="content-tab" >
+          <div v-show="transactionTab" class="content-tab" >
             <transaction v-bind:count_per_page="10"></transaction>
           </div>
-          <div v-if="commitTab" class="content-tab" >
+          <div v-show="commitTab" class="content-tab" >
             <commit v-bind:count_per_page="10" v-bind:nodeHeight="height"></commit>
           </div>
 
@@ -234,7 +234,7 @@ export default {
       }
     },
     async mounted() {
-      console.log('app mounted');
+      console.log('############# app mounted #################');
       this.clearup();
       window.api.resize(1160, 850);
       this.checkAccountOnStart();
@@ -300,7 +300,7 @@ export default {
         this.ownerApiRunning = true;
         this.isLoading = false;
         this.userLoggedIn = true;
-
+        this.emitter.emit('update');
         this.config = this.configService.config;
         this.getAddress();
         this.epicNode = this.configService.config['check_node_api_http_addr'];
@@ -381,6 +381,9 @@ export default {
         this.nodeOnline = false;
         this.ownerApiRunning = false;
         this.userLoggedIn = false;
+        if(this.refresh != undefined){
+          clearInterval(this.refresh);
+        }
 
       },
       openWalletSettings(){

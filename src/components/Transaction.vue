@@ -141,20 +141,16 @@
         openDetail: false,
         txDetail: {},
         msg: this.$t("msg.txs.cancelSuccess"),
-        updating: false
       }
     },
-    mounted () {
-      if(!this.updating){
-        this.getTxs();
-      }
-    },
+
     created () {
+      console.log('########### TRASNACTION VUE CREATED ###########');
       this.emitter.on('updateTxs', () => {
 
-        if(!this.updating){
+
           this.getTxs();
-        }
+
       })
     },
     methods: {
@@ -165,7 +161,7 @@
       },
       async getTxs() {
 
-        this.updating = true;
+
         let txs = await this.$walletService.getTransactions(true, null, null);
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok[1].reverse()
@@ -179,7 +175,7 @@
         }else{
           log.error('getTxs error:' + txs.error)
         }
-        this.updating = false;
+
 
       },
       processTxs(txs) {
