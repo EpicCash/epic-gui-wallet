@@ -43,7 +43,7 @@
                 <div class="field is-grouped">
                   <div class="control">
                     <button class="button" @click.prevent="login">
-                      {{ $t("msg.login_") }}<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/>&nbsp;</span>
+                      {{ $t("msg.login_") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
                     </button>
                   </div>
                   <div class="control">

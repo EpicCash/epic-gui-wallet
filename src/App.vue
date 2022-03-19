@@ -73,7 +73,7 @@
               </li>
               <li>
               <a href="#" class="dropdown-item" @click.prevent="logout" >
-                {{ $t("msg.logout") }}<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/>&nbsp;</span>
+                {{ $t("msg.logout") }}<span v-if="isLoading">&nbsp;<font-awesome-icon :icon="['fas', 'spinner']"/></span>
               </a>
               </li>
             </ul>
