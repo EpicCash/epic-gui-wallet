@@ -232,9 +232,9 @@ class ConfigService {
       if(!window.nodeFs.existsSync(walletDir)){
         return false;
       }
-      if(!window.nodeFs.existsSync(tomlFile)){
+      /*if(!window.nodeFs.existsSync(tomlFile)){
         return false;
-      }
+      }*/
 
       if(window.nodeFs.existsSync(configFile)){
 
@@ -474,7 +474,7 @@ class ConfigService {
 
         //check if owner api secret file exist
         let ownerApiSecretFile = path.join(defaultAccountWalletdir, '.owner_api_secret');
-        
+
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.ownerApiSecretPath = ownerApiSecretFile;
