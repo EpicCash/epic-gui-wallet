@@ -153,11 +153,9 @@
     },
 
     created () {
-      console.log('############# created commit ##########');
+
       this.emitter.on('updateCommits', ()=> {
-
           this.getCommits()
-
       })
     },
 

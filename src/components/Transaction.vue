@@ -145,17 +145,13 @@
     },
 
     created () {
-      console.log('########### TRASNACTION VUE CREATED ###########');
       this.emitter.on('updateTxs', () => {
-
-
           this.getTxs();
-
       })
     },
     methods: {
       detail(tx){
-        console.log(JSON.stringify(tx));
+        
         this.txDetail = tx;
         this.openDetail = true;
       },

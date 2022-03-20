@@ -116,9 +116,7 @@ export default {
        this.continueLogin(false);
     });
 
-
     this.emitter.on('continueLoginFirst', () => {
-      console.log('continueLoginFirst');
       this.continueLogin(true);
     });
 
@@ -138,7 +136,7 @@ export default {
 
         let apiCallable = await this.$walletService.getNodeHeight();
 
-        console.log('Login apiCallable', apiCallable);
+
 
         if( !apiCallable ){
           this.isLoading = false;
@@ -146,7 +144,7 @@ export default {
         }
 
         if(firstlogin){
-          console.log('after api start this is firstlogin');
+
           //call txs for first wallet scan outputs
           //because a recovered wallet makes a scan on first start
           //bug if multible
@@ -168,11 +166,11 @@ export default {
       }
     },
     create(){
-      console.log('new create');
+
       this.emitter.emit('initMode', 'create');
     },
     restore(){
-      console.log('restore');
+      
       this.emitter.emit('initMode', 'restore');
     },
     async login(){
@@ -192,6 +190,13 @@ export default {
         //check now requires settings
         this.isLoading = true;
         let action = await this.configService.startCheck(account, true);
+
+
+        if(action === 'toml'){
+          await this.$walletService.newToml(this.password);
+          action = await this.configService.startCheck(account, true);
+        }
+
         if(action === 'settings'){
           this.isLoading = false;
           this.emitter.emit('open', 'windowSettings');
@@ -200,7 +205,6 @@ export default {
           await this.continueLogin(false);
 
         }
-
 
 
       }else{

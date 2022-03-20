@@ -75,11 +75,8 @@ class WalletService {
       let baseURL = this.configService.defaultEpicNode;
       let password = this.configService.ownerApisecret;
 
-
-
-      console.log('wallet init client password', password);
       return new Promise(function(resolve, reject) {
-                console.log('initClient', password);
+
                 let client = axios.create({
                     baseURL: baseURL,
                     auth: {
@@ -90,7 +87,6 @@ class WalletService {
 
                 })
 
-                console.log('init wallet client');
                 resolve(client);
       });
     }
@@ -123,7 +119,7 @@ class WalletService {
 
         //do not enrypt receive_tx
         if(!isForeign){
-          //console.log('jsonRPC body', body);
+
           const aesCipher = window.nodeAes256gcm(this.shared_key);
           const nonce = new Buffer.from(crypto.randomBytes(12));
           let enc = aesCipher.encrypt(JSON.stringify(body), nonce);
@@ -156,10 +152,10 @@ class WalletService {
           }
 
           let dec = aesCipher.decrypt(data, nonce2)
-          //console.log('decrypt', dec, typeof dec);
+
           if(dec != ''){
             let response = JSON.parse(dec);
-            console.log('return decoded responce', method, response);
+
             return response;
           }
       }else{
@@ -328,40 +324,36 @@ class WalletService {
           if(this.configService.config['network'] == 'floonet'){
             args = [
               '--floonet',
-            //  '-r', this.configService.config['check_node_api_http_addr'],
               '-c', this.configService.defaultAccountWalletdir,
               'owner_api'
 
             ];
           }else{
             args = [
-            //  '-r', this.configService.config['check_node_api_http_addr'],
               '-c', this.configService.defaultAccountWalletdir,
               'owner_api'
 
             ];
           }
 
-          console.log('wallet start', this.configService.epicPath, args, this.configService.platform, this.configService.userhomedir);
-
 
           walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
-          console.log('wallet start walletOpenId', walletOpenId);
+
           if(walletOpenId === 0 && this.token){
             this.walletIsOpen = true;
             return true;
           }
 
           let userTopDir = await this.jsonRPC('set_top_level_directory', {dir: this.configService.defaultAccountWalletdir}, false)
-          console.log('wallet start  userTopDir', userTopDir);
+
           if(userTopDir.result){
 
               let tokenResponse =  await this.jsonRPC('open_wallet', {"name": account, password: password}, false)
-              console.log('wallet start  tokenResponse', tokenResponse);
+
               if(tokenResponse.result){
                 this.token = tokenResponse.result.Ok;
               }else if(tokenResponse.error){
-                console.log(tokenResponse.error.mesage);
+
                 return false;
               }
 
@@ -381,9 +373,7 @@ class WalletService {
     /* start a epic wallet in listen mode */
     async startListen(password, tor, method){
 
-        console.log(tor,method);
         let args = [];
-        console.log('start wallet listener');
 
         //do not start listener 2 times if wallet is already open
         if(this.walletIsListen){
@@ -431,7 +421,31 @@ class WalletService {
     isListen(){
       return this.walletIsListen;
     }
+    async newToml(password){
 
+
+        let args = [];
+        if(this.configService.config['network'] == 'floonet'){
+
+          args = [
+            '--floonet',
+            '--pass', password,
+            '-c', this.configService.defaultAccountWalletdir,
+            'init'
+          ];
+
+        }else{
+          args = [
+            '--pass', password,
+            '-c', this.configService.defaultAccountWalletdir,
+            'init'
+          ];
+        }
+
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
+
+
+    }
     async new(password, network, userhomedir){
 
 
@@ -496,7 +510,6 @@ class WalletService {
           if(this.processes[processName] > 0){
             let processKilled = await window.nodeChildProcess.kill(this.processes[processName], this.configService.platform);
 
-            console.log('stop process', this.processes[processName], processKilled);
             if(processKilled && processName === 'listen'){
               this.walletIsListen = false;
               delete this.processes[processName];

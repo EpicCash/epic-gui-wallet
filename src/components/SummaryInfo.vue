@@ -32,11 +32,8 @@
       }
     },
     created () {
-      console.log('############# created updateSummary ##########');
       this.emitter.on('updateSummary', () => {
-
           this.getSummaryinfo();
-
       });
 
     },

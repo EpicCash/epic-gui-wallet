@@ -234,7 +234,7 @@ export default {
       }
     },
     async mounted() {
-      console.log('############# app mounted #################');
+
       this.clearup();
       window.api.resize(1160, 850);
       this.checkAccountOnStart();
@@ -243,7 +243,7 @@ export default {
     created () {
 
       this.emitter.on('initMode', (action) => {
-        console.log(action);
+
         this.action = action;
       })
 
@@ -311,7 +311,7 @@ export default {
       });
 
       this.emitter.on('updateNode', () => {
-        console.log('emit on update', this.nodeOnline);
+
         if(this.nodeOnline && this.userLoggedIn){
           this.getNode();
           this.getHeight();
@@ -398,7 +398,7 @@ export default {
 
         if(await this.configService.killWalletProcess()){
           if(this.configService.appHasAccounts()){
-            console.log('app has accounts', this.configService.appConfig);
+
             this.checkservice = false;
             this.ownerApiRunning = false;
             this.action = 'login';
@@ -446,7 +446,7 @@ export default {
 
       async getNode(){
         this.nodeOnline = await this.$nodeService.nodeOnline();
-        console.log('async getNode', this.nodeOnline);
+        
         if(this.nodeOnline.sync_info){
           this.current_height = this.nodeOnline.sync_info.current_height
           this.highest_height = this.nodeOnline.sync_info.highest_height

@@ -16,12 +16,21 @@ class NodeService {
     let password = this.configService.apisecret;
 
     return new Promise(function(resolve) {
+
+              
+              console.log('nodeService initClient', password, baseURL);
               let client = axios.create({
                   baseURL: baseURL,
                   auth: {
                       username: 'epic',
                       password: password
                   },
+                  headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    credentials: 'same-origin',
+                  },
+                  withCredentials: true,
+
 
               })
 
@@ -46,7 +55,7 @@ class NodeService {
     }
 
 
-    return this.client.get('/v1/status').then((response) => {
+    return this.client.get('/v1/status', { withCredentials:true }).then((response) => {
 
         return response.data
     }, (error) => {

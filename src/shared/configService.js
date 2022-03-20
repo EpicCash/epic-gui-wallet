@@ -1,5 +1,6 @@
 /* check required files and folder on on app start */
-const defaultUserdir = 'does not exist';//window.config.getUserHomedir();
+const defaultAppConfigDir = window.config.getUserHomedir();
+const defaultUserdir = 'epicguiwallet';
 const path = window.nodePath;
 const nodeChildProcess = window.nodeChildProcess;
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -53,12 +54,18 @@ class ConfigService {
     });
 
     if(foundAccount && foundAccount['userhomedir']){
-      //console.log('set new wallet dir on login', foundAccount);
-      this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'), foundAccount['account']);
+
+      if(foundAccount['account'] == 'default'){
+        this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'));
+
+      }else{
+        this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'), foundAccount['account']);
+
+      }
+
       this.appConfigAccount = foundAccount;
     }
-    //console.log('set new wallet dir on login', this.defaultAccountWalletdir, this.userhomedir);
-    //return false;
+
     return accountExist;
 
   }
@@ -89,7 +96,7 @@ class ConfigService {
       window.nodeFs.writeFileSync(this.configFile, JSON.stringify(this.config), {encoding: "utf8",flag: "w"});
       return true;
     }catch(e){
-      console.log('saveConfig', e);
+
       return false;
     }
 
@@ -108,7 +115,7 @@ class ConfigService {
       window.nodeFs.writeFileSync(this.appConfigFile, JSON.stringify(this.appConfig), {encoding: "utf8", flag: "w"});
       return true;
     }catch(e){
-      console.log('saveAppConfig', e);
+
       return false;
     }
 
@@ -128,11 +135,11 @@ class ConfigService {
         const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
         if(tomlContent.search(re) != -1){
-            console.log('Enable ForeignApi to true')
+
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
         }
         if(tomlContent.search(re2) != -1){
-            console.log('change wallet default path to ', this.userhomedir);
+
             if(this.platform == 'win'){
               //double escaped path
               tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir.replace(/\\/g, '\\\\') + '"');
@@ -141,7 +148,7 @@ class ConfigService {
             }
         }
         if(tomlContent.search(re3) != -1){
-            console.log('change where wallet should find a running node', this.config.check_node_api_http_addr)
+
             tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr  = "' + this.config.check_node_api_http_addr + '"');
         }
 
@@ -152,7 +159,14 @@ class ConfigService {
 
 
     } else {
+
+
+
         this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file does not exist or readable');
+        return false;
+        //todo create a default new toml file
+
+
     }
     return tomlFile;
 
@@ -185,7 +199,7 @@ class ConfigService {
       }
 
       this.appConfig = appConfig;
-      console.log('updateAppConfig', this.appConfig);
+
       return this.saveAppConfig();
   }
 
@@ -195,7 +209,7 @@ class ConfigService {
 
     for(let walletProcess of plist) {
       let killed = await nodeChildProcess.kill(walletProcess.pid);
-      console.log('startCheck killed process', killed, walletProcess);
+
     }
 
     return true;
@@ -210,7 +224,7 @@ class ConfigService {
       let configFile = path.join(selectedDir, 'config.json');
       let walletDirSegements = selectedDir.split(path.sep).reverse();
       if(walletDirSegements.length <= 0){
-        console.log('wallet dir has no segments');
+
         return false;
       }
       let userdata;
@@ -324,7 +338,7 @@ class ConfigService {
     let appConfig = true;
 
     //this should never fail or app is not working
-    this.appConfigFile = path.join(window.config.getResourcePath(), 'app.json');
+    this.appConfigFile = path.join(defaultAppConfigDir, '.epic', 'epic_3-0-0_config.json');
     if (!window.nodeFs.existsSync(this.appConfigFile)) {
       appConfig = false;
       //copy default config json to new wallet dir
@@ -341,7 +355,7 @@ class ConfigService {
           appConfig = false;
         }
       }catch(e){
-        console.log('cannot parse app config', e);
+
         return false;
       }
 
@@ -365,7 +379,13 @@ class ConfigService {
             this.appConfig['account_dirs'].forEach(function(existingAccount){
                 if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
                   userHomedir = existingAccount['userhomedir'];
-                  defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account'])
+                  if(account == 'default'){
+                    defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'));
+
+                  }else{
+                    defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account']);
+
+                  }
                 }
             });
 
@@ -373,10 +393,16 @@ class ConfigService {
           this.appConfig['account_dirs'].forEach(function(existingAccount){
               if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
                 userHomedir = existingAccount['userhomedir'];
-                defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account'])
+                if(existingAccount['account'] == 'default'){
+                  defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'));
+                }else{
+                  defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account']);
+
+                }
               }
           });
       }
+
 
       await delay(sleepTime);
 
@@ -392,7 +418,7 @@ class ConfigService {
       this.userhomedir = userHomedir;
       this.defaultAccountWalletdir = defaultAccountWalletdir;
 
-      console.log('defaultAccountWalletdir', this.defaultAccountWalletdir);
+
 
       await delay(sleepTime);
 
@@ -408,8 +434,6 @@ class ConfigService {
             this.emitter.emit('checkFail', 'wallet config file does not exist');
             //copy default config json to new wallet dir
             let defaultConfigFile = path.join(window.config.getResourcePath(), "default.config.json");
-            console.log(defaultAccountWalletdir);
-            console.log(configFile);
             window.nodeFs.copyFileSync(defaultConfigFile, configFile);
         }
         this.configFile = configFile;
@@ -450,7 +474,7 @@ class ConfigService {
 
         //check if owner api secret file exist
         let ownerApiSecretFile = path.join(defaultAccountWalletdir, '.owner_api_secret');
-        console.log('config check ownerApiSecretFile', ownerApiSecretFile);
+        
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.ownerApiSecretPath = ownerApiSecretFile;
@@ -466,7 +490,9 @@ class ConfigService {
 
 
         this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
-
+        if(!this.walletTOMLPath){
+          return 'toml';
+        }
 
         this.defaultEpicNode = this.config['check_node_api_http_addr'] != '' ? this.config['check_node_api_http_addr'] : 'http://127.0.0.1'
         await delay(sleepTime);
@@ -474,7 +500,6 @@ class ConfigService {
         //check if we run the first time
         //make some settings
         if(this.config['firstTime']){
-          console.log('starting first time', account);
           this.accountExist(account);
           return 'settings'
 
