@@ -51,7 +51,7 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
-  if (isDevelopment) {
+  if (!isDevelopment) {
     var menu = Menu.buildFromTemplate([
         {
             label: 'Menu',
