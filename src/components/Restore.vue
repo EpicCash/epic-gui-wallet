@@ -140,7 +140,7 @@ export default {
   data() {
     let config = this.configService.config;
     let network = config['network'] ? config['network'] : 'mainnet';
-    let account = 'default';
+
 
     return {
       wordList: [],
@@ -149,7 +149,7 @@ export default {
       seeds:[],
       password: '',
       password2: '',
-      account: account,
+      account: '',
       total: 24,
       page: 'addSeeds',
       errorPassword: false,
@@ -282,7 +282,7 @@ export default {
       if(account == 'default'){
         userhomedir = window.nodePath.join(this.userHomedir, networkShortname);
       }else{
-        userhomedir = window.nodePath.join(this.userHomedir, networkShortname, this.account);
+        userhomedir = window.nodePath.join(this.userHomedir, networkShortname, account);
       }
 
 
@@ -292,7 +292,7 @@ export default {
 
       if(recovered && recovered.success){
         if(await this.configService.updateAppConfig('account_dirs', {
-            account: this.account,
+            account: account,
             userhomedir: this.userHomedir,
             network: this.network,
             isdefault: false

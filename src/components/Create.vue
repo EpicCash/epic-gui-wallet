@@ -40,7 +40,7 @@
               <div class="field">
                 <label class="label">{{ $t("msg.account") }}</label>
                 <div class="control">
-                  <input class="input" type="text" placeholder="" :class="{'is-danger': error}" v-model="account">
+                  <input class="input" type="text" placeholder="default" :class="{'is-danger': error}" v-model="account">
                 </div>
 
               </div>
@@ -169,7 +169,7 @@ export default {
       if(account == 'default'){
         userhomedir = window.nodePath.join(this.userHomedir, networkShortname);
       }else{
-        userhomedir = window.nodePath.join(this.userHomedir, networkShortname, this.account);
+        userhomedir = window.nodePath.join(this.userHomedir, networkShortname, account);
       }
 
 
@@ -177,17 +177,15 @@ export default {
       if(created && created.success){
         console.log('created', created);
 
-
-
         if(await this.configService.updateAppConfig('account_dirs', {
-            account: this.account,
+            account: account,
             userhomedir: this.userHomedir,
             network: this.network,
             isdefault: false
           }) )
           {
 
-          if(await this.configService.startCheck(this.account)){
+          if(await this.configService.startCheck(account)){
             this.walletCreated = true
             this.seeds = created.msg.split(' ')
           }
