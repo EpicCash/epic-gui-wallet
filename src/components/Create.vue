@@ -128,9 +128,11 @@ export default {
         return
       }
 
-      if(this.account.length == 0 ){
+      let account = this.account != '' ? this.account.trim() : 'default';
+
+      if(!this.onlyLetters(account)){
         this.error = true
-        this.errorInfo = this.$t('msg.create.errorAccountEmpty')
+        this.errorInfo = this.$t('msg.create.errorAccountName')
         return
       }else{
         var self = this;
@@ -156,10 +158,18 @@ export default {
       }
 
       let userhomedir = '';
+      let networkShortname = '';
       if(this.network == 'floonet'){
-        userhomedir = window.nodePath.join(this.userHomedir, 'floo', this.account);
+        networkShortname = 'floo';
       }else{
-        userhomedir = window.nodePath.join(this.userHomedir, 'main', this.account);
+        networkShortname = 'main';
+
+      }
+
+      if(account == 'default'){
+        userhomedir = window.nodePath.join(this.userHomedir, networkShortname);
+      }else{
+        userhomedir = window.nodePath.join(this.userHomedir, networkShortname, this.account);
       }
 
 
@@ -196,6 +206,9 @@ export default {
     },
     resetErrors(){
       this.error = false;
+    },
+    onlyLetters(str) {
+      return /^[a-z]*$/.test(str);
     },
     clearup(){
       this.password = ""

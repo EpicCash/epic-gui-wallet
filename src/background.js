@@ -28,6 +28,7 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    title: "Epiccash Wallet 3.0",
     webPreferences: {
       icon: path.join(__dirname, '../public/favicon.ico'),
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -55,10 +56,11 @@ async function createWindow() {
         {
             label: 'Menu',
             submenu: [
-                //{label:'Adjust Notification Value'},
-                //{label:'CoinMarketCap'},
+                { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+                { type: "separator" },
                 {
-                    label:'Exit',
+                    label:'Quit',
+                    accelerator: "Command+Q",
                     async click() {
                         let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
 
@@ -80,9 +82,32 @@ async function createWindow() {
                          };
                          app.quit()
                     }
-                }
-            ]
+                },
+
+            ],
+
+        },
+        {
+          label: "Application",
+          submenu: [
+
+            {
+              label: "Edit",
+              submenu: [
+                  { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+                  { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                  { type: "separator" },
+                  { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                  { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+                  { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+                  { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+              ]
+            }
+          ]
+
+
         }
+
     ])
     Menu.setApplicationMenu(menu);
   }

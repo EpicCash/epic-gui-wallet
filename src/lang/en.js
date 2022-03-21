@@ -55,6 +55,7 @@ const messages = {
       errorPasswdConsistency: 'Please enter the same password',
       errorCreateFailed: 'Error when try to create new wallet.',
       errorAccountEmpty: 'Account cannot be empty',
+      errorAccountName: 'Only lower a-z letters are allowed for account name',
       errorAccountExist: 'Account already exist'
     },
 
@@ -82,7 +83,8 @@ const messages = {
       restoring: 'It will take 10-30 minites to finish check. Be patient ......',
       restored: 'Wallet successfully recovered.',
       login: 'Login to Wallet',
-      walletLocation: 'Wallet location'
+      walletLocation: 'Wallet location',
+      errorAccountName: 'Only lower a-z letters are allowed for account name',
     },
 
     app:{
