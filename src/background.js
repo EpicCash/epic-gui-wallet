@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, dialog, Menu } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell } from 'electron'
 import { exec } from 'child_process'
 
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -51,16 +51,21 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
-  if (!isDevelopment) {
+  if (isDevelopment) {
     var menu = Menu.buildFromTemplate([
         {
             label: 'Menu',
             submenu: [
-                { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+                process.platform == 'darwin' ? { label: "About Application", selector: "orderFrontStandardAboutPanel:" }:null,
+                { label: "Source on GitHub", click ()
+                  {
+                    shell.openExternal('https://github.com/EpicCash/epic-gui-wallet');
+                  }
+                 },
                 { type: "separator" },
                 {
                     label:'Quit',
-                    accelerator: "Command+Q",
+                    accelerator: "CmdOrCtrl+Q",
                     async click() {
                         let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
 

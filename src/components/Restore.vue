@@ -212,7 +212,7 @@ export default {
       this.seeds = [];
       this.password ='';
       this.password2 = '';
-      this.page = 'addSeeds';
+      this.page = '';
       this.errorPassword = false;
       this.errorInfoPassword = '';
       this.recoverErrorInfo = '';
@@ -329,8 +329,9 @@ export default {
       this.clearup()
     },
     toLogin(){
-      this.clearup()
-      this.emitter.emit('toLogin')
+      
+      this.clearup();
+      this.emitter.emit('toLogin');
     }
   }
 }
