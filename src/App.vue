@@ -239,8 +239,12 @@ export default {
       window.api.resize(1160, 850);
       this.checkAccountOnStart();
 
+
+
+
+
     },
-    created () {
+    async created () {
 
       this.emitter.on('initMode', (action) => {
 
@@ -396,12 +400,17 @@ export default {
 
       async checkAccountOnStart(){
 
+
+
         if(await this.configService.killWalletProcess()){
           if(this.configService.appHasAccounts()){
 
             this.checkservice = false;
             this.ownerApiRunning = false;
             this.action = 'login';
+
+
+
           }else{
             this.checkservice = false;
             this.action = 'init';
@@ -446,7 +455,7 @@ export default {
 
       async getNode(){
         this.nodeOnline = await this.$nodeService.nodeOnline();
-        
+
         if(this.nodeOnline.sync_info){
           this.current_height = this.nodeOnline.sync_info.current_height
           this.highest_height = this.nodeOnline.sync_info.highest_height

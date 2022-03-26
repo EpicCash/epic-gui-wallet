@@ -337,7 +337,7 @@ class WalletService {
           }
 
 
-          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
+          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
 
           if(walletOpenId === 0 && this.token){
             this.walletIsOpen = true;
@@ -408,7 +408,7 @@ class WalletService {
           args.push('--no_tor');
         }
 
-        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform);
+        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
 
         if(walletListenId && walletListenId.msg > 0){
             this.walletIsListen = true;
@@ -442,7 +442,7 @@ class WalletService {
           ];
         }
 
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
 
 
     }
@@ -466,7 +466,7 @@ class WalletService {
             'init'
           ];
         }
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
 
 
     }
@@ -491,7 +491,7 @@ class WalletService {
           ];
         }
 
-        return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds);
+        return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds, this.configService.binariesPath);
     }
 
     async check(password, delete_unconfirmed){
@@ -502,7 +502,7 @@ class WalletService {
         }
 
         const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -t ${this.configService.defaultAccountWalletdir} --pass ${addQuotations(password)} scan ${delete_flag}`;
-        await window.nodeChildProcess.execScan(cmd);
+        await window.nodeChildProcess.execScan(cmd, this.configService.binariesPath);
 
     }
 

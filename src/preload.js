@@ -5,7 +5,7 @@ import { join } from 'path'
 import path from 'path';
 const moment = require('moment');
 const base32 = require('rfc-3548-b32');
-
+//import { useFetch } from '@vueuse/core';
 const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
@@ -85,12 +85,23 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     },
 
-    async execNew(cmd, args, platform){
+    async execNew(cmd, args, platform, path){
       console.log('execNew cmd:', cmd);
       console.log('execNew args:', args);
       return new Promise(function(resolve, reject) {
 
-          const createProcess = spawn(cmd, args, {shell: platform == 'win'});
+
+          let createProcess;
+          if(platform == 'mac'){
+            createProcess = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
+          }else if(platform == 'linux'){
+            createProcess = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
+          }else{
+            createProcess = spawn(cmd, args, {shell: true});
+          }
+
+
+
           let newSeedData = '';
           let errorData = '';
           let recordData = false;
@@ -148,10 +159,20 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       });
     },
-    async execScan(cmd){
+    async execScan(cmd, path){
 
       return new Promise(function(resolve, reject) {
-          const scanProcess = exec(cmd);
+
+
+          let scanProcess;
+          if(platform == 'mac'){
+            scanProcess = exec('DYLD_FALLBACK_LIBRARY_PATH='+path+' '+ cmd);
+          }else if(platform == 'linux'){
+            scanProcess = exec('LD_LIBRARY_PATH='+path+' '+ cmd);
+          }else{
+            scanProcess = exec(cmd);
+          }
+
           //scan process is self closing
           scanProcess.stdout.on('data', function(data){
               ipcRenderer.send('scan-stdout', data);
@@ -179,12 +200,26 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
 
     /* start wallet api */
-    async execStart(cmd, args, platform){
+    async execStart(cmd, args, platform, path){
 
       return new Promise(function(resolve, reject) {
+
           //console.log('start wallet cmd:', cmd);
           //console.log('start wallet args', args);
-          const ownerAPI = spawn(cmd, args, {shell: platform == 'win'});
+
+          let ownerAPI;
+          if(platform == 'mac'){
+            ownerAPI = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
+          }else if(platform == 'linux'){
+            ownerAPI = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
+          }else{
+            ownerAPI = spawn(cmd, args, {shell: true});
+          }
+
+
+          console.log('start platform', path);
+
+
           ownerAPI.stdout.setEncoding('utf8');
           ownerAPI.stderr.setEncoding('utf8');
 
@@ -213,10 +248,20 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
     /* start wallet listen */
-    async execListen(cmd, args, platform){
+    async execListen(cmd, args, platform, path){
 
       return new Promise(function(resolve, reject) {
-          const listenProcess = spawn(cmd, args, {shell: platform == 'win'});
+
+
+          let listenProcess;
+          if(platform == 'mac'){
+            listenProcess = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
+          }else if(platform == 'linux'){
+            listenProcess = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
+          }else{
+            listenProcess = spawn(cmd, args, {shell: true});
+          }
+
           listenProcess.stdout.setEncoding('utf8');
           listenProcess.stderr.setEncoding('utf8');
           listenProcess.stdout.on('data', (data) => {
@@ -235,11 +280,22 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
 
-    async execRecover(cmd, args, platform, seeds, password){
+    async execRecover(cmd, args, platform, seeds, path){
 
       return new Promise(function(resolve, reject) {
 
-          const recover = spawn(cmd, args, {shell: platform == 'win'});
+          let recover;
+          if(platform == 'mac'){
+            recover = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
+          }else if(platform == 'linux'){
+            recover = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
+          }else{
+            recover = spawn(cmd, args, {shell: true});
+          }
+
+          console.log('execRecover', cmd);
+          console.log('execRecover', args);
+
           let newSeedData = '';
           let errorData = '';
           let recordData = false;
@@ -264,7 +320,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           });
 
           recover.stderr.on('data', (data) => {
-
+            console.log('##########', data);
             errorData += data;
 
             if(data.includes('Recovery word phrase is invalid.')){
@@ -338,6 +394,7 @@ const aes256gcm = (shared_secret) => {
   };
 };
 
+//contextBridge.exposeInMainWorld('nodeFetch', useFetch);
 contextBridge.exposeInMainWorld('nodeFindProcess', require('find-process'));
 contextBridge.exposeInMainWorld('nodeCrypto', require('crypto'));
 contextBridge.exposeInMainWorld('nodeSecp256k1', secp256k1);
@@ -353,6 +410,8 @@ contextBridge.exposeInMainWorld('nodeFs', require('fs'));
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
+
+
   getResourcePath(){
     return resourcePath;
   },

@@ -460,7 +460,7 @@ class ConfigService {
         if (window.nodeFs.existsSync(apiSecretFile) && window.nodeFs.readFileSync(apiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.apiSecretPath = apiSecretFile;
-            this.apisecret = window.nodeFs.readFileSync(this.apiSecretPath, {encoding:'utf8', flag:'r'}).toString()
+            this.apisecret = window.nodeFs.readFileSync(this.apiSecretPath, {encoding:'utf8', flag:'r'}).toString().trim()
 
             this.emitter.emit('checkSuccess', 'node api secret "' + apiSecretFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');
 
@@ -478,7 +478,7 @@ class ConfigService {
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.ownerApiSecretPath = ownerApiSecretFile;
-            this.ownerApisecret = window.nodeFs.readFileSync(this.ownerApiSecretPath, {encoding:'utf8', flag:'r'}).toString()
+            this.ownerApisecret = window.nodeFs.readFileSync(this.ownerApiSecretPath, {encoding:'utf8', flag:'r'}).toString().trim()
 
 
             this.emitter.emit('checkSuccess', 'owner api secret "' + ownerApiSecretFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');

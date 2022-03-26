@@ -40,25 +40,29 @@
                 <p class="help is-warningapi" v-if="errorapi">Code: {{ this.errorCode }}</p>
               </div>
 
-                <div class="field is-grouped">
+              <div class="field is-grouped">
+                  <template v-if="continueBtn == false" >
                   <div class="control">
-                    <button class="button" @click.prevent="login">
-                      {{ $t("msg.login_") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
-                    </button>
+                        <button class="button" @click.prevent="login">
+                          {{ $t("msg.login_") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
+                        </button>
                   </div>
                   <div class="control">
+                      <button class="button" @click.prevent="create">
+                        {{ $t("msg.new.create") }}
+                      </button>
+                  </div>
+                  <div class="control">
+                      <button class="button" @click.prevent="restore">{{ $t("msg.restore.recover") }}</button>
+                  </div>
+                </template>
 
-                    <button class="button" @click.prevent="create">
-                      {{ $t("msg.new.create") }}
-                    </button>
-                  </div>
-                  <div class="control">
-
-                    <button class="button" @click.prevent="restore">
-                      {{ $t("msg.restore.recover") }}
-                    </button>
-                  </div>
-                </div>
+                <template v-if="continueBtn == true" >
+                  <button class="button" @click.prevent="login">
+                    {{ $t("msg.continue") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
+                  </button>
+                </template>
+              </div>
             </form>
 
 
@@ -96,6 +100,7 @@ export default {
       errorCode: '',
       errorAccount: false,
       isLoading: false,
+      continueBtn: false,
     }
   },
 
@@ -111,6 +116,7 @@ export default {
         this.errorapi = false;
         this.errorapiMsg = '';
         this.errorCode = '';
+        this.continueBtn = false;
     });
     this.emitter.on('continueLogin', () => {
        this.continueLogin(false);
@@ -127,21 +133,32 @@ export default {
 
       let account = this.account ? this.account : 'default';
       let loginSucccess = await this.$walletService.start(this.password, account);
-      this.password = '';
-      this.account = '';
-      account = '';
+
       this.isLoading = false;
       //we have a valid login to wallet
+
       if(loginSucccess){
 
+        let nodeOnline = false;
+        if(!this.continueBtn && !firstlogin){
+          nodeOnline = await this.$nodeService.nodeOnline();
+        }else{
+          nodeOnline = true;
+        }
         let apiCallable = await this.$walletService.getNodeHeight();
 
+        if(!nodeOnline){
+          this.continueBtn = true
+        }
 
-
-        if( !apiCallable ){
+        if( !apiCallable || !nodeOnline ){
           this.isLoading = false;
           return this.errorapi = true;
         }
+
+        this.password = '';
+        this.account = '';
+        account = '';
 
         if(firstlogin){
 
@@ -155,10 +172,10 @@ export default {
 
         }else{
           this.emitter.emit('logined');
+          this.continueBtn = false;
+          this.errorapiMsg = '';
+          this.errorCode = '';
         }
-
-
-
       }else{
 
         return this.error = true
@@ -170,11 +187,11 @@ export default {
       this.emitter.emit('initMode', 'create');
     },
     restore(){
-      
+
       this.emitter.emit('initMode', 'restore');
     },
     async login(){
-
+      
       this.resetErrors()
       //check if acount exist.
       let account = this.account ? this.account : 'default';
@@ -219,6 +236,7 @@ export default {
       this.errorAccount = false;
       this.errorEmpty = false;
       this.isLoading = false;
+
     }
   }
 }

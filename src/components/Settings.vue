@@ -30,10 +30,13 @@
 
         <div class="field">
           <label class="label">{{ $t("msg.settings.check_node_api_http_addr") }}</label>
-          <div class="control">
+          <div class="control has-icons-right">
             <input class="input" type="text" v-model="check_node_api_http_addr" placeholder="http://127.0.0.1:3413">
+            <span class="icon is-small is-right" v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
             <p class="hint">{{ $t("msg.settings.node_api_addr_hint") }}</p>
-
+            <div class="box" v-if="errorapi">
+              <p style="color:red;" class="help is-warningapi" >{{ this.errorapiMsg }}</p>
+            </div>
           </div>
         </div>
 
@@ -53,7 +56,7 @@
         <p>&nbsp;</p>
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-link" @click="save" v-bind:class="{'is-loading': isLoading }">{{ $t("msg.save") }}</button>
+            <button class="button is-link" @click="save" >{{ $t("msg.save") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span></button>
           </div>
           <div class="control">
             <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
@@ -66,8 +69,16 @@
 </template>
 <script>
 
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+library.add(faSpinner)
+
   export default {
     name: "settings",
+    components: {
+      FontAwesomeIcon
+    },
     props: {
       showModal: {
         type: Boolean,
@@ -88,6 +99,9 @@
         localeSelected: this.configService.config.locale,
         langs: this.configService.langs,
         isLoading: false,
+        errorapiMsg: '',
+        errorapi: false,
+        errorCode: ''
 
       }
     },
@@ -98,13 +112,22 @@
         this.locale = this.config['local'];
       }
     },
+    created(){
+
+      this.emitter.on('settings_error', ({msg, code})=>{
+          this.errorapi = true;
+          this.errorapiMsg = msg;
+          this.errorCode = code;
+      });
+    },
+
     methods: {
 
       async save(){
 
+        this.isLoading = true;
+        if(await this.checkForm()){
 
-        if(this.checkForm()){
-          this.isLoading = true;
           this.emitter.emit('selectLocale', this.localeSelected);
 
           if(this.configService.config.firstTime == true){
@@ -121,6 +144,7 @@
             this.configService.checkTomlFile();
 
             this.emitter.emit('continueLoginFirst');
+            this.isLoading = false;
             return;
 
           }else{
@@ -135,8 +159,11 @@
 
               this.emitter.emit('restartNode');
               this.emitter.emit('close', 'windowSettings');
+              this.isLoading = false;
           }
 
+        }else{
+          this.isLoading = false;
         }
       },
       clearup(){
@@ -157,12 +184,17 @@
           '(\\#[-a-z\\d_]*)?$','i');
         return re.test(address);
       },
-      checkForm(){
+      async checkForm(){
+
         this.errors = []
         if (!this.check_node_api_http_addr || !this.validAddress(this.check_node_api_http_addr)) {
           this.errors.push(this.$t('msg.wrongAddressFormat'));
         }
 
+        let nodeOnline = await this.$nodeService.nodeOnline(this.check_node_api_http_addr);
+        if(!nodeOnline){
+          return false;
+        }
         if (!this.errors.length) {
           return true;
         }

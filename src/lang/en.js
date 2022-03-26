@@ -6,11 +6,12 @@ const messages = {
     passwordAgain: 'Enter password again',
     wrongPassword: 'Wrong password',
     login_: 'Login',
+    continue: 'Continue offline',
     logout: 'Logout',
     search: 'Search',
     clearup: 'Clear',
     jump: 'Jump',
-
+    
     confirmed: 'Confirmed',
     unconfirmed: 'Unconfirmed',
     locked: 'Locked',
@@ -71,7 +72,8 @@ const messages = {
     restore:{
       seedPhrase: 'Seed Phrase',
       title: 'Restore wallet via seed phrase',
-      addSeedsInfo: 'Add seed phrase one by one please',
+      addSeedsInfo: 'Add seed phrase by clicking the word(s) please',
+      yourSeedsInfo: 'Your seed phrase is',
       add: 'Add',
       invalid: 'Invalid Seed Phrase',
       delete: 'Delete',
