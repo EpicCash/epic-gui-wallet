@@ -85,22 +85,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     },
 
-    async execNew(cmd, args, platform, path){
-      console.log('execNew cmd:', cmd);
-      console.log('execNew args:', args);
+    async execNew(cmd, args, platform){
+
       return new Promise(function(resolve, reject) {
 
-
-          let createProcess;
-          if(platform == 'mac'){
-            createProcess = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
-          }else if(platform == 'linux'){
-            createProcess = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
-          }else{
-            createProcess = spawn(cmd, args, {shell: true});
-          }
-
-
+          let createProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
           let newSeedData = '';
           let errorData = '';
@@ -159,19 +148,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       });
     },
-    async execScan(cmd, path){
+    async execScan(cmd){
 
       return new Promise(function(resolve, reject) {
 
-
-          let scanProcess;
-          if(platform == 'mac'){
-            scanProcess = exec('DYLD_FALLBACK_LIBRARY_PATH='+path+' '+ cmd);
-          }else if(platform == 'linux'){
-            scanProcess = exec('LD_LIBRARY_PATH='+path+' '+ cmd);
-          }else{
-            scanProcess = exec(cmd);
-          }
+          let scanProcess = exec(cmd);
 
           //scan process is self closing
           scanProcess.stdout.on('data', function(data){
@@ -200,32 +181,23 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
 
     /* start wallet api */
-    async execStart(cmd, args, platform, path){
+    async execStart(cmd, args, platform, emitOutput){
 
       return new Promise(function(resolve, reject) {
 
           //console.log('start wallet cmd:', cmd);
           //console.log('start wallet args', args);
 
-          let ownerAPI;
-          if(platform == 'mac'){
-            ownerAPI = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
-          }else if(platform == 'linux'){
-            ownerAPI = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
-          }else{
-            ownerAPI = spawn(cmd, args, {shell: true});
-          }
-
-
-          console.log('start platform', path);
-
+          let ownerAPI = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
           ownerAPI.stdout.setEncoding('utf8');
           ownerAPI.stderr.setEncoding('utf8');
 
           ownerAPI.stdout.on('data', (data) => {
             console.log(data);
-
+            if(emitOutput){
+              ipcRenderer.send('scan-stdout', data);
+            }
             if(data.includes('HTTP Owner listener started')){
 
               resolve(ownerAPI.pid);
@@ -235,6 +207,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           ownerAPI.stderr.on('data', (data) => {
             console.log('ownerAPI.stderr', data);
+            if(emitOutput){
+              ipcRenderer.send('scan-stdout', data);
+            }
             if(data.includes('Address already in use')){
               //we have unknow process id
               resolve(0);
@@ -248,19 +223,14 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
     /* start wallet listen */
-    async execListen(cmd, args, platform, path){
+    async execListen(cmd, args, platform){
 
       return new Promise(function(resolve, reject) {
 
 
-          let listenProcess;
-          if(platform == 'mac'){
-            listenProcess = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
-          }else if(platform == 'linux'){
-            listenProcess = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
-          }else{
-            listenProcess = spawn(cmd, args, {shell: true});
-          }
+
+          let listenProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
 
           listenProcess.stdout.setEncoding('utf8');
           listenProcess.stderr.setEncoding('utf8');
@@ -280,18 +250,12 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
 
-    async execRecover(cmd, args, platform, seeds, path){
+    async execRecover(cmd, args, platform, seeds){
 
       return new Promise(function(resolve, reject) {
 
-          let recover;
-          if(platform == 'mac'){
-            recover = spawn(cmd, args, {shell: false, env: {DYLD_FALLBACK_LIBRARY_PATH: path}});
-          }else if(platform == 'linux'){
-            recover = spawn(cmd, args, {shell: false, env: {LD_LIBRARY_PATH: path}});
-          }else{
-            recover = spawn(cmd, args, {shell: true});
-          }
+          let recover = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
 
           console.log('execRecover', cmd);
           console.log('execRecover', args);
@@ -303,7 +267,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           recover.stdin.setEncoding('utf8');
           recover.stderr.setEncoding('utf8');
           recover.stdout.on('data', (data) => {
-
+            console.log('#####stdout#####', data);
             if(data.includes('Please enter your recovery phrase')){
               recover.stdin.write(seeds+"\n");
             }else{
@@ -320,7 +284,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           });
 
           recover.stderr.on('data', (data) => {
-            console.log('##########', data);
+            console.log('#####stderr#####', data);
             errorData += data;
 
             if(data.includes('Recovery word phrase is invalid.')){

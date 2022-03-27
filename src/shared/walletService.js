@@ -118,6 +118,8 @@ class WalletService {
         }
 
         //do not enrypt receive_tx
+        console.log('######### json ######### isForeign', isForeign);
+
         if(!isForeign){
 
           const aesCipher = window.nodeAes256gcm(this.shared_key);
@@ -152,7 +154,7 @@ class WalletService {
           }
 
           let dec = aesCipher.decrypt(data, nonce2)
-
+          console.log('######### json ######### dec', dec);
           if(dec != ''){
             let response = JSON.parse(dec);
 
@@ -166,7 +168,7 @@ class WalletService {
               return false;
         });
 
-
+        console.log('######### json ######### response', response);
         if(response){
           return response;
         }else{
@@ -300,7 +302,7 @@ class WalletService {
 
 
     /* start a epic wallet in owner_api mode */
-    async start(password, account){
+    async start(password, account, emitOutput){
 
         this.client = undefined;
         this.shared_key = undefined;
@@ -337,7 +339,7 @@ class WalletService {
           }
 
 
-          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
+          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform, emitOutput);
 
           if(walletOpenId === 0 && this.token){
             this.walletIsOpen = true;
@@ -408,7 +410,7 @@ class WalletService {
           args.push('--no_tor');
         }
 
-        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
+        walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform);
 
         if(walletListenId && walletListenId.msg > 0){
             this.walletIsListen = true;
@@ -442,7 +444,7 @@ class WalletService {
           ];
         }
 
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
 
 
     }
@@ -466,7 +468,7 @@ class WalletService {
             'init'
           ];
         }
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, this.configService.binariesPath);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
 
 
     }
@@ -491,7 +493,7 @@ class WalletService {
           ];
         }
 
-        return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds, this.configService.binariesPath);
+        return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds);
     }
 
     async check(password, delete_unconfirmed){
@@ -502,7 +504,7 @@ class WalletService {
         }
 
         const cmd = `${this.configService.epicPath} -r ${this.configService.defaultEpicNode} -t ${this.configService.defaultAccountWalletdir} --pass ${addQuotations(password)} scan ${delete_flag}`;
-        await window.nodeChildProcess.execScan(cmd, this.configService.binariesPath);
+        await window.nodeChildProcess.execScan(cmd);
 
     }
 

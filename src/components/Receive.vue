@@ -79,7 +79,7 @@ export default {
           this.$walletService.receiveTransaction(JSON.parse(content), null, null)
               .then( (res) => {
                 let data = res.data.result;
-
+                console.log('################# receive ################', data);
                 if(data.Ok){
 
                   fs.writeFileSync(fn_output.filePath, JSON.stringify(data.Ok), {

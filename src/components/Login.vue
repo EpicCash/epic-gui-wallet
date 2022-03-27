@@ -123,6 +123,7 @@ export default {
     });
 
     this.emitter.on('continueLoginFirst', () => {
+
       this.continueLogin(true);
     });
 
@@ -131,8 +132,14 @@ export default {
   methods: {
     async continueLogin(firstlogin){
 
+      
+      if(this.$parent.walletfirstscan){
+        this.emitter.emit('close', 'windowSettings');
+        this.emitter.emit('open', 'windowFirstrunCheck');
+      }
+
       let account = this.account ? this.account : 'default';
-      let loginSucccess = await this.$walletService.start(this.password, account);
+      let loginSucccess = await this.$walletService.start(this.password, account, this.$parent.walletfirstscan);
 
       this.isLoading = false;
       //we have a valid login to wallet
@@ -191,7 +198,7 @@ export default {
       this.emitter.emit('initMode', 'restore');
     },
     async login(){
-      
+
       this.resetErrors()
       //check if acount exist.
       let account = this.account ? this.account : 'default';

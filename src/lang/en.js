@@ -11,7 +11,7 @@ const messages = {
     search: 'Search',
     clearup: 'Clear',
     jump: 'Jump',
-    
+
     confirmed: 'Confirmed',
     unconfirmed: 'Unconfirmed',
     locked: 'Locked',
@@ -221,6 +221,9 @@ const messages = {
       start: 'Start',
       stopCheckMsg: 'Check was cancelled',
       checkedMsg: 'Check balance finished'
+    },
+    firstruncheck: {
+      checking: 'Scan blockchain for your wallet outputs, be patient ...',
     },
 
     lang: {

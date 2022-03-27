@@ -121,7 +121,7 @@
                 style="animation-iteration-count:2;margin-bottom:40px">
                 {{ $t('msg.restore.restored') }}
             </p>
-            <a class="button is-link is-outlined" @click="toLogin">{{ $t('msg.restore.login') }}</a>
+            <a class="button is-link is-outlined" @click="toLogin(true)">{{ $t('msg.restore.login') }}</a>
           </div>
 
 
@@ -332,10 +332,10 @@ export default {
     reset(){
       this.clearup()
     },
-    toLogin(){
+    toLogin(recovered){
       this.page = 'addSeeds';
       this.clearup();
-      this.emitter.emit('toLogin');
+      this.emitter.emit('toLogin', recovered);
     }
   }
 }
