@@ -169,7 +169,7 @@ export default {
 
   },
   watch: {
-    seeds:function(newVal){
+    seeds: function(newVal){
 
       if(newVal.length == this.total){
         this.enoughSeeds = true
@@ -318,6 +318,12 @@ export default {
     },
     add(word){
       this.seeds.push(word)
+
+      if(this.seeds.length == this.total){
+          this.enoughSeeds = true
+      }else{
+          this.enoughSeeds = false
+      }
 
     },
     onlyLetters(str) {
