@@ -118,7 +118,7 @@ class WalletService {
         }
 
         //do not enrypt receive_tx
-        console.log('######### json ######### isForeign', isForeign);
+
 
         if(!isForeign){
 
@@ -154,7 +154,7 @@ class WalletService {
           }
 
           let dec = aesCipher.decrypt(data, nonce2)
-          console.log('######### json ######### dec', dec);
+
           if(dec != ''){
             let response = JSON.parse(dec);
 
@@ -168,7 +168,7 @@ class WalletService {
               return false;
         });
 
-        console.log('######### json ######### response', response);
+
         if(response){
           return response;
         }else{

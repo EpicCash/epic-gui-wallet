@@ -228,7 +228,6 @@ export default {
         openProofAddressMsg: false,
         proofAddressMsg: '',
         refresh: undefined,
-        walletfirstscan: false,
 
 
     }},
@@ -282,7 +281,7 @@ export default {
           this.openSettings = false
         }
         if(window == 'windowFirstrunCheck'){
-          
+
           this.openFirstrunCheck = false
         }
 
@@ -305,12 +304,6 @@ export default {
       });
 
       this.emitter.on('toLogin', (recover)=>{
-
-        if(recover != undefined && recover != false){
-          this.walletfirstscan = true;
-        }
-
-        console.log('###### end up in firstscan #######', this.walletfirstscan);
 
         this.checkAccountOnStart();
       });
@@ -517,7 +510,17 @@ export default {
         this.isLoading = true;
         this.$walletService.logoutClient();
         this.userLoggedIn = false;
+
+        //clean info from previous user
+        this.emitter.emit('logoutTxs');
+        this.emitter.emit('logoutCommits');
+        this.emitter.emit('logoutSummary');
+
+
         this.emitter.emit('toLogin');
+
+
+
       },
 
 

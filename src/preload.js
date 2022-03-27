@@ -43,7 +43,7 @@ const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
-const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
+const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     async kill(pid){
@@ -196,7 +196,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           ownerAPI.stdout.on('data', (data) => {
             console.log(data);
             if(emitOutput){
-              ipcRenderer.send('scan-stdout', data);
+              ipcRenderer.send('firstscan-stdout', data);
             }
             if(data.includes('HTTP Owner listener started')){
 
@@ -208,7 +208,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           ownerAPI.stderr.on('data', (data) => {
             console.log('ownerAPI.stderr', data);
             if(emitOutput){
-              ipcRenderer.send('scan-stdout', data);
+              ipcRenderer.send('firstscan-stdout', data);
             }
             if(data.includes('Address already in use')){
               //we have unknow process id

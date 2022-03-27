@@ -10,6 +10,7 @@ const messages = {
     logout: 'Logout',
     search: 'Search',
     clearup: 'Clear',
+    close: 'Close',
     jump: 'Jump',
 
     confirmed: 'Confirmed',
@@ -223,7 +224,7 @@ const messages = {
       checkedMsg: 'Check balance finished'
     },
     firstruncheck: {
-      checking: 'Scan blockchain for your wallet outputs, be patient ...',
+      title: 'Scan blockchain for your wallet outputs, be patient ...',
     },
 
     lang: {

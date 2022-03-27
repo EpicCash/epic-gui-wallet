@@ -62,18 +62,12 @@ export default {
     }
   },
   created() {
-      window.nodeChildProcess.on('scan-finish', () => {
 
-        log.debug('Got walletCheckFinished message.')
+      window.nodeChildProcess.on('firstscan-stdout', (payload) => {
+        this.checkOutputs.push(payload.data)
+      });
+  },
 
-      })
-  },
-  mounted() {
-    // handle reply from the backend
-    window.nodeChildProcess.on('scan-stdout', (payload) => {
-      this.checkOutputs.push(payload.data)
-    });
-  },
   methods: {
 
     closeModal() {

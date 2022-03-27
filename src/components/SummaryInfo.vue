@@ -35,7 +35,14 @@
       this.emitter.on('updateSummary', () => {
           this.getSummaryinfo();
       });
-
+      this.emitter.on('logoutSummary', ()=>{
+          this.spendable = 0;
+          this.total = 0;
+          this.unconfirmed = 0;
+          this.unfinalization = 0;
+          this.immature = 0;
+          this.locked = 0;
+      });
     },
      methods: {
 

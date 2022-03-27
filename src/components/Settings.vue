@@ -115,9 +115,15 @@ library.add(faSpinner)
     created(){
 
       this.emitter.on('settings_error', ({msg, code})=>{
-          this.errorapi = true;
-          this.errorapiMsg = msg;
-          this.errorCode = code;
+          if(msg != '' && code != ''){
+            this.errorapi = true;
+            this.errorapiMsg = msg;
+            this.errorCode = code;
+          }else{
+            this.errorapi = false;
+            this.errorapiMsg = '';
+            this.errorCode = '';
+          }
       });
     },
 
@@ -126,6 +132,9 @@ library.add(faSpinner)
       async save(){
 
         this.isLoading = true;
+
+
+
         if(await this.checkForm()){
 
           this.emitter.emit('selectLocale', this.localeSelected);
@@ -190,6 +199,10 @@ library.add(faSpinner)
         if (!this.check_node_api_http_addr || !this.validAddress(this.check_node_api_http_addr)) {
           this.errors.push(this.$t('msg.wrongAddressFormat'));
         }
+
+        this.check_node_api_http_addr = this.check_node_api_http_addr.trim();
+        this.check_node_api_http_addr = this.check_node_api_http_addr.replace(/\/$/, "");
+
 
         let nodeOnline = await this.$nodeService.nodeOnline(this.check_node_api_http_addr);
         if(!nodeOnline){

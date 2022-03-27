@@ -213,12 +213,14 @@ export default {
       return /^[a-z]*$/.test(str);
     },
     clearup(){
-      this.password = ""
-      this.password2 = ""
-      this.walletCreating = false
-      this.error = false,
-      this.errorInfo = ''
-      this.userHomedir = ''
+      this.password = "";
+      this.password2 = "";
+      this.walletCreating = false;
+      this.error = false;
+      this.errorInfo = '';
+      this.userHomedir = '';
+      this.seeds = [];
+      this.walletCreated = false;
     },
     toLogin(){
       this.clearup()

@@ -270,6 +270,10 @@ ipcMain.on('scan-stdout', (event, data) => {
   event.reply('scan-stdout', { data });
 });
 
+ipcMain.on('firstscan-stdout', (event, data) => {
+  event.reply('firstscan-stdout', { data });
+});
+
 ipcMain.on('scan-finish', (event, data) => {
   event.reply('scan-finish', { data });
 });

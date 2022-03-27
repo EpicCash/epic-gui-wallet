@@ -132,14 +132,14 @@ export default {
   methods: {
     async continueLogin(firstlogin){
 
-      
-      if(this.$parent.walletfirstscan){
+
+      if(firstlogin){
         this.emitter.emit('close', 'windowSettings');
         this.emitter.emit('open', 'windowFirstrunCheck');
       }
 
       let account = this.account ? this.account : 'default';
-      let loginSucccess = await this.$walletService.start(this.password, account, this.$parent.walletfirstscan);
+      let loginSucccess = await this.$walletService.start(this.password, account, firstlogin);
 
       this.isLoading = false;
       //we have a valid login to wallet

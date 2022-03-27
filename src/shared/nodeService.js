@@ -15,7 +15,12 @@ class NodeService {
 
   async nodeOnline(url){
 
+
+
     let emitter = this.emitter;
+    emitter.emit('wallet_error', {msg: '', code: ''});
+    emitter.emit('settings_error', {msg: '', code: ''});
+    
     let  baseURL = '';
     if(url == undefined){
       baseURL = this.configService.config['check_node_api_http_addr'] ? this.configService.config['check_node_api_http_addr'] : this.configService.defaultEpicNode;
@@ -40,8 +45,9 @@ class NodeService {
     }).catch(function(error){
 
       let msg = 'Error connecting node ' + baseURL + (error.status ? ' - '+ error.status : '') +' '+ (error.statusText ? error.statusText :'');
-      emitter.emit('wallet_error', {msg: msg, code: '0x1645779384'})
-      emitter.emit('settings_error', {msg: msg, code: '0x1645779384'})
+      msg += '\n\n ... make sure your node is accessible.';
+      emitter.emit('wallet_error', {msg: msg, code: '0x1645779384'});
+      emitter.emit('settings_error', {msg: msg, code: '0x1645779384'});
       return false;
     });
     return response;
