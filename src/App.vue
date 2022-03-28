@@ -114,7 +114,7 @@
   <file-send :showModal="openFileSend"></file-send>
   <finalize :showModal="openFinalize"></finalize>
 
-
+  <firstrun-check :showModal="openFirstrunCheck"></firstrun-check>
   <seed :showModal="openSeed"></seed>
   <check :showModal="openCheck"></check>
   <checkService v-show="action === 'check'"></checkService>
@@ -158,6 +158,8 @@ import Settings from './components/Settings.vue'
 
 import Message from './components/Message.vue'
 
+import FirstrunCheck from './components/FirstrunCheck.vue'
+
 import mixin from './mixin.js'
 import { useI18n } from 'vue-i18n/index'
 
@@ -182,7 +184,8 @@ export default {
     Restore,
     Create,
     Login,
-    Message
+    Message,
+    FirstrunCheck
   },
     data(){
       return {
@@ -199,6 +202,7 @@ export default {
         isDroppingDown2: false,
         isDroppingDown3: false,
         ownerApiRunning: false,
+        openFirstrunCheck: false,
         height:null,
         isAnimate:false,
         walletExist:false,
@@ -240,7 +244,7 @@ export default {
       this.checkAccountOnStart();
 
     },
-    created () {
+    async created () {
 
       this.emitter.on('initMode', (action) => {
 
@@ -273,14 +277,25 @@ export default {
           this.openSeed = false
         }
         if(window == 'windowSettings'){
+
           this.openSettings = false
         }
+        if(window == 'windowFirstrunCheck'){
+
+          this.openFirstrunCheck = false
+        }
+
+
       });
 
       this.emitter.on('open', (window)=>{
         if(window == 'windowSettings'){
           this.openWalletSettings();
         }
+        if(window == 'windowFirstrunCheck'){
+          this.openFirstrunCheck = true;
+        }
+
       });
       this.emitter.on('restartNode', async ()=>{
         let nodeRestarted = await this.$nodeService.reconnectNode();
@@ -288,7 +303,8 @@ export default {
         this.getNode();
       });
 
-      this.emitter.on('toLogin', ()=>{
+      this.emitter.on('toLogin', (recover)=>{
+
         this.checkAccountOnStart();
       });
 
@@ -377,6 +393,7 @@ export default {
         this.openProofAddressMsg = true;
         this.proofAddressMsg = this.address;
       },
+
       clearup(){
         this.nodeOnline = false;
         this.ownerApiRunning = false;
@@ -386,15 +403,14 @@ export default {
         }
 
       },
+
       openWalletSettings(){
-        this.resetKey += 1;
+
         this.openSettings=true;
         this.config = this.configService.config;
       },
 
-
-
-      async checkAccountOnStart(){
+      async checkAccountOnStart(recover){
 
         if(await this.configService.killWalletProcess()){
           if(this.configService.appHasAccounts()){
@@ -402,6 +418,7 @@ export default {
             this.checkservice = false;
             this.ownerApiRunning = false;
             this.action = 'login';
+
           }else{
             this.checkservice = false;
             this.action = 'init';
@@ -409,6 +426,7 @@ export default {
         }
 
       },
+
       openTab(tabName) {
           if(tabName == 'transactionTab'){
             this.transactionTab = true;
@@ -446,7 +464,7 @@ export default {
 
       async getNode(){
         this.nodeOnline = await this.$nodeService.nodeOnline();
-        
+
         if(this.nodeOnline.sync_info){
           this.current_height = this.nodeOnline.sync_info.current_height
           this.highest_height = this.nodeOnline.sync_info.highest_height
@@ -492,7 +510,17 @@ export default {
         this.isLoading = true;
         this.$walletService.logoutClient();
         this.userLoggedIn = false;
+
+        //clean info from previous user
+        this.emitter.emit('logoutTxs');
+        this.emitter.emit('logoutCommits');
+        this.emitter.emit('logoutSummary');
+
+
         this.emitter.emit('toLogin');
+
+
+
       },
 
 

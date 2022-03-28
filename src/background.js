@@ -39,7 +39,7 @@ async function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false
     }
-  })
+  });
 
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -52,68 +52,134 @@ async function createWindow() {
     win.loadURL('app://./index.html')
   }
   if (!isDevelopment) {
-    var menu = Menu.buildFromTemplate([
-        {
-            label: 'Menu',
-            submenu: [
-                process.platform == 'darwin' ? { label: "About Application", selector: "orderFrontStandardAboutPanel:" }:null,
-                { label: "Source on GitHub", click ()
-                  {
-                    shell.openExternal('https://github.com/EpicCash/epic-gui-wallet');
-                  }
-                 },
-                { type: "separator" },
-                {
-                    label:'Quit',
-                    accelerator: "CmdOrCtrl+Q",
-                    async click() {
-                        let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
-
-                         for(var pItem in plist){
-                           if (process.platform === 'win32') {
-
-                               try{
-                                 exec(`taskkill /pid ${plist[pItem].pid} /f /t`);
-                               }catch(e){
-                                 console.log('taskkill failed', e);
-                               }
-                           }else{
-                             try{
-                                ps.kill(plist[pItem].pid);
-                              }catch(e){
-                                console.log('taskkill failed', e);
-                              }
-                           }
-                         };
-                         app.quit()
-                    }
-                },
-
-            ],
-
-        },
-        {
-          label: "Application",
-          submenu: [
-
-            {
-              label: "Edit",
+    if(process.platform == 'darwin'){
+      var menu = Menu.buildFromTemplate([
+          {
+              label: 'Menu',
               submenu: [
-                  { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-                  { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                  { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+                  { label: "Source on GitHub", click ()
+                    {
+                      shell.openExternal('https://github.com/EpicCash/epic-gui-wallet');
+                    }
+                   },
                   { type: "separator" },
-                  { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-                  { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-                  { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-                  { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-              ]
-            }
-          ]
+                  {
+                      label:'Quit',
+                      accelerator: "CmdOrCtrl+Q",
+                      async click() {
+                          let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+
+                           for(var pItem in plist){
+                             if (process.platform === 'win32') {
+
+                                 try{
+                                   exec(`taskkill /pid ${plist[pItem].pid} /f /t`);
+                                 }catch(e){
+                                   console.log('taskkill failed', e);
+                                 }
+                             }else{
+                               try{
+                                  ps.kill(plist[pItem].pid);
+                                }catch(e){
+                                  console.log('taskkill failed', e);
+                                }
+                             }
+                           };
+                           app.quit()
+                      }
+                  },
+
+              ],
+
+          },
+          {
+            label: "Application",
+            submenu: [
+
+              {
+                label: "Edit",
+                submenu: [
+                    { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+                    { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                    { type: "separator" },
+                    { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                    { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+                    { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+                    { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+                ]
+              }
+            ]
 
 
-        }
+          }
 
-    ])
+      ]);
+    }else{
+      var menu = Menu.buildFromTemplate([
+          {
+              label: 'Menu',
+              submenu: [
+
+                  { label: "Source on GitHub", click ()
+                    {
+                      shell.openExternal('https://github.com/EpicCash/epic-gui-wallet');
+                    }
+                   },
+                  { type: "separator" },
+                  {
+                      label:'Quit',
+                      accelerator: "CmdOrCtrl+Q",
+                      async click() {
+                          let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+
+                           for(var pItem in plist){
+                             if (process.platform === 'win32') {
+
+                                 try{
+                                   exec(`taskkill /pid ${plist[pItem].pid} /f /t`);
+                                 }catch(e){
+                                   console.log('taskkill failed', e);
+                                 }
+                             }else{
+                               try{
+                                  ps.kill(plist[pItem].pid);
+                                }catch(e){
+                                  console.log('taskkill failed', e);
+                                }
+                             }
+                           };
+                           app.quit()
+                      }
+                  },
+
+              ],
+
+          },
+          {
+            label: "Application",
+            submenu: [
+
+              {
+                label: "Edit",
+                submenu: [
+                    { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+                    { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                    { type: "separator" },
+                    { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                    { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+                    { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+                    { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+                ]
+              }
+            ]
+
+
+          }
+
+      ]);
+    }
+
     Menu.setApplicationMenu(menu);
   }
 }
@@ -202,6 +268,10 @@ ipcMain.handle('resize', (event, width, height) => {
 
 ipcMain.on('scan-stdout', (event, data) => {
   event.reply('scan-stdout', { data });
+});
+
+ipcMain.on('firstscan-stdout', (event, data) => {
+  event.reply('firstscan-stdout', { data });
 });
 
 ipcMain.on('scan-finish', (event, data) => {

@@ -118,6 +118,8 @@ class WalletService {
         }
 
         //do not enrypt receive_tx
+
+
         if(!isForeign){
 
           const aesCipher = window.nodeAes256gcm(this.shared_key);
@@ -300,7 +302,7 @@ class WalletService {
 
 
     /* start a epic wallet in owner_api mode */
-    async start(password, account){
+    async start(password, account, emitOutput){
 
         this.client = undefined;
         this.shared_key = undefined;
@@ -321,23 +323,25 @@ class WalletService {
 
           let walletOpenId = 0;
 
+
+
           if(this.configService.config['network'] == 'floonet'){
             args = [
               '--floonet',
-              '-c', this.configService.defaultAccountWalletdir,
+              '-c',this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
               'owner_api'
 
             ];
           }else{
             args = [
-              '-c', this.configService.defaultAccountWalletdir,
+              '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
               'owner_api'
 
             ];
           }
 
 
-          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform);
+          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform, emitOutput);
 
           if(walletOpenId === 0 && this.token){
             this.walletIsOpen = true;
@@ -386,8 +390,8 @@ class WalletService {
           args = [
             '--floonet',
             '--pass', password,
-            '-t', this.configService.defaultAccountWalletdir,
-            '-c', this.configService.defaultAccountWalletdir,
+            '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'listen',
             '--method', (method == 'http' ? 'http' : 'keybase')
 
@@ -396,8 +400,8 @@ class WalletService {
         }else{
           args = [
             '--pass', password,
-            '-t', this.configService.defaultAccountWalletdir,
-            '-c', this.configService.defaultAccountWalletdir,
+            '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'listen',
             '--method', (method == 'http' ? 'http' : 'keybase')
 
@@ -430,14 +434,14 @@ class WalletService {
           args = [
             '--floonet',
             '--pass', password,
-            '-c', this.configService.defaultAccountWalletdir,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'init'
           ];
 
         }else{
           args = [
             '--pass', password,
-            '-c', this.configService.defaultAccountWalletdir,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'init'
           ];
         }
@@ -455,14 +459,14 @@ class WalletService {
           args = [
             '--floonet',
             '--pass', password,
-            '-c', userhomedir,
+            '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
             'init'
           ];
 
         }else{
           args = [
             '--pass', password,
-            '-c', userhomedir,
+            '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
             'init'
           ];
         }
@@ -470,6 +474,9 @@ class WalletService {
 
 
     }
+
+
+
 
     async recover(seeds, password, network, userhomedir){
 
@@ -479,14 +486,14 @@ class WalletService {
           args = [
             '--floonet',
             '--pass', password,
-            '-c', userhomedir,
+            '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
             'init', '-r'
           ];
 
         }else{
           args = [
             '--pass', password,
-            '-c', userhomedir,
+            '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
             'init', '-r'
           ];
         }

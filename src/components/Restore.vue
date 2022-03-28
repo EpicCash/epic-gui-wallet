@@ -33,7 +33,7 @@
                 <div class="field has-addons-fullwidth">
 
                   <div class="control">
-                      <input v-model="search" placeholder="type to search" style="width:100%;" type="text" class="input"  @keyup="keyEvent" v-on:keyup.enter="add" />
+                      <input v-model="search" placeholder="type to search words / paste seed phrase" style="width:100%;" type="text" class="input"  @keyup="keyEvent" v-on:keyup.enter="add" />
                   </div>
 
                 </div>
@@ -46,8 +46,10 @@
                   <button class="button is-text" @click="toLogin">{{ $t("msg.back") }}</button>
                 </div>
 
-              <br/>
-              <br/>
+              <p class="has-text-weight-semibold has-text-warning"
+                style="margin-bottom:12px">
+                {{ $t('msg.restore.yourSeedsInfo') }}
+              </p>
               <div class="tags">
                 <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}</span>
               </div>
@@ -89,7 +91,7 @@
                   <div class="control">
                     <input class="input" type="password" placeholder="********" required :class="{'is-danger': errorPassword}" v-model="password2">
                   </div>
-                  <p class="help is-danger" v-if="errorPassword">{{errorInfoPassword}}</p>
+
                 </div>
 
                 <div class="field">
@@ -109,7 +111,7 @@
                   <button class="button is-link" @click="initR" >{{ $t('msg.restore.recover') }}</button>
                   <button class="button is-text" @click="page='addSeeds'">{{ $t("msg.back") }}</button>
                 </div>
-                <p class="help is-danger" v-if="error">{{ this.recoverErrorInfo }}</p>
+                <p class="help is-danger" v-if="error">{{ this.errorInfo }}</p>
 
               </div>
             </div>
@@ -119,7 +121,7 @@
                 style="animation-iteration-count:2;margin-bottom:40px">
                 {{ $t('msg.restore.restored') }}
             </p>
-            <a class="button is-link is-outlined" @click="toLogin">{{ $t('msg.restore.login') }}</a>
+            <a class="button is-link is-outlined" @click="toLogin(true)">{{ $t('msg.restore.login') }}</a>
           </div>
 
 
@@ -167,7 +169,7 @@ export default {
 
   },
   watch: {
-    seeds:function(newVal){
+    seeds: function(newVal){
 
       if(newVal.length == this.total){
         this.enoughSeeds = true
@@ -178,6 +180,8 @@ export default {
   },
   methods: {
     async selectDir(){
+        this.userHomedir = '';
+
         let customHomedir = await window.api.showOpenDialog();
         if(customHomedir.canceled == false){
           this.userHomedir = customHomedir.filePaths[0];
@@ -212,7 +216,7 @@ export default {
       this.seeds = [];
       this.password ='';
       this.password2 = '';
-      this.page = '';
+
       this.errorPassword = false;
       this.errorInfoPassword = '';
       this.recoverErrorInfo = '';
@@ -231,42 +235,40 @@ export default {
     async initR(){
 
       this.resetErrors()
-
+      console.log('#############', this.userHomedir);
       if(this.userHomedir == ''){
         this.error = true;
-        this.recoverErrorInfo = this.$t('msg.create.selectErr');
+        this.errorInfo = this.$t('msg.create.selectErr');
         return
       }
 
       let account = this.account != '' ? this.account.trim() : 'default';
+      let network = this.network;
 
       if(!this.onlyLetters(account)){
         this.error = true
         this.errorInfo = this.$t('msg.create.errorAccountName')
         return
-      }else{
-        var self = this;
-        this.configService.appConfig.account_dirs.forEach(function(existingAccount){
-          console.log('configService', existingAccount);
-          if(existingAccount['account'] == self.account && existingAccount['network'] == self.network){
-            self.error = true
-            self.errorInfo = self.$t('msg.create.errorAccountExist')
-            return
-          }
+      }
 
-        });
+      for(var existingAccount in this.configService.appConfig.account_dirs){
+        if(this.configService.appConfig.account_dirs[existingAccount]['account'] == account && this.configService.appConfig.account_dirs[existingAccount]['network'] == network){
+          this.error = true
+          this.errorInfo = this.$t('msg.create.errorAccountExist')
+          return;
+        }
       }
 
 
       if(this.password.length == 0 ){
-        this.errorPassword = true
-        this.errorInfoPassword = this.$t('msg.create.errorPasswdEmpty')
+        this.error = true
+        this.errorInfo = this.$t('msg.create.errorPasswdEmpty')
         return
       }
 
       if(this.password != this.password2 ){
-        this.errorPassword = true
-        this.errorInfoPassword = this.$t('msg.create.errorPasswdConsistency')
+        this.error = true
+        this.errorInfo = this.$t('msg.create.errorPasswdConsistency')
         return
       }
 
@@ -303,17 +305,25 @@ export default {
 
         }else{
           this.error = true;
-          this.recoverErrorInfo = 'Error update config';
+          this.errorInfo = 'Error update config';
         }
 
       }else{
         this.error = true;
-        this.recoverErrorInfo = recovered.msg;
+        this.errorInfo = recovered.msg;
       }
+
+      this.userHomedir = '';
 
     },
     add(word){
       this.seeds.push(word)
+
+      if(this.seeds.length == this.total){
+          this.enoughSeeds = true
+      }else{
+          this.enoughSeeds = false
+      }
 
     },
     onlyLetters(str) {
@@ -328,10 +338,10 @@ export default {
     reset(){
       this.clearup()
     },
-    toLogin(){
-      
+    toLogin(recovered){
+      this.page = 'addSeeds';
       this.clearup();
-      this.emitter.emit('toLogin');
+      this.emitter.emit('toLogin', recovered);
     }
   }
 }

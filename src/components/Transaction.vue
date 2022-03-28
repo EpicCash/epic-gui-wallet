@@ -147,11 +147,16 @@
     created () {
       this.emitter.on('updateTxs', () => {
           this.getTxs();
-      })
+      });
+      this.emitter.on('logoutTxs', ()=>{
+          this.current_txs = [];
+          this.total_txs = [];
+          this.clearup();
+      });
     },
     methods: {
       detail(tx){
-        
+
         this.txDetail = tx;
         this.openDetail = true;
       },

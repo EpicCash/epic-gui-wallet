@@ -111,7 +111,7 @@ export default {
 
     async selectDir(){
 
-
+        this.userHomedir = '';
         let customHomedir = await window.api.showOpenDialog();
 
         if(customHomedir.canceled == false){
@@ -129,23 +129,24 @@ export default {
       }
 
       let account = this.account != '' ? this.account.trim() : 'default';
+      let network = this.network;
+
 
       if(!this.onlyLetters(account)){
         this.error = true
         this.errorInfo = this.$t('msg.create.errorAccountName')
         return
-      }else{
-        var self = this;
-        this.configService.appConfig.account_dirs.forEach(function(existingAccount){
-
-          if(existingAccount['account'] == self.account && existingAccount['network'] == self.network){
-            self.error = true
-            self.errorInfo = self.$t('msg.create.errorAccountExist')
-            return
-          }
-
-        });
       }
+
+      for(var existingAccount in this.configService.appConfig.account_dirs){
+
+        if(this.configService.appConfig.account_dirs[existingAccount]['account'] == account && this.configService.appConfig.account_dirs[existingAccount]['network'] == network){
+          this.error = true
+          this.errorInfo = this.$t('msg.create.errorAccountExist')
+          return
+        }
+      }
+
       if(this.password.length == 0 ){
         this.error = true
         this.errorInfo = this.$t('msg.create.errorPasswdEmpty')
@@ -199,7 +200,10 @@ export default {
       }else{
         this.error = true;
         this.errorInfo = created.msg;
+
       }
+
+      this.userHomedir = '';
 
     },
     resetErrors(){
@@ -209,12 +213,14 @@ export default {
       return /^[a-z]*$/.test(str);
     },
     clearup(){
-      this.password = ""
-      this.password2 = ""
-      this.walletCreating = false
-      this.error = false,
-      this.errorInfo = ''
-      this.userHomedir = ''
+      this.password = "";
+      this.password2 = "";
+      this.walletCreating = false;
+      this.error = false;
+      this.errorInfo = '';
+      this.userHomedir = '';
+      this.seeds = [];
+      this.walletCreated = false;
     },
     toLogin(){
       this.clearup()

@@ -156,7 +156,12 @@
 
       this.emitter.on('updateCommits', ()=> {
           this.getCommits()
-      })
+      });
+      this.emitter.on('logoutCommits', ()=>{
+          this.current_commits = [];
+          this.total_commits = [];
+          this.clearup();
+      });
     },
 
     methods: {

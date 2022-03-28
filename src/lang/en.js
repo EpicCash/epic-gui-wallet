@@ -6,9 +6,11 @@ const messages = {
     passwordAgain: 'Enter password again',
     wrongPassword: 'Wrong password',
     login_: 'Login',
+    continue: 'Continue offline',
     logout: 'Logout',
     search: 'Search',
     clearup: 'Clear',
+    close: 'Close',
     jump: 'Jump',
 
     confirmed: 'Confirmed',
@@ -71,7 +73,8 @@ const messages = {
     restore:{
       seedPhrase: 'Seed Phrase',
       title: 'Restore wallet via seed phrase',
-      addSeedsInfo: 'Add seed phrase one by one please',
+      addSeedsInfo: 'Add seed phrase by clicking the word(s) please',
+      yourSeedsInfo: 'Your seed phrase is',
       add: 'Add',
       invalid: 'Invalid Seed Phrase',
       delete: 'Delete',
@@ -219,6 +222,9 @@ const messages = {
       start: 'Start',
       stopCheckMsg: 'Check was cancelled',
       checkedMsg: 'Check balance finished'
+    },
+    firstruncheck: {
+      title: 'Scan blockchain for your wallet outputs, be patient ...',
     },
 
     lang: {

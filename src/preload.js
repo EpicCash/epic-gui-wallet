@@ -5,7 +5,7 @@ import { join } from 'path'
 import path from 'path';
 const moment = require('moment');
 const base32 = require('rfc-3548-b32');
-
+//import { useFetch } from '@vueuse/core';
 const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
@@ -43,7 +43,7 @@ const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
-const validChannels = ['scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
+const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     async kill(pid){
@@ -86,11 +86,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
     },
 
     async execNew(cmd, args, platform){
-      console.log('execNew cmd:', cmd);
-      console.log('execNew args:', args);
+
       return new Promise(function(resolve, reject) {
 
-          const createProcess = spawn(cmd, args, {shell: platform == 'win'});
+          let createProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
           let newSeedData = '';
           let errorData = '';
           let recordData = false;
@@ -151,7 +151,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
     async execScan(cmd){
 
       return new Promise(function(resolve, reject) {
-          const scanProcess = exec(cmd);
+
+          let scanProcess = exec(cmd);
+
           //scan process is self closing
           scanProcess.stdout.on('data', function(data){
               ipcRenderer.send('scan-stdout', data);
@@ -179,18 +181,23 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
 
     /* start wallet api */
-    async execStart(cmd, args, platform){
+    async execStart(cmd, args, platform, emitOutput){
 
       return new Promise(function(resolve, reject) {
+
           //console.log('start wallet cmd:', cmd);
           //console.log('start wallet args', args);
-          const ownerAPI = spawn(cmd, args, {shell: platform == 'win'});
+
+          let ownerAPI = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
           ownerAPI.stdout.setEncoding('utf8');
           ownerAPI.stderr.setEncoding('utf8');
 
           ownerAPI.stdout.on('data', (data) => {
             console.log(data);
-
+            if(emitOutput){
+              ipcRenderer.send('firstscan-stdout', data);
+            }
             if(data.includes('HTTP Owner listener started')){
 
               resolve(ownerAPI.pid);
@@ -200,6 +207,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           ownerAPI.stderr.on('data', (data) => {
             console.log('ownerAPI.stderr', data);
+            if(emitOutput){
+              ipcRenderer.send('firstscan-stdout', data);
+            }
             if(data.includes('Address already in use')){
               //we have unknow process id
               resolve(0);
@@ -216,7 +226,12 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
     async execListen(cmd, args, platform){
 
       return new Promise(function(resolve, reject) {
-          const listenProcess = spawn(cmd, args, {shell: platform == 'win'});
+
+
+
+          let listenProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
+
           listenProcess.stdout.setEncoding('utf8');
           listenProcess.stderr.setEncoding('utf8');
           listenProcess.stdout.on('data', (data) => {
@@ -235,11 +250,16 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
 
-    async execRecover(cmd, args, platform, seeds, password){
+    async execRecover(cmd, args, platform, seeds){
 
       return new Promise(function(resolve, reject) {
 
-          const recover = spawn(cmd, args, {shell: platform == 'win'});
+          let recover = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
+
+          console.log('execRecover', cmd);
+          console.log('execRecover', args);
+
           let newSeedData = '';
           let errorData = '';
           let recordData = false;
@@ -247,7 +267,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           recover.stdin.setEncoding('utf8');
           recover.stderr.setEncoding('utf8');
           recover.stdout.on('data', (data) => {
-
+            console.log('#####stdout#####', data);
             if(data.includes('Please enter your recovery phrase')){
               recover.stdin.write(seeds+"\n");
             }else{
@@ -264,7 +284,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           });
 
           recover.stderr.on('data', (data) => {
-
+            console.log('#####stderr#####', data);
             errorData += data;
 
             if(data.includes('Recovery word phrase is invalid.')){
@@ -338,6 +358,7 @@ const aes256gcm = (shared_secret) => {
   };
 };
 
+//contextBridge.exposeInMainWorld('nodeFetch', useFetch);
 contextBridge.exposeInMainWorld('nodeFindProcess', require('find-process'));
 contextBridge.exposeInMainWorld('nodeCrypto', require('crypto'));
 contextBridge.exposeInMainWorld('nodeSecp256k1', secp256k1);
@@ -353,6 +374,8 @@ contextBridge.exposeInMainWorld('nodeFs', require('fs'));
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
+
+
   getResourcePath(){
     return resourcePath;
   },
