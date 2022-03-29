@@ -338,6 +338,11 @@ class ConfigService {
     let appConfig = true;
 
     //this should never fail or app is not working
+    let epicDir = path.join(defaultAppConfigDir, '.epic');
+    if (!window.nodeFs.existsSync(epicDir)){
+        window.nodeFs.mkdirSync(epicDir, { recursive: true });
+    }
+
     this.appConfigFile = path.join(defaultAppConfigDir, '.epic', 'epic_3-0-0_config.json');
     if (!window.nodeFs.existsSync(this.appConfigFile)) {
       appConfig = false;
