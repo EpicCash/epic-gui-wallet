@@ -28,7 +28,7 @@ npm 8.5.5
 
 # Ubuntu
 ```
-apt install libgtk-3-0
+apt install libgtk-3-0 libgbm-dev
 ```
 
 
