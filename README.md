@@ -15,12 +15,21 @@ npm run electron:serve
 npm run electron:build
 ```
 
-```
+
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+# Required deps
+```
+NodeJs v17.9.0
+npm 8.5.5
+```
 
+# Ubuntu
+```
+apt install libgtk-3-0
+```
 
 
 
