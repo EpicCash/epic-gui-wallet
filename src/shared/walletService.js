@@ -332,7 +332,14 @@ class WalletService {
               'owner_api'
 
             ];
-          }else{
+          } else if(this.configService.config['network'] == 'usernet'){
+            args = [
+              '--usernet',
+              '-c',this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+              'owner_api'
+
+            ];
+          } else{
             args = [
               '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
               'owner_api'
@@ -397,6 +404,17 @@ class WalletService {
 
 
           ];
+        } else if(this.configService.config['network'] == 'usernet'){
+          args = [
+            '--usernet',
+            '--pass', password,
+            '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            'listen',
+            '--method', (method == 'http' ? 'http' : 'keybase')
+
+
+          ];
         }else{
           args = [
             '--pass', password,
@@ -438,7 +456,16 @@ class WalletService {
             'init'
           ];
 
-        }else{
+        } else if(this.configService.config['network'] == 'usernet'){
+
+          args = [
+            '--usernet',
+            '--pass', password,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            'init'
+          ];
+
+        } else{
           args = [
             '--pass', password,
             '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
@@ -463,7 +490,16 @@ class WalletService {
             'init'
           ];
 
-        }else{
+        } else if(network == 'usernet'){
+
+          args = [
+            '--usernet',
+            '--pass', password,
+            '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
+            'init'
+          ];
+
+        } else{
           args = [
             '--pass', password,
             '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
@@ -490,7 +526,16 @@ class WalletService {
             'init', '-r'
           ];
 
-        }else{
+        } else if(network == 'usernet'){
+
+          args = [
+            '--usernet',
+            '--pass', password,
+            '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
+            'init', '-r'
+          ];
+ 
+        } else{
           args = [
             '--pass', password,
             '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,

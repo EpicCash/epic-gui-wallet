@@ -22,6 +22,7 @@
                 <select v-model="network">
                   <option value="mainnet">Mainnet</option>
                   <option value="floonet">Floonet</option>
+                  <option value="usernet">Usernet</option>
                 </select>
 
             </div>
