@@ -55,11 +55,20 @@ class ConfigService {
 
     if(foundAccount && foundAccount['userhomedir']){
 
+      let userhomedir = '';
+      if(foundAccount['network'] == 'mainnet'){
+        userhomedir = 'main';
+      } else if(foundAccount['network'] == 'floonet'){
+        userhomedir = 'floo';
+      } else if(foundAccount['network'] == 'usernet'){
+        userhomedir = 'user';
+      }
+
       if(foundAccount['account'] == 'default'){
-        this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'));
+        this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], userhomedir);
 
       }else{
-        this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], (foundAccount['network'] == 'mainnet' ? 'main' : 'floo'), foundAccount['account']);
+        this.defaultAccountWalletdir = path.join(foundAccount['userhomedir'], userhomedir, foundAccount['account']);
 
       }
 
@@ -149,7 +158,7 @@ class ConfigService {
         }
         if(tomlContent.search(re3) != -1){
 
-            tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr  = "' + this.config.check_node_api_http_addr + '"');
+            tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + this.config.check_node_api_http_addr + '"');
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -242,7 +251,7 @@ class ConfigService {
         if(config && config.version == '3.0.0'){
 
             let account = walletDirSegements[0];
-            if(account == 'main' || account == 'floo'){
+            if(account == 'main' || account == 'floo' || account == 'user'){
               account = 'default';
             }else{
               walletDirSegements.shift();
@@ -253,8 +262,11 @@ class ConfigService {
             if(networkShortname == 'main'){
               network = 'mainnet';
               walletDirSegements.shift();
-            }else if(networkShortname == 'floo'){
+            } else if(networkShortname == 'floo'){
               network = 'floonet';
+              walletDirSegements.shift();
+            } else if(networkShortname == 'user'){
+              network = 'usernet';
               walletDirSegements.shift();
             }
 
@@ -268,7 +280,7 @@ class ConfigService {
         }else{
 
           let account = walletDirSegements[0];
-          if(account == 'main' || account == 'floo'){
+          if(account == 'main' || account == 'floo' || account == 'user'){
             account = 'default';
           }else{
             walletDirSegements.shift();
@@ -278,8 +290,11 @@ class ConfigService {
           if(networkShortname == 'main'){
             network = 'mainnet';
             walletDirSegements.shift();
-          }else if(networkShortname == 'floo'){
+          } else if(networkShortname == 'floo'){
             network = 'floonet';
+            walletDirSegements.shift();
+          } else if(networkShortname == 'user'){
+            network = 'usernet';
             walletDirSegements.shift();
           }
 
@@ -298,7 +313,7 @@ class ConfigService {
       }else{
 
         let account = walletDirSegements[0];
-        if(account == 'main' || account == 'floo'){
+        if(account == 'main' || account == 'floo' || account == 'user'){
           account = 'default';
         }else{
           walletDirSegements.shift();
@@ -308,8 +323,11 @@ class ConfigService {
         if(networkShortname == 'main'){
           network = 'mainnet';
           walletDirSegements.shift();
-        }else if(networkShortname == 'floo'){
+        } else if(networkShortname == 'floo'){
           network = 'floonet';
+          walletDirSegements.shift();
+        } else if(networkShortname == 'user'){
+          network = 'usernet';
           walletDirSegements.shift();
         }
 
@@ -384,11 +402,19 @@ class ConfigService {
             this.appConfig['account_dirs'].forEach(function(existingAccount){
                 if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
                   userHomedir = existingAccount['userhomedir'];
+                  let networkShortname = '';
+                  if(existingAccount['network'] == 'mainnet'){
+                    networkShortname = 'main';
+                  } else if(existingAccount['network'] == 'floonet'){
+                    networkShortname = 'floo';
+                  } else if(existingAccount['network'] == 'usernet'){
+                    networkShortname = 'user';
+                  }
                   if(account == 'default'){
-                    defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'));
+                    defaultAccountWalletdir = path.join(userHomedir, networkShortname);
 
                   }else{
-                    defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account']);
+                    defaultAccountWalletdir = path.join(userHomedir, networkShortname, existingAccount['account']);
 
                   }
                 }
@@ -398,10 +424,18 @@ class ConfigService {
           this.appConfig['account_dirs'].forEach(function(existingAccount){
               if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
                 userHomedir = existingAccount['userhomedir'];
+                let networkShortname = '';
+                if(existingAccount['network'] == 'mainnet'){
+                  networkShortname = 'main';
+                } else if(existingAccount['network'] == 'floonet'){
+                  networkShortname = 'floo';
+                } else if(existingAccount['network'] == 'usernet'){
+                  networkShortname = 'user';
+                }
                 if(existingAccount['account'] == 'default'){
-                  defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'));
+                  defaultAccountWalletdir = path.join(userHomedir, networkShortname);
                 }else{
-                  defaultAccountWalletdir = path.join(userHomedir, (existingAccount['network'] == 'mainnet' ? 'main' : 'floo'), existingAccount['account']);
+                  defaultAccountWalletdir = path.join(userHomedir, networkShortname, existingAccount['account']);
 
                 }
               }

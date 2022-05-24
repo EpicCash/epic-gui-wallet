@@ -153,7 +153,6 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       return new Promise(function(resolve, reject) {
 
           let scanProcess = exec(cmd);
-
           //scan process is self closing
           scanProcess.stdout.on('data', function(data){
               ipcRenderer.send('scan-stdout', data);

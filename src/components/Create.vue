@@ -66,6 +66,7 @@
                         <select v-model="network">
                           <option value="mainnet">Mainnet</option>
                           <option value="floonet">Floonet</option>
+                          <option value="usernet">Usernet</option>
                         </select>
                     </div>
                   </div>
@@ -162,9 +163,10 @@ export default {
       let networkShortname = '';
       if(this.network == 'floonet'){
         networkShortname = 'floo';
-      }else{
+      } else if(this.network == 'usernet') {
+        networkShortname = 'user';
+      } else {
         networkShortname = 'main';
-
       }
 
       if(account == 'default'){
