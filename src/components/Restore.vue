@@ -118,7 +118,7 @@
             </div>
 
           <div v-else-if="page==='restored'">
-            <p class="animated bounce has-text-weight-semibold has-text-danger is-size-5"
+            <p class="animated bounce has-text-weight-semibold has-text-success is-size-5"
                 style="animation-iteration-count:2;margin-bottom:40px">
                 {{ $t('msg.restore.restored') }}
             </p>
