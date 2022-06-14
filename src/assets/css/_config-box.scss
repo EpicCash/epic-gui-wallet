@@ -1,0 +1,36 @@
+.config-box {
+  display: none;
+}
+
+@include desktop {
+  .config-box {
+    display: block;
+    position: fixed;
+    top: 6rem;
+    right: 0;
+    background: $white;
+    border-top-left-radius: $radius-large;
+    border-bottom-left-radius: $radius-large;
+    border-top: 1px solid $grey-light;
+    border-left: 1px solid $grey-light;
+    border-bottom: 1px solid $grey-light;
+    box-shadow: $box-shadow;
+    z-index: 45;
+
+    .trigger {
+      cursor: pointer;
+    }
+
+    .config-wrapper {
+      padding: $default-padding $default-padding * 3;
+      position: relative;
+
+      .close-button {
+        position: absolute;
+        top: $default-padding * .5;
+        right: $default-padding * .5;
+        cursor: pointer;
+      }
+    }
+  }
+}

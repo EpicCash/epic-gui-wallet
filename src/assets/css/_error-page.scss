@@ -1,0 +1,29 @@
+.error-page-icon {
+  margin-bottom: $default-padding;
+
+  .icon {
+    background-color: $error-page-icon-background-color;
+    border-radius: $radius-rounded;
+    width: $error-page-icon-size;
+    height: $error-page-icon-size;
+  }
+  .mdi.mdi-set, .mdi.mdi:before {
+    font-size: $error-page-icon-size * .75;
+  }
+}
+
+.error-page-caption {
+  h1 {
+    text-transform: uppercase;
+    font-size: $size-base * 2;
+    color: $error-page-caption-color;
+  }
+
+  &+.error-page-action {
+    margin-top: $default-padding;
+  }
+}
+
+section.hero.is-error-section {
+  background: transparent;
+}

@@ -4,13 +4,19 @@ import { createI18n } from 'vue-i18n/index'
 import walletService from './shared/walletService.js';
 import nodeService from './shared/nodeService.js';
 import configService from './shared/configService.js';
+import addressBookService from './shared/addressbookService.js';
 import {words} from './shared/words.js';
 import dbService from './db.js';
 import App from './App.vue'
 import mitt from 'mitt';
 import moment from 'moment'
-import './assets/css/main-styles.scss';
+
+import './assets/css/epiccashApp.scss';
 import './assets/css/animate.css';
+
+import mdiVue from 'mdi-vue/v3';
+import * as mdijs from '@mdi/js';
+
 import en from './lang/en';
 import zh from './lang/zh';
 import ru from './lang/ru';
@@ -30,10 +36,14 @@ const i18n = createI18n({
 })
 
 app.use(i18n);
+app.use(mdiVue, {
+  icons: mdijs
+});
 
 let config = new configService(emitter);
 app.config.globalProperties.$walletService = new walletService(emitter, config);
 app.config.globalProperties.$nodeService = new nodeService(emitter, config);
+app.config.globalProperties.$addressBookService =  new addressBookService();
 app.config.globalProperties.configService = config;
 app.config.globalProperties.$dbService = dbService;
 app.config.globalProperties.mnemonicWords = words;

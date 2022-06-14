@@ -16,11 +16,10 @@ function addQuotations(s){
 class WalletService {
 
     constructor(emitter, configService) {
-
         this.emitter = emitter;
         this.client;
         this.configService = configService;
-        this.walletIsOpen = false;
+        this.walletProcess = false;
         this.walletIsListen = false;
         this.processes = {};
         this.shared_key;
@@ -32,7 +31,7 @@ class WalletService {
       this.client = undefined;
       this.shared_key = undefined;
       this.token = undefined;
-      this.walletIsOpen = false;
+    //  this.walletProcess = false;
       this.walletIsListen = false;
     }
     async initSecure(url) {
@@ -306,72 +305,43 @@ class WalletService {
 
         this.client = undefined;
         this.shared_key = undefined;
-        this.token = undefined;
-        this.walletIsOpen = false;
-        this.walletIsListen = false;
-        if(await this.configService.killWalletProcess()){
-          this.account = account ? account : 'default';
-          let args = [];
+        this.walletProcess = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
 
-          //this.stopProcess('ownerAPI')
-          //do not start listener 2 times if wallet is open
+        if(!this.walletProcess.length){
 
-          if(this.walletIsOpen){
+          let args = [
+            ...(this.configService.config['network'] != 'mainnet' ? '--' + this.configService.config['network'] : []),
+            '-c',this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            'owner_api'
+          ];
 
-            return this.walletIsOpen;
-          }
-
-          let walletOpenId = 0;
-
-
-
-          if(this.configService.config['network'] == 'floonet'){
-            args = [
-              '--floonet',
-              '-c',this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
-              'owner_api'
-
-            ];
+          let walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform, emitOutput);
+          
+          if(walletOpenId > 0){
+            this.walletProcess = true;
           }else{
-            args = [
-              '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
-              'owner_api'
-
-            ];
+            return false;
           }
-
-
-          walletOpenId = await window.nodeChildProcess.execStart(this.configService.epicPath, args, this.configService.platform, emitOutput);
-
-          if(walletOpenId === 0 && this.token){
-            this.walletIsOpen = true;
-            return true;
-          }
-
-          let userTopDir = await this.jsonRPC('set_top_level_directory', {dir: this.configService.defaultAccountWalletdir}, false)
-
-          if(userTopDir.result){
-
-              let tokenResponse =  await this.jsonRPC('open_wallet', {"name": account, password: password}, false)
-
-              if(tokenResponse.result){
-                this.token = tokenResponse.result.Ok;
-              }else if(tokenResponse.error){
-
-                return false;
-              }
-
-              if(walletOpenId > 0 && this.token){
-                  this.processes['ownerAPI'] = walletOpenId;
-                  this.walletIsOpen = true;
-                  return true;
-              }
-
-          }
-
-          return false;
         }
 
+        let userTopDir = await this.jsonRPC('set_top_level_directory', {dir: this.configService.defaultAccountWalletdir}, false)
+
+        if(userTopDir.result){
+
+            let tokenResponse = await this.jsonRPC('open_wallet', {"name": account, password: password}, false)
+
+            if(tokenResponse.result){
+              this.token = tokenResponse.result.Ok;
+            }else if(tokenResponse.error){
+              return false;
+            }
+
+            if(this.token){
+              return true;
+            }
+        }
+
+        return false;
     }
 
     /* start a epic wallet in listen mode */
@@ -523,7 +493,7 @@ class WalletService {
 
             }
             if(processKilled && processName === 'ownerAPI'){
-              this.walletIsOpen = false;
+              this.walletProcess = false;
               delete this.processes[processName];
 
             }

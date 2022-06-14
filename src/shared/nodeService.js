@@ -1,18 +1,45 @@
 
 require('promise.prototype.finally').shim();
 
+function addQuotations(s){
+    return '"' + s +'"'
+}
 
 class NodeService {
 
   constructor(emitter, configService) {
       this.emitter = emitter;
       this.configService = configService;
+      this.interalNodeProcess = false;
   }
 
   async reconnectNode(){
     return await this.nodeOnline();
   }
+  async internalNodeStart(emitOutput){
 
+    this.interalNodeProcess = await window.nodeFindProcess('name', /.*?epic$/);
+    //// TODO: server tomlFile
+    //run_tui = false
+
+
+
+    if(!this.interalNodeProcess.length){
+      let args = [
+        ...(this.configService.config['network'] != 'mainnet' ? '--' + this.configService.config['network'] : []),
+      ];
+      let nodeOpenId = await window.nodeChildProcess.execNode(this.configService.epicNodePath, args, this.configService.platform, emitOutput);
+      if(nodeOpenId > 0){
+        this.interalNodeProcess = true;
+      }else{
+        return false;
+      }
+
+    }
+    return true;
+
+
+  }
   async nodeOnline(url){
 
 
@@ -20,7 +47,7 @@ class NodeService {
     let emitter = this.emitter;
     emitter.emit('wallet_error', {msg: '', code: ''});
     emitter.emit('settings_error', {msg: '', code: ''});
-    
+
     let  baseURL = '';
     if(url == undefined){
       baseURL = this.configService.config['check_node_api_http_addr'] ? this.configService.config['check_node_api_http_addr'] : this.configService.defaultEpicNode;

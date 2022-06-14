@@ -1,0 +1,47 @@
+html{
+
+	&.is-dark-mode-active{
+
+		.is-state-info{
+
+			background-color: $epicCashGold !important;
+			border-color: $epicCashGold !important;
+			color: #fff !important;
+		}
+
+
+
+		// Icon im Menu
+
+		.menu-list{
+
+			line-height: 2;
+
+			.icon{
+
+				.mdi{
+
+					font-size: 1.3rem;
+				}
+			}
+		}
+
+		.button{
+
+			&.is-primary{
+
+				background-color: $epicCashGold !important;
+				border-color: $epicCashGold !important;
+				color: #ffffff !important;
+			}
+		}
+
+		.card-content{
+
+			.level-item{
+
+				justify-content: flex-start;
+			}
+		}
+	}
+}

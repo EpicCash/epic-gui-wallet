@@ -20,16 +20,20 @@ class ConfigService {
       //TODO: make it selectable in app, so user can
       //start wallet from last used account
       this.defaultAccountWalletdir = '';
-
+      this.appConfigFile = path.join(defaultAppConfigDir, '.epic', 'epic_3-0-0_config.json');
       this.platform = window.config.getPlatform();
       this.binariesPath = path.join(window.config.getResourcePath(), 'bin', window.config.getPlatform());
       this.epicWalletBinary = window.config.getPlatform() ==='win' ? 'epic-wallet.exe' : 'epic-wallet';
+      this.epicNodeBinary = window.config.getPlatform() ==='win' ? 'epic.exe' : 'epic';
       this.epicBinPath = path.join(this.binariesPath, this.epicWalletBinary);
+      this.epicNodeBinPath = path.join(this.binariesPath, this.epicNodeBinary);
       if(window.config.getPlatform() == 'win'){
-        this.epicBinPath = '"' + path.resolve(this.epicBinPath) + '"'
+        this.epicBinPath = '"' + path.resolve(this.epicBinPath) + '"';
+        this.epicNodeBinPath = '"' + path.resolve(this.epicNodeBinPath) + '"';
       }
 
       this.epicPath = this.epicBinPath;
+      this.epicNodePath = this.epicNodeBinPath;
       this.config = {};
       this.configFile = '';
       this.apiSecretPath = '';
@@ -41,7 +45,17 @@ class ConfigService {
       this.walletTOMLName = 'epic-wallet.toml';
       this.appConfigAccount;
 
+
+
+      //this should never fail or app is not working
+      let epicDir = path.join(defaultAppConfigDir, '.epic');
+      if (!window.nodeFs.existsSync(epicDir)){
+        window.nodeFs.mkdirSync(epicDir, { recursive: true });
+      }
+
+
   }
+
   accountExist(account){
     let accountExist = false;
     let foundAccount = [];
@@ -69,6 +83,7 @@ class ConfigService {
     return accountExist;
 
   }
+
   loadConfig(configPath){
 
     let config;
@@ -90,6 +105,7 @@ class ConfigService {
     return config;
 
   }
+
   saveConfig(){
 
     try{
@@ -120,6 +136,7 @@ class ConfigService {
     }
 
   }
+
   checkTomlFile(defaultAccountWalletdir){
 
     let walletDir = defaultAccountWalletdir ? defaultAccountWalletdir : this.defaultAccountWalletdir;
@@ -171,6 +188,7 @@ class ConfigService {
     return tomlFile;
 
   }
+
   /* save only default user paths here */
   updateAppConfig(configKey, userdata){
 
@@ -203,16 +221,41 @@ class ConfigService {
       return this.saveAppConfig();
   }
 
-  async killWalletProcess(){
+  /*
+   * find running epic-wallet and epic node
+   * process and close them if user confirms via prompt
+   */
+  async killEpicProcess(){
 
-    let plist = await window.nodeFindProcess('name',/.*?epic-wallet.*(owner_api|listen)/);
+    let killPromise = [];
+    let killProcess = false;
 
-    for(let walletProcess of plist) {
-      let killed = await nodeChildProcess.kill(walletProcess.pid);
+    let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+    let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic$/);
 
+    if(pWalletList.length || pEpicnodeList.length){
+      await this.emitter.emit('killEpicProcess', async function(confirmed){
+        if(!confirmed){
+          return false;
+        }
+        killProcess = true;
+      })
     }
 
-    return true;
+    if(killProcess){
+
+      for(let process of pWalletList) {
+        killPromise.push(nodeChildProcess.kill(process.pid))
+      }
+
+      for(let process of pEpicnodeList) {
+        killPromise.push(nodeChildProcess.kill(process.pid))
+      }
+      await Promise.all(killPromise);
+    }
+
+    console.log('all epic process killed');
+
   }
 
 
@@ -332,24 +375,18 @@ class ConfigService {
       return true;
 
   }
+
   /* check if app has its config file */
   appHasAccounts(){
 
-    let appConfig = true;
 
-    //this should never fail or app is not working
-    let epicDir = path.join(defaultAppConfigDir, '.epic');
-    if (!window.nodeFs.existsSync(epicDir)){
-        window.nodeFs.mkdirSync(epicDir, { recursive: true });
-    }
-
-    this.appConfigFile = path.join(defaultAppConfigDir, '.epic', 'epic_3-0-0_config.json');
     if (!window.nodeFs.existsSync(this.appConfigFile)) {
-      appConfig = false;
+
       //copy default config json to new wallet dir
       let defaultAppFile = path.join(window.config.getResourcePath(), "default.app.json");
       window.nodeFs.copyFileSync(defaultAppFile, this.appConfigFile);
-      this.appConfig = {'account_dirs':[]}
+      this.appConfig = {'account_dirs':[]};
+      return false;
     }else{
 
       let appConfigContent = window.nodeFs.readFileSync(this.appConfigFile, {encoding:'utf8', flag:'r'})
@@ -357,28 +394,26 @@ class ConfigService {
       try{
         this.appConfig = JSON.parse(appConfigContent);
         if(this.appConfig['account_dirs'].length <= 0){
-          appConfig = false;
+          return false;
         }
-      }catch(e){
 
+      }catch(e){
         return false;
       }
 
     }
 
-    return appConfig;
+    return true;
 
   }
 
-  async startCheck(account, skip, selecteHomedir){
+  async startCheck(account){
 
 
       let userHomedir = defaultUserdir;
       let defaultAccountWalletdir = '';
       let initWallet = false;
-      /*if(!skip){
-        await this.killWalletProcess();
-      }*/
+
       //this fails if user create a wallet without default name
       if(account){
             this.appConfig['account_dirs'].forEach(function(existingAccount){

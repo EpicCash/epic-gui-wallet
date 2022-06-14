@@ -1,0 +1,11 @@
+footer.footer {
+  border-top: $footer-border-top;
+
+  .logo {
+    height: $footer-logo-height;
+    img, svg {
+      width: auto;
+      height: $footer-logo-height;
+    }
+  }
+}

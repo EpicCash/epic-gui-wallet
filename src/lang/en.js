@@ -12,7 +12,7 @@ const messages = {
     clearup: 'Clear',
     close: 'Close',
     jump: 'Jump',
-
+    error: 'Please correct the following error(s):',
     confirmed: 'Confirmed',
     unconfirmed: 'Unconfirmed',
     locked: 'Locked',

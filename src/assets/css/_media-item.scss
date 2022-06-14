@@ -1,0 +1,23 @@
+.media {
+  .media-content {
+    .media-meta {
+      margin-bottom: $default-padding * .25;
+      strong, small {
+        margin-right: $default-padding * .33;
+      }
+    }
+  }
+}
+
+@include mobile {
+  .media.has-media-left {
+    flex-direction: column;
+
+    .media-left {
+      margin: 0 auto $default-padding;
+    }
+  }
+  .media-content {
+    overflow-x: visible;
+  }
+}

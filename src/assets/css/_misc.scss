@@ -1,0 +1,44 @@
+.is-user-avatar {
+  &.has-max-width {
+    max-width: $size-base * 7;
+  }
+
+  &.is-aligned-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  img {
+    margin: 0 auto;
+    border-radius: $radius-rounded;
+  }
+}
+
+.icon.has-update-mark {
+  position: relative;
+
+  &:after {
+    content: '';
+    width: $icon-update-mark-size;
+    height: $icon-update-mark-size;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background-color: $icon-update-mark-color;
+    border-radius: $radius-rounded;
+  }
+}
+
+
+@each $state-class, $state-color, $state-text in $state-colors {
+  .is-state-#{$state-class} {
+    background-color: $state-color!important;
+    border-color: $state-color!important;
+    color: $state-text!important;
+
+    &.is-hoverable:hover {
+      background-color: rgba($state-color, .9)!important;
+      border-color: rgba($state-color, .9)!important;
+    }
+  }
+}

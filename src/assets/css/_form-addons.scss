@@ -1,0 +1,41 @@
+.button.is-static {
+  background-color: transparent;
+}
+
+.switch {
+  &:hover, &:focus {
+    input[type=checkbox] + .check {
+      background: transparent;
+    }
+  }
+
+  input[type=checkbox] {
+    &:checked + .check {
+      border-color: $primary;
+      &:before {
+        background: $white;
+        border: 0;
+      }
+    }
+    + .check {
+      background: transparent;
+      border: $checkbox-border;
+
+      &:before {
+        background: transparent;
+        border: $checkbox-border;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.switch, .b-checkbox.checkbox, .b-radio.radio {
+  input[type=checkbox], input[type=radio] {
+    &:focus, &:focus:checked, &:active {
+      + .check {
+        box-shadow: none!important;
+      }
+    }
+  }
+}

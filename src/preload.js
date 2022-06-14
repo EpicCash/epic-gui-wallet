@@ -61,7 +61,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
            });
 
         }else{
-          ps.kill(pid, function( err ) {
+          //check if 3 seconds for node server is to short and makes problems
+          ps.kill(pid, {timeout: 3},function( err ) {
               if (err) {
                 resolve(false);
               }
@@ -178,7 +179,37 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       }
     },
 
+    /* start wallet api */
+    async execNode(cmd, args, platform, emitOutput){
 
+      return new Promise(function(resolve, reject) {
+
+          //console.log('start wallet cmd:', cmd);
+          //console.log('start wallet args', args);
+
+          let node = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
+          node.stdout.setEncoding('utf8');
+          node.stderr.setEncoding('utf8');
+
+          node.stdout.on('data', (data) => {
+            console.log('node.data', data);
+            //Epic server started.
+            if(data.includes('Epic server started')){
+
+              resolve(node.pid);
+            }
+
+          });
+
+          node.stderr.on('data', (data) => {
+            console.log('node.stderr', data);
+            log.error('start node got stderr: ' + data)
+            resolve(false);
+
+          });
+      });
+    },
 
     /* start wallet api */
     async execStart(cmd, args, platform, emitOutput){
@@ -194,7 +225,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           ownerAPI.stderr.setEncoding('utf8');
 
           ownerAPI.stdout.on('data', (data) => {
-            console.log(data);
+            //console.log(data);
             if(emitOutput){
               ipcRenderer.send('firstscan-stdout', data);
             }
@@ -206,7 +237,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           });
 
           ownerAPI.stderr.on('data', (data) => {
-            console.log('ownerAPI.stderr', data);
+            //console.log('ownerAPI.stderr', data);
             if(emitOutput){
               ipcRenderer.send('firstscan-stdout', data);
             }

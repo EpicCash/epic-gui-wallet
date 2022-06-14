@@ -41,6 +41,14 @@ async function createWindow() {
     }
   });
 
+  //add css theme class to html tag
+  win.webContents.on('dom-ready', () => {
+    win.webContents.executeJavaScript(`
+      var root = document.getElementsByTagName('html')[0];
+      root.setAttribute( 'class', 'has-aside-left has-aside-mobile-transition has-navbar-fixed-top is-dark-mode-active has-aside-expanded' );
+    `);
+  });
+
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
