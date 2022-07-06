@@ -6,10 +6,16 @@
   border-radius: $radius-large;
   border: $card-border;
 
-  &.has-height-medium {
+  &.has-shadow {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  &.is-scrollable-height-medium {
     .card-content {
+      @include scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
       height: $card-height-medium;
       position: relative;
+      overflow-y: auto;
     }
   }
 

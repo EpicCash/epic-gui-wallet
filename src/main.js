@@ -1,15 +1,20 @@
 
 import { createApp } from 'vue'
+import { store } from './store/index'
+import router from './router'
 import { createI18n } from 'vue-i18n/index'
 import walletService from './shared/walletService.js';
 import nodeService from './shared/nodeService.js';
+import ngrokService from './shared/ngrokService.js';
 import configService from './shared/configService.js';
-import addressBookService from './shared/addressbookService.js';
+import userService from './shared/userService.js';
+import addressbookService from './shared/addressbookService.js';
+import addressbookTransactionService from './shared/addressbookTransactionService.js';
 import {words} from './shared/words.js';
-import dbService from './db.js';
 import App from './App.vue'
 import mitt from 'mitt';
 import moment from 'moment'
+import Toaster from "@meforma/vue-toaster";
 
 import './assets/css/epiccashApp.scss';
 import './assets/css/animate.css';
@@ -39,17 +44,29 @@ app.use(i18n);
 app.use(mdiVue, {
   icons: mdijs
 });
+app.use(store);
+app.use(router);
+app.use(Toaster);
 
 let config = new configService(emitter);
 app.config.globalProperties.$walletService = new walletService(emitter, config);
 app.config.globalProperties.$nodeService = new nodeService(emitter, config);
-app.config.globalProperties.$addressBookService =  new addressBookService();
+app.config.globalProperties.$ngrokService = new ngrokService(emitter, config);
+
+app.config.globalProperties.$userService =  new userService();
+app.config.globalProperties.$addressBookService =  new addressbookService();
+app.config.globalProperties.$addressbookTransactionService =  new addressbookTransactionService();
 app.config.globalProperties.configService = config;
-app.config.globalProperties.$dbService = dbService;
 app.config.globalProperties.mnemonicWords = words;
 app.config.globalProperties.$filters = {
   datetimeFormat(date) {
-    return moment(date).format('YYYY-MM-DD, hh:mm:ss')
+
+     if(date != undefined){
+       let formatDatetime = moment(date).format('YYYY-MM-DD, HH:mm:ss');
+       return formatDatetime
+     }else{
+       return '-'
+     }
   },
   truncate(text, length) {
     if (text.length > length) {

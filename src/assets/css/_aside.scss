@@ -82,6 +82,15 @@ aside.aside {
   .menu-container, .aside-container {
     flex: 1;
     position: relative;
+    overflow-y: auto;
+  }
+
+  .menu-container {
+    @include scrollbars($aside-scrollbar-track, $aside-scrollbar-thumb);
+  }
+
+  .aside-container {
+    @include scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
   }
 
   .menu {
@@ -167,7 +176,7 @@ aside.aside {
 
 .has-aside-right {
   aside.aside.is-placed-right {
-    right: 0;
+    right: 1px;
   }
 }
 
@@ -187,9 +196,11 @@ aside.aside {
     body {
       overflow-x: hidden;
     }
+
     #app, nav.navbar {
       width: 100vw;
     }
+
     aside.aside {
       max-width: 100vw;
       width: $aside-mobile-width;

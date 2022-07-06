@@ -2,8 +2,8 @@
   <input
     class="input"
     type="account"
-    placeholder="default"
-    required
+    :placeholder="placeholder"
+    :required="required"
     autocomplete="off"
     v-model="input" />
 
@@ -17,16 +17,18 @@
   import useFormValidation from "@/modules/useFormValidation";
 
   export default {
+    props: ['placeholder', 'required'],
     setup() {
       let input = ref('');
       let defaultValue = ref(null);
+
       const { validateAccountField, errors } = useFormValidation();
 
-      const validInput = (configService) => {
+      const validInput = (configService, exist) => {
 
-        defaultValue.value = input.value == '' ? 'default' : input.value;
-        console.log(defaultValue.value);
-        return validateAccountField("account", defaultValue.value, configService);
+        defaultValue.value = input.value == '' && !exist ? 'default' : input.value;
+
+        return validateAccountField("account", defaultValue.value, configService, exist);
       };
 
       return { input, errors, defaultValue, validInput };

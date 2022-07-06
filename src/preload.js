@@ -10,6 +10,9 @@ const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
 
+
+const debug = false;
+
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
 const util = require('util');
@@ -43,7 +46,7 @@ const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
-const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
+const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     async kill(pid){
@@ -78,9 +81,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       const child = await spawn(cmd, args);
       child.stdout.setEncoding('utf8');
       child.stdout.on('data',function(data){
-        console.log(data);
+        debug ? console.log('spawn.stdout', data) : null;
       });
-
 
       return child;
 
@@ -97,10 +99,10 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           let recordData = false;
 
           createProcess.stdout.setEncoding('utf8');
-          createProcess.stderr.setEncoding('utf8');
-
           createProcess.stdout.on('data', (data) => {
-            console.log('stdout', data);
+
+            debug ? console.log('execNew.stdout', data) : null;
+
             //start recording data
             if(data.includes('Please back-up these words in a non-digital format.') || recordData){
               recordData = true;
@@ -110,7 +112,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           });
 
+          createProcess.stderr.setEncoding('utf8');
           createProcess.stderr.on('data', (data) => {
+
+            debug ? console.log('execNew.stderr', data) : null;
+
             errorData += data;
 
             if(data.includes('Recovery word phrase is invalid.')){
@@ -124,10 +130,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           createProcess.stdout.on('end', function () {
 
             if(errorData != ''){
-
               resolve({success: false, msg: errorData});
-
             }else if(newSeedData != ''){
+
               let wordSeed = newSeedData;
 
               //TODO replace with a preg match replace
@@ -157,16 +162,19 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           //scan process is self closing
           scanProcess.stdout.on('data', function(data){
-              ipcRenderer.send('scan-stdout', data);
+            debug ? console.log('execScan.stdout', data) : null;
+            ipcRenderer.send('scan-stdout', data);
           })
           scanProcess.stderr.on('data', function(data){
-              ipcRenderer.send('scan-stdout', data);
+            debug ? console.log('execScan.stderr', data) : null;
+            ipcRenderer.send('scan-stdout', data);
           })
           scanProcess.on('close', function(code){
-              console.log('scan close', code);
-              log.debug('epic wallet check exists with code: ' + code);
+            debug ? console.log('execScan.close', code) : null;
 
-              if(code==0){ipcRenderer.send('scan-finish')}
+
+            if(code==0){ipcRenderer.send('scan-finish')}
+            if(code==1){ipcRenderer.send('scan-error')}
           });
 
       });
@@ -180,32 +188,58 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
     },
 
     /* start wallet api */
-    async execNode(cmd, args, platform, emitOutput){
+    async execNode(cmd, args, platform){
 
       return new Promise(function(resolve, reject) {
 
-          //console.log('start wallet cmd:', cmd);
-          //console.log('start wallet args', args);
 
-          let node = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+          let node_server = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
-          node.stdout.setEncoding('utf8');
-          node.stderr.setEncoding('utf8');
+          node_server.stdout.setEncoding('utf8');
+          node_server.stdout.on('data', (data) => {
+              debug ? console.log('execNode.stdout', data) : null;
 
-          node.stdout.on('data', (data) => {
-            console.log('node.data', data);
             //Epic server started.
             if(data.includes('Epic server started')){
-
-              resolve(node.pid);
+              resolve(node_server.pid);
             }
 
           });
 
-          node.stderr.on('data', (data) => {
-            console.log('node.stderr', data);
-            log.error('start node got stderr: ' + data)
+
+          node_server.stderr.setEncoding('utf8');
+          node_server.stderr.on('data', (data) => {
+            debug ? console.log('execNode.stderr', data) : null;
+
             resolve(false);
+
+          });
+
+      });
+    },
+    /* start ngrok */
+    async execNgrok(cmd, args, platform){
+
+      return new Promise(function(resolve, reject) {
+
+          let ngrok = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+
+          ngrok.stdout.setEncoding('utf8');
+          ngrok.stdout.on('data', (data) => {
+
+            debug ? console.log('execNgrok.stdout', data) : null;
+
+            if(data.includes('client session established')){
+              resolve({success: true, msg: ngrok.pid});
+            }
+
+          });
+
+          ngrok.stderr.setEncoding('utf8');
+          ngrok.stderr.on('data', (data) => {
+
+            debug ? console.log('execNgrok.stderr', data) : null;
+            resolve({success: false, msg: data});
 
           });
       });
@@ -216,16 +250,13 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       return new Promise(function(resolve, reject) {
 
-          //console.log('start wallet cmd:', cmd);
-          //console.log('start wallet args', args);
-
           let ownerAPI = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
-          ownerAPI.stdout.setEncoding('utf8');
-          ownerAPI.stderr.setEncoding('utf8');
 
+          ownerAPI.stdout.setEncoding('utf8');
           ownerAPI.stdout.on('data', (data) => {
-            //console.log(data);
+            debug ? console.log('execStart.stdout', data) : null;
+
             if(emitOutput){
               ipcRenderer.send('firstscan-stdout', data);
             }
@@ -236,8 +267,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           });
 
+          ownerAPI.stderr.setEncoding('utf8');
           ownerAPI.stderr.on('data', (data) => {
-            //console.log('ownerAPI.stderr', data);
+            debug ? console.log('execStart.stderr', data) : null;
+
+
             if(emitOutput){
               ipcRenderer.send('firstscan-stdout', data);
             }
@@ -245,7 +279,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               //we have unknow process id
               resolve(0);
             }else{
-              log.error('start owner_api got stderr: ' + data)
+
               resolve(false);
 
             }
@@ -258,23 +292,23 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       return new Promise(function(resolve, reject) {
 
-
-
           let listenProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
-
           listenProcess.stdout.setEncoding('utf8');
-          listenProcess.stderr.setEncoding('utf8');
           listenProcess.stdout.on('data', (data) => {
-              console.log(data);
+
+              debug ? console.log('execListen.stdout', data) : null;
               if(data.includes('HTTP Foreign listener started.')){
 
                 resolve({success: true, msg: listenProcess.pid});
               }
 
-          })
+          });
+
+          listenProcess.stderr.setEncoding('utf8');
           listenProcess.stderr.on('data', (data) => {
-              log.error('start wallet listen got stderr: ' + data)
+              debug ? console.log('execListen.stderr', data) : null;
+
               resolve({success: false, msg: data});
           })
 
@@ -288,17 +322,14 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           let recover = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
 
-          console.log('execRecover', cmd);
-          console.log('execRecover', args);
-
           let newSeedData = '';
           let errorData = '';
           let recordData = false;
+
           recover.stdout.setEncoding('utf8');
-          recover.stdin.setEncoding('utf8');
-          recover.stderr.setEncoding('utf8');
           recover.stdout.on('data', (data) => {
-            console.log('#####stdout#####', data);
+            debug ? console.log('execRecover.stdout', data) : null;
+
             if(data.includes('Please enter your recovery phrase')){
               recover.stdin.write(seeds+"\n");
             }else{
@@ -309,13 +340,16 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
                 newSeedData += data;
               }
 
-
             }
 
           });
 
+
+          recover.stderr.setEncoding('utf8');
           recover.stderr.on('data', (data) => {
-            console.log('#####stderr#####', data);
+
+            debug ? console.log('execRecover.stderr', data) : null;
+
             errorData += data;
 
             if(data.includes('Recovery word phrase is invalid.')){
@@ -327,6 +361,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           });
 
           recover.stdout.on('end', function () {
+
+            debug ? console.log('execRecover.stdout.end', data) : null;
 
             if(errorData != ''){
 
@@ -406,27 +442,26 @@ contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
 
-
   getResourcePath(){
     return resourcePath;
   },
   getUserHomedir () {
-      return homedir;
+    return homedir;
   },
   getPlatform(){
-      switch (os.platform()) {
-          case 'aix':
-          case 'freebsd':
-          case 'linux':
-          case 'openbsd':
-          case 'android':
-            return 'linux';
-          case 'darwin':
-          case 'sunos':
-            return 'mac';
-          case 'win32':
-            return 'win';
-        }
+    switch (os.platform()) {
+      case 'aix':
+      case 'freebsd':
+      case 'linux':
+      case 'openbsd':
+      case 'android':
+        return 'linux';
+      case 'darwin':
+      case 'sunos':
+        return 'mac';
+      case 'win32':
+        return 'win';
+    }
   },
   getOnionV3(address){
 
@@ -438,11 +473,12 @@ contextBridge.exposeInMainWorld('config', {
     let checksum = Buffer.from(sha3_256.create().update(Buffer.concat([chekcsumstr, pubKey, onion_version])).digest()).slice(0,2);
     return base32.encode(Buffer.concat([pubKey, checksum, onion_version])).toLowerCase();
 
-  }
+  },
 
 
 
 });
+
 contextBridge.exposeInMainWorld('explorer', {
   //can be block height or commit
   open(data){

@@ -23,6 +23,10 @@ const getDatabase = () => {
                 primaryKey: true,
                 autoIncrement: true
             },
+            user_id: {
+              notNull: true,
+              dataType: DATA_TYPE.Number
+            },
             name: {
                 notNull: true,
                 dataType: DATA_TYPE.String
@@ -38,12 +42,94 @@ const getDatabase = () => {
             city: {
                 dataType: DATA_TYPE.String,
                 notNull: true
+            },
+            onion: {
+                dataType: DATA_TYPE.String,
+                notNull: true
+            },
+            keybase: {
+              dataType: DATA_TYPE.String,
+              notNull: true
+            },
+            alwaysproof:{
+              dataType: DATA_TYPE.Boolean,
+              default: false
+            },
+            proofaddr:{
+              dataType: DATA_TYPE.String,
+              notNull: true
             }
+        }
+    };
+    const tblAddressTransaction = {
+        name: 'AddressTransactions',
+        columns: {
+            id: {
+                primaryKey: true,
+                autoIncrement: true
+            },
+            user_id: {
+              notNull: true,
+              dataType: DATA_TYPE.Number
+            },
+            slateid: {
+                notNull: true,
+                dataType: DATA_TYPE.String
+            },
+            type: {
+                notNull: true,
+                dataType: DATA_TYPE.String
+            },
+            address: {
+                notNull: true,
+                dataType: DATA_TYPE.Number
+            },
+
+        }
+    };
+    const tblUser = {
+        name: 'User',
+        columns: {
+            id: {
+                primaryKey: true,
+                autoIncrement: true
+            },
+            account: {
+              unique: true,
+              notNull: true,
+              dataType: DATA_TYPE.String
+            },
+            name: {
+              notNull: true,
+                dataType: DATA_TYPE.String
+            },
+            email: {
+              notNull: true,
+              dataType: DATA_TYPE.String
+            },
+            ngrok: {
+              notNull: true,
+              dataType: DATA_TYPE.String
+            },
+            language: {
+              notNull: true,
+              dataType: DATA_TYPE.String
+            },
+            nodeInternal:{
+              default: false,
+              dataType: DATA_TYPE.Boolean
+            }
+
+
+
+
+
         }
     };
     const dataBase = {
         name: dbname,
-        tables: [tblAddressbook]
+        tables: [tblAddressbook, tblAddressTransaction, tblUser],
+        //version: 2
     };
     return dataBase;
 };
@@ -54,8 +140,9 @@ const initJsStore = async () => {
         await idbCon.initDb(dataBase);
     }
     catch (ex) {
-        alert(ex.message);
+        //alert(ex.message);
         console.error(ex);
+
     }
 };
 initJsStore();

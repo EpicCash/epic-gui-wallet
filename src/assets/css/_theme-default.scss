@@ -1,5 +1,5 @@
 /* We'll need some initial vars to use here */
-@import "~bulma/sass/utilities/initial-variables";
+@import "node_modules/bulma/sass/utilities/initial-variables";
 
 /* Base: Size  */
 $size-base: 1rem;
@@ -12,6 +12,11 @@ $family-sans-serif: 'Nunito', sans-serif;
 $base-color: #2e323a;
 $base-color-light: rgba(24,28,33,0.06);
 
+/* App Scrollbars */
+$app-scrollbar-track: $grey-lighter;
+$app-scrollbar-thumb: $grey-light;
+$app-scrollbar-hover: $grey;
+
 /* General overrides */
 $primary: $turquoise;
 $body-background-color: #f8f8f8;
@@ -19,8 +24,6 @@ $link: $blue;
 $link-visited: $purple;
 $light-border: 1px solid $base-color-light;
 $hr-height: 1px;
-
-
 
 /* NavBar: Bulma override */
 $navbar-item-color: $grey;
@@ -39,7 +42,7 @@ $navbar-avatar-size: 1.75rem;
 $menu-item-radius: 0;
 $menu-list-link-padding: $size-base * .5 0;
 $menu-label-color: lighten($base-color, 25%);
-$menu-item-color: lighten($base-color, 30%);
+$menu-item-color: lighten($base-color, 45%);
 $menu-item-hover-color: $white;
 $menu-item-hover-background-color: darken($base-color, 3.5%);
 $menu-item-active-color: $white;
@@ -62,6 +65,8 @@ $aside-right-box-shadow: -1px 1px 0 $base-color-light;
 $aside-menu-list-active-box-shadow: none;
 $aside-has-secondary-box-shadow: 0 0 5px 2px $black-ter;
 $aside-boxed-has-secondary-box-shadow: none;
+$aside-scrollbar-track: $black-ter;
+$aside-scrollbar-thumb: $grey;
 
 /* Aside Secondary Submenu: specifics */
 $aside-secondary-background-color: lighten($aside-background-color, 5%);
@@ -79,7 +84,7 @@ $title-bar-active-color: $black-ter;
 
 /* Hero Bar: specifics */
 $hero-bar-background: $white;
-$hero-bar-main-background-image: url("~@/assets/trianglify-bw-50@2x.png");
+$hero-bar-main-background-image: url("../assets/trianglify-bw-50@2x.png");
 $hero-avatar-size: $size-base * 10;
 
 /* Card: Bulma override */
@@ -119,7 +124,8 @@ $modal-card-width-mobile: 90vw;
 $modal-card-foot-background-color: $white-ter;
 
 /* Notification: Bulma override */
-$notification-padding: $default-padding * .75 $default-padding;
+$notification-padding: $default-padding * .75;
+$notification-padding-ltr: $notification-padding;
 
 /* Footer: Bulma override */
 $footer-background-color: $white;
@@ -156,11 +162,6 @@ $state-colors:
                 ('danger', $red, $white),
                 ('dark', $grey-darker, $white),
                 ('white', $white, $black-ter);
-
-/* Perfect Scrollbar */
-$ps-rail-background-color: transparent;
-$ps-thumb-background-color: #aaa;
-$ps-thumb-active-background-color: #999;
 
 /* Spinkit */
 $spinkit-spinner-color: $grey-lighter;

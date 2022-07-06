@@ -3,5 +3,6 @@
   "firstTime": true,
   "locale": "en",
   "check_node_api_http_addr": "",
-  "network": ""
+  "network": "",
+  "walletlisten_on_startup": true
 }

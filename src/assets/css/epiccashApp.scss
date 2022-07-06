@@ -3,12 +3,15 @@
 
 /* Theme style (colors & sizes) */
 @import "theme-light-dark";
-
+$aside-width: $size-base * 16;
 /* Core Libs & Lib configs */
 @import "libs/all";
 
 /* Mixins */
 @import "mixins";
+
+/* App */
+@import "app";
 
 /* Theme components */
 @import "nav-bar";
@@ -38,6 +41,7 @@
 
 /* Config box */
 @import "config-box";
+
 
 
 .button__loader {

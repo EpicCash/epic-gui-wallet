@@ -47,7 +47,7 @@ table.table {
     margin-bottom: 0;
   }
 
-  .table-wrapper + .level, .table-wrapper + .notification {
+  .table-wrapper + .level {
     padding: $notification-padding;
     padding-left: $card-content-padding;
     padding-right: $card-content-padding;

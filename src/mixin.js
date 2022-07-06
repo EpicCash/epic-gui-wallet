@@ -2,7 +2,7 @@ export default {
   mounted () {
     this.disableDragEvent()
   },
-  
+
   methods: {
     disableDragEvent () {
       window.addEventListener('dragenter', this.disableDrag, false)
@@ -20,7 +20,7 @@ export default {
         e.dataTransfer.dropEffect = 'none'
       }
     },
-    beforeDestroy () {
+    beforeUnmount () {
       window.removeEventListener('dragenter', this.disableDrag, false)
       window.removeEventListener('dragover', this.disableDrag)
       window.removeEventListener('drop', this.disableDrag)

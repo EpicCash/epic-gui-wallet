@@ -42,12 +42,12 @@ async function createWindow() {
   });
 
   //add css theme class to html tag
-  win.webContents.on('dom-ready', () => {
+  /*win.webContents.on('dom-ready', () => {
     win.webContents.executeJavaScript(`
       var root = document.getElementsByTagName('html')[0];
       root.setAttribute( 'class', 'has-aside-left has-aside-mobile-transition has-navbar-fixed-top is-dark-mode-active has-aside-expanded' );
     `);
-  });
+  });*/
 
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -284,6 +284,9 @@ ipcMain.on('firstscan-stdout', (event, data) => {
 
 ipcMain.on('scan-finish', (event, data) => {
   event.reply('scan-finish', { data });
+});
+ipcMain.on('scan-error', (event, data) => {
+  event.reply('scan-error', { data });
 });
 
 ipcMain.on('walletCreated', (event, data) => {

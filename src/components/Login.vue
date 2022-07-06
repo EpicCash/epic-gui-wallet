@@ -8,19 +8,20 @@
             <header class="card-header" style="justify-content: center;">
               <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
             </header>
+
             <div class="card-content">
 
               <form @submit.prevent novalidate>
                 <div class="field">
                   <label class="label">{{ $t("msg.account") }}</label>
                   <div class="control">
-                    <AccountField ref="accountField" />
+                    <AccountField ref="accountField" placeholder="default" required="true" />
                   </div>
                 </div>
                 <div class="field">
                   <label class="label">{{ $t("msg.password") }}</label>
                   <div class="control">
-                    <PasswordField ref="passwordField" />
+                    <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
                   </div>
                 </div>
                 <hr>
@@ -31,14 +32,14 @@
                     </button>
                   </div>
                   <div class="control">
-                    <a href="#" class="button is-outlined is-primary" @click.prevent="changeView('create')" >
+                    <router-link class="button is-outlined is-primary" to="/create">
                       {{ $t("msg.new.create") }}
-                    </a>
+                    </router-link>
                   </div>
                   <div class="control">
-                    <a href="#" class="button is-outlined is-primary" @click.prevent="changeView('restore')" >
+                    <router-link class="button is-outlined is-primary" to="/restore">
                       {{ $t("msg.restore.recover") }}
-                    </a>
+                    </router-link>
                   </div>
                 </div>
               </form>
@@ -57,16 +58,13 @@
 
 <script>
 
-const log = window.log
 
 import { ref } from 'vue';
-
-
-
 import PasswordField from "@/components/form/passwordField";
 import AccountField from "@/components/form/accountField";
 import useFormValidation from "@/modules/useFormValidation";
-
+import { useRouter } from '@/router';
+import { useStore } from '@/store';
 
 export default {
   name: "login",
@@ -74,130 +72,54 @@ export default {
     PasswordField,
     AccountField,
   },
-  data() {
-    return {
-
-      errorapi: false,
-      errorapiMsg: '',
-      errorCode: '',
-      isLoading: false,
-      continueBtn: false,
-    }
-  },
   setup() {
 
-    const errors = ref([]);
-    const passwordField = ref();
+    const store = useStore();
+    const router = useRouter();
+    const passwordField = ref('');
     const accountField = ref();
     const canLogin = ref(true);
+    const isLoading = ref(false);
     const { resetFormErrors } = useFormValidation();
 
     return {
-      errors,
+      store,
+      router,
       passwordField,
       accountField,
       canLogin,
+      isLoading,
       resetFormErrors,
 
-
     }
-
-  },
-  created(){
-
-    this.emitter.on('wallet_error', ({msg, code})=>{
-        this.errorapi = true;
-        this.errorapiMsg = msg;
-        this.errorCode = code;
-    });
-    this.emitter.on('wallet_error_clean',()=>{
-        this.errorapi = false;
-        this.errorapiMsg = '';
-        this.errorCode = '';
-        this.continueBtn = false;
-    });
-    
-    this.emitter.on('continueLogin', () => {
-       this.continueLogin(false);
-    });
-
-    this.emitter.on('continueLoginFirst', () => {
-      this.continueLogin(true);
-    });
 
   },
 
   methods: {
 
-    changeView(view){
-      this.emitter.emit('app.changeView', view);
-    },
-
     async continueLogin(firstlogin){
 
-      if(firstlogin){
-        this.emitter.emit('close', 'windowSettings');
-        this.emitter.emit('open', 'windowFirstrunCheck');
-      }
-
-
-      this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.accountField.defaultValue, firstlogin);
-
+      this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, firstlogin);
 
       this.isLoading = false;
-      if(this.canLogin){
+      if(this.canLogin.success){
         this.emitter.emit('app.accountLoggedIn');
-      }
-
-      /*
-
-      this.isLoading = false;
-      //we have a valid login to wallet
-
-      if(loginSucccess){
-
-        let nodeOnline = false;
-        if(!this.continueBtn && !firstlogin){
-          nodeOnline = await this.$nodeService.nodeOnline();
-        }else{
-          nodeOnline = true;
-        }
-        let apiCallable = await this.$walletService.getNodeHeight();
-
-        if(!nodeOnline){
-          this.continueBtn = true
-        }
-
-        if( !apiCallable || !nodeOnline ){
-          this.isLoading = false;
-          return this.errorapi = true;
-        }
-
-
-        if(firstlogin){
-
-          //call txs for first wallet scan outputs
-          //because a recovered wallet makes a scan on first start
-          //bug if multible
-          let txs = await this.$walletService.getTransactions(true, null, null);
-          if(txs){
-            this.emitter.emit('logined');
+        if(this.configService.config['walletlisten_on_startup']){
+          const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
+          if(isListen){
+            this.$toast.success("Wallet listener started");
+            this.store.commit('walletListenerService', true);
+          }else{
+            this.$toast.error("Error starting wallet listener");
+            this.store.commit('walletListenerService', false);
           }
-
-        }else{
-          this.emitter.emit('logined');
-          this.continueBtn = false;
-          this.errorapiMsg = '';
-          this.errorCode = '';
         }
       }else{
+        this.$toast.error(this.canLogin.msg.message);
+      }
 
-        return this.error = true
-
-      }*/
     },
     create(){
-
       this.emitter.emit('initMode', 'create');
     },
     restore(){
@@ -206,30 +128,31 @@ export default {
     },
     async login(){
       this.resetFormErrors();
+      let isFormAllValid = [];
+
+      isFormAllValid.push(this.passwordField.validInput());
+      isFormAllValid.push(this.accountField.validInput(this.configService));
+
       //check now requires settings
-      if(this.passwordField.validInput() && this.accountField.validInput(this.configService)){
+      if(!isFormAllValid.includes(false)){
 
         this.isLoading = true;
+
         let action = await this.configService.startCheck(this.accountField.defaultValue);
 
         switch(action){
           case 'login':
             await this.continueLogin(false);
           break;
-          case 'toml':
-            await this.$walletService.newToml(this.passwordField.defaultValue);
-            await this.configService.startCheck(this.accountField.defaultValue);
-          break;
           case 'settings':
-            this.isLoading = false;
-            this.emitter.emit('open', 'windowSettings');
+            this.router.push('/setupwizard');
+          break;
+          default:
+            this.$toast.error('Fatal login.vue: unknown action "' + action + '"', {duration:false});
           break;
         }
 
-
-
-
-
+        this.isLoading = false;
 
       }else{
         return;

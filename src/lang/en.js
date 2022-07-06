@@ -51,7 +51,7 @@ const messages = {
       seedPhrase: 'Seed Phrase',
       toNewMsg: 'Create a New Wallet.',
       newWallet: 'Create new wallet',
-      backupNote: 'Import！Please backup your seed phrase to restore your wallet',
+      backupNote: 'Important！Please backup your seed phrase to restore your wallet',
       backupFinish: 'Ok, I backed up my seed phrase. Login my wallet',
       errorPasswdEmpty: 'Password cannot be empty',
       errorPasswdConsistency: 'Please enter the same password',
@@ -78,7 +78,7 @@ const messages = {
       add: 'Add',
       invalid: 'Invalid Seed Phrase',
       delete: 'Delete',
-      added: 'Finish enter seed phrase',
+      added: 'Recover wallet',
       newPassword: 'Set a new password',
       recover: 'Recover',
       reAdd: 'Re-enter seed phrase ',
@@ -106,7 +106,7 @@ const messages = {
 
     info: {
       spendable: 'Spendable',
-      total: 'Total Balance',
+      total: 'Balance',
       unfinalization: 'Unfinalized',
       immature: 'Immature'
     },
@@ -155,7 +155,7 @@ const messages = {
     },
 
     fileReceive: {
-      dropMsg: 'Drop transaction file received',
+      dropMsg: 'Drop transaction file to receive or click to upload',
       WrongFileType: 'Wrong transaction file type',
       saveMsg: 'Save response transaction file created',
       CreateFailed: 'Failed to create new response transaction file',
@@ -167,7 +167,7 @@ const messages = {
       success: 'Transaction success',
       ok:'OK',
       sending: 'Sending',
-      dropMsg: 'Drop response transaction file to finalize',
+      dropMsg: 'Drop response transaction file to finalize or click to upload',
       WrongFileType: 'Wrong transaction file type',
       TxFailed: 'transaction failed',
     },

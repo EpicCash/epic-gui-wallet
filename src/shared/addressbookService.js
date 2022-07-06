@@ -2,15 +2,25 @@ import { BaseService } from "./base_service";
 
 class AddressbookService extends BaseService {
 
+
+
     constructor() {
         super();
         this.tableName = "Addressbook";
     }
 
+    clear(){
+      return this.connection.clear(this.tableName);
+    }
+
     getAddress() {
-      console.log(this.connection);
+
         return this.connection.select({
             from: this.tableName,
+            order: {
+                by: 'name',
+                type: 'asc' //supprted sort type is - asc,desc
+            }
         })
     }
 
@@ -19,6 +29,17 @@ class AddressbookService extends BaseService {
             into: this.tableName,
             values: [address],
             return: true
+        })
+    }
+
+    findAddress(value) {
+        return this.connection.select({
+            from: this.tableName,
+            where: {
+                name: {
+                  like: '%'+ value +'%'
+                }
+            }
         })
     }
 

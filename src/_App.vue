@@ -334,8 +334,8 @@ export default {
         }
       });
 
-      this.emitter.on('walletListen', ()=>{
-        this.walletListen = this.$walletService.isListen();
+      this.emitter.on('walletListen', async()=>{
+        this.walletListen = await this.$walletService.isListen();
       });
 
 

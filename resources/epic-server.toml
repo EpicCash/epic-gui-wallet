@@ -18,7 +18,7 @@
 
 #the directory, relative to current, in which the epic blockchain
 #is stored
-db_root = "/Users/johanneshahn/epic/epic/epic/target/release/chain_data"
+db_root = ""
 
 #path of TLS certificate file, self-signed certificates are not supported
 #tls_certificate_file = ""
@@ -30,11 +30,11 @@ api_http_addr = "127.0.0.1:3413"
 
 #path of the secret token used by the API to authenticate the calls
 #comment the it to disable basic auth
-#api_secret_path = "/Users/johanneshahn/epic/epic/epic/target/release/.api_secret"
+api_secret_path = ".api_secret"
 #foreign_api_secret_path = ".foreign_api_secret"
 
 #path to the file that contains the pre-generated foundation coinbases
-foundation_path = "/usr/share/epic/foundation.json"
+foundation_path = "./foundation.json"
 
 #The chain type, which defines the genesis block and the set of cuckoo
 #parameters used for mining as well as wallet output coinbase maturity. Can be:
@@ -63,7 +63,7 @@ header_sync_timeout = 10
 
 #whether to run the ncurses TUI. Ncurses must be installed and this
 #will also disable logging to stdout
-run_tui = true
+run_tui = false
 
 #Whether to run a test miner. This is only for developer testing (chaintype
 #usertesting) at cuckoo 16, and will only mine into the default wallet port.
@@ -88,7 +88,10 @@ host = "0.0.0.0"
 port = 3414
 
 #how to seed this server, can be None, List or DNSSeed
-seeding_type = "DNSSeed"
+#seeding_type = "DNSSeed"
+seeding_type = "List"
+seeds = ["95.217.197.180:3517"]
+
 
 #If the seeding type is List, the list of peers to connect to can
 #be specified as follows:
@@ -165,7 +168,7 @@ always_stem_our_txs = true
 [server.stratum_mining_config]
 
 #whether stratum server is enabled
-enable_stratum_server = true
+enable_stratum_server = false
 
 #what port and address for the stratum server to listen on
 stratum_server_addr = "127.0.0.1:3416"
@@ -200,13 +203,13 @@ log_to_stdout = true
 stdout_log_level = "Debug"
 
 #whether to log to a file
-log_to_file = true
+log_to_file = false
 
 #log level for file: Error, Warning, Info, Debug, Trace
 file_log_level = "Debug"
 
 #log file path
-log_file_path = "/Users/johanneshahn/epic/epic/epic/target/release/epic-server.log"
+log_file_path = ""
 
 #whether to append to the log file (true), or replace it on every run (false)
 log_file_append = true

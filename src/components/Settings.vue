@@ -1,14 +1,7 @@
 <template>
 
-<div class="modal" :class="{'is-active': showModal}">
-  <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" >
-    <header class="modal-card-head">
-      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.settings.title") }}</p>
-      <button class="delete" aria-label="close" @click="closeModal"></button>
-    </header>
-    <section class="modal-card-body">
 
+    <section class="section is-main-section" >
 
         <div class="notification is-warning" v-if="errors.length">
           <p v-for="error in errors" :key="error">{{ error }}</p>
@@ -58,13 +51,10 @@
           <div class="control">
             <button class="button is-link" @click="save" >{{ $t("msg.save") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span></button>
           </div>
-          <div class="control">
-            <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
-          </div>
+
         </div>
     </section>
-  </div>
-</div>
+
 
 </template>
 <script>
@@ -80,10 +70,7 @@ library.add(faSpinner)
       FontAwesomeIcon
     },
     props: {
-      showModal: {
-        type: Boolean,
-        default: false
-      },
+
       config:{
         type: Object,
       }
@@ -178,11 +165,7 @@ library.add(faSpinner)
       clearup(){
         this.errors = []
       },
-      closeModal() {
-        this.clearup();
-        this.emitter.emit('close', 'windowSettings');
 
-      },
 
       validAddress(address) {
         let re = new RegExp('^(https?:\\/\\/)'+ // protocol

@@ -1,135 +1,163 @@
 <template>
+  <div class="card has-table has-mobile-sort-spaced">
+    <header class="card-header">
+      <p class="card-header-title">
 
+        <mdicon name="hand-coin-outline" size="18" />&nbsp;Coins
+      </p>
+      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getCommits()"><span class="icon"><mdicon name="refresh" /></span><span>Refresh</span></button>
+
+    </header>
+    <div class="notification is-card-toolbar is-upper">
       <div class="level">
         <div class="level-left">
-          <h2 class="title is-4 level-item">
-            {{ $t("msg.commit.unspentCmt") }}
-          </h2>
-        </div>
-
-        <div class="level-right">
-          <form v-on:submit.prevent="search" class="level-item">
-            <div class="field has-addons">
-              <p class="control">
-                <input class="input is-link is-small" type="text" placeholder="" v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
-              </p>
-              <p class="control">
-                <button class="button is-link is-small is-outlined" @click="search" v-show="!searched">{{ $t("msg.search") }}</button>
-                <button class="button is-link is-small is-outlined" @click="clearup" v-show="searched">{{ $t("msg.clearup") }}</button>
-              </p>
+          <div class="level-item">
+            <div class="buttons has-addons">
+              <button v-bind:class="{'is-active': currentFilter == 'unspent'}" @click="filter('unspent', 0, true)" class="button">Unspent</button>
+              <button v-bind:class="{'is-active': currentFilter == 'unconfirmed'}" @click="filter('unconfirmed', 0, true)" class="button">Unconfirmed</button>
             </div>
-          </form>
-        </div>
-
-      </div>
-      <table class="table is-fullwidth is-hoverable">
-        <thead>
-          <tr class="th">
-            <th></th>
-            <th>Commit</th>
-            <th>{{ $t("msg.commit.heightCreated") }}</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          <tr v-for="(ct, index) in current_commits" :key="ct.id" >
-                  <td @mouseover="(event)=>mouseover(index)" @mouseleave="mouseLeave" style="width:46px;">
-
-                      <span v-if="showCopy===index" @click="copy(index)">
-                          <font-awesome-icon :icon="['fas', 'copy']"/>
-                      </span>
-                      <span v-if="copied===index">
-
-                          <font-awesome-icon :icon="['fas', 'circle-check']" style="color:white;" />
-
-                      </span>
-
-                  </td>
-                  <td>
-
-                    <span v-if="ct.status=='Unconfirmed'" >{{ $filters.truncate(ct.commit, 35 ) }}</span>
-                    <a v-else @click="open(`${ct.commit}`)">{{ $filters.truncate(ct.commit, 35 ) }}</a>
-
-                  </td>
-                  <td>
-
-                    <span  v-if="ct.status=='Unconfirmed'">{{ct.height}}</span>
-                   <a v-else @click="open(`${ct.height}`)">{{ct.height}}</a>
-
-                  </td>
-                  <td>{{ ct.value/100000000 }}</td>
-                  <td>
-                    <span v-if="ct.status=='Unspent'" class="tag is-success is-rounded">{{ $t("msg.commit.unspent") }}</span>
-                    <span v-if="ct.status=='toUnspent'" class="tag is-warning is-rounded">({{ct.confirmed_count+'/10'}}) {{ $t("msg.unconfirmed") }} </span>
-                    <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-rounded">{{ $t("msg.unconfirmed") }}</span>
-                    <span v-if="ct.status=='Locked'" class="tag is-danger is-rounded">{{ $t("msg.locked") }}</span>
-                    <span v-if="ct.status=='Spent'" class="tag is-warning is-rounded">{{ $t("msg.commit.spent") }}</span>
-                  </td>
-
-          </tr>
-
-        </tbody>
-      </table>
-
-
-
-
-
-
-
-
-
-
-      <br/>
-      <br/>
-
-      <div v-if="pages_count>1 && !searched" class="level">
-        <div class="level-left">
+          </div>
         </div>
         <div class="level-right">
+          <div class="level-item">
+            <form v-on:submit.prevent="search" >
+              <div class="field has-addons">
+                <div class="control">
 
-        <button v-if="current_page_index>1" class="button is-outlined is-link is-small level-item" @click="prev">
-          <span class="is-size-7">&lt;</span>
-        </button>
-        <span class="level-item" style="vertical-align:bottom;">{{current_page_index}}/{{pages_count}}</span>
-        <button v-if="current_page_index<pages_count" class="button is-outlined is-link is-small level-item" @click="next">
-          <span class="is-size-7">&gt;</span>
-        </button>
-        &nbsp;&nbsp;
-        <input v-model="jump_to" @keyup.enter="jump" class="input is-link is-small level-item" placeholder="2" style="width:30px">
-        <button class="button is-link is-small is-outlined level-item">
-          <span class="is-size-7" @click="jump">{{ $t("msg.jump") }}</span>
-        </button>
+                  <input class="input" type="text" placeholder="Search..." v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
+                </div>
+                <div class="control">
+
+                  <button @click="search" v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
+                  <button @click="clearup" v-show="searched" class="button is-primary"><span class="icon"><mdicon name="close-circle-outline" /></span></button>
+
+
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="card-content">
+      <div class="b-table has-pagination">
+        <div class="table-wrapper has-mobile-cards">
 
-      <p v-if="searched && current_commits.length == 0"> {{ $t("msg.commit.noCmtFound") }}</p>
-      <p v-if="current_commits.length == 0 && !searched"> {{ $t("msg.commit.noCmt") }}</p>
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr class="th">
+                <th></th>
+                <th>Coin ID</th>
+                <th>{{ $t("msg.commit.heightCreated") }}</th>
+                <th>Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody v-if="current_commits.length">
+
+              <tr v-for="(ct, index) in current_commits" :key="ct.id" >
+                      <td @mouseover="(event)=>mouseover(index)" @mouseleave="mouseLeave" style="width:46px;">
+
+                          <span title="copy to clipboard" v-if="showCopy===index" @click="copy(index)">
+                              <mdicon name="content-copy" size="18" />
+                          </span>
+                          <span v-if="copied===index">
+                              <mdicon name="checkbox-marked-circle-outline" size="18" />
+                          </span>
+
+                      </td>
+                      <td>
+
+                        <span v-if="ct.status=='Unconfirmed'" >{{ $filters.truncate(ct.commit, 35 ) }}</span>
+                        <a v-else @click="open(`${ct.commit}`)">{{ $filters.truncate(ct.commit, 35 ) }}</a>
+
+                      </td>
+                      <td>
+
+                        <span  v-if="ct.status=='Unconfirmed'">{{ct.height}}</span>
+                       <a v-else @click="open(`${ct.height}`)">{{ct.height}}</a>
+
+                      </td>
+                      <td><span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{ ct.value/100000000 }}</span></td>
+                      <td>
+                        <span v-if="ct.status=='Unspent'" class="tag is-success is-normal">{{ $t("msg.commit.unspent") }}</span>
+                        <span v-if="ct.status=='toUnspent'" class="tag is-warning is-normal">({{ct.confirmed_count+'/10'}}) {{ $t("msg.unconfirmed") }} </span>
+                        <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.unconfirmed") }}</span>
+                        <span v-if="ct.status=='Locked'" class="tag is-danger is-normal">{{ $t("msg.locked") }}</span>
+                        <span v-if="ct.status=='Spent'" class="tag is-warning is-normal">{{ $t("msg.commit.spent") }}</span>
+                      </td>
+
+              </tr>
+
+            </tbody>
+            <tbody v-else >
+            <tr class="is-empty" >
+              <td colspan="7">
+                <section class="section">
+                  <div class="content has-text-grey has-text-centered">
+                    <p>
+                      <span class="icon is-large"><mdicon name="circle-off-outline" size="48" /></span>
+                    </p>
+
+                  </div>
+                </section>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="top level">
+          <div class="level-left">
+            <div class="level-item">
+              <div class="buttons has-addons">
+
+                <button :disabled="current_page_index <= 1" class="button" @click="prev">&lt;</button>
+
+                <template v-for="index in pages_count" :key="index">
+
+                  <button v-if="index <= Math.round(maxButtons/2) || index > (pages_count-Math.round(maxButtons/2)) " @click="page(index)" v-bind:class="{'is-active': current_page_index == index}" class="button" >
+                    {{ index }}
+                  </button>
+                  <button v-else-if="index == Math.round(pages_count/2)" v-bind:class="{'is-active': current_page_index > Math.round(maxButtons/2) && current_page_index <= (pages_count-Math.round(maxButtons/2))}" class="button" >
+                  ...
+                  </button>
+
+                </template>
+
+                <button :disabled="current_page_index >= pages_count" class="button" @click="next">&gt;</button>
+
+              </div>
+            </div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <small>Page {{current_page_index}} of {{pages_count}}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </template>
 
 <script>
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faCircleCheck, faCopy } from '@fortawesome/free-solid-svg-icons'
-  library.add(faCopy)
-  library.add(faCircleCheck)
+
 
 
   const log = window.log
   const clipboard = window.clipboard
 
+  import { ref, computed } from 'vue';
+  import { useStore } from '@/store'
+
   export default {
     name: 'commit',
     components: {
-      FontAwesomeIcon
+
     },
     props:{
-      count_per_page:{
-        type:Number
-      },
+
       nodeHeight:{
         type:Number,
         default:function(){
@@ -137,16 +165,65 @@
         }
       }
     },
+    //TODO: update on nodeheight update
+    /*watch: {
+        'total_commits': function (newVal) {
+          console.log(newVal)
+        },
+    },*/
+    setup(){
+      //division by 2
 
+      const store = useStore();
+      const count_per_page = ref(10);
+      const total_commits = computed(() => store.state.commits);
+      const isRefresh = ref(false);
+      const maxButtons = ref(6);
+      const currentFilter = ref('');
+      const pages_count = ref(1);
+      const current_page_index = ref(1);
+      const searched = ref(false);
+      const keyword =  ref("");
+
+
+      return{
+        store,
+        total_commits,
+        count_per_page,
+        isRefresh,
+        maxButtons,
+        currentFilter,
+        pages_count,
+        current_page_index,
+        searched,
+        keyword
+      }
+    },
+    watch: {
+        total_commits: function (newVal) {
+          if(newVal){
+            this.current_commits = newVal.slice(0, this.count_per_page);
+            if (newVal.length % this.count_per_page == 0){
+              this.pages_count = parseInt(newVal.length/this.count_per_page)
+            }else{
+              this.pages_count = parseInt(newVal.length/this.count_per_page) + 1
+            }
+          }
+        },
+    },
+    mounted() {
+
+      this.current_commits = this.total_commits.slice(0, this.count_per_page);
+      if (this.total_commits.length % this.count_per_page == 0){
+        this.pages_count = parseInt(this.total_commits.length/this.count_per_page)
+      }else{
+        this.pages_count = parseInt(this.total_commits.length/this.count_per_page) + 1
+      }
+
+    },
     data() {
       return {
         current_commits: [],
-        total_commits: [],
-        current_page_index: 1,
-        pages_count: 1,
-        jump_to: 2,
-        keyword: "",
-        searched: false,
         showCopy: -1,
         copied: -1,
       }
@@ -154,9 +231,6 @@
 
     created () {
 
-      this.emitter.on('updateCommits', ()=> {
-          this.getCommits()
-      });
       this.emitter.on('logoutCommits', ()=>{
           this.current_commits = [];
           this.total_commits = [];
@@ -176,18 +250,24 @@
       },
       copy(index){
         let ct = this.current_commits[index]
-        clipboard.writeText(ct.commit)
+        clipboard.writeText(ct.commit);
+        this.$toast.success("Commit copied");
         this.copied = index
         this.showCopy = -1
       },
 
       async getCommits() {
-
+          this.isRefresh = true;
           let commits = await this.$walletService.getCommits(false, true, null);
+          this.isRefresh = false;
+
           if(commits && commits.result && commits.result.Ok){
-            this.total_commits = this.processCommits(commits.result.Ok[1].reverse())
+            //this.total_commits =
+            let data = commits.result.Ok[1].reverse();
+            this.store.dispatch('processCommits', data)
 
             this.current_commits = this.total_commits.slice(0, this.count_per_page)
+
             if (this.total_commits.length%this.count_per_page ==0){
               this.pages_count = parseInt(this.total_commits.length/this.count_per_page)
             }else{
@@ -198,66 +278,101 @@
             console.log('commits error', commits.error);
           }
 
-
-
       },
 
-      processCommits(cts){
-        let nodeHeight = this.nodeHeight
-        let cts_processed = cts.map(function(ct){
-          let c = ct['output']
-          if( c.status === 'Unspent' && nodeHeight>0){
-            c.confirmed_count = nodeHeight - c.height + 1
-            if(c.confirmed_count < 10){
-              c.status = 'toUnspent'
-            }
-          }
-          return c
-        })
-        return cts_processed
-      },
+
 
       next(){
         this.current_page_index += 1
         let s = (this.current_page_index-1)*this.count_per_page
-        this.current_commits = this.total_commits.slice(s, s+this.count_per_page)
+        this.current_commits = this.currentFilter == '' ? this.total_commits.slice(s, s+this.count_per_page) : this.filter(this.currentFilter, s, false)
       },
       prev(){
         this.current_page_index -= 1
-        var s = (this.current_page_index-1)*this.count_per_page
-        this.current_commits = this.total_commits.slice(s, s+this.count_per_page)
+        let s = (this.current_page_index-1)*this.count_per_page
+        this.current_commits = this.currentFilter == '' ? this.total_commits.slice(s, s+this.count_per_page) : this.filter(this.currentFilter, s, false)
       },
-      jump(){
-        this.jump_to = parseInt(this.jump_to)
+      page(index){
+        this.current_page_index = index
+        let s = (this.current_page_index-1)*this.count_per_page
+        this.current_commits = this.currentFilter == '' ? this.total_commits.slice(s, s+this.count_per_page) : this.filter(this.currentFilter, s, false)
+      },
 
-        if(isNaN(this.jump_to)) {
-          this.jump_to = this.current_page_index
-          return
+      filter(type, isSlice, toggleFilter){
+
+        if(type == this.currentFilter && toggleFilter){
+          type = '';
         }
 
-        if(this.jump_to > this.pages_count) this.jump_to = this.pages_count
-        if(this.jump_to < 1) this.jump_to = 1
-        this.current_page_index = this.jump_to
-        let s = (this.current_page_index-1)*this.count_per_page
-        this.current_commits = this.total_commits.slice(s, s+this.count_per_page)
+        if(isSlice == 0){
+          this.current_page_index = 1;
+        }
+
+        let filterCommits = [];
+        this.currentFilter = type;
+
+
+        if(type == 'unspent'){
+          for(let commit of this.total_commits){
+
+            if(commit.status == 'Unspent'){
+              filterCommits.push(commit);
+            }
+          }
+        }else if(type == 'unconfirmed'){
+          for(let commit of this.total_commits){
+            if(commit.status == 'Unconfirmed'){
+              filterCommits.push(commit);
+            }
+          }
+        }else{
+          filterCommits = this.total_commits
+        }
+
+
+        this.current_commits = filterCommits.slice(isSlice, isSlice+this.count_per_page);
+        if (filterCommits.length % this.count_per_page == 0){
+          this.pages_count = parseInt(filterCommits.length/this.count_per_page)
+        }else{
+          this.pages_count = parseInt(filterCommits.length/this.count_per_page) + 1
+        }
+
+        return this.current_commits;
+
       },
 
       search(){
+
         let keyword = this.keyword
         if(this.keyword){
-          this.current_commits = this.total_commits.filter(function(ct){
-            if(ct.commit.search(keyword) != -1){
-              return ct
-            }})
+          if(this.currentFilter != ''){
+            let filtered_commits = this.filter(this.currentFilter, 0, false);
+            this.current_commits = filtered_commits.filter(function(ct){
+              if(ct.commit.search(keyword) != -1){
+                return ct
+              }
+            });
+          }else{
+            this.current_commits = this.total_commits.filter(function(ct){
+              if(ct.commit.search(keyword) != -1){
+                return ct
+              }
+            });
+          }
+
           this.searched = true
+
         }
+
       },
 
       clearup(){
+
         this.keyword = ""
         this.searched = false
+
         let s = (this.current_page_index-1)*this.count_per_page
-        this.current_commits = this.total_commits.slice(s, s+this.count_per_page)
+        this.current_commits = this.currentFilter == '' ? this.total_commits.slice(s, s+this.count_per_page) : this.filter(this.currentFilter, s, false);
       },
       open (link) {
         window.explorer.open(link);
@@ -265,6 +380,3 @@
     }
   }
 </script>
-
-<style>
-</style>

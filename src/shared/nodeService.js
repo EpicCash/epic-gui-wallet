@@ -10,27 +10,29 @@ class NodeService {
   constructor(emitter, configService) {
       this.emitter = emitter;
       this.configService = configService;
-      this.interalNodeProcess = false;
+      this.internalNodeProcess = false;
   }
 
   async reconnectNode(){
-    return await this.nodeOnline();
+    return await this.getNodeStatus();
   }
-  async internalNodeStart(emitOutput){
-
-    this.interalNodeProcess = await window.nodeFindProcess('name', /.*?epic$/);
-    //// TODO: server tomlFile
-    //run_tui = false
 
 
+  async internalNodeStart(){
 
-    if(!this.interalNodeProcess.length){
+    this.internalNodeProcess = await window.nodeFindProcess('name', /.*?epic server.*$/);
+
+
+    if(!this.internalNodeProcess.length){
       let args = [
-        ...(this.configService.config['network'] != 'mainnet' ? '--' + this.configService.config['network'] : []),
+        ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
+        ...(this.configService.nodeTOMLPath != '' ? ['server', '--config_file', this.configService.nodeTOMLPath, 'run'] : ['server', 'run']),
+
       ];
-      let nodeOpenId = await window.nodeChildProcess.execNode(this.configService.epicNodePath, args, this.configService.platform, emitOutput);
+    
+      let nodeOpenId = await window.nodeChildProcess.execNode(this.configService.epicNodePath, args, this.configService.platform);
       if(nodeOpenId > 0){
-        this.interalNodeProcess = true;
+        this.internalNodeProcess = true;
       }else{
         return false;
       }
@@ -40,8 +42,10 @@ class NodeService {
 
 
   }
-  async nodeOnline(url){
+  async nodeStatus(){
 
+  }
+  async getNodeStatus(url){
 
 
     let emitter = this.emitter;
@@ -59,6 +63,7 @@ class NodeService {
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
+
     let response = await fetch(baseURL +'/v1/status', {
       method:'GET',
       headers: {
@@ -77,6 +82,7 @@ class NodeService {
       emitter.emit('settings_error', {msg: msg, code: '0x1645779384'});
       return false;
     });
+
     return response;
 
   }
