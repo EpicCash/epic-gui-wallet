@@ -57,9 +57,16 @@ export default function useFormValidation() {
         return true;
     }
 
-    const validateAddressField = (fieldName, fieldValue) => {
+    const validateAddressField = (fieldName, fieldValue, addressType) => {
 
-        let message = !fieldValue ? isEmpty(fieldName, fieldValue) : isHttpAddress(fieldName, fieldValue);
+        let message = null;
+        if(addressType == 'http'){
+          message = !fieldValue ? isEmpty(fieldName, fieldValue) : isHttpAddress(fieldName, fieldValue);
+        }else{
+          message = isEmpty(fieldName, fieldValue);
+        }
+
+
         if(message !== null){
           errors[fieldName] = message;
           return false;

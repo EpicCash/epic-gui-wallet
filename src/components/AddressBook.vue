@@ -81,6 +81,20 @@
 
             <div class="field">
               <div class="control">
+                <label>External Address 1</label>
+                <input class="input" type="text" v-model="externalOne" >
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label>External Address 2</label>
+                <input class="input" type="text" v-model="externalTwo" >
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
 
                 <label>Proof Address</label>
                 <input class="input" type="text" v-model="proofaddr" >
@@ -89,11 +103,17 @@
 
             <div class="field">
               <div class="control">
-
                 <label class="checkbox">
-                  <input type="checkbox" v-model="alwaysproof">
-                  send always proof
+                  <input class="switch is-success" id="alwaysProofSwitch" type="checkbox" v-model="alwaysproof">
+                  <label for="alwaysProofSwitch">send always proof</label>
                 </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label>Notice</label>
+                <textarea class="textarea" v-model="notice" ></textarea>
               </div>
             </div>
 
@@ -127,8 +147,16 @@
             <p class="block" v-if="city"><label class="label">City</label> {{city}}</p>
             <p class="block" v-if="onion"><label class="label">Tor-Onion Address</label><span>{{onion}}</span>&nbsp;<mdicon @click="copy(onion)" name="content-copy" size=16 /></p>
             <p class="block" v-if="keybase"><label class="label">Keybase Account</label> {{keybase}}&nbsp;<mdicon @click="copy(keybase)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="externalOne"><label class="label">External Address 1</label> {{externalOne}}&nbsp;<mdicon @click="copy(externalOne)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="externalTwo"><label class="label">External Address 2</label> {{externalTwo}}&nbsp;<mdicon @click="copy(externalTwo)" name="content-copy" size=16 /></p>
+
+
             <p class="block" v-if="proofaddr"><label class="label">Proof Address</label> {{proofaddr}}&nbsp;<mdicon @click="copy(proofaddr)" name="content-copy" size=16 /></p>
             <p class="block" v-if="proofaddr"><label class="label">Send always proof</label> {{alwaysproof == true ? 'yes' : 'no'}}</p>
+
+            <p class="block" v-if="notice"><label class="label">Notice</label> <pre>{{notice}}</pre></p>
+
+
           </div>
           <footer class="card-footer">
               <a href="#" class="card-footer-item" @click="edit()">Edit</a>
@@ -151,7 +179,9 @@
 const log = window.log;
 
 import { ref } from 'vue';
+import { useStore } from '@/store';
 import ModalBox from '@/components/layout/ModalBox.vue'
+
 
 export default {
   name: "addressBook",
@@ -169,6 +199,10 @@ export default {
     const alwaysproof = ref(false);
     const proofaddr = ref('');
     const addressList = ref([]);
+    const externalOne = ref('');
+    const externalTwo = ref('');
+    const notice = ref('');
+
 
     const isEditAddress = ref(false);
     const isNewAddress = ref(false);
@@ -177,11 +211,14 @@ export default {
 
     const addressLoaded = ref(false);
     const isModalActive = ref(false);
-    const trashObject = ref(null)
+    const trashObject = ref(null);
+
+    const store = useStore();
 
 
 
     return {
+      store,
       id,
       name,
       country,
@@ -190,6 +227,9 @@ export default {
       keybase,
       alwaysproof,
       proofaddr,
+      externalOne,
+      externalTwo,
+      notice,
       addressList,
       isEditAddress,
       addressLoaded,
@@ -241,6 +281,9 @@ export default {
       this.alwaysproof = addressItem.alwaysproof;
       this.proofaddr = addressItem.proofaddr;
       this.addressLoaded = true;
+      this.externalOne = addressItem.externalOne;
+      this.externalTwo = addressItem.externalTwo;
+      this.notice = addressItem.notice;
 
     },
     edit(){
@@ -266,6 +309,9 @@ export default {
       this.addressLoaded = false;
       this.isEditAddress = false;
       this.isNewAddress = true;
+      this.externalOne = '';
+      this.externalTwo = '';
+      this.notice = '';
 
     },
     async deleteAddress(id){
@@ -288,6 +334,7 @@ export default {
     },
     async updateAddressById(){
 
+
       let updated = await this.$addressBookService.updateAddressById( this.id, {
         name: this.name,
         country: this.country,
@@ -295,7 +342,10 @@ export default {
         onion: this.onion,
         keybase: this.keybase,
         alwaysproof: this.alwaysproof,
-        proofaddr: this.proofaddr
+        proofaddr: this.proofaddr,
+        externalOne: this.externalOne,
+        externalTwo: this.externalTwo,
+        notice: this.notice
 
       });
       if(updated){
@@ -306,14 +356,19 @@ export default {
     },
     async addAddress(){
 
+
       let inserted = await this.$addressBookService.addAddress({
         name: this.name,
+        user_id: this.store.state.user.id,
         country: this.country,
         city: this.city,
         onion: this.onion,
         keybase: this.keybase,
         alwaysproof: this.alwaysproof,
-        proofaddr: this.proofaddr
+        proofaddr: this.proofaddr,
+        externalOne: this.externalOne,
+        externalTwo: this.externalTwo,
+        notice: this.notice
 
       });
       if(inserted){

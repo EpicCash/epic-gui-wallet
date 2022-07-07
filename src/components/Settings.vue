@@ -3,23 +3,27 @@
 
     <section class="section is-main-section" >
 
-
         <NodeserverField ref="nodeserverField" />
 
-
-
         <div class="field">
-
           <label class="label">{{ $t("msg.lang.lang") }}</label>
           <div class="control">
             <div class="select">
               <select v-model="localeSelected">
-                <option v-for="(lang, locale) in langs" :value="locale" :key="lang">{{lang}}</option>
+                <option v-for="(lang, value) in langs" :value="value" :key="lang.id" >{{lang}}</option>
               </select>
             </div>
           </div>
         </div>
 
+        <div class="field">
+          <div class="control">
+            <label class="checkbox">
+              <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
+              <label for="walletListenSwitch">automatically start wallet listener after login</label>
+            </label>
+          </div>
+        </div>
 
         <div class="field">
           <div class="control">
@@ -50,7 +54,6 @@ import useFormValidation from "@/modules/useFormValidation";
       const { resetFormErrors } = useFormValidation();
       const nodeserverField = ref('');
       const store = useStore();
-      const locale = ref('en');
       const localeSelected = ref('en');
       const langs = ref([]);
       const check_node_api_http_addr = ref('');
@@ -60,7 +63,6 @@ import useFormValidation from "@/modules/useFormValidation";
         store,
         nodeserverField,
         resetFormErrors,
-        locale,
         localeSelected,
         langs,
         check_node_api_http_addr,
@@ -71,7 +73,7 @@ import useFormValidation from "@/modules/useFormValidation";
     mounted(){
 
       this.nodeserverField.select = !this.store.state.user.nodeInternal ? 'external' : 'internal';
-      this.locale = this.configService.config['locale'];
+
       this.localeSelected = this.configService.config['locale'];
       this.langs = this.configService.langs;
       this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
@@ -99,8 +101,7 @@ import useFormValidation from "@/modules/useFormValidation";
           });
           this.configService.checkTomlFile();
 
-          let updated = false;
-
+          let updated = 0;
           if(this.nodeserverField.select == 'external'){
             updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false});
           }else{
@@ -109,12 +110,6 @@ import useFormValidation from "@/modules/useFormValidation";
 
           /*todo simple node restart user update wallet restart here*/
           if(updated){
-            //load account else wizard
-            let user = await this.$userService.getUser(this.configService.configAccount);
-
-            if(user.length){
-              this.store.commit('user', user[0]);
-            }
             this.store.commit('nodeType', this.nodeserverField.select);
             this.$toast.success('Settings saved');
             this.emitter.emit('app.nodeStart');

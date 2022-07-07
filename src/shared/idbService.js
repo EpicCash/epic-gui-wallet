@@ -18,6 +18,7 @@ export const dbname = 'Epicwallet';
 const getDatabase = () => {
     const tblAddressbook = {
         name: 'Addressbook',
+        version:2,
         columns: {
             id: {
                 primaryKey: true,
@@ -56,6 +57,18 @@ const getDatabase = () => {
               default: false
             },
             proofaddr:{
+              dataType: DATA_TYPE.String,
+              notNull: true
+            },
+            externalOne:{
+              dataType: DATA_TYPE.String,
+              notNull: true
+            },
+            externalTwo:{
+              dataType: DATA_TYPE.String,
+              notNull: true
+            },
+            notice:{
               dataType: DATA_TYPE.String,
               notNull: true
             }

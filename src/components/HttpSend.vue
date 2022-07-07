@@ -24,8 +24,10 @@
             <div class="field">
               <div class="control">
                 <label class="checkbox">
-                  <input type="checkbox" v-model="withproof" @click="addProof">
-                  send proof
+
+                  <input class="switch is-success" id="sendProofSwitch" type="checkbox" v-model="withproof" @click="addProof">
+                  <label for="sendProofSwitch">send proof</label>
+
                 </label>
                 <div v-show="withproof">
                   <ProofAddressField ref="proofAddressField" />
@@ -111,6 +113,7 @@ export default {
           this.withproof = false;
           this.foundAddress = [];
           this.method = 'http';
+          this.addressField.addressType = 'http';
         }
       },
   },
@@ -163,13 +166,14 @@ export default {
 
       if(!this.addressSelected){
         if(type == 'onion'){
-          this.addressField.setValue(address.onion.trim());
+          this.addressField.setValue(address.onion.trim(), type);
 
 
         }else if(type == 'keybase'){
-          this.addressField.setValue(address.keybase.trim());
+          this.addressField.setValue(address.keybase.trim(), type);
           this.method = 'keybase';
         }
+
         if(address.alwaysproof && address.proofaddr != ''){
           this.withproof = true;
         }
@@ -256,11 +260,14 @@ export default {
         }
 
         this.isLoadingSendFile = false;
+      }else{
+        return;
       }
 
     },
 
     async send(){
+
       this.resetFormErrors();
       let isFormAllValid = [];
 
@@ -317,6 +324,8 @@ export default {
         }
 
         this.isLoadingSend = false;
+      }else{
+        return;
       }
 
     },

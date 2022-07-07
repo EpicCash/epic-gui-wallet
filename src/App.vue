@@ -42,15 +42,19 @@
       const loggedIn = ref(false);
       const store = useStore();
       const router = useRouter();
-      const pollingStopped = ref(false);
+
       let pollingId = 0;
+      let refreshId = 0;
 
 
 
       store.commit('darkModeToggle', true);
       router.push('/');
 
-      onUnmounted (_ => clearTimeout(pollingId))
+      onUnmounted (_ => {
+        clearTimeout(pollingId)
+        clearTimeout(refreshId)
+      })
 
       return {
         locale,
@@ -63,7 +67,7 @@
     created() {
 
       this.emitter.on('app.startRefreshNodeStatus', () => {
-        this.pollingStopped = false;
+        this.stopPolling();
         this.startPolling();
       });
 
@@ -72,19 +76,16 @@
       });
 
       this.emitter.on('app.nodeStart', async () => {
-        this.stopPolling();
         await this.nodeStart();
-        this.startPolling();
       })
 
       this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
       })
 
-      this.emitter.on('app.update', async () => {
-        await this.getSummaryinfo();
-        await this.getTxs();
-        await this.getCommits();
+      this.emitter.on('app.update', () => {
+        this.stopRefresh();
+        this.startRefresh();
       });
 
       this.emitter.on('app.logout',() => {
@@ -120,9 +121,7 @@
           }
         }
 
-
         //always at the very end
-
         this.emitter.emit('app.update');
 
       });
@@ -132,7 +131,6 @@
         const confirmed = await confirm('We found some running wallet and node processes in the background. Please close them first before you can run this App.');
         callback(confirmed);
       });
-
 
     },
 
@@ -158,6 +156,7 @@
     methods: {
 
       async nodeStart(){
+
         //start internal server only if its setup else just check if external node is running
         if(this.store.state.user.nodeInternal){
 
@@ -169,16 +168,18 @@
             let respNode = await this.$nodeService.getNodeStatus();
 
             if(respNode){
-              this.$toast.success("Node is online");
+              this.$toast.success("Node started");
               this.store.commit('nodeStatus', respNode);
               this.emitter.emit('app.startRefreshNodeStatus');
+
             }else{
-              this.$toast.error("Node is offline");
+              this.$toast.error("Error starting node");
 
             }
           }
 
         }else{
+
           this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
           let respNode = await this.$nodeService.getNodeStatus();
           if(respNode){
@@ -215,16 +216,40 @@
           }
         }
 
+      },
+      stopRefresh(){
+
+        clearTimeout(this.refreshId);
+      },
+
+      async startRefresh() {
+
+
+          let refresh = _ => this.refreshId = setTimeout(this.startRefresh, 1000*60)
+
+          try {
+            console.log('startRefresh');
+            await this.getSummaryinfo();
+            await this.getTxs();
+            await this.getCommits();
+
+          }
+          catch (e) {
+            console.error ('Error startRefresh', e)
+            clearTimeout(this.refreshId);
+          }
+          finally {
+            refresh()
+          }
 
       },
       stopPolling(){
-        this.pollingStopped = true;
         clearTimeout(this.pollingId);
       },
 
       async startPolling() {
 
-        if(!this.pollingStopped){
+
           let polling = _ => this.pollingId = setTimeout(this.startPolling, 1000*30)
 
           try {
@@ -238,7 +263,7 @@
           finally {
             polling()
           }
-        }
+
       },
 
       async getSummaryinfo() {

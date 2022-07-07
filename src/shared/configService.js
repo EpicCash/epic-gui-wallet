@@ -104,6 +104,7 @@ class ConfigService {
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
         const re = /db_root(\s)*=(\s).*/;
         const re2 = /chain_type(\s)*=(\s).*/;
+        const re3 = /foundation_path(\s)*=(\s).*/;
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
         if(tomlContent.search(re) != -1){
           if(this.platform == 'win'){
@@ -115,6 +116,14 @@ class ConfigService {
         }
         if(tomlContent.search(re2) != -1){
           tomlContent = tomlContent.replace(re2, 'chain_type = "' + this.tomlNetworkname + '"');
+        }
+        if(tomlContent.search(re3) != -1){
+          if(this.platform == 'win'){
+                  //double escaped path
+            tomlContent = tomlContent.replace(re3, 'foundation_path = "' + foundationFile.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re3, 'foundation_path = "' + foundationFile + '"');
+          }
         }
 
 

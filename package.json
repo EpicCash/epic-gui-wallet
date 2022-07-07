@@ -27,6 +27,7 @@
     "bulma-checkbox": "^1.2.1",
     "bulma-radio": "^1.2.0",
     "bulma-responsive-tables": "^1.2.5",
+    "bulma-switch": "^2.0.4",
     "bulma-switch-control": "^1.2.2",
     "bulma-upload-control": "^1.2.0",
     "core-js": "^3.6.5",
