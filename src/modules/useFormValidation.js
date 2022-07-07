@@ -2,7 +2,7 @@ import { reactive } from "@vue/reactivity";
 import useValidators from '@/modules/Validators';
 
 const errors = reactive({});
-const { isEmpty, isEqual, minLength, accountExist, isNumber, isSpendable, onlyLetter, isDirEmpty } = useValidators();
+const { isEmpty, isEqual, minLength, accountExist, isNumber, isSpendable, onlyLetter, isDirEmpty, isHttpAddress } = useValidators();
 
 export default function useFormValidation() {
 
@@ -29,8 +29,6 @@ export default function useFormValidation() {
         }else{
           message = onlyLetter(fieldName, fieldValue) || accountExist(fieldName, fieldValue, configService, exist);
         }
-
-
 
         if(message !== null){
           errors[fieldName] = message;
@@ -61,7 +59,7 @@ export default function useFormValidation() {
 
     const validateAddressField = (fieldName, fieldValue) => {
 
-        let message = isEmpty(fieldName, fieldValue);
+        let message = !fieldValue ? isEmpty(fieldName, fieldValue) : isHttpAddress(fieldName, fieldValue);
         if(message !== null){
           errors[fieldName] = message;
           return false;

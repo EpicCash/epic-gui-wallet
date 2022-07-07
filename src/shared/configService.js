@@ -55,10 +55,8 @@ class ConfigService {
       this.nodeFoundationName = 'foundation.json';
       this.tomlNetworkname = '';
 
-
-
       this.ngrokApiAddress = 'http://127.0.0.1:4040';
-      this.startWalletListener = true;
+
 
       //this should never fail or app is not working
       let epicDir = path.join(defaultAppConfigDir, '.epic');
@@ -508,6 +506,19 @@ class ConfigService {
       return true;
 
   }
+
+  configVersionOk(){
+
+    if(this.config['walletlisten_on_startup'] == undefined || this.config['version'] != '4.0.0'){
+      this.emitter.emit('checkFail', 'config version to old');
+      return false;
+    }
+
+    this.emitter.emit('checkSuccess', 'config version ok');
+    return true;
+
+  }
+
   async startCheck(account){
       console.log('startCheck account', account);
 
@@ -584,7 +595,9 @@ class ConfigService {
 
 
         this.config = this.loadConfig(this.configFile);
-
+        if(!this.configVersionOk()){
+          return 'settings'
+        }
 
         await delay(sleepTime);
 

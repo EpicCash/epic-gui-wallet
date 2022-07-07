@@ -13,6 +13,17 @@ export default function useValidators() {
     return null;
   }
 
+  const isHttpAddress = (fieldName, fieldValue) => {
+
+    let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !pattern.test(fieldValue) ? 'No valid HTTP(S) Address' : null;
+
+  }
 
   const minLength = (fieldName, fieldValue, min) => {
     return fieldValue.length < min ? `The ${fieldName} field must be at least ${min} characters long` : null;
@@ -49,6 +60,7 @@ export default function useValidators() {
     isNumber,
     isSpendable,
     onlyLetter,
-    isDirEmpty
+    isDirEmpty,
+    isHttpAddress
   }
 }

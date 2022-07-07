@@ -48,6 +48,7 @@ export const store = createStore({
 
     /* which service are running */
     walletListenerService: false,
+    torService: false,
     ngrokService: false,
     nodeType: '',
     nodeStatus: {
@@ -58,7 +59,7 @@ export const store = createStore({
       }
 
     },
-    torService: false,
+
     user: {},
     stuffUpdates: [],
     updates: [],
@@ -81,9 +82,13 @@ export const store = createStore({
 
     walletListenerService(state, payload){
       state.walletListenerService = payload;
+      state.torService = payload;
     },
     ngrokService(state, payload){
       state.ngrokService = payload;
+    },
+    torService(state, payload){
+      state.torService = payload;
     },
     nodeStatus(state, payload){
 
@@ -115,10 +120,6 @@ export const store = createStore({
     },
     nodeType(state, payload){
       state.nodeType = payload;
-    },
-
-    torService(state, payload){
-      state.torService = payload;
     },
 
     /* AppStyle */

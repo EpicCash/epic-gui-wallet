@@ -69,8 +69,13 @@
 
       this.emitter.on('app.stopRefreshNodeStatus', () => {
         this.stopPolling();
-      })
+      });
 
+      this.emitter.on('app.nodeStart', async () => {
+        this.stopPolling();
+        await this.nodeStart();
+        this.startPolling();
+      })
 
       this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
@@ -92,47 +97,13 @@
 
       this.emitter.on('app.accountLoggedIn', async () => {
 
-        let user = await this.$userService.getUser(this.configService.configAccount);
-        this.store.commit('user', user[0]);
-
         this.loggedIn = true;
         this.store.dispatch('toggleFullPage', false);
         this.store.commit('asideStateToggle');
         this.$router.push('/dashboard');
 
-        //start internal server only if its setup else just check if external node is running
-        if(this.store.state.user.nodeInternal){
 
-          this.store.commit('nodeType', 'internal');
-          if(!this.configService.startCheckNode()){
-            this.$toast.error("Can not setup internal node server");
-          }else{
-            await this.$nodeService.internalNodeStart();
-            let respNode = await this.$nodeService.getNodeStatus();
-
-            if(respNode){
-              this.$toast.success("Node is online");
-              this.store.commit('nodeStatus', respNode);
-              this.emitter.emit('app.startRefreshNodeStatus');
-            }else{
-              this.$toast.error("Node is offline");
-
-            }
-          }
-
-        }else{
-          this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
-          let respNode = await this.$nodeService.getNodeStatus();
-          if(respNode){
-            this.$toast.success("External Node is online");
-            this.store.commit('nodeStatus', respNode);
-            this.emitter.emit('app.startRefreshNodeStatus');
-          }else{
-            this.$toast.error("External Node is offline");
-          }
-
-        }
-
+        this.emitter.emit('app.nodeStart');
 
         if(this.store.state.user.ngrok != ''){
           let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok);
@@ -185,6 +156,42 @@
 
     },
     methods: {
+
+      async nodeStart(){
+        //start internal server only if its setup else just check if external node is running
+        if(this.store.state.user.nodeInternal){
+
+          this.store.commit('nodeType', 'internal');
+          if(!this.configService.startCheckNode()){
+            this.$toast.error("Can not setup internal node server");
+          }else{
+            await this.$nodeService.internalNodeStart();
+            let respNode = await this.$nodeService.getNodeStatus();
+
+            if(respNode){
+              this.$toast.success("Node is online");
+              this.store.commit('nodeStatus', respNode);
+              this.emitter.emit('app.startRefreshNodeStatus');
+            }else{
+              this.$toast.error("Node is offline");
+
+            }
+          }
+
+        }else{
+          this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
+          let respNode = await this.$nodeService.getNodeStatus();
+          if(respNode){
+            this.$toast.success("External Node is online");
+            this.store.commit('nodeStatus', respNode);
+            this.emitter.emit('app.startRefreshNodeStatus');
+          }else{
+            this.$toast.error("External Node is offline");
+          }
+
+        }
+      },
+
       async nodeStatus(){
 
         if(this.store.state.user.nodeInternal){
@@ -196,6 +203,7 @@
               this.$toast.error("Node is offline");
               this.stopPolling();
             }
+
         }else{
 
           let respNode = await this.$nodeService.getNodeStatus();

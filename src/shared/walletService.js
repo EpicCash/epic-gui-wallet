@@ -21,7 +21,6 @@ class WalletService {
         this.configService = configService;
         this.walletProcess = false;
         this.walletIsListen = false;
-        this.processes = {};
         this.shared_key;
         this.token;
     }
@@ -348,7 +347,7 @@ class WalletService {
     async startListen(password, tor, method){
 
         let args = [];
-
+        let torBooted = false;
         this.walletIsListen = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
 
         if(!this.walletIsListen.length){
@@ -373,13 +372,13 @@ class WalletService {
 
           if(walletListenId && walletListenId.msg > 0){
               this.walletIsListen = true;
-              this.processes['listen'] = walletListenId.msg;
+              torBooted = walletListenId.tor;
           }else{
-            return false;
+            return {success:false, tor: torBooted};
           }
         }
 
-        return true;
+        return {success:true, tor: torBooted};
     }
 
     async isListen(){
@@ -389,7 +388,24 @@ class WalletService {
       }else{
         return true;
       }
+    }
 
+    async stopListen(){
+
+      let killPromise = [];
+      let killProcess = false;
+      let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
+
+      if(pWalletList.length){
+
+        for(let process of pWalletList) {
+          killPromise.push(window.nodeChildProcess.kill(process.pid))
+        }
+        await Promise.all(killPromise);
+      }
+
+      console.log('wallet listener stopped');
+      return true;
     }
 
     async newToml(password){
@@ -452,26 +468,7 @@ class WalletService {
 
     }
 
-    async stopProcess(processName){
-          if(this.processes[processName] > 0){
-            let processKilled = await window.nodeChildProcess.kill(this.processes[processName], this.configService.platform);
 
-            if(processKilled && processName === 'listen'){
-              this.walletIsListen = false;
-              delete this.processes[processName];
-
-            }
-            if(processKilled && processName === 'ownerAPI'){
-              this.walletProcess = false;
-              delete this.processes[processName];
-
-            }
-
-            return processKilled;
-          }
-          return false;
-
-    }
 }
 
 export default WalletService

@@ -44,10 +44,10 @@
                   <div>Connected peers: {{store.state.nodeStatus.connections}}</div>
                   <div>Status: {{store.state.nodeStatus.sync_status}}</div>
 
-                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">Sync Height: {{store.state.nodeStatus.sync_info.current_height}}&nbsp;/&nbsp;{{store.state.nodeStatus.sync_info.highest_height}} ({{parseFloat(Math.round(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100)).toFixed(2)}}%)</div>
-                    <div v-else >Blockchain Height: {{store.state.nodeStatus.tip.height}}</div>
+                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">Sync Height: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{0}}%)</div>
+                    <div v-else >Blockchain Height: {{height}}</div>
                   <div>
-                    <progress v-if="store.state.nodeStatus.sync_status != 'synced'" style="margin-top:5px;" class="progress is-success is-small" :value="(store.state.nodeStatus.sync_info.current_height)" :max="store.state.nodeStatus.sync_info.highest_height">0%</progress>
+                    <progress v-if="store.state.nodeStatus.sync_status != 'synced'" style="margin-top:5px;" class="progress is-success is-small" :value="currentHeight" :max="highestHeight">0%</progress>
                     <progress v-else style="margin-top:5px;" class="progress is-success is-small" :value="100" :max="100"></progress>
                   </div>
 
@@ -78,7 +78,10 @@ export default {
     const route = useRoute();
     const userName = computed(() => store.state.user.name)
     const newAvatar = computed(() => store.state.userAvatar)
-
+    const currentHeight = computed(() => store.state.nodeStatus.sync_info.current_height ? store.state.nodeStatus.sync_info.current_height : 0);
+    const highestHeight = computed(() => store.state.nodeStatus.sync_info.highest_height ? store.state.nodeStatus.sync_info.highest_height : 0);
+    const height = computed(() =>   store.state.nodeStatus.tip.height ? store.state.nodeStatus.tip.height : 0);
+    const loaded = computed(() => store.state.nodeStatus.sync_info.current_height && store.state.nodeStatus.sync_info.highest_height ? parseFloat(Math.round(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100)).toFixed(2) : 0);
 
 
     return{
@@ -86,8 +89,12 @@ export default {
         route,
         userName,
         newAvatar,
+        currentHeight,
+        highestHeight,
+        height
 
     }
+
   },
 
 

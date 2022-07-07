@@ -293,14 +293,19 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       return new Promise(function(resolve, reject) {
 
           let listenProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
-
+          let isTorBooted = false;
           listenProcess.stdout.setEncoding('utf8');
           listenProcess.stdout.on('data', (data) => {
 
               debug ? console.log('execListen.stdout', data) : null;
+
+              if(data.includes('[notice] Bootstrapped 100% (done): Done')){
+                isTorBooted = true;
+
+              }
               if(data.includes('HTTP Foreign listener started.')){
 
-                resolve({success: true, msg: listenProcess.pid});
+                resolve({success: true, msg: listenProcess.pid, tor: isTorBooted});
               }
 
           });
@@ -309,7 +314,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           listenProcess.stderr.on('data', (data) => {
               debug ? console.log('execListen.stderr', data) : null;
 
-              resolve({success: false, msg: data});
+              resolve({success: false, msg: data, tor: isTorBooted});
           })
 
       });

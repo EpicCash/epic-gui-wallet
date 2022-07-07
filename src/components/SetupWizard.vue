@@ -137,8 +137,6 @@
 </template>
 <script>
 
-  const log = window.log
-
   import { ref } from 'vue';
   import NodeserverField from "@/components/form/nodeserverField";
   import useFormValidation from "@/modules/useFormValidation";
@@ -153,6 +151,7 @@
     setup(){
       const router = useRouter();
       const check_node_api_http_addr = ref('');
+      const walletlisten_on_startup = ref(false);
       const network = ref('');
       const ngrok = ref('');
       const locale = ref('en');
@@ -170,6 +169,7 @@
       return{
         router,
         check_node_api_http_addr,
+        walletlisten_on_startup,
         network,
         locale,
         localeSelected,
@@ -227,7 +227,9 @@
 
 
 
+
         try{
+
           let inserted = await this.$userService.addUser({
             account: this.configService.configAccount,
             name: this.name,
@@ -237,23 +239,23 @@
             nodeInternal: this.nodeserverField.nodeInternal
           });
 
+          this.configService.updateConfig({
+            version: '4.0.0',
+            check_node_api_http_addr: this.nodeserverField.defaultValue,
+            locale: this.localeSelected,
+            firstTime: false,
+            walletlisten_on_startup: this.walletlisten_on_startup
+
+          });
+          this.configService.checkTomlFile();
+          this.$router.push('/login');
+
         }catch(e){
           this.$toast.error("Error saving user settings: " + e.type);
           return
         }
 
-        this.configService.updateConfig({
-          check_node_api_http_addr: this.nodeserverField.defaultValue,
-          locale: this.localeSelected,
-          firstTime: false
-
-        });
-        this.configService.checkTomlFile();
-        this.$router.push('/login');
-
       },
-
-
 
     }
   }

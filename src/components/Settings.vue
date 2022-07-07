@@ -3,39 +3,14 @@
 
     <section class="section is-main-section" >
 
-        <div class="notification is-warning" v-if="errors.length">
-          <p v-for="error in errors" :key="error">{{ error }}</p>
-        </div>
+
+        <NodeserverField ref="nodeserverField" />
 
 
-        <div class="field">
-          <label class="label">{{ $t("msg.settings.network") }}</label>
-          <div class="control">
-            <div class="select" >
-                <select v-model="network">
-                  <option value="mainnet">Mainnet</option>
-                  <option value="floonet">Floonet</option>
-                </select>
-
-            </div>
-          </div>
-        </div>
 
         <div class="field">
-          <label class="label">{{ $t("msg.settings.check_node_api_http_addr") }}</label>
-          <div class="control has-icons-right">
-            <input class="input" type="text" v-model="check_node_api_http_addr" placeholder="http://127.0.0.1:3413">
-            <span class="icon is-small is-right" v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
-            <p class="hint">{{ $t("msg.settings.node_api_addr_hint") }}</p>
-            <div class="box" v-if="errorapi">
-              <p style="color:red;" class="help is-warningapi" >{{ this.errorapiMsg }}</p>
-            </div>
-          </div>
-        </div>
 
-        <div class="field">
           <label class="label">{{ $t("msg.lang.lang") }}</label>
-
           <div class="control">
             <div class="select">
               <select v-model="localeSelected">
@@ -46,10 +21,9 @@
         </div>
 
 
-        <p>&nbsp;</p>
-        <div class="field is-grouped">
+        <div class="field">
           <div class="control">
-            <button class="button is-link" @click="save" >{{ $t("msg.save") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span></button>
+            <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
           </div>
 
         </div>
@@ -59,141 +33,101 @@
 </template>
 <script>
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-library.add(faSpinner)
+import { ref } from 'vue';
+
+import { useStore } from '@/store';
+import NodeserverField from "@/components/form/nodeserverField";
+import useFormValidation from "@/modules/useFormValidation";
+
 
   export default {
     name: "settings",
     components: {
-      FontAwesomeIcon
+      NodeserverField
     },
-    props: {
+    setup(){
 
-      config:{
-        type: Object,
+      const { resetFormErrors } = useFormValidation();
+      const nodeserverField = ref('');
+      const store = useStore();
+      const locale = ref('en');
+      const localeSelected = ref('en');
+      const langs = ref([]);
+      const check_node_api_http_addr = ref('');
+      const walletlisten_on_startup = ref(false);
+
+      return{
+        store,
+        nodeserverField,
+        resetFormErrors,
+        locale,
+        localeSelected,
+        langs,
+        check_node_api_http_addr,
+        walletlisten_on_startup
       }
     },
-    data() {
 
-      return {
-
-        errors: [],
-        check_node_api_http_addr: '',
-        network: '',
-        locale: 'en',
-        localeSelected: this.configService.config.locale,
-        langs: this.configService.langs,
-        isLoading: false,
-        errorapiMsg: '',
-        errorapi: false,
-        errorCode: ''
-
-      }
-    },
     mounted(){
-      if(this.config){
-        this.check_node_api_http_addr = this.config['check_node_api_http_addr'];
-        this.network = this.config['network'];
-        this.locale = this.config['local'];
-      }
-    },
-    created(){
 
-      this.emitter.on('settings_error', ({msg, code})=>{
-          if(msg != '' && code != ''){
-            this.errorapi = true;
-            this.errorapiMsg = msg;
-            this.errorCode = code;
-          }else{
-            this.errorapi = false;
-            this.errorapiMsg = '';
-            this.errorCode = '';
-          }
-      });
+      this.nodeserverField.select = !this.store.state.user.nodeInternal ? 'external' : 'internal';
+      this.locale = this.configService.config['locale'];
+      this.localeSelected = this.configService.config['locale'];
+      this.langs = this.configService.langs;
+      this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
+      this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
+
     },
 
     methods: {
 
       async save(){
 
-        this.isLoading = true;
+        this.resetFormErrors();
+        let isFormAllValid = [];
 
+        isFormAllValid.push(this.nodeserverField.validInput());
 
+        if(!isFormAllValid.includes(false)){
 
-        if(await this.checkForm()){
+          this.configService.updateConfig({
 
-          this.emitter.emit('selectLocale', this.localeSelected);
+            check_node_api_http_addr: this.nodeserverField.defaultValue,
+            locale: this.localeSelected,
+            walletlisten_on_startup: this.walletlisten_on_startup
 
-          if(this.configService.config.firstTime == true){
+          });
+          this.configService.checkTomlFile();
 
+          let updated = false;
 
-            //change app user settings and update wallet toml
-            this.configService.updateConfig({
-              check_node_api_http_addr: this.check_node_api_http_addr,
-              network: this.network,
-              locale: this.localeSelected,
-              firstTime: false
-
-            });
-            this.configService.checkTomlFile();
-
-            this.emitter.emit('continueLoginFirst');
-            this.isLoading = false;
-            return;
-
+          if(this.nodeserverField.select == 'external'){
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false});
           }else{
-
-              //change app user settings and update wallet toml
-              this.configService.updateConfig({
-                check_node_api_http_addr: this.check_node_api_http_addr,
-                network: this.network,
-                locale: this.localeSelected
-              });
-              this.configService.checkTomlFile();
-
-              this.emitter.emit('restartNode');
-              this.emitter.emit('close', 'windowSettings');
-              this.isLoading = false;
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true});
           }
 
+          /*todo simple node restart user update wallet restart here*/
+          if(updated){
+            //load account else wizard
+            let user = await this.$userService.getUser(this.configService.configAccount);
+
+            if(user.length){
+              this.store.commit('user', user[0]);
+            }
+            this.store.commit('nodeType', this.nodeserverField.select);
+            this.$toast.success('Settings saved');
+            this.emitter.emit('app.nodeStart');
+          }else{
+            this.$toast.error('Error saving settings');
+          }
+
+
+
         }else{
-          this.isLoading = false;
-        }
-      },
-      clearup(){
-        this.errors = []
-      },
-
-
-      validAddress(address) {
-        let re = new RegExp('^(https?:\\/\\/)'+ // protocol
-          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-          '(\\#[-a-z\\d_]*)?$','i');
-        return re.test(address);
-      },
-      async checkForm(){
-
-        this.errors = []
-        if (!this.check_node_api_http_addr || !this.validAddress(this.check_node_api_http_addr)) {
-          this.errors.push(this.$t('msg.wrongAddressFormat'));
+          return;
         }
 
-        this.check_node_api_http_addr = this.check_node_api_http_addr.trim();
-        this.check_node_api_http_addr = this.check_node_api_http_addr.replace(/\/$/, "");
-
-
-        let nodeOnline = await this.$nodeService.nodeOnline(this.check_node_api_http_addr);
-        if(!nodeOnline){
-          return false;
-        }
-        if (!this.errors.length) {
-          return true;
-        }
       },
 
     }

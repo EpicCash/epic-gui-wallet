@@ -103,16 +103,40 @@ export default {
 
       this.isLoading = false;
       if(this.canLogin.success){
+
+        //load account else wizard
+        let user = await this.$userService.getUser(this.configService.configAccount);
+        
+        if(user.length){
+          this.store.commit('user', user[0]);
+        }else{
+          this.router.push('/setupwizard');
+          return;
+        }
+
+
+
         this.emitter.emit('app.accountLoggedIn');
         if(this.configService.config['walletlisten_on_startup']){
+
           const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
-          if(isListen){
+
+          if(isListen && isListen.success){
             this.$toast.success("Wallet listener started");
             this.store.commit('walletListenerService', true);
           }else{
             this.$toast.error("Error starting wallet listener");
             this.store.commit('walletListenerService', false);
           }
+
+          if(isListen && isListen.tor){
+            this.$toast.success("Tor started");
+            this.store.commit('torService', true);
+          }else{
+            this.$toast.error("Tor not started");
+            this.store.commit('torService', false);
+          }
+
         }
       }else{
         this.$toast.error(this.canLogin.msg.message);
@@ -146,6 +170,7 @@ export default {
           break;
           case 'settings':
             this.router.push('/setupwizard');
+
           break;
           default:
             this.$toast.error('Fatal login.vue: unknown action "' + action + '"', {duration:false});

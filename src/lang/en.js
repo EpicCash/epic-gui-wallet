@@ -174,7 +174,7 @@ const messages = {
 
     httpReceive: {
       launchSucess: 'Started successfully',
-      listening: "Wallet's HTTP listen is running",
+      listening: "Wallet is listen and can receive transactions",
       address: 'Wallet Address',
       reachableMsg2: 'Ensure your IP Address is public and reachable by the internet.',
       close: 'Stop listener',

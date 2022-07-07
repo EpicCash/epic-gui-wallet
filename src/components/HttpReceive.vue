@@ -3,102 +3,74 @@
   <section class="section is-main-section">
 
 
-    <div v-if="running">
+    <div v-show="store.state.walletListenerService">
+      <div class="columns">
+        <div class="column is-half">
+              <div class="message is-link">
 
+                <div class="message-header"><p>{{ $t("msg.httpReceive.listening") }}</p></div>
+                <div class="message-body">
 
-
-      <div class="message is-link">
-        <div class="message-header" v-if="started"><p>{{ $t("msg.httpReceive.launchSucess") }}</p></div>
-        <div class="message-header" v-else><p>{{ $t("msg.httpReceive.listening") }}</p></div>
-        <div class="message-body">
-
-          <p>Ngrok Address: {{ ngrokAddress }}</p>
-          <p>Tor onion Address: {{ onionAddress }}</p>
-
-        </div>
-
-      </div>
-
-    </div>
-    <div v-else>
-
-
-
-      <div>
-        <div class="message is-warning">
-          <div class="message-header"><p>{{ $t("msg.httpReceive.attention") }}</p></div>
-          <div class="message-body">
-            <p>{{ $t("msg.httpReceive.reachableMsg") }}</p>
-          </div>
-        </div>
-
-
-        <div class="field is-horizontal">
-          <div class="field-label is-normal"><label class="label">{{ $t("msg.password") }}</label></div>
-          <div class="field-body">
-
-            <input class="input" type="password" placeholder="********" required v-model="password" >
-
-          </div>
-        </div>
-
-        <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label class="label">Method</label>
-          </div>
-          <div class="field-body">
-                <div class="select">
-                  <select v-model="method">
-                    <option value="http">Http</option>
-                    <option value="keybase">Keybase</option>
-                  </select>
+                  <p v-if="store.state.ngrokService"><label>Ngrok Address:</label><br/>{{ ngrokAddress }}</p>
+                  <p>&nbsp;</p>
+                  <p v-if="store.state.torService">Tor onion Address:<br/>{{ onionAddress }}<span @click="copyOnionAdress()"></span></p>
+                  <p v-else>Tor onion Address:<br/><span class="has-text-danger">Tor not available. Try to restart the wallet listener</span></p>
                 </div>
-          </div>
+
+              </div>
+
+              <div class="field">
+                <div class="control">
+                  <button class="button is-primary" @click="stop" :class="{ 'button__loader': isLoading }">
+                      <span class="button__text">{{ $t("msg.httpReceive.close") }}</span>
+                  </button>
+                </div>
+              </div>
+
+
+
         </div>
-
-        <div class="field is-horizontal">
-          <div class="field-label">
-            <label class="label">TOR</label>
-          </div>
-          <div class="field-body">
-                <label class="checkbox">
-                  <input type="checkbox" name="tor" v-model="tor">
-                  enable
-                </label>
-          </div>
-        </div>
-
-        <div class="field is-horizontal">
-          <div class="field-label">
-            <label class="label">TOR Onion address</label>
-          </div>
-          <div class="field-body">
-          <span v-if="onionAddress" class="" >
-            <button class="button is-small is-rounded">{{ onionAddress }}</button>
-            &nbsp;<span @click="copyOnionAdress()"></span>
-            <span v-if="!showCopyOnionAddress">&nbsp;{{ $t("msg.commit.copied") }}</span>
-          </span>
-          </div>
-        </div>
+      </div>
+    </div>
+    <div v-show="!store.state.walletListenerService">
+      <div class="columns">
+        <div class="column is-half">
+          <div>
+            <div class="message is-warning">
+              <div class="message-header"><p>{{ $t("msg.httpReceive.attention") }}</p></div>
+              <div class="message-body">
+                <p>{{ $t("msg.httpReceive.reachableMsg") }}</p>
+              </div>
+            </div>
 
 
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <div class="center">
+            <div class="field">
+              <label class="label">{{ $t("msg.password") }}</label>
+              <div class="control">
+                <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
+              </div>
+            </div>
 
-          <div class="field is-grouped ">
-            <div class="control">
-              <button class="button is-link" @click="start">
-                {{ $t("msg.httpReceive.start") }}<span v-if="starting">&nbsp;</span>
-              </button>
+
+
+            <div class="field">
+              <div class="control">
+                <button class="button is-primary" @click="start" :class="{ 'button__loader': isLoading }">
+                    <span class="button__text">{{ $t("msg.httpReceive.start") }}</span>
+                </button>
+              </div>
             </div>
 
           </div>
-
         </div>
-
       </div>
-    </div>
+
+
+    </div><!-- end else -->
+
+
+
+
   </section>
 
 </template>
@@ -107,47 +79,42 @@
 
 import { ref,onMounted } from 'vue';
 import { useStore } from '@/store';
-
+import PasswordField from "@/components/form/passwordField";
+import useFormValidation from "@/modules/useFormValidation";
 
 
 const clipboard = window.clipboard;
 
 export default {
   name: "http-receive",
-  data() {
-    return {
-
-      starting: false,
-      stopping: false,
-      started: false,
-      localReachable: false,
-      password: '',
-      method: 'http',
-      tor: false,
-      showCopyOnionAddress: true,
-
-    }
+  components: {
+    PasswordField,
   },
+
   setup(){
 
     const store = useStore();
     const onionAddress = ref('');
     const ngrokAddress = ref('');
-    const running = ref(false);
+    const passwordField = ref('');
+    const { resetFormErrors } = useFormValidation();
+    const isLoading = ref(false);
 
     return {
       store,
       onionAddress,
       ngrokAddress,
-      running,
+      passwordField,
+      resetFormErrors,
+      isLoading
     }
   },
   mounted(){
     this.onionAddress = this.getOnionAddress();
-    this.running = this.store.state.walletListenerService;
     this.ngrokAddress = this.$ngrokService.getAddress();
   },
   methods: {
+
     async getOnionAddress(){
       let addressRes = await this.$walletService.getPubliProofAddress();
       if(addressRes.result.Ok){
@@ -172,56 +139,57 @@ export default {
     },
     async start(){
 
-      this.clearup();
+
+      this.resetFormErrors();
+      let isFormAllValid = [];
+
+      isFormAllValid.push(this.passwordField.validInput());
 
 
 
-      if(!this.starting && !this.running){
+      //check now requires settings
+      if(!isFormAllValid.includes(false)){
 
-        this.starting = true
-        const isListen = await this.$walletService.startListen(this.password, this.tor, this.method);
+        this.isLoading = true;
+        const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
+        this.isLoading = false;
+        if(isListen && isListen.success){
 
-        if(isListen.success){
 
+          this.$toast.success("Wallet listener started");
 
-          this.started = true
-          this.running = true
-
-          this.emitter.emit('walletListen')
+          this.store.commit('walletListenerService', true);
 
         }else if(isListen.success == false){
 
-          this.starting = false;
+          this.$toast.error("Error starting wallet listener");
+          this.store.commit('walletListenerService', false);
+        }
 
-
+        if(isListen && isListen.tor){
+          this.$toast.success("Tor started");
+          this.store.commit('torService', true);
+        }else{
+          this.$toast.error("Tor not started");
+          this.store.commit('torService', false);
         }
 
       }
-      this.password = '';
+
 
 
     },
     async stop(){
 
-      this.stopping = true;
-      let killed = await this.$walletService.stopProcess('listen')
+      this.isLoading = true;
+      let killed = await this.$walletService.stopListen();
+      this.isLoading = false;
       if(killed){
-        this.running = false
-        this.emitter.emit('walletListen')
-        this.clearup();
-
+        this.store.commit('walletListenerService', false);
+        this.$toast.success("Wallet listener stopped");
       }
     },
 
-
-    clearup(){
-
-
-      this.starting = false;
-      this.stopping = false;
-      this.started = false;
-
-    },
 
   }
 }
