@@ -306,7 +306,7 @@ class ConfigService {
     let killProcess = false;
 
     let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
-    let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic server.*$/);
+    let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
 
     if(pWalletList.length || pEpicnodeList.length){
       await this.emitter.emit('killEpicProcess', async function(confirmed){
