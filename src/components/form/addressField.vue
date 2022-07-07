@@ -23,7 +23,7 @@
     emits: ["keyup"], // <--- add this line
     setup(_,{ emit }) {
       let input = ref('');
-      let addressType = ref('http');
+
       let defaultValue = ref(null);
 
       const { validateAddressField, errors } = useFormValidation();
@@ -32,15 +32,15 @@
       const validInput = () => {
 
         defaultValue.value = input.value;
-        return validateAddressField("address", defaultValue.value, addressType.value);
+        return validateAddressField("address", defaultValue.value);
       };
 
-      const setValue = (value, type) => {
+      const setValue = (value) => {
         input.value = value;
-        addressType.value = type;
+
       };
 
-      return { input, errors, defaultValue, validInput, setValue, addressType };
+      return { input, errors, defaultValue, validInput, setValue };
     },
 
   };

@@ -141,6 +141,7 @@ const getDatabase = () => {
     };
     const dataBase = {
         name: dbname,
+        version:2,
         tables: [tblAddressbook, tblAddressTransaction, tblUser],
         //version: 2
     };

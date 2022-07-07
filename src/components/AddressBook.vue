@@ -17,14 +17,15 @@
           </p>
           <p>&nbsp;</p>
           <template v-for="address in addressList" :key="address.id">
-          <a v-bind:class="{'is-active': id == address.id}" class="panel-block" @click="callAddress(address)">
-            {{ address.name}}
-          </a>
+            <a v-bind:class="{'is-active': toggleActive}" class="panel-block" @click="callAddress(address)">
+              {{address.name}}
+            </a>
 
-        </template>
-        <div class="panel-block is-pulled-right">
-          <button class="button is-primary is-small " @click="create()"><mdicon name="plus" /></button>
-        </div>
+          </template>
+
+          <div class="panel-block is-pulled-right">
+            <button class="button is-primary is-small " @click="create()"><mdicon name="plus" /></button>
+          </div>
 
         </nav>
 
@@ -203,7 +204,7 @@ export default {
     const externalTwo = ref('');
     const notice = ref('');
 
-
+    const toggleActive = ref(false);
     const isEditAddress = ref(false);
     const isNewAddress = ref(false);
 
@@ -237,6 +238,7 @@ export default {
       isModalActive,
       trashObject,
       selectedAddress,
+      toggleActive,
 
     }
 
@@ -270,6 +272,8 @@ export default {
     },
     callAddress(addressItem){
 
+      this.toggleActive = this.toggleActive !== true;
+
       this.selectedAddress = addressItem;
 
       this.id = addressItem.id;
@@ -280,10 +284,11 @@ export default {
       this.keybase = addressItem.keybase;
       this.alwaysproof = addressItem.alwaysproof;
       this.proofaddr = addressItem.proofaddr;
-      this.addressLoaded = true;
       this.externalOne = addressItem.externalOne;
       this.externalTwo = addressItem.externalTwo;
       this.notice = addressItem.notice;
+
+      this.addressLoaded = this.toggleActive;
 
     },
     edit(){

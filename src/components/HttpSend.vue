@@ -42,10 +42,18 @@
                   <div v-for="address in foundAddress" :key="address.id" class="dropdown-content">
 
                     <a v-if="address.onion" @click="fillAddressField(address, 'onion')"  href="#" class="dropdown-item" data-address-id="{{address.id}}">
-                      {{ address.name }} - <span class="paste-address">{{ address.onion }}</span>
+                      {{ address.name }} - TOR <span class="paste-address">{{ address.onion }}</span>
                     </a>
                     <a v-if="address.keybase" @click="fillAddressField(address, 'keybase')" href="#" class="dropdown-item" data-address-id="{{address.id}}">
-                      {{ address.name }} - <span class="paste-address">{{ address.keybase }}</span>
+                      {{ address.name }} - KEYBASE <span class="paste-address">{{ address.keybase }}</span>
+                    </a>
+
+                    <a v-if="address.externalOne" @click="fillAddressField(address, 'externalOne')" href="#" class="dropdown-item" data-address-id="{{address.id}}">
+                      {{ address.name }} - HTTP <span class="paste-address">{{ address.externalOne }}</span>
+                    </a>
+
+                    <a v-if="address.externalTwo" @click="fillAddressField(address, 'externalTwo')" href="#" class="dropdown-item" data-address-id="{{address.id}}">
+                      {{ address.name }} - HTTP <span class="paste-address">{{ address.externalTwo }}</span>
                     </a>
 
                   </div>
@@ -113,7 +121,7 @@ export default {
           this.withproof = false;
           this.foundAddress = [];
           this.method = 'http';
-          this.addressField.addressType = 'http';
+
         }
       },
   },
@@ -166,12 +174,18 @@ export default {
 
       if(!this.addressSelected){
         if(type == 'onion'){
-          this.addressField.setValue(address.onion.trim(), type);
-
+          this.addressField.setValue(address.onion.trim());
+          this.method = 'http';
 
         }else if(type == 'keybase'){
-          this.addressField.setValue(address.keybase.trim(), type);
+          this.addressField.setValue(address.keybase.trim());
           this.method = 'keybase';
+        }else if(type == 'externalOne'){
+          this.addressField.setValue(address.externalOne.trim());
+          this.method = 'http';
+        }else if(type == 'externalTwo'){
+          this.addressField.setValue(address.externalTwo.trim());
+          this.method = 'http';
         }
 
         if(address.alwaysproof && address.proofaddr != ''){

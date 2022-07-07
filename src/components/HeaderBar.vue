@@ -44,7 +44,7 @@
                   <div>Connected peers: {{store.state.nodeStatus.connections}}</div>
                   <div>Status: {{store.state.nodeStatus.sync_status}}</div>
 
-                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">Sync Height: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{0}}%)</div>
+                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">Sync Height: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
                     <div v-else >Blockchain Height: {{height}}</div>
                   <div>
                     <progress v-if="store.state.nodeStatus.sync_status != 'synced'" style="margin-top:5px;" class="progress is-success is-small" :value="currentHeight" :max="highestHeight">0%</progress>
