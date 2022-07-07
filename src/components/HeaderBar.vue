@@ -91,7 +91,8 @@ export default {
         newAvatar,
         currentHeight,
         highestHeight,
-        height
+        height,
+        loaded
 
     }
 
