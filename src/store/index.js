@@ -7,7 +7,7 @@ export const store = createStore({
   state: {
     /* AppStyle (needed for demo render() in main.js) */
     appStyle: 'default',
-    debug: true,
+    debug: false,
 
     //hide amount values with *****
     hideValues: false,
@@ -266,7 +266,7 @@ export const store = createStore({
     async processTxs({ commit, state }, payload) {
 
       let transactionsWithAddress = await payload.table.getAddress(state.user.id);
-      
+
       let txs_processed = await payload.data.map(function(x){
         x.status = 'unconfirmed'
         if( x.confirmed){

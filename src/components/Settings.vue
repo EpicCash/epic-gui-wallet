@@ -2,6 +2,11 @@
 
 
     <section class="section is-main-section" >
+      <div class="columns">
+        <div class="column is-half">
+
+          <div>
+
 
         <NodeserverField ref="nodeserverField" />
 
@@ -35,16 +40,37 @@
               required
               v-model="ngrok" />
           </div>
-
-          <videoPlay v-bind="playerOptions"></videoPlay>
-
+          <div class="control">
+              <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+                <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+                <mdicon size="18" v-else name="menu-down" />
+                How to get your Authtoken from ngrok
+              </a>
+            </div>
         </div>
+
+        <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+          <div class="card-content">
+           <div class="content">
+             <div class="field">
+
+               <div class="control">
+                 <videoPlay width="100%" height="auto" v-bind="playerOptions" ></videoPlay>
+               </div>
+             </div>
+          </div>
+        </div>
+      </div>
+
 
         <div class="field">
           <div class="control">
             <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
           </div>
 
+        </div>
+        </div>
+        </div>
         </div>
     </section>
 
@@ -75,10 +101,13 @@ import { videoPlay } from "vue3-video-play";
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
       const ngrok = ref('');
+      const advancedSettings = ref(false);
       const playerOptions = reactive({
           // videojs options
-
-          src: "../assets/ngrok_authtoken_1024.mov"
+          autoPlay: true,
+          loop: true,
+          src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
+          control: false,
 
       });
       return{
@@ -90,7 +119,8 @@ import { videoPlay } from "vue3-video-play";
         check_node_api_http_addr,
         walletlisten_on_startup,
         ngrok,
-        playerOptions
+        playerOptions,
+        advancedSettings,
       }
     },
 
@@ -107,7 +137,10 @@ import { videoPlay } from "vue3-video-play";
     },
 
     methods: {
+      toggleAdvancedSettings(){
 
+        this.advancedSettings = !this.advancedSettings;
+      },
       async save(){
 
         this.resetFormErrors();

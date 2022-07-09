@@ -17,6 +17,7 @@ import moment from 'moment'
 import Toaster from "@meforma/vue-toaster";
 
 
+
 import './assets/css/epiccashApp.scss';
 import './assets/css/animate.css';
 

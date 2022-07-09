@@ -42,6 +42,8 @@ class NodeService {
 
 
   }
+  
+
   async nodeStatus(){
 
   }

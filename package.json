@@ -30,6 +30,7 @@
     "bulma-switch": "^2.0.4",
     "bulma-switch-control": "^1.2.2",
     "bulma-upload-control": "^1.2.0",
+    "coingecko-api-v3": "^0.0.13",
     "core-js": "^3.6.5",
     "cross-spawn": "^7.0.3",
     "crypto-browserify": "^3.12.0",

@@ -10,7 +10,6 @@ const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
 
-
 const debug = false;
 
 const sha3_256 = require('js-sha3').sha3_256;
@@ -445,8 +444,29 @@ contextBridge.exposeInMainWorld('log', log);
 contextBridge.exposeInMainWorld('nodeFs', require('fs'));
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodePath', require('path'));
-contextBridge.exposeInMainWorld('config', {
 
+
+
+
+contextBridge.exposeInMainWorld('config', {
+  async getPrice(){
+
+    let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=epic-cash', {
+      method:'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(function(res){
+
+      if (!res.ok) { throw Error(res) }
+      return res.json();
+    }).catch(function(error){
+
+      let msg = 'Error connecting coingecko ';
+      return false;
+    });
+    return response;
+  },
   getResourcePath(){
     return resourcePath;
   },

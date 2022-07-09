@@ -75,7 +75,7 @@
                 </td>
                 <td><span :title="tx.tx_slate_id ? tx.tx_slate_id: ''">{{ $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</span></td>
                 <td>{{ $filters.datetimeFormat(tx.creation_ts) }}</td>
-                <td>{{ tx.address ? tx.address.name : null }}</td>
+                <td><span v-bind:class="{'is-hidden': store.state.hideValues }">{{ tx.address ? tx.address.name : null }}</span></td>
                 <td>{{ $filters.truncateMid($filters.paymentProof(tx.payment_proof, 'receiver_address'), 19) }}</td>
                 <td>
 

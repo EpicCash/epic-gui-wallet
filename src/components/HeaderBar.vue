@@ -28,7 +28,7 @@
                       <mdicon v-if="!store.state.hideValues" name="eye-outline" />
                       <mdicon v-else name="eye-off-outline" />
                     </span>
-                    {{ $t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{store.state.summary.total}} EPIC</span>
+                    {{ $t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{store.state.summary.total}} EPIC</span>&nbsp;<span v-bind:class="{'is-hidden': store.state.hideValues }" class="is-size-7">&#x2248; ${{ usdPrice }}</span>
 
                   </h3>
                   <h3 class="subtitle"><mdicon name="server-network" style="color: green;" /> Node ({{ store.state.nodeType}})</h3>
@@ -72,6 +72,18 @@ import { useRoute } from 'vue-router';
 
 export default {
   name: "headerbar",
+  watch: {
+      'store.state.summary.total': async function (newVal) {
+        
+        if(newVal){
+
+          let geckoPrice = await window.config.getPrice();
+          if(geckoPrice.length >= 1){
+            this.usdPrice = parseFloat(geckoPrice[0].current_price * this.store.state.summary.total).toFixed(2);
+          }
+        }
+      },
+  },
   setup() {
 
     const store = useStore();
@@ -82,7 +94,7 @@ export default {
     const highestHeight = computed(() => store.state.nodeStatus.sync_info.highest_height ? store.state.nodeStatus.sync_info.highest_height : 0);
     const height = computed(() =>   store.state.nodeStatus.tip.height ? store.state.nodeStatus.tip.height : 0);
     const loaded = computed(() => store.state.nodeStatus.sync_info.current_height && store.state.nodeStatus.sync_info.highest_height ? parseFloat(Math.round(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100)).toFixed(2) : 0);
-
+    const usdPrice = ref(0);
 
     return{
         store,
@@ -92,21 +104,15 @@ export default {
         currentHeight,
         highestHeight,
         height,
-        loaded
-
+        loaded,
+        usdPrice
     }
-
   },
 
-
-
-
   methods:{
-    hideValues(){
+    async hideValues(){
       this.store.commit('hideValues');
-
-
-    }
+    },
   }
 
 }
