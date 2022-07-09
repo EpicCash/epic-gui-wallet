@@ -24,7 +24,7 @@
 
       <div class="navbar-item has-control no-left-space">
         <div class="control">
-          
+
         </div>
       </div>
     </div>
@@ -41,7 +41,6 @@
             <span>{{ userName }}</span>
           </div>
 
-
           <div class="navbar-dropdown">
             <div class="navbar-dropdown">
 
@@ -53,11 +52,6 @@
               <span class="icon"><mdicon name="settings" /></span>
               <span>Settings</span>
             </router-link>
-            <a href="proof-address.html" class="navbar-item">
-              <span class="icon"><mdicon name="security-network" /></span>
-              <span>Proof Address</span>
-            </a>
-
             <router-link class="navbar-item" to="/recheckBalance">
               <span class="icon"><mdicon name="sync" /></span>
               <span>Recheck Balance</span>

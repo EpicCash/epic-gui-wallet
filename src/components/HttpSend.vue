@@ -121,6 +121,7 @@ export default {
           this.withproof = false;
           this.foundAddress = [];
           this.method = 'http';
+          this.address = {};
 
         }
       },
@@ -138,7 +139,7 @@ export default {
     const message = ref('');
     const isLoadingSend = ref(false);
     const isLoadingSendFile = ref(false);
-
+    const address = ref({});
 
 
     const { resetFormErrors } = useFormValidation();
@@ -155,7 +156,8 @@ export default {
       message,
       resetFormErrors,
       isLoadingSend,
-      isLoadingSendFile
+      isLoadingSendFile,
+      address
     }
 
   },
@@ -171,7 +173,7 @@ export default {
 
     },
     fillAddressField(address, type){
-
+      this.address = address;
       if(!this.addressSelected){
         if(type == 'onion'){
           this.addressField.setValue(address.onion.trim());
@@ -221,8 +223,6 @@ export default {
       if(!isFormAllValid.includes(false)){
         this.isLoadingSendFile = true;
 
-
-
         let tx_data = {
           "src_acct_name": null,
           "amount": this.amountField.defaultValue * 100000000,
@@ -248,11 +248,25 @@ export default {
             let lock = await this.$walletService.lock_outputs(result);
 
             if(lock && lock.result.Ok == null){
+              try {
+                fs.writeFileSync(fn_output.filePath, JSON.stringify(result), {
+                  encoding: "utf8",
+                  flag: "w"
+                });
+              }catch(err){
+                this.$toast.error(err.message);
+                return;
+              }
 
-              fs.writeFileSync(fn_output.filePath, JSON.stringify(result), {
-                encoding: "utf8",
-                flag: "w"
+              await this.$addressTransactionsService.addAddress({
+
+                user_id: this.store.state.user.id,
+                slateid: result.id,
+                type: 'file',
+                address: this.address ? this.address.id : 0
+
               });
+
               this.$toast.success('Transaction file saved');
               this.emitter.emit('app.update');
 
@@ -320,12 +334,22 @@ export default {
 
             let tx_id = res.result.Ok.id
 
-            this.store.commit('addPostedUnconfirmedTx', tx_id);
+
+
+            await this.$addressTransactionsService.addAddress({
+
+              user_id: this.store.state.user.id,
+              slateid: tx_id,
+              type: 'direct',
+              address: this.address ? this.address.id : 0
+
+            });
+
             this.$toast.success(this.$t("msg.httpSend.success"));
             this.emitter.emit('app.update');
 
         }else{
-          console.log(res);
+          
 
           this.store.commit('updates', {
                 "status": "is-danger",

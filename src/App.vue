@@ -296,7 +296,7 @@
 
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok[1].reverse()
-          this.store.dispatch('processTxs', data)
+          this.store.dispatch('processTxs', {data: data, table: this.$addressTransactionsService})
 
         }else{
           this.store.commit('updates', {

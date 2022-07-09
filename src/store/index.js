@@ -263,11 +263,11 @@ export const store = createStore({
   },
   actions: {
 
-    processTxs({ commit, state }, txs) {
+    async processTxs({ commit, state }, payload) {
 
-
-
-      let txs_processed = txs.map(function(x){
+      let transactionsWithAddress = await payload.table.getAddress(state.user.id);
+      
+      let txs_processed = await payload.data.map(function(x){
         x.status = 'unconfirmed'
         if( x.confirmed){
           x.status = 'confirmed'
@@ -278,7 +278,14 @@ export const store = createStore({
         if(x.status === 'unconfirmed'){
           x.cancelable = true
         }
+        let hasAddress = transactionsWithAddress.find(function(transaction, index) {
+          if(transaction.slateid == x.tx_slate_id)
+            return true;
+        });
+        if(hasAddress){
 
+          x.address = hasAddress;
+        }
 
         return x
       })

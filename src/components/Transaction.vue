@@ -54,15 +54,17 @@
                   </div>
                 </th>
                 <th>Creation date</th>
+                <th>Receiver</th>
                 <th>Payment proof</th>
                 <th>Amount (fee)</th>
                 <th>Status</th>
+                <th>Transfer Type</th>
                 <th>&nbsp;</th>
               </tr>
             </thead>
             <tbody v-if="current_txs.length">
-
-              <tr v-for="tx in current_txs" :key="tx.id"   >
+              <template v-for="tx in current_txs" :key="tx.id"  >
+              <tr>
                 <td >
 
                   <mdicon size="18" v-if="tx.tx_type=='TxSent'" name="arrow-left-circle-outline" class="has-text-danger" />
@@ -73,6 +75,7 @@
                 </td>
                 <td><span :title="tx.tx_slate_id ? tx.tx_slate_id: ''">{{ $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</span></td>
                 <td>{{ $filters.datetimeFormat(tx.creation_ts) }}</td>
+                <td>{{ tx.address ? tx.address.name : null }}</td>
                 <td>{{ $filters.truncateMid($filters.paymentProof(tx.payment_proof, 'receiver_address'), 19) }}</td>
                 <td>
 
@@ -87,17 +90,25 @@
                   <span v-if="tx.status=='unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.unconfirmed") }}</span>
                   <span v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ $t("msg.txs.canceled") }}</span>
                 </td>
+                <td>{{ tx.address ? tx.address.type : null }}</td>
 
                 <td class="is-actions-cell">
 
                   <div class="buttons is-right">
-
-                    <button class="button is-small is-primary" @click="detail(tx)">
-                      <span class="is-icon"><mdicon name="eye" size="12" /></span>
-                    </button>
+                    <router-link v-if="tx.address && tx.address.type == 'file' && tx.status=='unconfirmed'" class="button is-small is-primary" to="/finalizeTransaction">
+                      <span class="is-icon"><mdicon name="basket" size="12" />&nbsp;Finalize</span>
+                    </router-link>
                     <button v-if="tx.cancelable" class="button is-small is-primary" @click="cancel(`${tx.tx_slate_id}`)">
                       <span class="is-icon"><mdicon name="cancel" size="12" /></span>
                     </button>
+                    <button class="button is-small is-primary" @click="detail(tx)">
+                      <span class="is-icon">
+                        <mdicon v-if="tx.id != txDetail" name="eye" size="12" />
+                        <mdicon v-else name="eye-off" size="12" />
+                      </span>
+                    </button>
+
+
 
 
 
@@ -106,12 +117,56 @@
 
 
               </tr>
+              <tr v-bind:class="{'is-hidden': tx.id != txDetail}" >
+                <td></td>
+                <td colspan="8">
+                  <table>
+                    <tr>
+                      <td>
+                        <span class="has-text-weight-bold">ID:</span> {{tx.id}}<br/>
+                        <span class="has-text-weight-bold">Slate ID:</span> {{tx.tx_slate_id}}<br/>
+                        <span class="has-text-weight-bold">Creation date:</span> {{$filters.datetimeFormat(tx.creation_ts)}}<br/>
+                        <span class="has-text-weight-bold">Confirmation date:</span> {{$filters.datetimeFormat(tx.confirmation_ts)}}<br/>
+                        <span class="has-text-weight-bold">Amount credited:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
+                        <span class="has-text-weight-bold">Amount debited:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_debited/100000000}}</span><br/>
+                        <span class="has-text-weight-bold">Fee:</span> {{tx.fee/100000000}}<br/>
+                        <template v-if="tx.messages && tx.messages.messages">
+                          <p  v-for="message in tx.messages.messages" :key="message.id" >
+                            <span class="has-text-weight-bold">Message {{message.id}}:</span> {{message.message}}<br/>
+                          </p>
+                        </template>
+                      </td>
+                      <td>
+                        <span class="has-text-weight-bold">Status:</span> {{tx.status}}<br/>
+                        <span class="has-text-weight-bold">Type:</span> {{tx.tx_type}}<br/>
+
+
+                          <template v-if="tx.payment_proof">
+                              <span v-if="tx.payment_proof" class="has-text-weight-bold">Payment proof:</span><br/>
+                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">Receiver address:</span> <span :title="tx.payment_proof.receiver_address">{{ $filters.truncateMid(tx.payment_proof.receiver_address ? tx.payment_proof.receiver_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_address)" name="content-copy" size=16 /></span><br/>
+                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">Receiver signature:</span> <span :title="tx.payment_proof.receiver_signature">{{ $filters.truncateMid(tx.payment_proof.receiver_signature ? tx.payment_proof.receiver_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_signature)" name="content-copy" size=16 /></span><br/>
+                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">Sender address:</span> <span :title="tx.payment_proof.sender_address">{{ $filters.truncateMid(tx.payment_proof.sender_address ? tx.payment_proof.sender_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_address)" name="content-copy" size=16 /></span><br/>
+                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">Sender signature:</span> <span :title="tx.payment_proof.sender_signature">{{ $filters.truncateMid(tx.payment_proof.sender_signature ? tx.payment_proof.sender_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_signature)" name="content-copy" size=16 /></span><br/>
+                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">Sender address path:</span> {{tx.payment_proof.sender_address_path}}<br/>
+
+                          </template>
+
+                          <template v-else>
+                            <span class="has-text-weight-bold">Payment proof: </span>-<br/>
+                          </template>
+
+                      </td>
+                   </tr>
+                  </table>
+                </td>
+              </tr>
+              </template>
 
 
             </tbody>
             <tbody v-else >
             <tr class="is-empty" >
-              <td colspan="7">
+              <td colspan="9">
                 <section class="section">
                   <div class="content has-text-grey has-text-centered">
                     <p>
@@ -162,9 +217,6 @@
   </div>
 
 
-
-  <transaction-detail :showMsg="openDetail" v-on:close="openDetail = false" v-bind:tx=txDetail v-bind:showTime="0" msgType="link"></transaction-detail>
-
 </template>
 
 <script>
@@ -174,17 +226,13 @@
 
   import { ref, computed } from 'vue';
   import { useStore } from '@/store'
-  import TransactionDetail from '@/components/TransactionDetail'
+
 
 
   export default {
     name: 'transaction',
-    components: {
-      TransactionDetail,
-    },
-
     setup(){
-      //division by 2
+
 
       const store = useStore();
       const maxButtons = ref(6);
@@ -200,8 +248,8 @@
       const keyword =  ref("");
       const searched = ref(false);
 
-      const openDetail = ref(false);
-      const txDetail = ref({});
+      const detailToggle = ref(false);
+      const txDetail = ref(0);
       const isRefresh = ref(false);
 
 
@@ -215,7 +263,7 @@
         total_txs,
         keyword,
         searched,
-        openDetail,
+        detailToggle,
         txDetail,
         isRefresh,
         count_per_page
@@ -224,12 +272,16 @@
     watch: {
         total_txs: function (newVal) {
           if(newVal){
-            this.current_txs = newVal.slice(0, this.count_per_page);
+
             if (newVal.length % this.count_per_page == 0){
               this.pages_count = parseInt(newVal.length/this.count_per_page)
             }else{
               this.pages_count = parseInt(newVal.length/this.count_per_page) + 1
             }
+
+            let s = (this.current_page_index-1)*this.count_per_page
+            this.current_txs = this.currentFilter == '' ? this.total_txs.slice(s, s+this.count_per_page) : this.filter(this.currentFilter, s, false)
+
           }
         },
     },
@@ -256,10 +308,20 @@
     },
 
     methods: {
+      copy(text){
+        window.clipboard.writeText(text);
+        this.$toast.show("Copied to clipboard!", {duration:1000});
 
+      },
       detail(tx){
-        this.txDetail = tx;
-        this.openDetail = true;
+
+        if(tx.id !== this.txDetail){
+          this.detailToggle = false;
+        }
+
+        this.detailToggle = this.detailToggle !== true;
+        this.txDetail = this.detailToggle ? tx.id : 0;
+
       },
       async getTxs() {
 
@@ -270,8 +332,8 @@
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok[1].reverse()
 
-          this.store.dispatch('processTxs', data)
-          console.log('get processTxs', this.total_txs);
+          this.store.dispatch('processTxs', {data: data, table:this.$addressTransactionsService})
+
           if(this.currentFilter == ''){
             this.current_txs = this.total_txs.slice(0, this.count_per_page)
             if (this.total_txs.length % this.count_per_page == 0){
@@ -379,6 +441,9 @@
       async cancel(tx_slate_id){
         let res = await this.$walletService.cancelTransactions(null, tx_slate_id);
         if(res && res.result && res.result.Ok == null){
+
+
+
           this.$toast.success(this.$t("msg.txs.cancelSuccess"));
           this.emitter.emit('app.update');
         }else if(res && res.error){

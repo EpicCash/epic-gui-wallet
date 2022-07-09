@@ -76,6 +76,7 @@ const getDatabase = () => {
     };
     const tblAddressTransaction = {
         name: 'AddressTransactions',
+        version: 2,
         columns: {
             id: {
                 primaryKey: true,

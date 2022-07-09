@@ -102,10 +102,10 @@ class ConfigService {
     if(window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'})){
 
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
-        const re = /db_root(\s)*=(\s).*/;
-        const re2 = /chain_type(\s)*=(\s).*/;
-        const re3 = /foundation_path(\s)*=(\s).*/;
+
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
+
+        const re = /db_root(\s)*=(\s).*/;
         if(tomlContent.search(re) != -1){
           if(this.platform == 'win'){
                   //double escaped path
@@ -114,9 +114,13 @@ class ConfigService {
             tomlContent = tomlContent.replace(re, 'db_root = "' + chainDir + '"');
           }
         }
+
+        const re2 = /chain_type(\s)*=(\s).*/;
         if(tomlContent.search(re2) != -1){
           tomlContent = tomlContent.replace(re2, 'chain_type = "' + this.tomlNetworkname + '"');
         }
+
+        const re3 = /foundation_path(\s)*=(\s).*/;
         if(tomlContent.search(re3) != -1){
           if(this.platform == 'win'){
                   //double escaped path
@@ -124,6 +128,11 @@ class ConfigService {
           }else{
             tomlContent = tomlContent.replace(re3, 'foundation_path = "' + foundationFile + '"');
           }
+        }
+
+        const re4 = /stdout_log_level(\s)*=(\s).*/;
+        if(tomlContent.search(re4) != -1){
+            tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
         }
 
 
@@ -222,14 +231,15 @@ class ConfigService {
 
 
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
-        const re = /owner_api_include_foreign(\s)*=(\s)*false/;
-        const re2 = /data_file_dir(\s)*=(\s).*/;
-        const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
+
+        const re = /owner_api_include_foreign(\s)*=(\s)*false/;
         if(tomlContent.search(re) != -1){
 
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
         }
+
+        const re2 = /data_file_dir(\s)*=(\s).*/;
         if(tomlContent.search(re2) != -1){
 
             if(this.platform == 'win'){
@@ -239,9 +249,15 @@ class ConfigService {
               tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir + '"');
             }
         }
-        if(tomlContent.search(re3) != -1){
 
-            tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr  = "' + this.config.check_node_api_http_addr + '"');
+        const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
+        if(tomlContent.search(re3) != -1){
+            tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + this.config.check_node_api_http_addr + '"');
+        }
+
+        const re4 = /stdout_log_level(\s)*=(\s).*/;
+        if(tomlContent.search(re4) != -1){
+            tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -254,7 +270,7 @@ class ConfigService {
 
         this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file does not exist or readable');
         return false;
-        //todo create a default new toml file
+        
 
 
     }

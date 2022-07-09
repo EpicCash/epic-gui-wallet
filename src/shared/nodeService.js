@@ -20,7 +20,7 @@ class NodeService {
 
   async internalNodeStart(){
 
-    this.internalNodeProcess = await window.nodeFindProcess('name', /.*?epic server.*$/);
+    this.internalNodeProcess = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
 
 
     if(!this.internalNodeProcess.length){
@@ -29,7 +29,7 @@ class NodeService {
         ...(this.configService.nodeTOMLPath != '' ? ['server', '--config_file', this.configService.nodeTOMLPath, 'run'] : ['server', 'run']),
 
       ];
-    
+
       let nodeOpenId = await window.nodeChildProcess.execNode(this.configService.epicNodePath, args, this.configService.platform);
       if(nodeOpenId > 0){
         this.internalNodeProcess = true;

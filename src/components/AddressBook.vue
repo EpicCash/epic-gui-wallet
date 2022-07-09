@@ -245,7 +245,7 @@ export default {
   },
   async created(){
 
-    this.addressList = await this.$addressBookService.getAddress();
+    this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
   },
 
   methods: {

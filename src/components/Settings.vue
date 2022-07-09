@@ -26,6 +26,21 @@
         </div>
 
         <div class="field">
+          <label class="label">Your Ngrok Authtoken</label>
+
+          <div class="control">
+            <input
+              class="input"
+              type="ngrok"
+              required
+              v-model="ngrok" />
+          </div>
+
+          <videoPlay v-bind="playerOptions"></videoPlay>
+
+        </div>
+
+        <div class="field">
           <div class="control">
             <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
           </div>
@@ -37,17 +52,18 @@
 </template>
 <script>
 
-import { ref } from 'vue';
-
+import { ref, reactive } from 'vue';
 import { useStore } from '@/store';
 import NodeserverField from "@/components/form/nodeserverField";
 import useFormValidation from "@/modules/useFormValidation";
-
+import "vue3-video-play/dist/style.css";
+import { videoPlay } from "vue3-video-play";
 
   export default {
     name: "settings",
     components: {
-      NodeserverField
+      NodeserverField,
+      videoPlay,
     },
     setup(){
 
@@ -58,7 +74,13 @@ import useFormValidation from "@/modules/useFormValidation";
       const langs = ref([]);
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
+      const ngrok = ref('');
+      const playerOptions = reactive({
+          // videojs options
 
+          src: "../assets/ngrok_authtoken_1024.mov"
+
+      });
       return{
         store,
         nodeserverField,
@@ -66,7 +88,9 @@ import useFormValidation from "@/modules/useFormValidation";
         localeSelected,
         langs,
         check_node_api_http_addr,
-        walletlisten_on_startup
+        walletlisten_on_startup,
+        ngrok,
+        playerOptions
       }
     },
 
@@ -78,6 +102,7 @@ import useFormValidation from "@/modules/useFormValidation";
       this.langs = this.configService.langs;
       this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
       this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
+      this.ngrok = this.store.state.user.ngrok;
 
     },
 
@@ -103,9 +128,9 @@ import useFormValidation from "@/modules/useFormValidation";
 
           let updated = 0;
           if(this.nodeserverField.select == 'external'){
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok});
           }else{
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok});
           }
 
           /*todo simple node restart user update wallet restart here*/

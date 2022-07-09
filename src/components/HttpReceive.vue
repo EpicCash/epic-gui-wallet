@@ -11,10 +11,14 @@
                 <div class="message-header"><p>{{ $t("msg.httpReceive.listening") }}</p></div>
                 <div class="message-body">
 
-                  <p v-if="store.state.ngrokService"><label>Ngrok Address:</label><br/>{{ ngrokAddress }}</p>
-                  <p>&nbsp;</p>
-                  <p v-if="store.state.torService">Tor onion Address:<br/>{{ onionAddress }}<span @click="copyOnionAdress()"></span></p>
-                  <p v-else>Tor onion Address:<br/><span class="has-text-danger">Tor not available. Try to restart the wallet listener</span></p>
+                  <p v-if="store.state.ngrokService"><label>Ngrok Address:</label><br/><code>{{ ngrokAddress }}</code>&nbsp;<mdicon @click="copy(ngrokAddress)" name="content-copy" size=16 /></p>
+                  <p v-if="store.state.ngrokService">&nbsp;</p>
+                  <p v-if="store.state.torService">Tor onion Address:<br/><code>{{ onionAddress }}</code>&nbsp;<mdicon @click="copy(onionAddress)" name="content-copy" size=16 /></p>
+                  <p v-else>Tor onion Address:<br/><code>Tor not available. Try to restart the wallet listener</code></p>
+
+                  <p v-if="proofAddress">&nbsp;</p>
+                  <p v-if="proofAddress">Proof Address:<br/><code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 /></p>
+
                 </div>
 
               </div>
@@ -96,6 +100,7 @@ export default {
     const store = useStore();
     const onionAddress = ref('');
     const ngrokAddress = ref('');
+    const proofAddress = ref('');
     const passwordField = ref('');
     const { resetFormErrors } = useFormValidation();
     const isLoading = ref(false);
@@ -104,38 +109,35 @@ export default {
       store,
       onionAddress,
       ngrokAddress,
+      proofAddress,
       passwordField,
       resetFormErrors,
       isLoading
     }
   },
-  mounted(){
-    this.onionAddress = this.getOnionAddress();
+  async mounted(){
+    this.onionAddress = await this.getOnionAndProofAddress();
     this.ngrokAddress = this.$ngrokService.getAddress();
   },
   methods: {
 
-    async getOnionAddress(){
+    async getOnionAndProofAddress(){
       let addressRes = await this.$walletService.getPubliProofAddress();
-      if(addressRes.result.Ok){
 
-        this.address = addressRes.result.Ok;
+      if(addressRes && addressRes.result && addressRes.result.Ok){
 
-        if(this.address != ''){
-          this.onionAddress = window.config.getOnionV3(this.address);
+        this.proofAddress = addressRes.result.Ok;
+
+        if(this.proofAddress != ''){
+          return await window.config.getOnionV3(this.proofAddress);
         }
-
       }
+      return '';
     },
 
-    copyOnionAdress(){
-      clipboard.writeText(this.onionAddress);
-      this.showCopyOnionAddress = false;
-      setTimeout(()=> {
-        this.showCopyOnionAddress = true;
-      }, 2000)
-
-
+    copy(text){
+      window.clipboard.writeText(text);
+      this.$toast.show("Copied to clipboard!", {duration:1000});
     },
     async start(){
 
@@ -155,7 +157,8 @@ export default {
         this.isLoading = false;
         if(isListen && isListen.success){
 
-
+          this.onionAddress = await this.getOnionAndProofAddress();
+          this.ngrokAddress = this.$ngrokService.getAddress();
           this.$toast.success("Wallet listener started");
 
           this.store.commit('walletListenerService', true);

@@ -5,7 +5,7 @@
 
       <div class="select" >
         <select v-model="select" required>
-          <option value="internal">Buildin node server</option>
+          <option value="internal">Built-in node server</option>
           <option value="external">External node server</option>
         </select>
       </div>

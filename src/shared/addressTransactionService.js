@@ -1,22 +1,36 @@
 import { BaseService } from "./base_service";
 
-class AddressbookTransaction extends BaseService {
+class AddressTransactions extends BaseService {
 
 
 
     constructor() {
         super();
-        this.tableName = "AddressbookTransaction";
+        this.tableName = "AddressTransactions";
     }
 
     clear(){
       return this.connection.clear(this.tableName);
     }
 
-    getAddress() {
-      console.log(this.connection);
+    getAddress(user_id) {
+
         return this.connection.select({
             from: this.tableName,
+            where: {
+                user_id: user_id
+            },
+            join: {
+                with: "Addressbook",
+                on: "AddressTransactions.address=Addressbook.id",
+                type:"inner",
+                as: {
+                    id: "addressbook_id",
+                    user_id: "addressbook_userid",
+
+                }
+
+            }
         })
     }
 
@@ -39,6 +53,14 @@ class AddressbookTransaction extends BaseService {
         })
     }
 
+    getAddressBySlateId(slateid) {
+        return this.connection.select({
+            from: this.tableName,
+            where: {
+                slateid: slateid
+            }
+        })
+    }
     getAddressById(id) {
         return this.connection.select({
             from: this.tableName,
@@ -68,4 +90,4 @@ class AddressbookTransaction extends BaseService {
     }
 }
 
-export default AddressbookTransaction;
+export default AddressTransactions;

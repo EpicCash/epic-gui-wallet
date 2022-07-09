@@ -9,12 +9,13 @@ import ngrokService from './shared/ngrokService.js';
 import configService from './shared/configService.js';
 import userService from './shared/userService.js';
 import addressbookService from './shared/addressbookService.js';
-import addressbookTransactionService from './shared/addressbookTransactionService.js';
+import addressTransactionsService from './shared/addressTransactionService.js';
 import {words} from './shared/words.js';
 import App from './App.vue'
 import mitt from 'mitt';
 import moment from 'moment'
 import Toaster from "@meforma/vue-toaster";
+
 
 import './assets/css/epiccashApp.scss';
 import './assets/css/animate.css';
@@ -48,6 +49,7 @@ app.use(store);
 app.use(router);
 app.use(Toaster);
 
+
 let config = new configService(emitter);
 app.config.globalProperties.$walletService = new walletService(emitter, config);
 app.config.globalProperties.$nodeService = new nodeService(emitter, config);
@@ -55,7 +57,7 @@ app.config.globalProperties.$ngrokService = new ngrokService(emitter, config);
 
 app.config.globalProperties.$userService =  new userService();
 app.config.globalProperties.$addressBookService =  new addressbookService();
-app.config.globalProperties.$addressbookTransactionService =  new addressbookTransactionService();
+app.config.globalProperties.$addressTransactionsService =  new addressTransactionsService();
 app.config.globalProperties.configService = config;
 app.config.globalProperties.mnemonicWords = words;
 app.config.globalProperties.$filters = {

@@ -13,10 +13,13 @@ class AddressbookService extends BaseService {
       return this.connection.clear(this.tableName);
     }
 
-    getAddress() {
+    getAddress(user_id) {
 
         return this.connection.select({
             from: this.tableName,
+            where: {
+                user_id: user_id
+            },
             order: {
                 by: 'name',
                 type: 'asc' //supprted sort type is - asc,desc
