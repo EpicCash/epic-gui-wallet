@@ -5,7 +5,6 @@ import { join } from 'path'
 import path from 'path';
 const moment = require('moment');
 const base32 = require('rfc-3548-b32');
-//import { useFetch } from '@vueuse/core';
 const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
@@ -444,11 +443,8 @@ contextBridge.exposeInMainWorld('log', log);
 contextBridge.exposeInMainWorld('nodeFs', require('fs'));
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodePath', require('path'));
-
-
-
-
 contextBridge.exposeInMainWorld('config', {
+
   async getPrice(){
 
     let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=epic-cash', {
@@ -499,8 +495,6 @@ contextBridge.exposeInMainWorld('config', {
     return base32.encode(Buffer.concat([pubKey, checksum, onion_version])).toLowerCase();
 
   },
-
-
 
 });
 

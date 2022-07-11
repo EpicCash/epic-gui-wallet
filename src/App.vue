@@ -27,15 +27,6 @@
       AsideRight
     },
 
-    /*emits: {
-      logout() {
-        console.log('emits logout');
-        // return `true` or `false` to indicate
-        // validation pass / fail
-        return true;
-      }
-    },*/
-
     setup() {
 
       const { locale } = useI18n();
@@ -88,8 +79,10 @@
         this.startRefresh();
       });
 
-      this.emitter.on('app.logout',() => {
+      this.emitter.on('app.logout', () => {
         this.loggedIn = false;
+        this.stopPolling();
+        this.stopRefresh();
         this.store.dispatch('toggleFullPage', true);
         this.store.commit('asideStateToggle', false);
         this.$router.push('/');
@@ -164,24 +157,19 @@
           if(!this.configService.startCheckNode()){
             this.$toast.error("Can not setup internal node server");
           }else{
-            await this.$nodeService.internalNodeStart();
-            let respNode = await this.$nodeService.getNodeStatus();
-
-            if(respNode){
+            let started  = await this.$nodeService.internalNodeStart();
+            this.emitter.emit('app.startRefreshNodeStatus');
+            if(started){
               this.$toast.success("Node started");
-              this.store.commit('nodeStatus', respNode);
-              this.emitter.emit('app.startRefreshNodeStatus');
-
             }else{
-              this.$toast.error("Error starting node");
-
+              this.$toast.error("Node not started");
             }
           }
 
         }else{
 
           this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
-          let respNode = await this.$nodeService.getNodeStatus();
+          let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
           if(respNode){
             this.$toast.success("External Node is online");
             this.store.commit('nodeStatus', respNode);
@@ -195,25 +183,16 @@
 
       async nodeStatus(){
 
-        if(this.store.state.user.nodeInternal){
-            let respNode = await this.$nodeService.getNodeStatus();
-            console.log(respNode);
-            if(respNode){
-              this.store.commit('nodeStatus', respNode);
-            }else{
-              this.$toast.error("Node is offline");
-              this.stopPolling();
-            }
-
+        let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
+        if(respNode){
+          this.store.commit('nodeStatus', respNode);
         }else{
-
-          let respNode = await this.$nodeService.getNodeStatus();
-          if(respNode){
-            this.store.commit('nodeStatus', respNode);
+          if(this.store.state.user.nodeInternal){
+            this.$toast.error("Node is offline");
           }else{
             this.$toast.error("External Node is offline");
-            this.stopPolling();
           }
+          this.stopPolling();
         }
 
       },
@@ -222,8 +201,8 @@
         clearTimeout(this.refreshId);
       },
 
+      /* refresh wallet summary txs and outputs */
       async startRefresh() {
-
 
           let refresh = _ => this.refreshId = setTimeout(this.startRefresh, 1000*60)
 
@@ -247,6 +226,7 @@
         clearTimeout(this.pollingId);
       },
 
+      /* refresh node status */
       async startPolling() {
 
 

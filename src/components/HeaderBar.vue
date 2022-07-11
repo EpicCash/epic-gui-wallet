@@ -74,7 +74,7 @@ export default {
   name: "headerbar",
   watch: {
       'store.state.summary.total': async function (newVal) {
-        
+
         if(newVal){
 
           let geckoPrice = await window.config.getPrice();
@@ -93,7 +93,7 @@ export default {
     const currentHeight = computed(() => store.state.nodeStatus.sync_info.current_height ? store.state.nodeStatus.sync_info.current_height : 0);
     const highestHeight = computed(() => store.state.nodeStatus.sync_info.highest_height ? store.state.nodeStatus.sync_info.highest_height : 0);
     const height = computed(() =>   store.state.nodeStatus.tip.height ? store.state.nodeStatus.tip.height : 0);
-    const loaded = computed(() => store.state.nodeStatus.sync_info.current_height && store.state.nodeStatus.sync_info.highest_height ? parseFloat(Math.round(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100)).toFixed(2) : 0);
+    const loaded = computed(() => store.state.nodeStatus.sync_info.current_height > 0 && store.state.nodeStatus.sync_info.highest_height > 0 ? parseFloat(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100).toFixed(2) : 0);
     const usdPrice = ref(0);
 
     return{
