@@ -408,6 +408,24 @@ class WalletService {
       return true;
     }
 
+    async stopWallet(){
+
+      let killPromise = [];
+      let killProcess = false;
+      let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
+
+      if(pWalletList.length){
+
+        for(let process of pWalletList) {
+          killPromise.push(window.nodeChildProcess.kill(process.pid))
+        }
+        await Promise.all(killPromise);
+      }
+
+
+      return true;
+    }
+
     async newToml(password){
 
         let args = [

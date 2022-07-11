@@ -42,6 +42,21 @@ class NodeService {
     }
 
   }
+  async stopNode(){
+
+      let killPromise = [];
+      let killProcess = false;
+      let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+      if(pEpicnodeList.length){
+
+        for(let process of pEpicnodeList) {
+          killPromise.push(window.nodeChildProcess.kill(process.pid))
+        }
+        await Promise.all(killPromise);
+
+      }
+
+  }
 
 
   async internalNodeStart(){

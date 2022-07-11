@@ -95,13 +95,21 @@
         this.startRefresh();
       });
 
-      this.emitter.on('app.logout', () => {
-        this.loggedIn = false;
+      this.emitter.on('app.logout', async () => {
+
         this.stopRefreshNode();
+        this.stopRefreshNgrok();
         this.stopRefresh();
+        this.store.commit('user', {});
+        await this.$walletService.stopListen();
+        await this.$walletService.stopWallet();
+        await this.$ngrokService.stopNgrok();
+        await this.$nodeService.stopNode();
+        this.$walletService.logoutClient();
+        this.loggedIn = false;
         this.store.dispatch('toggleFullPage', true);
         this.store.commit('asideStateToggle', false);
-        this.$router.push('/');
+        this.$router.push('/login');
 
       });
 
@@ -113,10 +121,6 @@
         this.$router.push('/dashboard');
         this.emitter.emit('app.nodeStart');
         this.emitter.emit('app.ngrokStart');
-
-
-
-
 
         //always at the very end
         this.emitter.emit('app.update');
@@ -271,7 +275,12 @@
           let refresh = _ => this.startRefreshNgrokId = setTimeout(this.startRefreshNgrok, 1000*30)
 
           try {
-            await this.$ngrokService.checkStatus();
+            let ngrokStatus = await this.$ngrokService.checkStatus();
+            if(ngrokStatus){
+              this.store.commit('ngrokService', true);
+            }else{
+              this.store.commit('ngrokService', false);
+            }
 
           }
           catch (e) {

@@ -18,6 +18,7 @@
             Local Address:<br/>
             <code>http(s)://[YOUR IP ADDRESS]:3415</code>
           </p>
+          <p v-if="!store.state.ngrokService">&nbsp;</p>
 
           <p v-if="store.state.torService">
             Tor onion Address:<br/>
@@ -132,12 +133,7 @@ export default {
   methods: {
 
     async getNgrokAddress(){
-
-      let ngrokStatus = await this.$ngrokService.checkStatus();
-      if(ngrokStatus){
-        return this.$ngrokService.getAddress()
-      }
-
+      return this.$ngrokService.getAddress()
     },
     async getOnionAndProofAddress(){
       let addressRes = await this.$walletService.getPubliProofAddress();

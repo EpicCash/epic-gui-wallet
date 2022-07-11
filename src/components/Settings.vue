@@ -22,11 +22,12 @@
         </div>
 
         <div class="field">
+          <label class="label">Wallet listener</label>
           <div class="control">
-            <label class="checkbox">
+
               <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
               <label for="walletListenSwitch">automatically start wallet listener after login</label>
-            </label>
+
           </div>
         </div>
 
@@ -150,7 +151,7 @@ import { videoPlay } from "vue3-video-play";
 
         if(!isFormAllValid.includes(false)){
 
-        
+
           this.configService.updateConfig({
 
             check_node_api_http_addr: this.nodeserverField.defaultValue,

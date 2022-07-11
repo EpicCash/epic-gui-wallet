@@ -85,9 +85,11 @@
     <div class="menu is-menu-bottom">
       <ul class="menu-list">
         <li>
-          <a @click="emitter.emit('app.logout')" title="Log out" class="has-icon is-state-info is-hoverable">
-            <span class="icon"><mdicon name="logout" /></span>
-            <span class="menu-item-label">Log out</span>
+          <a :class="{ 'button__loader': isLoading }" @click="logout" title="Log out" class="has-icon is-state-info is-hoverable">
+            <span class="button__text">
+              <span class="icon"><mdicon name="logout" /></span>
+              <span class="menu-item-label">Log out</span>
+            </span>
           </a>
         </li>
       </ul>
@@ -98,27 +100,33 @@
 
 <script>
 import { useStore } from '@/store'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from '@/router'
 
 
 export default {
   name: 'AsideMenu',
-  components: {
 
-  },
   setup (props, { emit }) {
     const store = useStore()
     const router = useRouter();
     const isAsideVisible = computed(() => store.state.isAsideVisible)
     const isAsideExpanded = computed(() => store.state.isAsideExpanded)
-
+    const isLoading = ref(false);
 
 
 
     return {
       isAsideVisible,
       isAsideExpanded,
+      isLoading,
+    }
+  },
+  methods: {
+
+    async logout(){
+      this.isLoading = true;
+      this.emitter.emit('app.logout')
     }
   }
 

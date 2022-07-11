@@ -62,9 +62,11 @@
             </router-link>
 
             <hr class="navbar-divider">
-            <a href="/index.html" class="navbar-item">
-              <span class="icon"><mdicon name="logout" /></span>
-              <span>Log Out</span>
+            <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">
+              <span class="button__text">
+                <span class="icon"><mdicon name="logout" /></span>
+                <span>Log Out</span>
+              </span>
             </a>
           </div>
 
@@ -96,7 +98,7 @@ export default {
     NavBarMenu
   },
 
-  setup (props) {
+  setup (props, { emit }) {
     const isMenuNavBarActive = ref(false)
     const isExpanded = ref(true);
     const menuNavBarToggleIcon = computed(() => isMenuNavBarActive.value ? 'close' : 'dots-vertical')
@@ -135,6 +137,7 @@ export default {
     const hasUpdates = computed(() => store.state.hasUpdates)
 
     const router = useRouter()
+    const isLoading = ref(false);
 
     router.afterEach(() => {
       isMenuNavBarActive.value = false
@@ -151,10 +154,6 @@ export default {
 
     const updatesToggle = () => {
       store.dispatch('asideRightToggle')
-    }
-
-    const logout = () => {
-
     }
 
     return {
@@ -175,7 +174,15 @@ export default {
       asideToggle,
       menuNavBarToggle,
       updatesToggle,
-      logout
+      isLoading,
+    }
+  },
+
+  methods: {
+
+    async logout(){
+      this.isLoading = true;
+      this.emitter.emit('app.logout')
     }
   }
 }

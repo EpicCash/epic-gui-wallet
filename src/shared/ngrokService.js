@@ -16,13 +16,14 @@ class NgrokService {
   }
   async ngrokRestart(){
 
-    this.tunnels = {};
+
     if(this.sharedSecret != '' && !this.restart){
 
       this.restart = true;
       let ngrokService = await this.internalStart(this.sharedSecret);
 
       if(ngrokService){
+        this.tunnels = {};
         let respNgrok = await this.openTunnel();
         if(respNgrok){
           let ngrokStatus = await this.checkStatus();
@@ -36,6 +37,27 @@ class NgrokService {
       }
     }
     return false;
+  }
+
+  async stopNgrok(){
+    //we need to stop ngrok every time after we call the apisecret
+    this.tunnels = {};
+    let killPromise = [];
+    let killProcess = false;
+
+    let pNgrokList = await window.nodeFindProcess('name', /.*?ngrok.*(start)/);
+
+    if(pNgrokList.length){
+
+      for(let process of pNgrokList) {
+        killPromise.push(nodeChildProcess.kill(process.pid))
+      }
+
+      await Promise.all(killPromise);
+    }
+    this.internalNgrokProcess = false;
+    this.sharedSecret = '';
+
   }
 
   async internalStart(sharedSecret){
