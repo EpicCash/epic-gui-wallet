@@ -26,8 +26,10 @@ async function createWindow() {
   // Create the browser window.
 
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
+    minWidth: 1024,
+    maxWidth: 1600,
     title: "Epiccash Wallet 3.0",
     webPreferences: {
       icon: path.join(__dirname, '../public/favicon.ico'),

@@ -150,6 +150,7 @@ import { videoPlay } from "vue3-video-play";
 
         if(!isFormAllValid.includes(false)){
 
+        
           this.configService.updateConfig({
 
             check_node_api_http_addr: this.nodeserverField.defaultValue,
@@ -171,6 +172,7 @@ import { videoPlay } from "vue3-video-play";
             this.store.commit('nodeType', this.nodeserverField.select);
             this.$toast.success('Settings saved');
             this.emitter.emit('app.nodeStart');
+            this.emitter.emit('app.ngrokStart');
           }else{
             this.$toast.error('Error saving settings');
           }

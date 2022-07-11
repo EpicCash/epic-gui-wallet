@@ -24,7 +24,7 @@
                 <div>
                   <h1 class="title is-spaced">Howdy, <b>{{ userName }}</b></h1>
                   <h3 class="subtitle">
-                    <span @click="hideValues">
+                    <span class="is-clickable" @click="hideValues">
                       <mdicon v-if="!store.state.hideValues" name="eye-outline" />
                       <mdicon v-else name="eye-off-outline" />
                     </span>

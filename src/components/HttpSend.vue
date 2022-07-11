@@ -23,12 +23,8 @@
             </div>
             <div class="field">
               <div class="control">
-                <label class="checkbox">
-
                   <input class="switch is-success" id="sendProofSwitch" type="checkbox" v-model="withproof" @click="addProof">
                   <label for="sendProofSwitch">send proof</label>
-
-                </label>
                 <div v-show="withproof">
                   <ProofAddressField ref="proofAddressField" />
                 </div>
@@ -349,7 +345,7 @@ export default {
             this.emitter.emit('app.update');
 
         }else{
-          
+
 
           this.store.commit('updates', {
                 "status": "is-danger",

@@ -10,8 +10,33 @@ class NgrokService {
       this.internalNgrokProcess = false;
       this.address = '';
       this.tunnels = {};
+      this.sharedSecret = '';
+      this.restart = false;
+      this.debug = true;
   }
+  async ngrokRestart(){
 
+    this.tunnels = {};
+    if(this.sharedSecret != '' && !this.restart){
+
+      this.restart = true;
+      let ngrokService = await this.internalStart(this.sharedSecret);
+
+      if(ngrokService){
+        let respNgrok = await this.openTunnel();
+        if(respNgrok){
+          let ngrokStatus = await this.checkStatus();
+          if(ngrokStatus){
+            this.restart = false;
+            this.debug ? console.log('Ngrok restarted') : null;
+            return true;
+          }
+        }
+
+      }
+    }
+    return false;
+  }
 
   async internalStart(sharedSecret){
 
@@ -19,8 +44,9 @@ class NgrokService {
       return false;
     }
 
+    this.sharedSecret = sharedSecret;
+
     //we need to stop ngrok every time after we call the apisecret
-    //unstable on macOS
     let killPromise = [];
     let killProcess = false;
 
@@ -57,15 +83,9 @@ class NgrokService {
 
   }
 
-  async checkStatus(url){
+  async checkStatus(){
 
-
-    let baseURL = '';
-    if(url == undefined){
-      baseURL = this.configService.ngrokApiAddress+this.tunnels.uri;
-    }else{
-      baseURL = url;
-    }
+    let baseURL = this.configService.ngrokApiAddress+this.tunnels.uri;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
     let response = await fetch(baseURL, {
@@ -87,6 +107,11 @@ class NgrokService {
 
     });
 
+    if(!response){
+      let restart = await this.ngrokRestart();
+      this.debug ? console.log('ngrokRestart', restart) : null;
+    }
+    this.debug ? console.log('getNgrokStatus', response) : null;
     return response;
   }
 

@@ -10,7 +10,7 @@
     <section class="modal-card-body" >
       <div>
 
-        <div class="message is-link">
+        <div class="message is-info">
           <div class="message-header" ><p>{{ $t("msg.check.checking") }}</p></div>
           <div class="message-body">
             <div class="control">

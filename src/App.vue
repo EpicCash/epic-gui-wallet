@@ -34,7 +34,8 @@
       const store = useStore();
       const router = useRouter();
 
-      let pollingId = 0;
+      let startRefreshNodeId = 0;
+      let startRefreshNgrokId = 0;
       let refreshId = 0;
 
 
@@ -43,8 +44,9 @@
       router.push('/');
 
       onUnmounted (_ => {
-        clearTimeout(pollingId)
-        clearTimeout(refreshId)
+        clearTimeout(startRefreshNodeId);
+        clearTimeout(startRefreshNgrokId);
+        clearTimeout(refreshId);
       })
 
       return {
@@ -58,17 +60,31 @@
     created() {
 
       this.emitter.on('app.startRefreshNodeStatus', () => {
-        this.stopPolling();
-        this.startPolling();
+        this.stopRefreshNode();
+        this.startRefreshNode();
       });
 
       this.emitter.on('app.stopRefreshNodeStatus', () => {
-        this.stopPolling();
+        this.stopRefreshNode();
       });
 
       this.emitter.on('app.nodeStart', async () => {
         await this.nodeStart();
-      })
+      });
+
+
+      this.emitter.on('app.startRefreshNgrokStatus', () => {
+        this.stopRefreshNgrok();
+        this.startRefreshNgrok();
+      });
+
+      this.emitter.on('app.stopRefreshNgrokStatus', () => {
+        this.stopRefreshNgrok();
+      });
+
+      this.emitter.on('app.ngrokStart', async () => {
+        await this.ngrokStart();
+      });
 
       this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
@@ -81,7 +97,7 @@
 
       this.emitter.on('app.logout', () => {
         this.loggedIn = false;
-        this.stopPolling();
+        this.stopRefreshNode();
         this.stopRefresh();
         this.store.dispatch('toggleFullPage', true);
         this.store.commit('asideStateToggle', false);
@@ -95,24 +111,12 @@
         this.store.dispatch('toggleFullPage', false);
         this.store.commit('asideStateToggle');
         this.$router.push('/dashboard');
-
-
         this.emitter.emit('app.nodeStart');
+        this.emitter.emit('app.ngrokStart');
 
-        if(this.store.state.user.ngrok != ''){
-          let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok);
-          if(ngrokService){
-            let respNgrok = await this.$ngrokService.openTunnel();
-            let ngrokStatus = await this.$ngrokService.checkStatus();
-            if(ngrokStatus){
-              this.$toast.success("Ngrok service started");
-              this.store.commit('ngrokService', true);
-            }else{
-              this.$toast.error("Error starting Ngrok service");
-              this.store.commit('ngrokService', false);
-            }
-          }
-        }
+
+
+
 
         //always at the very end
         this.emitter.emit('app.update');
@@ -147,6 +151,26 @@
 
     },
     methods: {
+      async ngrokStart(){
+
+        if(this.store.state.user.ngrok != ''){
+          let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok);
+          if(ngrokService){
+            let respNgrok = await this.$ngrokService.openTunnel();
+            if(respNgrok){
+              this.$toast.success("Ngrok service started");
+              this.store.commit('ngrokService', true);
+              this.emitter.emit('app.startRefreshNgrokStatus');
+            }else{
+              this.$toast.error("Error starting Ngrok service");
+              this.store.commit('ngrokService', false);
+            }
+          }else{
+            this.$toast.error("Error starting Ngrok service");
+            this.store.commit('ngrokService', false);
+          }
+        }
+      },
 
       async nodeStart(){
 
@@ -192,12 +216,11 @@
           }else{
             this.$toast.error("External Node is offline");
           }
-          this.stopPolling();
+          this.stopRefreshNode();
         }
 
       },
       stopRefresh(){
-
         clearTimeout(this.refreshId);
       },
 
@@ -205,16 +228,14 @@
       async startRefresh() {
 
           let refresh = _ => this.refreshId = setTimeout(this.startRefresh, 1000*60)
-
           try {
-            console.log('startRefresh');
+
             await this.getSummaryinfo();
             await this.getTxs();
             await this.getCommits();
 
           }
           catch (e) {
-            console.error ('Error startRefresh', e)
             clearTimeout(this.refreshId);
           }
           finally {
@@ -222,28 +243,47 @@
           }
 
       },
-      stopPolling(){
-        clearTimeout(this.pollingId);
-      },
 
       /* refresh node status */
-      async startPolling() {
+      async startRefreshNode() {
 
 
-          let polling = _ => this.pollingId = setTimeout(this.startPolling, 1000*30)
+          let refresh = _ => this.startRefreshNodeId = setTimeout(this.startRefreshNode, 1000*30)
 
           try {
             await this.nodeStatus();
 
           }
           catch (e) {
-            console.error ('Error startPolling', e)
-            clearTimeout(this.pollingId);
+            clearTimeout(this.startRefreshNodeId);
           }
           finally {
-            polling()
+            refresh()
           }
 
+      },
+      stopRefreshNode(){
+        clearTimeout(this.startRefreshNodeId);
+      },
+
+      /* refresh node status */
+      async startRefreshNgrok() {
+          let refresh = _ => this.startRefreshNgrokId = setTimeout(this.startRefreshNgrok, 1000*30)
+
+          try {
+            await this.$ngrokService.checkStatus();
+
+          }
+          catch (e) {
+            clearTimeout(this.startRefreshNgrokId);
+          }
+          finally {
+            refresh()
+          }
+
+      },
+      stopRefreshNgrok(){
+        clearTimeout(this.startRefreshNgrokId);
       },
 
       async getSummaryinfo() {

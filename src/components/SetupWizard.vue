@@ -4,10 +4,7 @@
   <section class="section hero is-fullheight">
       <section class="hero">
         <div class="hero-body">
-
-          <div v-show="step==='step1'" class="container">
-
-
+          <div class="container">
             <div class="columns is-centered">
               <div class="column is-three-quarters">
                 <div class="card has-card-header-background">
@@ -15,120 +12,182 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div class="card-content">
-                      <h2 class="title" style="text-align: center;">Setup Assistant Step 1/3</h2>
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">
-                        Account
-                      </h2>
+                    <h2 class="title" style="color: #d19944; text-transform: uppercase; text-align: center;">Setup Assistant</h2>
 
-                      <div class="field">
-                        <label class="label">Your name</label>
+                    <div id="stepContainerWrap">
 
-                        <div class="control">
-                          <input
-                            class="input"
-                            type="name"
-                            required
-                            v-model="name" />
+                      <div id="stepContainer">
+                        <div class="stepContainerLine"></div>
+
+                        <div class="stepContainerLineFill" v-bind:class="{'lineFillStep2': step==='step2' || step==='step3'   }"></div>
+                        <div class="stepContainerLineFill" v-bind:class="{'lineFillStep2Back': step==='step1' && moveback }"></div>
+
+                        <div class="stepContainerLineFill" v-bind:class="{'lineFillStep3': step==='step3' || step==='step4'  }"></div>
+                        <div class="stepContainerLineFill" v-bind:class="{'lineFillStep3Back': step==='step2' && moveback  }"></div>
+
+
+
+                        <div class="circle" >
+                          <svg class="circleFill" v-bind:class="{'filled': step==='step2' || step==='step3' || step==='step4' }" viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="15" cy="5" r="13" stroke="#d19944" stroke-width="2.2" fill="none"></circle>
+                          </svg>
+                          <svg class="circleTrack" viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="15" cy="5" r="13" stroke="#ffffff" stroke-width="2" fill="none"></circle>
+                          </svg>
+                          <h3>1</h3>
                         </div>
-                      </div>
 
-                      <div class="field">
-                        <label class="label">Email</label>
-
-                        <div class="control">
-                          <input
-                            class="input"
-                            type="email"
-                            required
-                            v-model="email" />
+                        <div class="circle">
+                          <svg class="circleFill" v-bind:class="{'filled': step==='step3' || step==='step4'  }" viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="15" cy="5" r="13" stroke="#d19944" stroke-width="2.2" fill="none"></circle>
+                          </svg>
+                          <svg class="circleTrack" viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="15" cy="5" r="13" stroke="#ffffff" stroke-width="2" fill="none"></circle>
+                          </svg>
+                          <h3>2</h3>
                         </div>
+
+                        <div class="circle">
+                          <svg class="circleFill" v-bind:class="{'filled': step==='step4' }" viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="15" cy="5" r="13" stroke="#d19944" stroke-width="2.2" fill="none"></circle>
+                          </svg>
+                          <svg class="circleTrack" viewBox="0 0 30 10" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="15" cy="5" r="13" stroke="#ffffff" stroke-width="2" fill="none"></circle>
+                          </svg>
+                          <h3>3</h3>
+                        </div>
+
+
                       </div>
+                    </div><!-- end stepContainerWrap -->
 
-                      <div class="field">
-                        <label class="label">{{ $t("msg.lang.lang") }}</label>
+                    <div v-show="step==='step1'" >
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Account information</h2>
 
-                        <div class="control">
-                          <div class="select">
-                            <select v-model="localeSelected">
-                              <option v-for="(lang, locale) in langs" :value="locale" :key="lang.id">{{lang}}</option>
-                            </select>
+                        <div class="field">
+                          <label class="label">Your name<span class="required">*</span></label>
+                          <TextField ref="textField" fieldname="name" />
+                          <p class="help">Name is only internal used</p>
+                        </div>
+
+                        <div class="field">
+                          <label class="label">Keybase</label>
+                          <div class="control">
+                            <input class="input" type="keybase" required v-model="keybase" />
+                            <p class="help">
+                               If you have a Keybase Account, you can enter here.</p>
                           </div>
                         </div>
-                      </div>
 
-                      <div class="buttons is-centered">
-                        <button class="button is-primary" @click="nextStep('step2')" >Next step&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
-                      </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div><!-- end step 1 -->
+                        <div class="field">
+                          <label class="label">{{ $t("msg.lang.lang") }}</label>
+                          <div class="control">
+                            <div class="select">
+                              <select v-model="localeSelected">
+                                <option v-for="(lang, locale) in langs" :value="locale" :key="lang.id">{{lang}}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="buttons is-centered">
+                          <button class="button is-primary" @click="nextStep('step2')" >Next step&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
+                        </div>
 
-          <div v-show="step==='step2'" class="container">
-            <div class="columns is-centered">
-              <div class="column is-three-quarters">
-                <div class="card has-card-header-background">
-                  <header class="card-header" style="justify-content: center;">
-                    <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
-                  </header>
-                  <div class="card-content">
-                      <h2 class="title" style="text-align: center;">Setup Assistant Step 2/3</h2>
+                    </div><!-- end step 1 -->
+
+
+                    <div v-show="step==='step2'">
+
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">
                         Network node
                       </h2>
-
+                      <article class="message is-info">
+                        <div class="message-body">
+                          Here text for node server
+                        </div>
+                      </article>
                       <NodeserverField ref="nodeserverField" />
-
-
-
+                      <p>&nbsp;</p>
+                      <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
-                        <button class="button is-primary" @click="nextStep('step3')" >Next step<mdicon name="arrow-right-circle-outline" /></button>
+                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
+                          <button class="button is-primary" @click="nextStep('step3')" >Next step<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div><!-- end step 2 -->
+
+                    </div><!-- end step 2 -->
 
 
-          <div v-show="step==='step3'" class="container">
-            <div class="columns is-centered">
-              <div class="column is-three-quarters">
-                <div class="card has-card-header-background">
-                  <header class="card-header" style="justify-content: center;">
-                    <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
-                  </header>
-                  <div class="card-content">
-                      <h2 class="title" style="text-align: center;">Setup Assistant Step 3/3</h2>
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">
-                        Ngrok
-                      </h2>
+                    <div v-show="step==='step3'">
 
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Receiving transactions</h2>
+                      <article class="message is-info">
+                        <div class="message-body">
+                          Here text for node server
+                        </div>
+                      </article>
                       <div class="field">
-                        <label class="label">Your Authtoken</label>
+                        <label class="label">Your ngrok Auth-token</label>
 
-                        <div class="control">
-                          <input
-                            class="input"
-                            type="ngrok"
-                            required
-                            v-model="ngrok" />
+                          <div class="control">
+                            <input class="input" type="ngrok" required v-model="ngrok" />
+                          </div>
+                      </div>
+                      <div class="control">
+                          <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+                            <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+                            <mdicon size="18" v-else name="menu-down" />
+                            How to get your Authtoken from ngrok
+                          </a>
+                      </div>
+                      <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+                        <div class="card-content">
+                         <div class="content">
+                           <div class="field">
+
+                             <div class="control">
+                               <videoPlay width="100%" height="auto" v-bind="playerOptions" ></videoPlay>
+                             </div>
+                           </div>
                         </div>
                       </div>
-
+                    </div>
+                      <p>&nbsp;</p>
+                      <p>&nbsp;</p>
                       <div class="buttons is-centered">
                         <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
+                        <button class="button is-primary" @click="nextStep('step4')" >Next step<mdicon name="arrow-right-circle-outline" /></button>
+                      </div>
+
+                    </div><!-- end step 3 -->
+
+                    <div v-show="step==='step4'">
+
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Are these values correct?</h2>
+                      <p>
+                        Name: {{this.textField.defaultValue}}<br/>
+                        Keybase Account: {{keybase}}<span v-if="!keybase">-</span><br/>
+                        Language: {{localeSelected}}<br/>
+                        Ngrok Auth-Token: {{ngrok}}<span v-if="!ngrok">-</span><br/>
+                        Network node: {{nodeserverField.nodeInternal ? 'built-in' : this.nodeserverField.defaultValue}}<br/>
+                      </p>
+                      <p>&nbsp;</p>
+                      <p>&nbsp;</p>
+                      <div class="buttons is-centered">
+                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
                         <button class="button is-primary" @click="save" >Save and finish</button>
                       </div>
-                  </div>
+
+
+                    </div><!-- end step 3 -->
+
+
+                  </div><!-- card content -->
                 </div>
               </div>
             </div>
-          </div>
-
-
+          </div><!-- end container -->
         </div><!-- end hero-body -->
       </section>
     </section>
@@ -137,15 +196,20 @@
 </template>
 <script>
 
-  import { ref } from 'vue';
+  import { ref, reactive } from 'vue';
   import NodeserverField from "@/components/form/nodeserverField";
+  import TextField from "@/components/form/textField";
   import useFormValidation from "@/modules/useFormValidation";
   import { useRouter } from '@/router';
+  import "vue3-video-play/dist/style.css";
+  import { videoPlay } from "vue3-video-play";
 
   export default {
     name: "setup-wizard",
     components: {
-      NodeserverField
+      NodeserverField,
+      TextField,
+      videoPlay,
     },
 
     setup(){
@@ -159,13 +223,22 @@
       const langs = ref([]);
       const errorapi = ref(false);
       const step = ref('step1');
-
+      const moveback = ref(false);
       const name = ref('');
-      const email = ref('');
+      const keybase = ref('');
 
       const { resetFormErrors } = useFormValidation();
       const nodeserverField = ref('');
+      const textField = ref('');
+      const advancedSettings = ref(false);
+      const playerOptions = reactive({
+          // videojs options
+          autoPlay: true,
+          loop: true,
+          src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
+          control: false,
 
+      });
       return{
         router,
         check_node_api_http_addr,
@@ -179,8 +252,12 @@
         nodeserverField,
         resetFormErrors,
         name,
-        email,
-        ngrok
+        keybase,
+        ngrok,
+        advancedSettings,
+        playerOptions,
+        textField,
+        moveback
 
       }
     },
@@ -193,6 +270,10 @@
 
     },
     methods: {
+      toggleAdvancedSettings(){
+
+        this.advancedSettings = !this.advancedSettings;
+      },
       validateStep(step){
         this.resetFormErrors();
         let isFormAllValid = [];
@@ -201,12 +282,15 @@
 
 
           case 'step2':
-            isValid = true;
+          console.log(this.textField.validInput());
+            isFormAllValid.push(this.textField.validInput('name'));
+            isValid = !isFormAllValid.includes(false);
+
 
           break;
           case 'step3':
             isFormAllValid.push(this.nodeserverField.validInput());
-            isValid = !isFormAllValid.includes(false)
+            isValid = !isFormAllValid.includes(false);
           break;
 
         }
@@ -216,10 +300,12 @@
       nextStep(step){
 
         if(this.validateStep(step)){
+          this.moveback = false;
           this.step = step;
         }
       },
       prevStep(step){
+        this.moveback = true;
         this.step = step;
 
       },
@@ -232,11 +318,12 @@
 
           let inserted = await this.$userService.addUser({
             account: this.configService.configAccount,
-            name: this.name,
-            email: this.email,
+            name: this.textField.defaultValue,
+            keybase: this.keybase,
             ngrok: this.ngrok,
             language: this.localeSelected,
-            nodeInternal: this.nodeserverField.nodeInternal
+            nodeInternal: this.nodeserverField.nodeInternal,
+            email: ''
           });
 
           this.configService.updateConfig({
@@ -251,7 +338,7 @@
           this.$router.push('/login');
 
         }catch(e){
-          this.$toast.error("Error saving user settings: " + e.type);
+          this.$toast.error("Error saving user settings: " + e.message);
           return
         }
 

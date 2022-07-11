@@ -1,0 +1,135 @@
+$borderColor: #ffffff;
+$borderColorFilled: #d19944;
+
+html{
+
+	&.is-dark-mode-active{
+
+    .circle {
+      position: relative;
+      width: 85px;
+      height: 85px;
+      margin: 20px auto;
+      background-color: $dark-mode-background-color;
+    }
+    .circle svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .circle svg.circleFill {
+      z-index: 1;
+      stroke-dasharray: 322;
+      stroke-dashoffset: 322;
+      transition: all 2s;
+      transform: rotate(0deg);
+    }
+    .circle h3{
+      text-align: center;
+      line-height: 80px;
+      font-size: 28px;
+    }
+    .circle svg.circleFill.filled {
+
+      stroke-dashoffset: 38.5;
+    }
+    .circle svg.circleTrack {
+      z-index: 0;
+    }
+
+
+
+    #stepContainerWrap{
+
+      position: relative;
+
+      .stepContainerLine{
+        position: absolute;
+        z-index: 0;
+        content: '';
+        display: block;
+        top: 50%;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: #ffffff;
+      }
+
+      .stepContainerLineFill{
+        // aktueller Zustand 50% Breite - Step 2
+        position: absolute;
+        z-index: 0;
+        content: '';
+        display: block;
+        top: 50%;
+        left: 20%;
+        right: 80%;
+        height: 2px;
+        background: #d19944;
+      }
+
+
+      #stepContainer{
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        margin: 48px 0px;
+
+
+      }
+
+
+            .lineFillStep2{
+              animation: animateLineStep2For 1s linear forwards;
+            }
+            .lineFillStep2Back{
+              animation: animateLineStep2Back 1s linear forwards;
+            }
+
+            .lineFillStep3{
+              animation: animateLineStep3For 1s linear forwards;
+            }
+            .lineFillStep3Back{
+              animation: animateLineStep3Back 1s linear forwards;
+            }
+
+
+
+            @keyframes animateLineStep2For {
+                from{
+                    right: 80%;
+                }
+                to{
+                    right: 50%;
+                }
+            }
+            @keyframes animateLineStep2Back {
+                from{
+                    right: 50%;
+                }
+                to{
+                    right: 80%;
+                }
+            }
+
+            @keyframes animateLineStep3For {
+                from {
+                    right: 80%;
+                }
+                to{
+                    right: 20%;
+                }
+            }
+
+            @keyframes animateLineStep3Back {
+                from {
+                    right: 20%;
+                }
+                to{
+                    right: 80%;
+                }
+            }
+    }
+  }
+}

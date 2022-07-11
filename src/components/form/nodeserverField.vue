@@ -52,7 +52,7 @@
         defaultValue.value = input.value;
         if(select.value == 'external'){
           nodeInternal.value = false;
-          return validateAddressField("nodeaddress", defaultValue.value);
+          return validateAddressField("nodeaddress", defaultValue.value, true);
         }else{
           nodeInternal.value = true;
           defaultValue.value = 'http://127.0.0.1:3413';

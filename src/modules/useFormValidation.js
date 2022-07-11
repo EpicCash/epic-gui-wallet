@@ -46,7 +46,15 @@ export default function useFormValidation() {
         }
         return true;
     }
+    const validateTextField = (fieldName, fieldValue) => {
 
+        let message = !fieldValue ? isEmpty(fieldName, fieldValue) : null;
+        if(message !== null){
+          errors[fieldName] = message;
+          return false;
+        }
+        return true;
+    }
     const validateProofAddressField = (fieldName, fieldValue) => {
 
         let message = minLength(fieldName, fieldValue, 64);
@@ -57,10 +65,10 @@ export default function useFormValidation() {
         return true;
     }
 
-    const validateAddressField = (fieldName, fieldValue) => {
+    const validateAddressField = (fieldName, fieldValue, forceHttp) => {
 
         let message = null;
-        if(fieldValue.includes('http') || fieldValue.includes('https')){
+        if(fieldValue.includes('http') || fieldValue.includes('https') || forceHttp){
           message = !fieldValue ? isEmpty(fieldName, fieldValue) : isHttpAddress(fieldName, fieldValue);
         }else{
           message = isEmpty(fieldName, fieldValue);
@@ -109,6 +117,7 @@ export default function useFormValidation() {
       validateProofAddressField,
       validateAddressField,
       validateDirField,
-      validateNetworkField
+      validateNetworkField,
+      validateTextField
     }
 }

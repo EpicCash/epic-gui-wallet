@@ -7,7 +7,7 @@
 
 
       <div v-if="!checking">
-        <div class="message is-warning">
+        <div class="message is-info">
           <div class="message-header"><p>{{ $t("msg.check.introTitle") }}</p></div>
           <div class="message-body">
             <p>{{ $t("msg.check.intro1") }}</p>
@@ -24,9 +24,8 @@
             </div>
             <div class="field">
               <div class="control">
-                <label class="checkbox">
-                  <input type="checkbox" name="delete_unconfirmed" v-model="delete_unconfirmed"> Delete unconfirmed outputs
-                </label>
+                  <input class="switch is-success" id="unconfirmedSwitch" type="checkbox" v-model="delete_unconfirmed">
+                  <label for="unconfirmedSwitch">Delete unconfirmed coin outputs</label>
               </div>
 
             </div>
@@ -44,7 +43,7 @@
 
       </div>
       <div v-else>
-        <div class="message is-link" style="height:300px;max-height:300px;overflow-y:scroll;">
+        <div class="message is-info" style="height:300px;max-height:300px;overflow-y:scroll;">
 
           <div class="message-header" v-if="checking"><p>{{ $t("msg.check.checking") }}</p></div>
           <div class="message-body">
@@ -125,7 +124,7 @@ export default {
 
       window.nodeChildProcess.on('scan-error', () => {
         if(this.checking){
-          
+
           this.$toast.error("Error start scan. Is password correct?");
         }
 

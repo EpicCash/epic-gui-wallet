@@ -1,9 +1,4 @@
-
 require('promise.prototype.finally').shim();
-
-function addQuotations(s){
-    return '"' + s +'"'
-}
 
 class NodeService {
 
@@ -24,7 +19,6 @@ class NodeService {
         'txhashset_kernels_validation',
       ]
   }
-//Math.floor(Date.now() / 1000)
 
   async restartNode(){
 
@@ -54,7 +48,6 @@ class NodeService {
 
     this.internalNodeProcess = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
 
-
     if(!this.internalNodeProcess.length){
       let args = [
         ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
@@ -71,7 +64,6 @@ class NodeService {
 
     }
     return true;
-
 
   }
 
@@ -95,52 +87,48 @@ class NodeService {
       if (!res.ok) { throw Error(res) }
       return res.json();
     }).catch(function(error){
-
-      let msg = 'Error connecting node ' + baseURL + (error.status ? ' - '+ error.status : '') +' '+ (error.statusText ? error.statusText :'');
-      msg += '\n\n ... make sure your node is accessible.';
-
+      console.log('Error fetch node status', error);
       return false;
     });
 
     /* check if node status is ok or need a restart because is stalled */
     if(internal){
       if(!response){
+        this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
         await this.restartNode();
       }else{
         //check some other indicators that node is not stalled
         if((this.syncStatusCheckedTime+this.sysnStatusStalltime) < Math.floor(Date.now() / 1000)){
           this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
 
-            //never restart at this stages
-            if(!this.safeSyncStates.includes(response.sync_status)){
-              let restart = false;
+          //never restart at this stages
+          if(!this.safeSyncStates.includes(response.sync_status)){
+            let restart = false;
 
 
-              //no peers
-              if(response && response.connections == 0 && response.sync_status !== 'awaiting_peers'){
-                this.debug ? console.log('node has no peers', response.connections) : null;
-                restart = true;
-              }
-              //if node is synced but has no tip height
-              if(response && response.tip && response.tip.height == 0 && response.sync_status === 'no_sync'){
-                this.debug ? console.log('node has no tip height', response.sync_status) : null;
-                restart = true;
-              }
-
-              if(response && response.sync_info && response.sync_info.highest_height == 0 && response.sync_status !== 'awaiting_peers'){
-                this.debug ? console.log('node has no highest_height', response.sync_info.highest_height) : null;
-                restart = true;
-              }
-
-              if(restart){
-
-                await this.restartNode();
-              }
+            //no peers
+            if(response.connections == 0 && response.sync_status !== 'awaiting_peers'){
+              this.debug ? console.log('node has no peers', response.connections) : null;
+              restart = true;
+            }
+            //if node is synced but has no tip height
+            if(response.tip && response.tip.height == 0 && response.sync_status === 'no_sync'){
+              this.debug ? console.log('node has no tip height', response.sync_status) : null;
+              restart = true;
             }
 
+            if(response.sync_info && response.sync_info.highest_height == 0 && response.sync_status !== 'awaiting_peers'){
+              this.debug ? console.log('node has no highest_height', response.sync_info.highest_height) : null;
+              restart = true;
+            }
+
+            if(restart){
+              await this.restartNode();
+            }
+
+          }
         }
       }
-
     }
 
     this.debug ? console.log('getNodeStatus', response) : null;

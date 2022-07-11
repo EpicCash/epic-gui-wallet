@@ -26,8 +26,8 @@
 
       const validInput = (configService) => {
 
-        defaultValue.value = input.value == '' ? 'default' : input.value;
-        
+        defaultValue.value = input.value == '' ? 0 : input.value;
+
         return validateAmountField("amount", defaultValue.value, configService);
       };
 

@@ -174,12 +174,12 @@ const messages = {
 
     httpReceive: {
       launchSucess: 'Started successfully',
-      listening: "Wallet is listen and can receive transactions",
+      listening: "Your wallet can receive transactions through this addresses.",
       address: 'Wallet Address',
       reachableMsg2: 'Ensure your IP Address is public and reachable by the internet.',
       close: 'Stop listener',
       attention: 'Attention',
-      reachableMsg: 'To start HTTP listen, you should have public ip, which is reachable by internet user.',
+      reachableMsg: 'To receive online transactions, your wallet must be started in listen mode.',
       password: 'Wallet Password (used to start HTTP listen)',
       start: 'Start',
       error: 'No password.',
@@ -216,7 +216,7 @@ const messages = {
       tip:'... continue?',
       introTitle: 'Info',
 
-      intro1: 'This will scan the entire Blockchain for the unspent outputs that belongs to your wallet.',
+      intro1: 'This will scan the entire Blockchain for the unspent coin outputs that belongs to your wallet.',
       intro2: "",
 
       start: 'Start',

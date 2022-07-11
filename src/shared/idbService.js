@@ -103,6 +103,7 @@ const getDatabase = () => {
     };
     const tblUser = {
         name: 'User',
+        version: 2,
         columns: {
             id: {
                 primaryKey: true,
@@ -118,6 +119,10 @@ const getDatabase = () => {
                 dataType: DATA_TYPE.String
             },
             email: {
+              notNull: true,
+              dataType: DATA_TYPE.String
+            },
+            keybase: {
               notNull: true,
               dataType: DATA_TYPE.String
             },
