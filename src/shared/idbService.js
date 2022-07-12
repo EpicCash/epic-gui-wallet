@@ -106,8 +106,8 @@ const getDatabase = () => {
         version: 2,
         columns: {
             id: {
-                primaryKey: true,
-                autoIncrement: true
+              primaryKey: true,
+              autoIncrement: true
             },
             account: {
               unique: true,
@@ -116,7 +116,7 @@ const getDatabase = () => {
             },
             name: {
               notNull: true,
-                dataType: DATA_TYPE.String
+              dataType: DATA_TYPE.String
             },
             email: {
               notNull: true,
@@ -138,18 +138,12 @@ const getDatabase = () => {
               default: false,
               dataType: DATA_TYPE.Boolean
             }
-
-
-
-
-
         }
     };
     const dataBase = {
         name: dbname,
         version:2,
         tables: [tblAddressbook, tblAddressTransaction, tblUser],
-        //version: 2
     };
     return dataBase;
 };

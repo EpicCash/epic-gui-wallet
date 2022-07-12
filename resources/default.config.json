@@ -4,5 +4,6 @@
   "locale": "en",
   "check_node_api_http_addr": "http://127.0.0.1:3413",
   "network": "mainnet",
-  "walletlisten_on_startup": true
+  "walletlisten_on_startup": true,
+  "nodesynced": false
 }

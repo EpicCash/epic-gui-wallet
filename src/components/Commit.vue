@@ -46,7 +46,7 @@
           <table class="table is-fullwidth is-striped is-hoverable">
             <thead>
               <tr class="th">
-                <th></th>
+                <th width="60">#</th>
                 <th>Coin ID</th>
                 <th>{{ $t("msg.commit.heightCreated") }}</th>
                 <th>Value</th>
@@ -55,8 +55,8 @@
             </thead>
             <tbody v-if="current_commits.length">
 
-              <tr v-for="(ct, index) in current_commits" :key="ct.id" >
-                      <td @mouseover="(event)=>mouseover(index)" @mouseleave="mouseLeave" style="width:46px;">
+              <tr v-for="(ct, index) in current_commits" :key="ct.id" @mouseover="(event)=>mouseover(index)" @mouseleave="mouseLeave" style="width:46px;" >
+                      <td >
 
                           <span title="copy to clipboard" v-if="showCopy===index" @click="copy(index)">
                               <mdicon name="content-copy" size="18" />

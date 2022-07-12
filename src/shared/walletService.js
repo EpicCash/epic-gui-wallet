@@ -60,18 +60,18 @@ class WalletService {
       let response = await this.client.post(url, body, headers).catch(function (error) {
             emitter.emit('wallet_error', {msg: error, code: '0x1645779384'})
             return false;
-
       });
 
       let key = secp256k1.getSharedSecret(privateKey, response.data.result.Ok);
       return Buffer.from(key).toString('hex').substr(2, 64);
+
     }
 
     initClient() {
 
-      let baseURL = this.configService.defaultEpicNode;
+      let baseURL = this.configService.config['check_node_api_http_addr'] ? this.configService.config['check_node_api_http_addr'] : this.configService.defaultEpicNode;
       let password = this.configService.ownerApisecret;
-
+      console.log('###### debug initClient', baseURL);
       return new Promise(function(resolve, reject) {
 
                 let client = axios.create({

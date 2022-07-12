@@ -12,37 +12,53 @@
       </div>
     </form>
     <p>&nbsp;</p>
-    <div id="accordion_first">
-      <article class="message is-info">
-        <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-1">
-          <p style="pointer-events: none;">What is the Wallet Listener?</p>
-        </div>
-        <div class="message-body is-hidden" id="accordion-1"  >
-          <div class="message-body-content" data-toggle="accordion-1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    <div class="columns">
+      <div class="column is-half">
+        <article class="message is-dark">
+          <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-1">
+            <p style="pointer-events: none;">Wallet Listener</p>
           </div>
-        </div>
-      </article>
-      <article class="message is-info">
-        <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-2">
-          <p style="pointer-events: none;">What is a node?</p>
-        </div>
-        <div class="message-body is-hidden" id="accordion-2" >
-          <div class="message-body-content" data-toggle="accordion-2">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          <div class="message-body is-hidden" id="accordion-1"  >
+            <div class="message-body-content" data-toggle="accordion-1">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </div>
           </div>
-        </div>
-      </article>
-      <article class="message is-info">
-        <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-3">
-          <p style="pointer-events: none;">What is ngrok?</p>
-        </div>
-        <div class="message-body is-hidden" id="accordion-3" >
-          <div class="message-body-content" data-toggle="accordion-3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. ngrok
+        </article>
+        <article class="message is-dark">
+          <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-2">
+            <p style="pointer-events: none;">Network node</p>
           </div>
-        </div>
-      </article>
+          <div class="message-body is-hidden" id="accordion-2" >
+            <div class="message-body-content" data-toggle="accordion-2">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </div>
+          </div>
+        </article>
+      </div>
+      <div class="column is-half">
+        <article class="message is-dark">
+          <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-3">
+            <p style="pointer-events: none;">Receiving transactions</p>
+          </div>
+          <div class="message-body is-hidden" id="accordion-3" >
+            <div class="message-body-content" data-toggle="accordion-3">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. ngrok
+            </div>
+          </div>
+        </article>
+        <article class="message is-dark">
+          <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-4">
+            <p style="pointer-events: none;">Make offline transactions</p>
+          </div>
+          <div class="message-body is-hidden" id="accordion-4" >
+            <div class="message-body-content" data-toggle="accordion-4">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </div>
+          </div>
+        </article>
+      </div>
+
+
     </div>
 
 

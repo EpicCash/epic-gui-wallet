@@ -8,6 +8,13 @@
       <component :is="Component" :key="$route.fullPath" />
   </router-view>
   <aside-right />
+
+  <modal-box
+    :is-active="isModalActive"
+    @confirm="nodesyncedConfirm"
+    @cancel="nodesyncedCancel"
+  />
+
 </template>
 
 <script>
@@ -18,13 +25,15 @@
   import { useStore } from '@/store';
   import { useRouter } from '@/router';
   import AsideRight from '@/components/layout/AsideRight.vue'
+  import ModalBox from '@/components/layout/NodesyncedModalBox.vue'
 
   //app components
   export default {
     name: 'Epic GUI Wallet',
     mixins: [mixin],
     components: {
-      AsideRight
+      AsideRight,
+      ModalBox
     },
 
     setup() {
@@ -33,6 +42,7 @@
       const loggedIn = ref(false);
       const store = useStore();
       const router = useRouter();
+      const isModalActive = ref(false);
 
       let startRefreshNodeId = 0;
       let startRefreshNgrokId = 0;
@@ -41,7 +51,9 @@
       store.commit('darkModeToggle', true);
       router.push('/');
 
+      /* is this called ever ? */
       onUnmounted (_ => {
+
         clearTimeout(startRefreshNodeId);
         clearTimeout(startRefreshNgrokId);
         clearTimeout(refreshId);
@@ -51,6 +63,7 @@
         locale,
         loggedIn,
         store,
+        isModalActive,
       }
     },
 
@@ -157,6 +170,18 @@
 
     },
     methods: {
+      nodesyncedModalOpen(){
+        this.isModalActive = true
+      },
+
+      nodesyncedConfirm(){
+        this.isModalActive = false
+        this.emitter.emit('app.logout');
+      },
+
+      nodesyncedCancel(){
+        this.isModalActive = false
+      },
       async ngrokStart(){
 
         if(this.store.state.user.ngrok != ''){
@@ -222,6 +247,18 @@
 
         let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
         if(respNode){
+
+          if(this.store.state.user.nodeInternal && this.configService.config.nodesynced == false){
+            if(respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync'){
+              this.configService.updateConfig({
+                nodesynced: true,
+                check_node_api_http_addr: 'http://127.0.0.1:3413'
+              });
+              this.configService.checkTomlFile();
+              this.nodesyncedModalOpen();
+
+            }
+          }
           this.store.commit('nodeStatus', respNode);
         }else{
           if(this.store.state.user.nodeInternal){

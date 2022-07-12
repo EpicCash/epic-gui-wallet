@@ -56,7 +56,7 @@ class ConfigService {
       this.tomlNetworkname = '';
 
       this.ngrokApiAddress = 'http://127.0.0.1:4040';
-
+      this.nodeFallBack = 'https://fastepic.eu:3413';
 
       //this should never fail or app is not working
       let epicDir = path.join(defaultAppConfigDir, '.epic');
@@ -66,7 +66,7 @@ class ConfigService {
 
 
   }
-  
+
   resetConfig(){
     this.configAccount = '';
     this.userhomedir = '';
@@ -261,8 +261,18 @@ class ConfigService {
         }
 
         const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
+
+
+        let nodeApiHttp = '';
+        if(!this.config.nodesynced){
+          nodeApiHttp = this.nodeFallBack;
+        }else{
+          nodeApiHttp = this.config.check_node_api_http_addr;
+        }
+        console.log('check here wallet toml and node address', nodeApiHttp);
+
         if(tomlContent.search(re3) != -1){
-            tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + this.config.check_node_api_http_addr + '"');
+          tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + nodeApiHttp + '"');
         }
 
         const re4 = /stdout_log_level(\s)*=(\s).*/;
@@ -589,11 +599,11 @@ class ConfigService {
 
       }
 
-      await delay(sleepTime);
+      //await delay(sleepTime);
 
       //check if user home dir exist.
       //if home dir is not found then user have to select one
-      console.log('start check userHomedir:', userHomedir);
+
       if (window.nodeFs.existsSync(userHomedir)) {
           this.emitter.emit('checkSuccess', 'user wallet dir exist');
       } else {
@@ -606,10 +616,8 @@ class ConfigService {
       this.tomlNetworkname = networkToml;
       this.defaultAccountNetwork = network;
 
-      console.log('start check defaultAccountWalletdir:', defaultAccountWalletdir);
 
-
-      await delay(sleepTime);
+      //await delay(sleepTime);
 
       //check if config file exist
       //TODO: this does not work if user never created a wallet
@@ -626,7 +634,7 @@ class ConfigService {
             window.nodeFs.copyFileSync(defaultConfigFile, configFile);
         }
         this.configFile = configFile;
-        await delay(sleepTime);
+        //await delay(sleepTime);
 
 
         this.config = this.loadConfig(this.configFile);
@@ -634,7 +642,7 @@ class ConfigService {
           return 'settings'
         }
 
-        await delay(sleepTime);
+        //await delay(sleepTime);
 
       }else{
         initWallet = true;
@@ -651,17 +659,14 @@ class ConfigService {
         if (window.nodeFs.existsSync(apiSecretFile) && window.nodeFs.readFileSync(apiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.apiSecretPath = apiSecretFile;
-            this.apisecret = window.nodeFs.readFileSync(this.apiSecretPath, {encoding:'utf8', flag:'r'}).toString().trim()
-
+            this.apisecret = window.nodeFs.readFileSync(this.apiSecretPath, {encoding:'utf8', flag:'r'}).toString().trim();
             this.emitter.emit('checkSuccess', 'node api secret "' + apiSecretFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');
-
-
 
         } else {
             this.emitter.emit('checkFail', 'node api secret "' + apiSecretFile.replace(defaultAccountWalletdir, '~') + '" file does not exist or readable');
         }
 
-        await delay(sleepTime);
+        //await delay(sleepTime);
 
         //check if owner api secret file exist
         let ownerApiSecretFile = path.join(defaultAccountWalletdir, '.owner_api_secret');
@@ -669,15 +674,13 @@ class ConfigService {
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.ownerApiSecretPath = ownerApiSecretFile;
-            this.ownerApisecret = window.nodeFs.readFileSync(this.ownerApiSecretPath, {encoding:'utf8', flag:'r'}).toString().trim()
-
-
+            this.ownerApisecret = window.nodeFs.readFileSync(this.ownerApiSecretPath, {encoding:'utf8', flag:'r'}).toString().trim();
             this.emitter.emit('checkSuccess', 'owner api secret "' + ownerApiSecretFile.replace(defaultAccountWalletdir, '~') + '" file exist and readable');
 
         } else {
             this.emitter.emit('checkFail', 'owner api secret "' + ownerApiSecretFile.replace(defaultAccountWalletdir, '~') + '" file does not exist or readable');
         }
-        await delay(sleepTime);
+        //await delay(sleepTime);
 
         this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
         if(!this.walletTOMLPath){

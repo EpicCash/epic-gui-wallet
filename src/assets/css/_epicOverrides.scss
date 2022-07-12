@@ -113,7 +113,12 @@ span.mdi-content-copy:hover{
 .v--default-css .c-toast{
   border-radius: 0.2em;
 }
-
+.message-header{
+  border-radius: 0px;
+}
+progress.progress.is-small{
+  height:6px;
+}
 section.hero.is-hero-bar.is-main-hero img{
   width:6em;
   height:6em;

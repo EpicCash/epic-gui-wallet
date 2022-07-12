@@ -25,13 +25,13 @@
                   <h1 class="title is-spaced">Howdy, <b>{{ userName }}</b></h1>
                   <h3 class="subtitle">
                     <span class="is-clickable" @click="hideValues">
-                      <mdicon v-if="!store.state.hideValues" name="eye-outline" />
-                      <mdicon v-else name="eye-off-outline" />
+                      <mdicon size=20 v-if="!store.state.hideValues" name="eye-outline" />
+                      <mdicon size=20 v-else name="eye-off-outline" />
                     </span>
                     {{ $t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{store.state.summary.total}} EPIC</span>&nbsp;<span v-bind:class="{'is-hidden': store.state.hideValues }" class="is-size-7">&#x2248; ${{ usdPrice }}</span>
 
                   </h3>
-                  <h3 class="subtitle"><mdicon name="server-network" style="color: green;" /> Node ({{ store.state.nodeType}})</h3>
+
 
 
                 </div>
@@ -39,9 +39,10 @@
             </div>
             <div class="level-right">
               <div class="level-item is-hero-content-item">
-                <div>
-                  <div>Node Version: {{store.state.nodeStatus.user_agent}}</div>
-                  <div>Connected peers: {{store.state.nodeStatus.connections}}</div>
+                <div class="is-size-7">
+                  <h3 class="subtitle"><span><mdicon size=20 name="server-network" /> Node ({{ store.state.nodeType}})</span></h3>
+                  <div>Version: {{store.state.nodeStatus.user_agent}}</div>
+                  <div>Peers: {{store.state.nodeStatus.connections}}</div>
                   <div>Status: {{store.state.nodeStatus.sync_status}}</div>
 
                     <div v-if="store.state.nodeStatus.sync_status != 'synced'">Sync Height: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>

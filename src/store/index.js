@@ -7,7 +7,7 @@ export const store = createStore({
   state: {
     /* AppStyle (needed for demo render() in main.js) */
     appStyle: 'default',
-    debug: false,
+    debug: true,
 
     //hide amount values with *****
     hideValues: false,

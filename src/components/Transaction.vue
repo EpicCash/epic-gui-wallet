@@ -44,15 +44,11 @@
       <div class="b-table has-pagination">
         <div class="table-wrapper has-mobile-cards">
 
-          <table class="table is-striped is-hoverable is-fullwidth">
+          <table class="table is-fullwidth is-striped is-hoverable">
             <thead>
               <tr class="th">
                 <th>#</th>
-                <th class="is-current-sort is-sortable">
-                  <div class="th-wrap">
-                    Transaction ID <span class="icon is-small"><i class="mdi mdi-arrow-up"></i></span>
-                  </div>
-                </th>
+                <th>Transaction ID</th>
                 <th>Creation date</th>
                 <th>Receiver</th>
                 <th>Payment proof</th>
