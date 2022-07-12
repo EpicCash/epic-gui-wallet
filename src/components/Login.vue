@@ -97,26 +97,13 @@ export default {
 
   methods: {
 
-    async continueLogin(firstlogin){
+    async continueLogin(firstlogin, action){
 
       this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, firstlogin);
 
       this.isLoading = false;
       if(this.canLogin.success){
 
-        //load account else wizard
-        let user = await this.$userService.getUser(this.configService.configAccount);
-        
-        if(user.length){
-          this.store.commit('user', user[0]);
-        }else{
-          this.router.push('/setupwizard');
-          return;
-        }
-
-
-
-        this.emitter.emit('app.accountLoggedIn');
         if(this.configService.config['walletlisten_on_startup']){
 
           const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
@@ -136,19 +123,26 @@ export default {
             this.$toast.error("Tor not started");
             this.store.commit('torService', false);
           }
-
         }
+
+        //load account else wizard
+        let user = await this.$userService.getUser(this.configService.configAccount);
+
+        if(user.length){
+          this.store.commit('user', user[0]);
+        }else{
+          this.router.push('/setupwizard');
+          return;
+        }
+
+
+
+        this.emitter.emit('app.accountLoggedIn');
+
       }else{
         this.$toast.error(this.canLogin.msg.message);
       }
 
-    },
-    create(){
-      this.emitter.emit('initMode', 'create');
-    },
-    restore(){
-
-      this.emitter.emit('initMode', 'restore');
     },
     async login(){
       this.resetFormErrors();
@@ -163,20 +157,7 @@ export default {
         this.isLoading = true;
 
         let action = await this.configService.startCheck(this.accountField.defaultValue);
-
-        switch(action){
-          case 'login':
-            await this.continueLogin(false);
-          break;
-          case 'settings':
-            this.router.push('/setupwizard');
-
-          break;
-          default:
-            this.$toast.error('Fatal login.vue: unknown action "' + action + '"', {duration:false});
-          break;
-        }
-
+        await this.continueLogin(false, action);
         this.isLoading = false;
 
       }else{

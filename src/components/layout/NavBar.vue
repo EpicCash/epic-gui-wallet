@@ -60,6 +60,10 @@
               <span class="icon"><mdicon name="spellcheck" /></span>
               <span>Mnemonic Words</span>
             </router-link>
+            <router-link class="navbar-item" to="/setupwizard">
+              <span class="icon"><mdicon name="wizard-hat" /></span>
+              <span>Setup Assistant</span>
+            </router-link>
 
             <hr class="navbar-divider">
             <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">

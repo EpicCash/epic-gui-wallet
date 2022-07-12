@@ -231,6 +231,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               resolve({success: true, msg: ngrok.pid});
             }
 
+            if(data.includes('ERR_NGROK_107')){
+              resolve({success: false, msg: 'The authtoken you specified is properly formed, but it is invalid.'});
+            }
+
+
           });
 
           ngrok.stderr.setEncoding('utf8');

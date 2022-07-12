@@ -27,8 +27,8 @@
                 </div>
                 <div class="control">
 
-                  <button @click="search" v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
-                  <button @click="clearup" v-show="searched" class="button is-primary"><span class="icon"><mdicon name="close-circle-outline" /></span></button>
+                  <button v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
+                  <button @click.prevent="clearup" v-show="searched" class="button is-primary"><span class="icon"><mdicon name="close-circle-outline" /></span></button>
 
 
                 </div>
@@ -296,15 +296,6 @@
         this.pages_count = parseInt(this.total_txs.length/this.count_per_page) + 1
       }
 
-    },
-
-    created () {
-
-      this.emitter.on('logoutTxs', ()=>{
-          this.current_txs = [];
-          this.total_txs = [];
-          this.clearup();
-      });
     },
 
     methods: {

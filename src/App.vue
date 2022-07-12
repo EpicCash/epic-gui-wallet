@@ -115,6 +115,8 @@
 
       this.emitter.on('app.accountLoggedIn', async () => {
 
+        console.log('accountLoggedIn');
+        
         this.loggedIn = true;
         this.store.dispatch('toggleFullPage', false);
         this.store.commit('asideStateToggle');
@@ -159,7 +161,9 @@
 
         if(this.store.state.user.ngrok != ''){
           let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok);
-          if(ngrokService){
+
+
+          if(ngrokService.success){
             let respNgrok = await this.$ngrokService.openTunnel();
             if(respNgrok){
               this.$toast.success("Ngrok service started");
@@ -171,6 +175,11 @@
             }
           }else{
             this.$toast.error("Error starting Ngrok service");
+            this.store.commit('updates', {
+                  "status": "is-danger",
+                  "text":   "Ngrok: " + ngrokService.msg,
+                  "icon":   "information"
+            });
             this.store.commit('ngrokService', false);
           }
         }
@@ -312,7 +321,7 @@
           }else{
             this.store.commit('updates', {
                   "status": "is-danger",
-                  "text":   summary.error.message,
+                  "text": "Summary: " + summary.error.message,
                   "icon":   "information"
             });
 
@@ -330,7 +339,7 @@
         }else{
           this.store.commit('updates', {
                 "status": "is-danger",
-                "text":   txs.error.message,
+                "text":   "Txs: " + txs.error.message,
                 "icon":   "information"
           });
 
@@ -351,7 +360,7 @@
 
             this.store.commit('updates', {
                   "status": "is-danger",
-                  "text":   commits.error.message,
+                  "text": "Commits: " +  commits.error.message,
                   "icon":   "information"
             });
 

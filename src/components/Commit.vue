@@ -28,8 +28,8 @@
                 </div>
                 <div class="control">
 
-                  <button @click="search" v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
-                  <button @click="clearup" v-show="searched" class="button is-primary"><span class="icon"><mdicon name="close-circle-outline" /></span></button>
+                  <button v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
+                  <button @click.prevent v-show="searched" class="button is-primary"><span class="icon"><mdicon name="close-circle-outline" /></span></button>
 
 
                 </div>

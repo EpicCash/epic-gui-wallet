@@ -10,7 +10,7 @@ class NodeService {
       this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
       this.sysnStatusStalltime = (60*3); //3 minutes
       this.restartSuccess = true;
-      this.debug = true;
+      this.debug = false;
       //do not restart on this node states
       this.safeSyncStates = [
         'txhashset_download',

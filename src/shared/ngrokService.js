@@ -12,7 +12,7 @@ class NgrokService {
       this.tunnels = {};
       this.sharedSecret = '';
       this.restart = false;
-      this.debug = true;
+      this.debug = false;
   }
   async ngrokRestart(){
 
@@ -97,11 +97,10 @@ class NgrokService {
     if(ngrokMsg.success){
 
       this.internalNgrokProcess = true;
+      return ngrokMsg;
     }else{
-      return false;
+      return ngrokMsg;
     }
-
-    return true;
 
   }
 

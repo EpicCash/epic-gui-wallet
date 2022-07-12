@@ -201,6 +201,7 @@
   import TextField from "@/components/form/textField";
   import useFormValidation from "@/modules/useFormValidation";
   import { useRouter } from '@/router';
+  import { useStore } from '@/store';
   import "vue3-video-play/dist/style.css";
   import { videoPlay } from "vue3-video-play";
 
@@ -213,6 +214,7 @@
     },
 
     setup(){
+      const store = useStore();
       const router = useRouter();
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
@@ -240,6 +242,7 @@
 
       });
       return{
+        store,
         router,
         check_node_api_http_addr,
         walletlisten_on_startup,
@@ -263,7 +266,8 @@
     },
 
     mounted(){
-
+      this.store.dispatch('toggleFullPage', true);
+      this.store.commit('asideStateToggle', false);
       this.locale = this.configService.config['locale'];
       this.localeSelected = this.configService.config['locale'];
       this.langs = this.configService.langs;
@@ -316,15 +320,30 @@
 
         try{
 
-          let inserted = await this.$userService.addUser({
-            account: this.configService.configAccount,
-            name: this.textField.defaultValue,
-            keybase: this.keybase,
-            ngrok: this.ngrok,
-            language: this.localeSelected,
-            nodeInternal: this.nodeserverField.nodeInternal,
-            email: ''
-          });
+          let user = await this.$userService.getUser(this.configService.configAccount);
+          if(user.length){
+            let inserted = await this.$userService.updateUserByAccount(this.configService.configAccount, {
+              account: this.configService.configAccount,
+              name: this.textField.defaultValue,
+              keybase: this.keybase,
+              ngrok: this.ngrok,
+              language: this.localeSelected,
+              nodeInternal: this.nodeserverField.nodeInternal,
+              email: ''
+            });
+
+          }else{
+            let inserted = await this.$userService.addUser({
+              account: this.configService.configAccount,
+              name: this.textField.defaultValue,
+              keybase: this.keybase,
+              ngrok: this.ngrok,
+              language: this.localeSelected,
+              nodeInternal: this.nodeserverField.nodeInternal,
+              email: ''
+            });
+          }
+
 
           this.configService.updateConfig({
             version: '4.0.0',
@@ -335,7 +354,7 @@
 
           });
           this.configService.checkTomlFile();
-          this.$router.push('/login');
+          this.emitter.emit('app.accountLoggedIn');
 
         }catch(e){
           this.$toast.error("Error saving user settings: " + e.message);
