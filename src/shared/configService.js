@@ -66,6 +66,16 @@ class ConfigService {
 
 
   }
+  
+  resetConfig(){
+    this.configAccount = '';
+    this.userhomedir = '';
+    this.defaultAccountNetwork = 'mainnet';
+    this.config = {};
+    this.configFile = '';
+    this.apiSecretPath = '';
+    this.ownerApisecret = '';
+  }
 
   checkServerTomlFile(defaultAccountWalletdir){
 
@@ -270,7 +280,7 @@ class ConfigService {
 
         this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file does not exist or readable');
         return false;
-        
+
 
 
     }

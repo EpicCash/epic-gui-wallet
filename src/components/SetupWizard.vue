@@ -217,7 +217,6 @@
       const store = useStore();
       const router = useRouter();
       const check_node_api_http_addr = ref('');
-      const walletlisten_on_startup = ref(false);
       const network = ref('');
       const ngrok = ref('');
       const locale = ref('en');
@@ -245,7 +244,6 @@
         store,
         router,
         check_node_api_http_addr,
-        walletlisten_on_startup,
         network,
         locale,
         localeSelected,
@@ -350,9 +348,10 @@
             check_node_api_http_addr: this.nodeserverField.defaultValue,
             locale: this.localeSelected,
             firstTime: false,
-            walletlisten_on_startup: this.walletlisten_on_startup
+            walletlisten_on_startup: true
 
           });
+
           this.configService.checkTomlFile();
           this.emitter.emit('app.accountLoggedIn');
 

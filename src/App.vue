@@ -38,8 +38,6 @@
       let startRefreshNgrokId = 0;
       let refreshId = 0;
 
-
-
       store.commit('darkModeToggle', true);
       router.push('/');
 
@@ -107,6 +105,8 @@
         await this.$nodeService.stopNode();
         this.$walletService.logoutClient();
         this.loggedIn = false;
+        this.configService.resetConfig();
+
         this.store.dispatch('toggleFullPage', true);
         this.store.commit('asideStateToggle', false);
         this.$router.push('/login');
@@ -116,7 +116,7 @@
       this.emitter.on('app.accountLoggedIn', async () => {
 
         console.log('accountLoggedIn');
-        
+
         this.loggedIn = true;
         this.store.dispatch('toggleFullPage', false);
         this.store.commit('asideStateToggle');
@@ -131,7 +131,7 @@
 
       this.emitter.on('killEpicProcess', async (callback) => {
         //todo replace with customized dialog/prompt
-        const confirmed = await confirm('We found some running wallet and node processes in the background. Please close them first before you can run this App.');
+        const confirmed = await confirm('We found some running wallet and node processes in the background. Please close them first before you run this App.');
         callback(confirmed);
       });
 
