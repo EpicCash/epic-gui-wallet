@@ -92,13 +92,13 @@
 
                   <div class="buttons is-right">
                     <router-link v-if="tx.address && tx.address.type == 'file' && tx.status=='unconfirmed'" class="button is-small is-primary" to="/finalizeTransaction">
-                      <span class="is-icon"><mdicon name="basket" size="12" />&nbsp;Finalize</span>
+                      <span title="Finalize" class="is-icon"><mdicon name="basket" size="12" /></span>
                     </router-link>
                     <button v-if="tx.cancelable" class="button is-small is-primary" @click="cancel(`${tx.tx_slate_id}`)">
-                      <span class="is-icon"><mdicon name="cancel" size="12" /></span>
+                      <span title="Cancel" class="is-icon"><mdicon name="cancel" size="12" /></span>
                     </button>
                     <button class="button is-small is-primary" @click="detail(tx)">
-                      <span class="is-icon">
+                      <span title="Details" class="is-icon">
                         <mdicon v-if="tx.id != txDetail" name="eye" size="12" />
                         <mdicon v-else name="eye-off" size="12" />
                       </span>
@@ -118,7 +118,7 @@
                 <td colspan="8">
                   <table>
                     <tr>
-                      <td>
+                      <td class="tx-details">
                         <span class="has-text-weight-bold">ID:</span> {{tx.id}}<br/>
                         <span class="has-text-weight-bold">Slate ID:</span> {{tx.tx_slate_id}}<br/>
                         <span class="has-text-weight-bold">Creation date:</span> {{$filters.datetimeFormat(tx.creation_ts)}}<br/>

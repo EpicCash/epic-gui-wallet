@@ -101,9 +101,17 @@ html{
         cursor: pointer;
         z-index: -1;
     }
-
+    .navbar-dropdown .navbar-item:hover{
+      color:$epicCashGold
+    }
 	}
+  //.is-dark-mode-active
 }
+
+/* (C) NO SELECT + HIGHLIGHT COLOR */
+*:not(input):not(textarea){ user-select: none; }
+
+//html
 span.required{
   color:$red;
 }
@@ -119,6 +127,7 @@ span.mdi-content-copy:hover{
 progress.progress.is-small{
   height:6px;
 }
+
 section.hero.is-hero-bar.is-main-hero img{
   width:6em;
   height:6em;
@@ -200,7 +209,7 @@ div.avatar-letter{
 }
 
 #aside-main{
-  background-image: linear-gradient(0deg,  $black-ter 90%, #000000 100%);
+  background-image: linear-gradient(0deg,  $black-ter 60%, #000000 100%);
 }
 span.amount-hidden {
   visibility: hidden;

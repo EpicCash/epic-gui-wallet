@@ -38,43 +38,43 @@
         <nav-bar-menu class="has-divider ">
 
           <div class="is-user-name">
-            <span>{{ userName }}</span>
+            <span style="padding-right:120px;"></span><mdicon name="cog-outline" />
           </div>
 
-          <div class="navbar-dropdown">
+
             <div class="navbar-dropdown">
 
-            <router-link class="navbar-item" to="/account">
-              <span class="icon"><mdicon name="account" /></span>
-              <span>My Account</span>
-            </router-link>
-            <router-link class="navbar-item" to="/settings">
-              <span class="icon"><mdicon name="settings" /></span>
-              <span>Settings</span>
-            </router-link>
-            <router-link class="navbar-item" to="/recheckBalance">
-              <span class="icon"><mdicon name="sync" /></span>
-              <span>Recheck Balance</span>
-            </router-link>
-            <router-link class="navbar-item" to="/mnemonic">
-              <span class="icon"><mdicon name="spellcheck" /></span>
-              <span>Mnemonic Words</span>
-            </router-link>
-            <router-link class="navbar-item" to="/setupwizard">
-              <span class="icon"><mdicon name="wizard-hat" /></span>
-              <span>Setup Assistant</span>
-            </router-link>
+              <router-link class="navbar-item" to="/account">
+                <span class="icon"><mdicon name="account" /></span>
+                <span>Account</span>
+              </router-link>
+              <router-link class="navbar-item" to="/settings">
+                <span class="icon"><mdicon name="settings" /></span>
+                <span>Settings</span>
+              </router-link>
+              <router-link class="navbar-item" to="/recheckBalance">
+                <span class="icon"><mdicon name="sync" /></span>
+                <span>Recheck Balance</span>
+              </router-link>
+              <router-link class="navbar-item" to="/mnemonic">
+                <span class="icon"><mdicon name="spellcheck" /></span>
+                <span>Mnemonic Words</span>
+              </router-link>
+              <router-link class="navbar-item" to="/setupwizard">
+                <span class="icon"><mdicon name="wizard-hat" /></span>
+                <span>Run Setup Assistant</span>
+              </router-link>
 
-            <hr class="navbar-divider">
-            <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">
-              <span class="button__text">
-                <span class="icon"><mdicon name="logout" /></span>
-                <span>Log Out</span>
-              </span>
-            </a>
+              <hr class="navbar-divider">
+              <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">
+                <span class="button__text">
+                  <span class="icon"><mdicon name="logout" /></span>
+                  <span>Log Out</span>
+                </span>
+              </a>
           </div>
 
-          </div>
+
         </nav-bar-menu>
 
       </div>
