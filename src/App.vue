@@ -9,10 +9,18 @@
   </router-view>
   <aside-right />
 
-  <modal-box
-    :is-active="isModalActive"
+  <modal-node-box
+    :is-active="isNodeModalActive"
     @confirm="nodesyncedConfirm"
     @cancel="nodesyncedCancel"
+
+  />
+
+  <modal-firstsync-box
+    :is-active="isFirstscanModalActive"
+    @confirm="firstscanConfirm"
+    @cancel="firstscanCancel"
+    :output-data="scanoutput"
   />
 
 </template>
@@ -25,7 +33,8 @@
   import { useStore } from '@/store';
   import { useRouter } from '@/router';
   import AsideRight from '@/components/layout/AsideRight.vue'
-  import ModalBox from '@/components/layout/NodesyncedModalBox.vue'
+  import ModalNodeBox from '@/components/layout/NodesyncedModalBox.vue'
+  import ModalFirstsyncBox from '@/components/layout/FirstsyncModalBox.vue'
 
   //app components
   export default {
@@ -33,7 +42,8 @@
     mixins: [mixin],
     components: {
       AsideRight,
-      ModalBox
+      ModalNodeBox,
+      ModalFirstsyncBox
     },
 
     setup() {
@@ -42,8 +52,9 @@
       const loggedIn = ref(false);
       const store = useStore();
       const router = useRouter();
-      const isModalActive = ref(false);
-
+      const isNodeModalActive = ref(false);
+      const isFirstscanModalActive = ref(false);
+      const scanoutput = ref([]);
       let startRefreshNodeId = 0;
       let startRefreshNgrokId = 0;
       let refreshId = 0;
@@ -63,12 +74,31 @@
         locale,
         loggedIn,
         store,
-        isModalActive,
+        isNodeModalActive,
+        isFirstscanModalActive,
+        scanoutput
       }
     },
 
 
     created() {
+
+      window.nodeChildProcess.on('firstscan-stdout', (payload) => {
+
+        let lines = payload.data.split("\n");
+
+        for(var i = 0;i<lines.length;i++){
+          let cleanString = lines[i].replace(/^.+(?:WARN\s|DEBUG\s)/gm, '');
+          if(cleanString !== lines[i]){
+            if(cleanString.includes('This wallet has not been scanned against the current chain')){
+              this.isFirstscanModalActive = true;
+            }
+
+            this.scanoutput.unshift("\n"+cleanString);
+          }
+        }
+
+      });
 
       this.emitter.on('app.startRefreshNodeStatus', () => {
         this.stopRefreshNode();
@@ -112,6 +142,19 @@
         this.stopRefreshNgrok();
         this.stopRefresh();
         this.store.commit('user', {});
+        this.store.commit('txs', []);
+        this.store.commit('commits', []);
+        this.store.commit('summary', {
+          spendable: 0,
+          total: 0,
+          unconfirmed: 0,
+          unfinalization: 0,
+          immature: 0,
+          locked: 0,
+        });
+
+
+
         await this.$walletService.stopListen();
         await this.$walletService.stopWallet();
         await this.$ngrokService.stopNgrok();
@@ -171,17 +214,25 @@
     },
     methods: {
       nodesyncedModalOpen(){
-        this.isModalActive = true
+        this.isNodeModalActive = true
       },
 
       nodesyncedConfirm(){
-        this.isModalActive = false
+        this.isNodeModalActive = false
         this.emitter.emit('app.logout');
       },
 
       nodesyncedCancel(){
-        this.isModalActive = false
+        this.isNodeModalActive = false
       },
+
+      firstscanConfirm(){
+        this.isFirstscanModalActive = false
+      },
+      firstscanCancel(){
+        this.isFirstscanModalActive = false
+      },
+
       async ngrokStart(){
 
         if(this.store.state.user.ngrok != ''){

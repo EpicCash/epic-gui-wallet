@@ -147,7 +147,7 @@
                            <div class="field">
 
                              <div class="control">
-                               <videoPlay width="100%" height="auto" v-bind="playerOptions" ></videoPlay>
+                               <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
                              </div>
                            </div>
                         </div>
@@ -196,7 +196,7 @@
 </template>
 <script>
 
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, onUnmounted } from 'vue';
   import NodeserverField from "@/components/form/nodeserverField";
   import TextField from "@/components/form/textField";
   import useFormValidation from "@/modules/useFormValidation";
@@ -238,8 +238,13 @@
           loop: true,
           src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
           control: false,
+          play:true,
 
       });
+
+      //dont remove or videoplay throws errors
+      const onPlay = (ev) => {};
+
       return{
         store,
         router,
@@ -258,7 +263,8 @@
         advancedSettings,
         playerOptions,
         textField,
-        moveback
+        moveback,
+        onPlay
 
       }
     },
@@ -312,15 +318,13 @@
 
       },
       async save(){
-
-
-
-
         try{
 
           let user = await this.$userService.getUser(this.configService.configAccount);
+
+
           if(user.length){
-            let inserted = await this.$userService.updateUserByAccount(this.configService.configAccount, {
+            await this.$userService.updateUserByAccount(this.configService.configAccount, {
               account: this.configService.configAccount,
               name: this.textField.defaultValue,
               keybase: this.keybase,
@@ -331,6 +335,7 @@
             });
 
           }else{
+
             let inserted = await this.$userService.addUser({
               account: this.configService.configAccount,
               name: this.textField.defaultValue,
@@ -340,6 +345,14 @@
               nodeInternal: this.nodeserverField.nodeInternal,
               email: ''
             });
+            if(inserted.length){
+              user = inserted;
+            }else{
+              this.$toast.error("DB Fatal: can not insert DB");
+              return;
+            }
+
+
           }
 
 
@@ -354,7 +367,9 @@
           });
 
           this.configService.checkTomlFile();
+          this.store.commit('user', user[0]);
           this.emitter.emit('app.accountLoggedIn');
+
 
         }catch(e){
           this.$toast.error("Error saving user settings: " + e.message);

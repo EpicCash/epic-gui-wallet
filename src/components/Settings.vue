@@ -56,7 +56,7 @@
              <div class="field">
 
                <div class="control">
-                 <videoPlay width="100%" height="auto" v-bind="playerOptions" ></videoPlay>
+                 <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
                </div>
              </div>
           </div>
@@ -111,6 +111,10 @@ import { videoPlay } from "vue3-video-play";
           control: false,
 
       });
+
+      //dont remove or videoplay throws errors
+      const onPlay = (ev) => {};
+
       return{
         store,
         nodeserverField,
@@ -122,6 +126,7 @@ import { videoPlay } from "vue3-video-play";
         ngrok,
         playerOptions,
         advancedSettings,
+        onPlay
       }
     },
 

@@ -95,6 +95,9 @@ export default {
   methods: {
 
     async login(){
+
+
+
       this.resetFormErrors();
       let isFormAllValid = [];
 
@@ -109,7 +112,7 @@ export default {
         //first check config and setup
         let action = await this.configService.startCheck(this.accountField.defaultValue);
 
-        this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, false);
+        this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
 
 
         if(this.canLogin.success){
@@ -137,6 +140,7 @@ export default {
 
           //load account else wizard
           let user = await this.$userService.getUser(this.accountField.defaultValue);
+          console.log('LOGIN USER:', user);
           if(user.length && action != 'settings'){
             this.store.commit('user', user[0]);
           }else{

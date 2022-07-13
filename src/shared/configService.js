@@ -270,7 +270,7 @@ class ConfigService {
         }else{
           nodeApiHttp = this.config.check_node_api_http_addr;
         }
-        console.log('check here wallet toml and node address', nodeApiHttp);
+        
 
         if(tomlContent.search(re3) != -1){
           tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + nodeApiHttp + '"');

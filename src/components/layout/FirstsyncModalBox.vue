@@ -6,7 +6,7 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">
-          Confirm action
+          Wallet first scan
         </p>
         <button
           type="button"
@@ -15,16 +15,13 @@
         />
       </header>
       <section class="modal-card-body">
-        Your internal node is now synced and can be used by the app.<br/>
-        Restart App now?
+        <p class="is-size-7" v-for="output in outputData" :key="output">{{ output }}</p>
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-danger" @click="cancel">
-          Cancel
-        </button>
-        <button class="button is-success" @click="confirm">
+        <button class="button is-success" @click="cancel">
           Ok
         </button>
+
       </footer>
     </div>
   </div>
@@ -34,10 +31,13 @@
 import { computed } from 'vue'
 
 export default {
-  name: 'NodesyncedModalBox',
+  name: 'FirstsyncModalBox',
   props: {
     isActive: Boolean,
-
+    outputData: {
+      type: Array,
+      default: null
+    }
   },
   emits: ['cancel', 'confirm'],
   setup (props, { emit }) {

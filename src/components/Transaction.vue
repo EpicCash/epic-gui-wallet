@@ -217,10 +217,7 @@
 
 <script>
 
-  const log = window.log;
-
-
-  import { ref, computed } from 'vue';
+  import { ref, computed, onUnmounted } from 'vue';
   import { useStore } from '@/store'
 
 
@@ -333,7 +330,8 @@
           }
 
         }else{
-          log.error('getTxs error:' + txs.error)
+          
+          this.$toast.error(txs.error);
         }
       },
 

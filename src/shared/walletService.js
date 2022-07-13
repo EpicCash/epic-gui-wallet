@@ -71,7 +71,7 @@ class WalletService {
 
       let baseURL = this.configService.config['check_node_api_http_addr'] ? this.configService.config['check_node_api_http_addr'] : this.configService.defaultEpicNode;
       let password = this.configService.ownerApisecret;
-      console.log('###### debug initClient', baseURL);
+    
       return new Promise(function(resolve, reject) {
 
                 let client = axios.create({

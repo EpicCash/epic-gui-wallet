@@ -12,15 +12,22 @@
     <div class="columns">
       <div class="column is-half">
         <nav class="panel">
-          <p class="control">
-            <input class="input" type="text" placeholder="Search">
-          </p>
+          <form v-on:submit.prevent="search" >
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input class="input" type="text" placeholder="Search..." v-model="keyword" >
+              </div>
+              <div class="control">
+                <button v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
+                <button @click.prevent="clearup(false)" v-show="searched" class="button is-primary"><span class="icon"><mdicon name="close-circle-outline" /></span></button>
+              </div>
+            </div>
+          </form>
           <p>&nbsp;</p>
           <template v-for="address in addressList" :key="address.id">
-            <a v-bind:class="{'is-active': toggleActive}" class="panel-block" @click="callAddress(address)">
+            <a class="panel-block" @click="callAddress(address)">
               {{address.name}}
             </a>
-
           </template>
 
           <div class="panel-block is-pulled-right">
@@ -36,8 +43,7 @@
 
           <header class="card-header">
             <p class="card-header-title">
-              <span class="icon"><i class="mdi mdi-account-circle default"></i></span>
-              <span>{{name}}</span>
+              {{name}}
             </p>
           </header>
 
@@ -137,8 +143,7 @@
         <div v-else-if="addressLoaded" class="card tile is-child">
           <header class="card-header">
             <p class="card-header-title">
-              <span class="icon"><i class="mdi mdi-account-circle default"></i></span>
-              <span>{{name}}</span>
+              {{name}}
             </p>
           </header>
 
@@ -166,7 +171,7 @@
           </footer>
 
         </div>
-        <div v-else class="card tile is-child"></div>
+        <div v-else ></div>
 
       </div>
     </div>
@@ -187,6 +192,8 @@ import ModalBox from '@/components/layout/ModalBox.vue'
 export default {
   name: "addressBook",
   components: { ModalBox },
+
+
   setup() {
 
 
@@ -204,7 +211,6 @@ export default {
     const externalTwo = ref('');
     const notice = ref('');
 
-    const toggleActive = ref(false);
     const isEditAddress = ref(false);
     const isNewAddress = ref(false);
 
@@ -213,6 +219,9 @@ export default {
     const addressLoaded = ref(false);
     const isModalActive = ref(false);
     const trashObject = ref(null);
+
+    const keyword = ref("");
+    const searched = ref(false);
 
     const store = useStore();
 
@@ -238,7 +247,9 @@ export default {
       isModalActive,
       trashObject,
       selectedAddress,
-      toggleActive,
+      keyword,
+      searched
+
 
     }
 
@@ -248,8 +259,26 @@ export default {
     this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
   },
 
-  methods: {
 
+  methods: {
+    async search(){
+      this.clearup(true);
+      let keyword = this.keyword;
+      if(keyword != ''){
+        console.log(keyword);
+
+        this.addressList = await this.$addressBookService.findAddress(this.keyword);
+        console.log(this.addressList);
+        this.searched = true;
+      }
+    },
+    clearup(keepKeyword){
+
+      if(!keepKeyword){
+        this.keyword = '';
+      }
+      this.searched = false;
+    },
     trashModalOpen(obj){
 
       this.trashObject = obj
@@ -272,10 +301,7 @@ export default {
     },
     callAddress(addressItem){
 
-      this.toggleActive = this.toggleActive !== true;
-
       this.selectedAddress = addressItem;
-
       this.id = addressItem.id;
       this.name = addressItem.name;
       this.country = addressItem.country;
@@ -288,7 +314,7 @@ export default {
       this.externalTwo = addressItem.externalTwo;
       this.notice = addressItem.notice;
 
-      this.addressLoaded = this.toggleActive;
+      this.addressLoaded = true;
 
     },
     edit(){
@@ -325,7 +351,7 @@ export default {
         let deleted = await this.$addressBookService.removeAddress(id);
         if(deleted){
           this.$toast.error("Address deleted!", {duration:1000});
-          this.addressList = await this.$addressBookService.getAddress();
+          this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
           this.isEditAddress = false;
           this.selectedAddress = {};
           this.isNewAddress = false;
@@ -354,7 +380,7 @@ export default {
 
       });
       if(updated){
-        this.addressList = await this.$addressBookService.getAddress();
+        this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
         this.isEditAddress = false;
       }
 
@@ -378,7 +404,7 @@ export default {
       });
       if(inserted){
 
-        this.addressList = await this.$addressBookService.getAddress();
+        this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
         this.isNewAddress = false;
         this.isEditAddress = false;
       }

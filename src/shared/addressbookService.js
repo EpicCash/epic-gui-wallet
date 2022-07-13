@@ -41,7 +41,34 @@ class AddressbookService extends BaseService {
             where: {
                 name: {
                   like: '%'+ value +'%'
-                }
+                },
+                or: {
+                  country: {
+                    like: '%'+ value +'%'
+                  },
+                  city: {
+                    like: '%'+ value +'%'
+                  },
+                  onion: {
+                    like: '%'+ value +'%'
+                  },
+                  keybase: {
+                    like: '%'+ value +'%'
+                  },
+                  proofaddr: {
+                    like: '%'+ value +'%'
+                  },
+                  externalOne: {
+                    like: '%'+ value +'%'
+                  },
+                  externalTwo: {
+                    like: '%'+ value +'%'
+                  },
+                  notice: {
+                    like: '%'+ value +'%'
+                  }
+                },
+
             }
         })
     }

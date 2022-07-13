@@ -18,7 +18,7 @@ export const dbname = 'Epicwallet';
 const getDatabase = () => {
     const tblAddressbook = {
         name: 'Addressbook',
-        version:2,
+        version:4,
         columns: {
             id: {
                 primaryKey: true,
@@ -30,7 +30,8 @@ const getDatabase = () => {
             },
             name: {
                 notNull: true,
-                dataType: DATA_TYPE.String
+                dataType: DATA_TYPE.String,
+                enableSearch: true,
             },
             gender: {
                 dataType: DATA_TYPE.String,
@@ -38,19 +39,23 @@ const getDatabase = () => {
             },
             country: {
                 notNull: true,
-                dataType: DATA_TYPE.String
+                dataType: DATA_TYPE.String,
+                enableSearch: true,
             },
             city: {
                 dataType: DATA_TYPE.String,
-                notNull: true
+                notNull: true,
+                enableSearch: true,
             },
             onion: {
                 dataType: DATA_TYPE.String,
-                notNull: true
+                notNull: true,
+                enableSearch: true,
             },
             keybase: {
               dataType: DATA_TYPE.String,
-              notNull: true
+              notNull: true,
+              enableSearch: true,
             },
             alwaysproof:{
               dataType: DATA_TYPE.Boolean,
@@ -58,19 +63,23 @@ const getDatabase = () => {
             },
             proofaddr:{
               dataType: DATA_TYPE.String,
-              notNull: true
+              notNull: true,
+              enableSearch: true,
             },
             externalOne:{
               dataType: DATA_TYPE.String,
-              notNull: true
+              notNull: true,
+              enableSearch: true,
             },
             externalTwo:{
               dataType: DATA_TYPE.String,
-              notNull: true
+              notNull: true,
+              enableSearch: true,
             },
             notice:{
               dataType: DATA_TYPE.String,
-              notNull: true
+              notNull: true,
+              enableSearch: true,
             }
         }
     };
@@ -142,7 +151,7 @@ const getDatabase = () => {
     };
     const dataBase = {
         name: dbname,
-        version: 3,
+        version: 4,
         tables: [tblAddressbook, tblAddressTransaction, tblUser],
     };
     return dataBase;

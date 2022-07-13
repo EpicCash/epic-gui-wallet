@@ -23,7 +23,7 @@
       let input = ref('');
       let defaultValue = ref(null);
       let errorName = ref(props.fieldname);
-      console.log(props);
+      
       const { validateTextField, errors } = useFormValidation();
 
       const validInput = (name) => {
