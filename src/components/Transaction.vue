@@ -191,7 +191,7 @@
                     {{ index }}
                   </button>
                   <button v-else-if="index == Math.round(pages_count/2)" v-bind:class="{'is-active': current_page_index > Math.round(maxButtons/2) && current_page_index <= (pages_count-Math.round(maxButtons/2))}" class="button" >
-                  ...
+                  <span class="pager-activepage" v-if="current_page_index > Math.round(maxButtons/2) && current_page_index <= (pages_count-Math.round(maxButtons/2))">{{current_page_index}}</span>...
                   </button>
 
                 </template>

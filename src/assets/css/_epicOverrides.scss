@@ -111,6 +111,13 @@ html{
 /* (C) NO SELECT + HIGHLIGHT COLOR */
 *:not(input):not(textarea){ user-select: none; }
 
+.pager-activepage{
+  display: block;
+  position: absolute;
+  font-size: 16px;
+  top: 1px;
+}
+
 //html
 span.required{
   color:$red;

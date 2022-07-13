@@ -107,7 +107,7 @@ export default {
         this.isLoading = true;
 
         //first check config and setup
-        await this.configService.startCheck(this.accountField.defaultValue);
+        let action = await this.configService.startCheck(this.accountField.defaultValue);
 
         this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, false);
 
@@ -137,7 +137,7 @@ export default {
 
           //load account else wizard
           let user = await this.$userService.getUser(this.accountField.defaultValue);
-          if(user.length){
+          if(user.length && action != 'settings'){
             this.store.commit('user', user[0]);
           }else{
             this.router.push('/setupwizard');

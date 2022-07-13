@@ -12,6 +12,7 @@ class ConfigService {
   constructor(emitter) {
       this.emitter = emitter;
       this.configAccount = '';
+      this.configVersion = "4.0.1";
       //where to find accounts and wallet data
       this.userhomedir = '';
       this.langs = {'en': 'English', 'ru': 'Russian', 'zh': 'Chinese'};
@@ -554,7 +555,7 @@ class ConfigService {
 
   configVersionOk(){
 
-    if(this.config['walletlisten_on_startup'] == undefined || this.config['version'] != '4.0.0'){
+    if(this.config['version'] != this.configVersion){
       this.emitter.emit('checkFail', 'config version to old');
       return false;
     }
@@ -637,10 +638,7 @@ class ConfigService {
         //await delay(sleepTime);
 
 
-        this.config = this.loadConfig(this.configFile);
-        if(!this.configVersionOk()){
-          return 'settings'
-        }
+
 
         //await delay(sleepTime);
 
@@ -688,7 +686,10 @@ class ConfigService {
         }
 
         //make some settings
-
+        this.config = this.loadConfig(this.configFile);
+        if(!this.configVersionOk()){
+          return 'settings'
+        }
         if(this.config['firstTime']){
           this.accountExist(account);
           return 'settings'

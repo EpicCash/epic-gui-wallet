@@ -344,11 +344,12 @@
 
 
           this.configService.updateConfig({
-            version: '4.0.0',
+            version: this.configService.configVersion,
             check_node_api_http_addr: this.nodeserverField.defaultValue,
             locale: this.localeSelected,
             firstTime: false,
-            walletlisten_on_startup: true
+            walletlisten_on_startup: true,
+            nodesynced: false
 
           });
 
