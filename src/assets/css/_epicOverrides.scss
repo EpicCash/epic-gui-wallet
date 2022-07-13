@@ -104,10 +104,19 @@ html{
     .navbar-dropdown .navbar-item:hover{
       color:$epicCashGold
     }
+
+
+    aside.aside .aside-tools{
+      box-shadow: none !important;
+    }
+    //add new styles above
+
+
+
 	}
   //.is-dark-mode-active
 }
-
+//html
 /* (C) NO SELECT + HIGHLIGHT COLOR */
 *:not(input):not(textarea){ user-select: none; }
 
