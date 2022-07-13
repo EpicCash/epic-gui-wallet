@@ -10,7 +10,7 @@ class NodeService {
       this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
       this.sysnStatusStalltime = (60*3); //3 minutes
       this.restartSuccess = true;
-      this.debug = false;
+      this.debug = true;
       //do not restart on this node states
       this.safeSyncStates = [
         'txhashset_download',
@@ -134,6 +134,11 @@ class NodeService {
 
             if(response.sync_info && response.sync_info.highest_height == 0 && response.sync_status !== 'awaiting_peers'){
               this.debug ? console.log('node has no highest_height', response.sync_info.highest_height) : null;
+              restart = true;
+            }
+            // body_sync has latest block height but do not switch to no_sync
+            if(response.sync_status === 'body_sync' && response.tip.height == response.sync_info.current_height && response.sync_info.highest_height == response.sync_info.current_height){
+              this.debug ? console.log('node does not switch to no_sync', response) : null;
               restart = true;
             }
 

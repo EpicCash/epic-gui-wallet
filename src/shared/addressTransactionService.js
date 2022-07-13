@@ -23,7 +23,7 @@ class AddressTransactions extends BaseService {
             join: {
                 with: "Addressbook",
                 on: "AddressTransactions.address=Addressbook.id",
-                type:"inner",
+                type:"left",
                 as: {
                     id: "addressbook_id",
                     user_id: "addressbook_userid",

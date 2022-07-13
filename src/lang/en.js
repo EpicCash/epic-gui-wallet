@@ -14,7 +14,7 @@ const messages = {
     jump: 'Jump',
     error: 'Please correct the following error(s):',
     confirmed: 'Confirmed',
-    unconfirmed: 'Unconfirmed',
+    unconfirmed: 'Awaiting confirmation',
     locked: 'Locked',
 
     send: 'Send',
@@ -107,7 +107,7 @@ const messages = {
     info: {
       spendable: 'Spendable',
       total: 'Balance',
-      unfinalization: 'Unfinalized',
+      unfinalization: 'Unconfirmed',
       immature: 'Immature'
     },
 

@@ -346,7 +346,6 @@
           let summary = await this.$walletService.getSummaryInfo(10);
           if(summary && summary.result && summary.result.Ok){
             let data = summary.result.Ok
-
             this.store.commit('summary', {
               spendable: data[1]['amount_currently_spendable']/100000000,
               total: data[1]['total']/100000000,

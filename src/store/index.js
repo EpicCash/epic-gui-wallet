@@ -296,8 +296,18 @@ export const store = createStore({
 
     processCommits({ commit, state }, cts){
 
+      let currentHeight = state.nodeStatus.tip ? state.nodeStatus.tip.height : 0;
+
       let cts_processed = cts.map(function(ct){
         let c = ct['output']
+
+
+        if(currentHeight > 0 && c.status == "Unspent" && (Number(c.height)+10) > currentHeight){
+          console.log('status to unspent', c);
+          c.status = 'toUnspent';
+          c.confirmed_count = currentHeight-Number(c.height);
+        }
+
         return c
       })
 

@@ -82,7 +82,7 @@
                       <td>
                         <span v-if="ct.status=='Unspent'" class="tag is-success is-normal">{{ $t("msg.commit.unspent") }}</span>
                         <span v-if="ct.status=='toUnspent'" class="tag is-warning is-normal">({{ct.confirmed_count+'/10'}}) {{ $t("msg.unconfirmed") }} </span>
-                        <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.unconfirmed") }}</span>
+                        <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.info.unfinalization") }}</span>
                         <span v-if="ct.status=='Locked'" class="tag is-danger is-normal">{{ $t("msg.locked") }}</span>
                         <span v-if="ct.status=='Spent'" class="tag is-warning is-normal">{{ $t("msg.commit.spent") }}</span>
                       </td>

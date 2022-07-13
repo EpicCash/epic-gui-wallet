@@ -259,7 +259,7 @@ export default {
                 user_id: this.store.state.user.id,
                 slateid: result.id,
                 type: 'file',
-                address: this.address ? this.address.id : 0
+                address: this.address ? this.address.id : null
 
               });
 
@@ -337,7 +337,7 @@ export default {
               user_id: this.store.state.user.id,
               slateid: tx_id,
               type: 'direct',
-              address: this.address ? this.address.id : 0
+              address: this.address ? this.address.id : null
 
             });
 

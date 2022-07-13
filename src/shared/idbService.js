@@ -76,7 +76,7 @@ const getDatabase = () => {
     };
     const tblAddressTransaction = {
         name: 'AddressTransactions',
-        version: 2,
+        version: 3,
         columns: {
             id: {
                 primaryKey: true,
@@ -95,7 +95,7 @@ const getDatabase = () => {
                 dataType: DATA_TYPE.String
             },
             address: {
-                notNull: true,
+                notNull: false,
                 dataType: DATA_TYPE.Number
             },
 
@@ -142,7 +142,7 @@ const getDatabase = () => {
     };
     const dataBase = {
         name: dbname,
-        version:2,
+        version: 3,
         tables: [tblAddressbook, tblAddressTransaction, tblUser],
     };
     return dataBase;
