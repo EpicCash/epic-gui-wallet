@@ -105,7 +105,11 @@
                       </h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          Here text for node server
+                          Your wallet requires a network node to send and receive transactions.<br/>
+                          You can choose the built-in wallet node server or an external node server.<br/>
+                          <br/>
+                          If you are not sure what todo now, then leave the settings as it is.<br/>
+
                         </div>
                       </article>
                       <NodeserverField ref="nodeserverField" />
@@ -124,7 +128,15 @@
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Receiving transactions</h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          Here text for node server
+                          To receive transactions from other wallets, your wallet must be accessible over the internet.<br/>
+                          To make this process easy, we integrated a service called ngrok. <br/>
+                          With ngrok activated, your wallet is accessible via a temporary ngrok address.<br/>
+                          <br/>
+                          If you are not familar with Router-Settings and Port forwarding then<br/>
+                          it's recommendet to use the ngrok service.<br/>
+                          <br/>
+                          Please create a new account on ngrok.com to get your auth token.<br/>
+                          Leave field blank if you don't want to use ngrok service.<br/>
                         </div>
                       </article>
                       <div class="field">
@@ -238,7 +250,7 @@
           loop: true,
           src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
           control: false,
-          
+
 
       });
 
