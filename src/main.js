@@ -13,7 +13,7 @@ import addressTransactionsService from './shared/addressTransactionService.js';
 import {words} from './shared/words.js';
 import App from './App.vue'
 import mitt from 'mitt';
-import moment from 'moment'
+import moment from 'moment';
 import Toaster from "@meforma/vue-toaster";
 
 
@@ -28,6 +28,16 @@ import en from './lang/en';
 import zh from './lang/zh';
 import ru from './lang/ru';
 
+moment.updateLocale('en', {
+    longDateFormat : {
+        L: "YYYY-MM-DD, HH:mm:ss",
+    }
+});
+moment.updateLocale('de', {
+    longDateFormat : {
+        L: "DD.MM.YYYY, HH:mm:ss",
+    }
+});
 
 const messages = {
   en,
@@ -51,21 +61,37 @@ app.use(router);
 app.use(Toaster);
 
 
+
 let config = new configService(emitter);
+
+app.config.globalProperties.emitter = emitter;
 app.config.globalProperties.$walletService = new walletService(emitter, config);
 app.config.globalProperties.$nodeService = new nodeService(emitter, config);
 app.config.globalProperties.$ngrokService = new ngrokService(emitter, config);
-
 app.config.globalProperties.$userService =  new userService();
 app.config.globalProperties.$addressBookService =  new addressbookService();
 app.config.globalProperties.$addressTransactionsService =  new addressTransactionsService();
 app.config.globalProperties.configService = config;
 app.config.globalProperties.mnemonicWords = words;
+
 app.config.globalProperties.$filters = {
-  datetimeFormat(date) {
+
+  currencyFormat(number, locale){
+
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: 'USD',
+      currencyDisplay: "code"
+    })
+    .format(number)
+    .replace("USD", "")
+    .trim()
+  },
+  datetimeFormat(date, locale) {
 
      if(date != undefined){
-       let formatDatetime = moment(date).format('YYYY-MM-DD, HH:mm:ss');
+       moment.locale(locale ? locale : 'en');
+       let formatDatetime = moment(date).format('L');
        return formatDatetime
      }else{
        return '-'
@@ -101,5 +127,5 @@ app.config.globalProperties.$filters = {
   }
 
 }
-app.config.globalProperties.emitter = emitter;
+
 app.mount('#app');

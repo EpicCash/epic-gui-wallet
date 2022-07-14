@@ -3,7 +3,7 @@
     <label class="label">Node Server<span class="required">*</span></label>
     <div class="control">
 
-      <div class="select" >
+      <div class="select is-fullwidth" >
         <select v-model="select" required>
           <option value="internal">Built-in node server</option>
           <option value="external">External node server</option>

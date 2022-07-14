@@ -9,10 +9,7 @@
 
             <div class="field has-addons">
               <div class="control is-expanded">
-
                 <AddressField @keyup="keyEvent" ref="addressField" />
-
-
               </div>
               <div class="control">
                   <router-link class="button has-icon" to="/addressBook">
@@ -21,34 +18,25 @@
 
               </div>
             </div>
-            <div class="field">
-              <div class="control">
-                  <input class="switch is-success" id="sendProofSwitch" type="checkbox" v-model="withproof" @click="addProof">
-                  <label for="sendProofSwitch">send proof</label>
-                <div v-show="withproof">
-                  <ProofAddressField ref="proofAddressField" />
-                </div>
-              </div>
-            </div>
 
-            <div v-if="foundAddress.length" class="control is-expanded" style="margin-top:-1.5rem">
-              <div class="dropdown is-expanded" v-bind:class="{'is-active': foundAddress.length}">
+            <div v-if="foundAddress.length" class="control is-expanded addresssearch" style="margin-top:-1.2rem">
+              <div class="dropdown" v-bind:class="{'is-active': foundAddress.length}">
                 <div class="dropdown-trigger"></div>
                 <div className="dropdown-menu" id="dropdown-menu" role="menu">
                   <div v-for="address in foundAddress" :key="address.id" class="dropdown-content">
 
-                    <a v-if="address.onion" @click="fillAddressField(address, 'onion')"  href="#" class="dropdown-item" data-address-id="{{address.id}}">
+                    <a v-if="address.onion" @click="fillAddressField(address, 'onion')" class="dropdown-item" data-address-id="{{address.id}}">
                       {{ address.name }} - TOR <span class="paste-address">{{ address.onion }}</span>
                     </a>
-                    <a v-if="address.keybase" @click="fillAddressField(address, 'keybase')" href="#" class="dropdown-item" data-address-id="{{address.id}}">
+                    <a v-if="address.keybase" @click="fillAddressField(address, 'keybase')" class="dropdown-item" data-address-id="{{address.id}}">
                       {{ address.name }} - KEYBASE <span class="paste-address">{{ address.keybase }}</span>
                     </a>
 
-                    <a v-if="address.externalOne" @click="fillAddressField(address, 'externalOne')" href="#" class="dropdown-item" data-address-id="{{address.id}}">
+                    <a v-if="address.externalOne" @click="fillAddressField(address, 'externalOne')" class="dropdown-item" data-address-id="{{address.id}}">
                       {{ address.name }} - HTTP <span class="paste-address">{{ address.externalOne }}</span>
                     </a>
 
-                    <a v-if="address.externalTwo" @click="fillAddressField(address, 'externalTwo')" href="#" class="dropdown-item" data-address-id="{{address.id}}">
+                    <a v-if="address.externalTwo" @click="fillAddressField(address, 'externalTwo')" class="dropdown-item" data-address-id="{{address.id}}">
                       {{ address.name }} - HTTP <span class="paste-address">{{ address.externalTwo }}</span>
                     </a>
 
@@ -59,7 +47,17 @@
 
             <div class="field">
               <div class="control">
-                <textarea class="textarea" v-model="message" placeholder="Message (max. 256 chars)" ></textarea>
+                  <input class="switch is-success" id="sendProofSwitch" type="checkbox" v-model="withproof" @click="addProof">
+                  <label for="sendProofSwitch">send proof</label>
+                <div v-show="withproof">
+                  <ProofAddressField ref="proofAddressField" />
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <textarea maxlength="256" class="textarea" v-model="message" placeholder="Message (max. 256 chars)" ></textarea>
               </div>
             </div>
 
@@ -201,7 +199,10 @@ export default {
       if(!this.addressSelected){
 
         if(value != ''){
+
           this.foundAddress = await this.$addressBookService.findAddress(value);
+        }else{
+          this.foundAddress = [];
         }
       }
     },

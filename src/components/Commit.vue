@@ -184,6 +184,7 @@
       const current_page_index = ref(1);
       const searched = ref(false);
       const keyword =  ref("");
+      const locale = ref('en');
 
 
       return{
@@ -196,7 +197,8 @@
         pages_count,
         current_page_index,
         searched,
-        keyword
+        keyword,
+        locale
       }
     },
     watch: {
@@ -221,21 +223,15 @@
       }
 
     },
+    async created(){
+      this.locale = await window.api.locale();
+    },
     data() {
       return {
         current_commits: [],
         showCopy: -1,
         copied: -1,
       }
-    },
-
-    created () {
-
-      this.emitter.on('logoutCommits', ()=>{
-          this.current_commits = [];
-          this.total_commits = [];
-          this.clearup();
-      });
     },
 
     methods: {

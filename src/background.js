@@ -43,14 +43,6 @@ async function createWindow() {
     }
   });
 
-  //add css theme class to html tag
-  /*win.webContents.on('dom-ready', () => {
-    win.webContents.executeJavaScript(`
-      var root = document.getElementsByTagName('html')[0];
-      root.setAttribute( 'class', 'has-aside-left has-aside-mobile-transition has-navbar-fixed-top is-dark-mode-active has-aside-expanded' );
-    `);
-  });*/
-
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -228,6 +220,9 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+
+  let currentLocale = app.getLocale();
+  console.log('currentLocale',currentLocale);
   createWindow()
 })
 
@@ -271,10 +266,15 @@ ipcMain.handle('quit', () => {
   app.quit()
 });
 
+ipcMain.handle('locale', async() => {
+  return await app.getLocale();
+});
+
 ipcMain.handle('resize', (event, width, height) => {
   let browserWindow = BrowserWindow.fromWebContents(event.sender)
   browserWindow.setSize(width,height);
 });
+
 
 ipcMain.on('scan-stdout', (event, data) => {
   event.reply('scan-stdout', { data });

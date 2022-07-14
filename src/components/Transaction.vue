@@ -49,7 +49,7 @@
               <tr class="th">
                 <th>#</th>
                 <th>Transaction ID</th>
-                <th>Creation date</th>
+                <th style="min-width:180px;">Creation date</th>
                 <th>Receiver</th>
                 <th>Payment proof</th>
                 <th>Amount (fee)</th>
@@ -70,7 +70,7 @@
 
                 </td>
                 <td><span :title="tx.tx_slate_id ? tx.tx_slate_id: ''">{{ $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</span></td>
-                <td>{{ $filters.datetimeFormat(tx.creation_ts) }}</td>
+                <td>{{ $filters.datetimeFormat(tx.creation_ts, locale) }}</td>
                 <td><span v-bind:class="{'is-hidden': store.state.hideValues }">{{ tx.address ? tx.address.name : null }}</span></td>
                 <td>{{ $filters.truncateMid($filters.paymentProof(tx.payment_proof, 'receiver_address'), 19) }}</td>
                 <td>
@@ -121,8 +121,8 @@
                       <td class="tx-details">
                         <span class="has-text-weight-bold">ID:</span> {{tx.id}}<br/>
                         <span class="has-text-weight-bold">Slate ID:</span> {{tx.tx_slate_id}}<br/>
-                        <span class="has-text-weight-bold">Creation date:</span> {{$filters.datetimeFormat(tx.creation_ts)}}<br/>
-                        <span class="has-text-weight-bold">Confirmation date:</span> {{$filters.datetimeFormat(tx.confirmation_ts)}}<br/>
+                        <span class="has-text-weight-bold">Creation date:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>
+                        <span class="has-text-weight-bold">Confirmation date:</span> {{$filters.datetimeFormat(tx.confirmation_ts, locale)}}<br/>
                         <span class="has-text-weight-bold">Amount credited:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
                         <span class="has-text-weight-bold">Amount debited:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_debited/100000000}}</span><br/>
                         <span class="has-text-weight-bold">Fee:</span> {{tx.fee/100000000}}<br/>
@@ -244,7 +244,7 @@
       const detailToggle = ref(false);
       const txDetail = ref(0);
       const isRefresh = ref(false);
-
+      const locale = ref('en');
 
       return{
         store,
@@ -259,7 +259,8 @@
         detailToggle,
         txDetail,
         isRefresh,
-        count_per_page
+        count_per_page,
+        locale
       }
     },
     watch: {
@@ -290,7 +291,9 @@
       }
 
     },
-
+    async created(){
+      this.locale = await window.api.locale();
+    },
     methods: {
       copy(text){
         window.clipboard.writeText(text);
@@ -330,7 +333,7 @@
           }
 
         }else{
-          
+
           this.$toast.error(txs.error);
         }
       },

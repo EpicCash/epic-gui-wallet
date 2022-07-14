@@ -82,7 +82,7 @@
         @click.prevent="updatesToggle"
         :class="{'is-active':isAsideRightActive}"
       >
-        <span :class="{'has-update-mark':hasUpdates}" class="icon"><mdicon class="icon" name="bell" /></span>
+        <span :class="{'has-update-mark':hasUpdates}" class="icon"><mdicon :class="{'animated':hasUpdates}" class="icon faa-ring " name="bell" /></span>
         <span>Updates</span>
       </a>
 

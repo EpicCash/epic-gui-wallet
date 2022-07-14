@@ -8,12 +8,12 @@
           <div>
 
 
-        <NodeserverField ref="nodeserverField" />
+        <NodeserverField ref="nodeserverField" class="is-fullwidth" />
 
         <div class="field">
           <label class="label">{{ $t("msg.lang.lang") }}</label>
           <div class="control">
-            <div class="select">
+            <div class="select is-fullwidth">
               <select v-model="localeSelected">
                 <option v-for="(lang, value) in langs" :value="value" :key="lang.id" >{{lang}}</option>
               </select>

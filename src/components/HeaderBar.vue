@@ -28,7 +28,7 @@
                       <mdicon size=20 v-if="!store.state.hideValues" name="eye-outline" />
                       <mdicon size=20 v-else name="eye-off-outline" />
                     </span>
-                    {{ $t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{store.state.summary.total}} EPIC</span>&nbsp;<span v-bind:class="{'is-hidden': store.state.hideValues }" class="is-size-7">&#x2248; ${{ usdPrice }}</span>
+                    {{ $t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{ $filters.currencyFormat(store.state.summary.total, locale) }} EPIC</span>&nbsp;<span v-bind:class="{'is-hidden': store.state.hideValues }" class="is-size-7">&#x2248; ${{ $filters.currencyFormat(usdPrice, locale) }}</span>
 
                   </h3>
 
@@ -96,7 +96,7 @@ export default {
     const height = computed(() =>   store.state.nodeStatus.tip.height ? store.state.nodeStatus.tip.height : 0);
     const loaded = computed(() => store.state.nodeStatus.sync_info.current_height > 0 && store.state.nodeStatus.sync_info.highest_height > 0 ? parseFloat(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100).toFixed(2) : 0);
     const usdPrice = ref(0);
-
+    const locale = ref('en');
     return{
         store,
         route,
@@ -106,10 +106,14 @@ export default {
         highestHeight,
         height,
         loaded,
-        usdPrice
+        usdPrice,
+        locale
     }
   },
+  async created(){
+    this.locale = await window.api.locale();
 
+  },
   methods:{
     async hideValues(){
       this.store.commit('hideValues');

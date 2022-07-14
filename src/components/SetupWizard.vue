@@ -82,7 +82,7 @@
                         <div class="field">
                           <label class="label">{{ $t("msg.lang.lang") }}</label>
                           <div class="control">
-                            <div class="select">
+                            <div class="select is-fullwidth">
                               <select v-model="localeSelected">
                                 <option v-for="(lang, locale) in langs" :value="locale" :key="lang.id">{{lang}}</option>
                               </select>
@@ -112,8 +112,8 @@
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
-                          <button class="button is-primary" @click="nextStep('step3')" >Next step<mdicon name="arrow-right-circle-outline" /></button>
+                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />&nbsp;Previous step</button>
+                          <button class="button is-primary" @click="nextStep('step3')" >Next step&nbsp;<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
 
                     </div><!-- end step 2 -->
@@ -156,8 +156,8 @@
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
-                        <button class="button is-primary" @click="nextStep('step4')" >Next step<mdicon name="arrow-right-circle-outline" /></button>
+                        <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />&nbsp;Previous step</button>
+                        <button class="button is-primary" @click="nextStep('step4')" >&nbsp;Next step<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
 
                     </div><!-- end step 3 -->
@@ -175,7 +175,7 @@
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />Previous step</button>
+                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />&nbsp;Previous step</button>
                         <button class="button is-primary" @click="save" >Save and finish</button>
                       </div>
 
@@ -238,7 +238,7 @@
           loop: true,
           src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
           control: false,
-          play:true,
+          
 
       });
 
