@@ -554,7 +554,7 @@ class ConfigService {
     return tomlName;
 
   }
-  async startCheckNode(){
+  startCheckNode(){
 
       this.nodeTOMLPath = this.checkServerTomlFile();
       if(!this.nodeTOMLPath){

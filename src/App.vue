@@ -82,7 +82,7 @@
 
 
     created() {
-      
+
       window.nodeChildProcess.on('firstscan-stdout', (payload) => {
 
         let lines = payload.data.split("\n");
