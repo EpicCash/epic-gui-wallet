@@ -111,7 +111,7 @@ class NodeService {
     let password = this.configService.apisecret;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     let response = await fetch(baseURL +'/v1/status', {
       method:'GET',

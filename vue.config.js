@@ -11,7 +11,7 @@ module.exports = {
       preload: 'src/preload.js',
       builderOptions: {
 
-        "productName": "EpicWallet-4.0.0-alpha",
+        "productName": "EpicWallet-4.0.0-beta",
         "appId": "epic.tech",
         "directories": {
           "output": "build"
@@ -95,7 +95,7 @@ module.exports = {
         "linux": {
           "category": "Utility",
           "executableName": "EpicWallet-4.0.0-beta",
-          "artifactName": "${productName}-${version}.${ext}",
+          "artifactName": "${productName}.${ext}",
           "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": [
             "deb",
