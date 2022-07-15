@@ -58,6 +58,13 @@ module.exports = {
                 "**/*"
               ]
             }
+            {
+              "from": "resources/foundation.json",
+              "to": "Resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            }
           ]
         },
         "win": {
@@ -82,6 +89,13 @@ module.exports = {
             {
               "from": "resources/default.config.json",
               "to": "Resources/default.config.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/foundation.json",
+              "to": "Resources/foundation.json",
               "filter": [
                 "**/*"
               ]
@@ -119,6 +133,13 @@ module.exports = {
             {
               "from": "resources/default.config.json",
               "to": "resources/default.config.json",
+              "filter": [
+                "**/*"
+              ]
+            }
+            {
+              "from": "resources/foundation.json",
+              "to": "resources/foundation.json",
               "filter": [
                 "**/*"
               ]
