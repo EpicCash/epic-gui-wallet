@@ -23,6 +23,7 @@ class WalletService {
         this.walletIsListen = false;
         this.shared_key;
         this.token;
+        this.debug = true;
     }
 
     logoutClient(){
@@ -71,7 +72,7 @@ class WalletService {
 
       let baseURL = this.configService.config['check_node_api_http_addr'] ? this.configService.config['check_node_api_http_addr'] : this.configService.defaultEpicNode;
       let password = this.configService.ownerApisecret;
-    
+
       return new Promise(function(resolve, reject) {
 
                 let client = axios.create({
@@ -301,11 +302,21 @@ class WalletService {
     /* start a epic wallet in owner_api mode */
     async start(password, emitOutput){
 
+        let pWalletList = [];
+        let walletProcess = [];
         this.client = undefined;
         this.shared_key = undefined;
-        this.walletProcess = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
 
-        if(!this.walletProcess.length){
+        pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
+        for(let process of pWalletList) {
+          if(process.name.includes('epic-wallet')){
+            walletProcess.push(process);
+          }
+        }
+
+
+
+        if(!walletProcess.length){
 
           let args = [
             ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
@@ -346,11 +357,19 @@ class WalletService {
     /* start a epic wallet in listen mode */
     async startListen(password, tor, method){
 
+
         let args = [];
         let torBooted = false;
-        this.walletIsListen = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
+        let walletIsListen = [];
+        let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
 
-        if(!this.walletIsListen.length){
+        for(let process of pWalletList) {
+          if(process.name.includes('epic-wallet')){
+            walletIsListen.push(process);
+          }
+        }
+
+        if(!walletIsListen.length){
 
 
           let walletListenId = 0;
@@ -382,8 +401,17 @@ class WalletService {
     }
 
     async isListen(){
-      this.walletIsListen = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
-      if(!this.walletIsListen.length){
+
+      let walletIsListen = [];
+      let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
+
+      for(let process of pWalletList) {
+        if(process.name.includes('epic-wallet')){
+          walletIsListen.push(process);
+        }
+      }
+
+      if(!walletIsListen.length){
         return false;
       }else{
         return true;
@@ -392,36 +420,53 @@ class WalletService {
 
     async stopListen(){
 
+
+      let killPids = [];
       let killPromise = [];
       let killProcess = false;
+
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
 
-      if(pWalletList.length){
+      for(let process of pWalletList) {
+        if(process.name.includes('epic-wallet')){
+          killPids.push(process);
+        }
+      }
 
-        for(let process of pWalletList) {
+      if(killPids.length){
+
+        for(let process of killPids) {
+          this.debug ? console.log('stopListen kill', process) : null;
           killPromise.push(window.nodeChildProcess.kill(process.pid))
         }
         await Promise.all(killPromise);
       }
 
-      console.log('wallet listener stopped');
+      this.debug ? console.log('wallet listener stopped') : null;
       return true;
     }
 
     async stopWallet(){
 
+      let killPids = [];
       let killPromise = [];
       let killProcess = false;
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
 
-      if(pWalletList.length){
+      for(let process of pWalletList) {
+        if(process.name.includes('epic-wallet')){
+          killPids.push(process);
+        }
+      }
 
-        for(let process of pWalletList) {
+      if(killPids.length){
+
+        for(let process of killPids) {
+          this.debug ? console.log('stopWallet kill', process) : null;
           killPromise.push(window.nodeChildProcess.kill(process.pid))
         }
         await Promise.all(killPromise);
       }
-
 
       return true;
     }
@@ -476,10 +521,22 @@ class WalletService {
     }
 
     async stopCheck(){
+
+        let killPids = [];
         let killPromise = [];
         let walletCheckProcessList = await window.nodeFindProcess('name', /.*?epic-wallet.*(scan)/);
+
         for(let process of walletCheckProcessList) {
-          killPromise.push(window.nodeChildProcess.kill(process.pid))
+          if(process.name.includes('epic-wallet')){
+            killPids.push(process);
+          }
+        }
+
+        if(killPids.length){
+          for(let process of killPids) {
+            this.debug ? console.log('stopCheck kill', process) : null;
+            killPromise.push(window.nodeChildProcess.kill(process.pid))
+          }
         }
 
         await Promise.all(killPromise);

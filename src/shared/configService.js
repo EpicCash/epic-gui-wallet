@@ -270,7 +270,7 @@ class ConfigService {
         }else{
           nodeApiHttp = this.config.check_node_api_http_addr;
         }
-        
+
 
         if(tomlContent.search(re3) != -1){
           tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + nodeApiHttp + '"');
@@ -341,11 +341,26 @@ class ConfigService {
 
     let killPromise = [];
     let killProcess = false;
+    let killPids = [];
 
     let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
     let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
 
-    if(pWalletList.length || pEpicnodeList.length){
+    console.log(pWalletList);
+    console.log(pEpicnodeList);
+
+    for(let process of pWalletList) {
+      if(process.name.includes('epic-wallet')){
+        killPids.push(process);
+      }
+    }
+    for(let process of pEpicnodeList) {
+      if(process.name.includes('epic')){
+        killPids.push(process);
+      }
+    }
+
+    if(killPids.length){
       await this.emitter.emit('killEpicProcess', async function(confirmed){
         if(!confirmed){
           return false;
@@ -355,12 +370,8 @@ class ConfigService {
     }
 
     if(killProcess){
-
-      for(let process of pWalletList) {
-        killPromise.push(nodeChildProcess.kill(process.pid))
-      }
-
-      for(let process of pEpicnodeList) {
+      for(let process of killPids) {
+        console.log('configService kill', process);
         killPromise.push(nodeChildProcess.kill(process.pid))
       }
       await Promise.all(killPromise);

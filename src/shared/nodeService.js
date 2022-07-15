@@ -28,10 +28,19 @@ class NodeService {
       this.restartSuccess = false;
       let killPromise = [];
       let killProcess = false;
-      let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
-      if(pEpicnodeList.length){
+      let killPids = [];
 
-        for(let process of pEpicnodeList) {
+      let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+      for(let process of pEpicnodeList) {
+        if(process.name.includes('epic')){
+          killPids.push(process);
+        }
+      }
+
+      if(killPids.length){
+
+        for(let process of killPids) {
+          this.debug ? console.log('nodeService kill', process) : null;
           killPromise.push(window.nodeChildProcess.kill(process.pid))
         }
         await Promise.all(killPromise);
@@ -46,10 +55,17 @@ class NodeService {
 
       let killPromise = [];
       let killProcess = false;
+      let killPids = [];
       let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
-      if(pEpicnodeList.length){
+      for(let process of pEpicnodeList) {
+        if(process.name.includes('epic')){
+          killPids.push(process);
+        }
+      }
+      if(killPids.length){
 
-        for(let process of pEpicnodeList) {
+        for(let process of killPids) {
+          this.debug ? console.log('nodeService kill', process) : null;
           killPromise.push(window.nodeChildProcess.kill(process.pid))
         }
         await Promise.all(killPromise);
@@ -61,9 +77,15 @@ class NodeService {
 
   async internalNodeStart(){
 
-    this.internalNodeProcess = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+    let internalNodeProcess = [];
+    let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+    for(let process of pEpicnodeList) {
+      if(process.name.includes('epic')){
+        internalNodeProcess.push(process);
+      }
+    }
 
-    if(!this.internalNodeProcess.length){
+    if(!internalNodeProcess.length){
       let args = [
         ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
         ...(this.configService.nodeTOMLPath != '' ? ['server', '--config_file', this.configService.nodeTOMLPath, 'run'] : ['server', 'run']),

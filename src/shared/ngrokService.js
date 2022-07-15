@@ -44,12 +44,19 @@ class NgrokService {
     this.tunnels = {};
     let killPromise = [];
     let killProcess = false;
+    let killPids = [];
 
     let pNgrokList = await window.nodeFindProcess('name', /.*?ngrok.*(start)/);
+    for(let process of pNgrokList) {
+      if(process.name.includes('ngrok')){
+        killPids.push(process);
+      }
+    }
 
-    if(pNgrokList.length){
+    if(killPids.length){
 
-      for(let process of pNgrokList) {
+      for(let process of killPids) {
+        this.debug ? console.log('ngrokService kill', process) : null;
         killPromise.push(nodeChildProcess.kill(process.pid))
       }
 
@@ -71,12 +78,19 @@ class NgrokService {
     //we need to stop ngrok every time after we call the apisecret
     let killPromise = [];
     let killProcess = false;
+    let killPids = [];
 
     let pNgrokList = await window.nodeFindProcess('name', /.*?ngrok.*(start)/);
+    for(let process of pNgrokList) {
+      if(process.name.includes('ngrok')){
+        killPids.push(process);
+      }
+    }
 
-    if(pNgrokList.length){
+    if(killPids.length){
 
-      for(let process of pNgrokList) {
+      for(let process of killPids) {
+        this.debug ? console.log('ngrokService kill', process) : null;
         killPromise.push(nodeChildProcess.kill(process.pid))
       }
 
