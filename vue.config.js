@@ -34,6 +34,7 @@ module.exports = {
         },
         "mac": {
           "icon": "public/favicon_io/android-chrome-512x512.png",
+          "artifactName": "${productName}.${ext}",
           "target": "pkg",
           "extraFiles": [
             {
@@ -61,6 +62,13 @@ module.exports = {
             {
               "from": "resources/foundation.json",
               "to": "Resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/epic-server.toml",
+              "to": "Resources/epic-server.toml",
               "filter": [
                 "**/*"
               ]
@@ -96,6 +104,13 @@ module.exports = {
             {
               "from": "resources/foundation.json",
               "to": "Resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/epic-server.toml",
+              "to": "Resources/epic-server.toml",
               "filter": [
                 "**/*"
               ]
@@ -140,6 +155,13 @@ module.exports = {
             {
               "from": "resources/foundation.json",
               "to": "resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/epic-server.toml",
+              "to": "resources/epic-server.toml",
               "filter": [
                 "**/*"
               ]
