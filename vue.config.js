@@ -11,21 +11,11 @@ module.exports = {
       preload: 'src/preload.js',
       builderOptions: {
 
-        "productName": "EpicWallet",
+        "productName": "EpicWallet-4.0.0-alpha",
         "appId": "epic.tech",
         "directories": {
           "output": "build"
         },
-        "extraFiles": [
-          {
-            "from": "hedwig",
-            "to": "resources/bin/hedwig",
-            "filter": [
-              "**/*",
-              "!test.js"
-            ]
-          }
-        ],
 
         "dmg": {
           "contents": [
@@ -53,16 +43,7 @@ module.exports = {
                 "**/*"
               ]
             },
-            {
-              "from": "epicRs",
-              "to": "resources/bin/epicRs",
-              "filter": [
-                "**/*",
-                "!native",
-                "!test.js",
-                "!node.exe"
-              ]
-            },
+
             {
               "from": "resources/default.app.json",
               "to": "Resources/default.app.json",
@@ -90,15 +71,7 @@ module.exports = {
                 "**/*"
               ]
             },
-            {
-              "from": "epicRs",
-              "to": "resources/bin/epicRs",
-              "filter": [
-                "**/*",
-                "!native",
-                "!test.js"
-              ]
-            },
+
             {
               "from": "resources/default.app.json",
               "to": "Resources/default.app.json",
@@ -120,6 +93,9 @@ module.exports = {
           "allowToChangeInstallationDirectory": true
         },
         "linux": {
+          "category": "Utility",
+          "executableName": "EpicWallet-4.0.0-beta",
+          "artifactName": "${productName}-${version}.${ext}",
           "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": [
             "deb",

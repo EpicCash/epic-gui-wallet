@@ -247,6 +247,38 @@ app.on('window-all-closed', async() => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
+    
+    let killPromise = [];
+    let killProcess = false;
+    let killPids = [];
+
+    let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+    let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+    let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+    for(let process of pWalletList) {
+      if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
+        killPids.push(process);
+      }
+    }
+    for(let process of pEpicnodeList) {
+      if(process.cmd.includes('server')){
+        killPids.push(process);
+      }
+    }
+    for(let process of pNgrokList) {
+      if(process.cmd.includes('ngrok')){
+        killPids.push(process);
+      }
+    }
+    if(killPids.length){
+      for(let process of killPids) {
+
+        killPromise.push(kill(process.pid))
+      }
+      await Promise.all(killPromise);
+    }
+
+
     app.quit()
   }
 
