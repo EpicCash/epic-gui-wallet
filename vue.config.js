@@ -57,7 +57,7 @@ module.exports = {
               "filter": [
                 "**/*"
               ]
-            }
+            },
             {
               "from": "resources/foundation.json",
               "to": "Resources/foundation.json",
@@ -136,7 +136,7 @@ module.exports = {
               "filter": [
                 "**/*"
               ]
-            }
+            },
             {
               "from": "resources/foundation.json",
               "to": "resources/foundation.json",
@@ -146,7 +146,7 @@ module.exports = {
             }
           ],
           "desktop": {
-            "Name": "Epic-Wallet",
+            "Name": "Epic-Wallet 4.0.0-beta",
             "Encoding": "UTF-8",
             "Type": "Application",
             "Comment": "Epic Wallet, mind your Epic!",
