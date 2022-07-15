@@ -45,7 +45,7 @@
                     <div class="field">
                         <label class="label">{{ $t('msg.account') }}<span class="required">*</span></label>
                         <div class="control">
-                          <AccountField ref="accountField" required="true" />
+                          <AccountField ref="accountField" required="true" placeholder="default" />
                           <p class="help">Only lower case letters from a-z, <!----></p>
                         </div>
                     </div>

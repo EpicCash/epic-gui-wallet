@@ -20,17 +20,19 @@
           </div>
           <div class="message-body is-hidden" id="accordion-1"  >
             <div class="message-body-content" data-toggle="accordion-1">
-              <p>The send command is the first step of building an interactive transaction.<br/>
-              The transaction can either be an instant synchronous exchange through Tor, ngrok,
-              or it can be an asynchronous process, in which each step is done manually by exchanging
-              in file format.<br/>
-              <br/>
-              If you want to start a new transaction, then make sure that your
-              Node Server is fully synced to the epic network. The status of your node server should be displayed as "synced".<br/>
-              <br/>
-              The Recipient Address can be a TOR onion Address or any other external http(s) Address.<br/>
-              <br/>
-              If you want to have a proof of this transaction you can add the proof address you get from recipient.<br/>
+              <p>
+                The send command is the first step in building an interactive transaction.<br/>
+                <br/>
+                The transaction can either be carried out instantaneously using either<br/>
+                the Tor network or ngrok, or done manually through the exchange of files.<br/>
+                <br/>
+                To start a new transaction, make sure your node server is fully synced<br/>
+                to the Epic Cash network.<br/>
+                The status of your node server should read, “synced.”<br/>
+                <br/>
+                The recipient address can either be a Tor onion address or an external http(s) address.<br/>
+                <br/>
+                To have proof the transaction was carried out, enter the proof address provided by the receiver.<br/>
               </p>
             </div>
           </div>
@@ -43,15 +45,16 @@
           </div>
           <div class="message-body is-hidden" id="accordion-2" >
             <div class="message-body-content" data-toggle="accordion-2">
-              To receive coins your wallet must be in listen mode.<br/>
-              With the default settings your wallet is started in listen/receive mode by default.<br/>
+              To receive coins, your wallet must be in listen mode.<br/>
               <br/>
-              You can change this behaviour in Settings.<br/>
+              The wallet’s default settings activate the listen/receive mode by default.<br/>
+              This feature can be changed in Settings.<br/>
               <br/>
-              On the Receive page you have a list with the available addresses others can send to.
-              Your proof address is also displayed at this page.
-              If something goes wrong and your wallet cannot receive coins, then you can restart
-              the listener on the receive page.<br/>
+              On the Receive Page, there will be a list of addresses that can be used to receive coins.<br/>
+              <br/>
+              Your proof address is also displayed on this page.<br/>
+              <br/>
+              If something goes wrong and your wallet is not receiving coins, restart the listener on the Receive Page.<br/>
             </div>
           </div>
         </article>
@@ -63,7 +66,8 @@
           </div>
           <div class="message-body is-hidden" id="accordion-3" >
             <div class="message-body-content" data-toggle="accordion-3">
-              If you make a offline transaction. Then you import here the received finalize transaction file from receiver.
+              To finalize an offline transaction, use this page to import the finalized<br/>
+              transaction file provided by the receiver.<br/>
             </div>
           </div>
         </article>
@@ -75,10 +79,10 @@
           </div>
           <div class="message-body is-hidden" id="accordion-4" >
             <div class="message-body-content" data-toggle="accordion-4">
-              If somebody sends you a offline transaction, then you can import on this page the transaction file.<br/>
+              Use this page to import the transaction file provided by the receiver.<br/>
               <br/>
-              After the import you must save a finalization transaction file and send back to sender.<br/>
-
+              After importing the transaction file, save a finalized transaction file and deliver it<br/>
+              to the sender.<br/>
             </div>
           </div>
         </article>
@@ -90,10 +94,9 @@
           </div>
           <div class="message-body is-hidden" id="accordion-5" >
             <div class="message-body-content" data-toggle="accordion-5">
-              In the address book you can save your contacts and their addresses.<br/>
-              Later if you create a new transaction you can search in the "Recipient Address" field for your
-              contacts and paste the found addresses from the address book.<br/>
-
+              Save your contacts and their addresses in the address book.<br/>
+              <br/>
+              If you later decide to make another transaction, you can search for the contact’s address in the recipient’s address field.<br/>
             </div>
           </div>
         </article>
@@ -101,11 +104,11 @@
       <div class="column is-half">
         <article class="message is-dark">
           <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-6">
-            <p style="pointer-events: none;">Transaction-ID</p>
+            <p style="pointer-events: none;">Transaction ID</p>
           </div>
           <div class="message-body is-hidden" id="accordion-6" >
             <div class="message-body-content" data-toggle="accordion-6">
-              The transaction ID is the unique identifier for every transaction the receiver and you are sharing.<br/>
+              The Transaction ID is the unique identifier for each transaction shared by the receiver and sender.<br/>
             </div>
           </div>
         </article>
@@ -117,8 +120,9 @@
           </div>
           <div class="message-body is-hidden" id="accordion-7" >
             <div class="message-body-content" data-toggle="accordion-7">
-              The coin id is the unique identifier for your coins on the blockchain.<br/>
-              Only you see the value of the coin-id<br/>
+              The Coin ID is the unique identifier for your coins on the blockchain.<br/>
+
+              Only you can see the Coin ID value.<br/>
             </div>
           </div>
         </article>
@@ -130,8 +134,9 @@
           </div>
           <div class="message-body is-hidden" id="accordion-8" >
             <div class="message-body-content" data-toggle="accordion-8">
-              The wallet listener must be run if you want to receive coins from other wallets.<br/>
-              You can stop and start the listener on page "Receive"<br/>
+              The wallet listener must be running to receive coins from other wallets.<br/>
+              <br/>
+              The listener can be started or stopped on the Receive Page.<br/>
             </div>
           </div>
         </article>
@@ -143,8 +148,9 @@
           </div>
           <div class="message-body is-hidden" id="accordion-9" >
             <div class="message-body-content" data-toggle="accordion-9">
-              In your account you can set a username and a keybase account.<br/>
-              The username is displayed all over the app at the top.<br/>
+              Set your username and keybase account in Account.<br/>
+              <br/>
+              The username is displayed at the top of the app.<br/>
             </div>
           </div>
         </article>
@@ -157,7 +163,7 @@
           </div>
           <div class="message-body is-hidden" id="accordion-10" >
             <div class="message-body-content" data-toggle="accordion-10">
-              Here you can change the settings you made at the setup assistant process.<br/>
+              Here you can change the settings made during the setup assistant process.<br/>
             </div>
           </div>
         </article>
@@ -169,21 +175,12 @@
           </div>
           <div class="message-body is-hidden" id="accordion-11" >
             <div class="message-body-content" data-toggle="accordion-11">
-              This is the location of your node server. The node server is required for the wallet to send and receive coins<br/>
-              This can be the build-in server or an external Server address. If you change this value, please restart your wallet<br/>
-            </div>
-          </div>
-        </article>
-      </div>
-      <div class="column is-half">
-        <article class="message is-dark">
-          <div class="message-header is-clickable" @click="toggleState" data-toggle="accordion-12">
-            <p style="pointer-events: none;">Wallet listener</p>
-          </div>
-          <div class="message-body is-hidden" id="accordion-12" >
-            <div class="message-body-content" data-toggle="accordion-12">
-              Here you can change the behaviour of the wallet listener at startup. If you dont want to start the listener by default,<br/>
-              then uncheck the checkbox<br/>
+              This is the location of your node server.<br/>
+              <br/>
+              A node server is required for the wallet to send and receive coins.<br/>
+              <br/>
+              You can choose between the built-in node server and an external node server.<br/>
+              If you change this value, please restart your wallet.<br/>
             </div>
           </div>
         </article>
@@ -240,7 +237,7 @@
             <div class="message-body-content" data-toggle="accordion-16">
               In epic you can make transactions with a additional proof.<br/>
               <br/>
-              With a proof its possible for others 
+              With a proof its possible for others
               to verify that the transaction was made between the sender and receiver.<br/>
               <br/>
               To verify a proof the user needs the proof data and amount.<br/>

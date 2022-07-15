@@ -106,10 +106,9 @@
                       <article class="message is-info">
                         <div class="message-body">
                           Your wallet requires a network node to send and receive transactions.<br/>
-                          You can choose the built-in wallet node server or an external node server.<br/>
+                          You can choose between the built-in node server and an external node server.<br/>
                           <br/>
-                          If you are not sure what todo now, then leave the settings as it is.<br/>
-
+                          If you are not sure which one to use, then leave the settings as they are.<br/>
                         </div>
                       </article>
                       <NodeserverField ref="nodeserverField" />
@@ -128,19 +127,22 @@
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Receiving transactions</h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          To receive transactions from other wallets, your wallet must be accessible over the internet.<br/>
-                          To make this process easy, we integrated a service called ngrok. <br/>
-                          With ngrok activated, your wallet is accessible via a temporary ngrok address.<br/>
+
+                          To receive transactions from other wallets, your wallet must be accessible over the Internet.<br/>
                           <br/>
-                          If you are not familar with Router-Settings and Port forwarding then<br/>
-                          it's recommendet to use the ngrok service.<br/>
+                          To simplify this process, we have integrated the ngrok tool into the wallet.<br/>
+                          Once ngrok has been activated, your wallet will be accessible via a temporary ngrok address.<br/>
+                          If you are not familiar with router settings and port forwarding, we recommend using the ngrok service.<br/>
                           <br/>
-                          Please create a new account on ngrok.com to get your auth token.<br/>
-                          Leave field blank if you don't want to use ngrok service.<br/>
+                          To receive your ngrok authentication token, please create a new account at ngrok.com.<br/>
+                          <br/>
+                          <br/>
+                          Leave the field below blank, if you don’t want to use the ngrok service.<br/>
+
                         </div>
                       </article>
                       <div class="field">
-                        <label class="label">Your ngrok Auth-token</label>
+                        <label class="label">Your ngrok Authtoken</label>
 
                           <div class="control">
                             <input class="input" type="ngrok" required v-model="ngrok" />

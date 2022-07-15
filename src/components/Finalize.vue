@@ -153,8 +153,6 @@ export default {
               this.isSent = true
               tx_id = res.result.Ok;
 
-              
-              this.store.commit('addPostedUnconfirmedTx', tx_id)
             }else{
               this.$toast.error(res2.error.message);
             }

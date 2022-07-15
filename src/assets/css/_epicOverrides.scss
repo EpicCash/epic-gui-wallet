@@ -269,7 +269,7 @@ html{
 
 
 /* (C) NO SELECT + HIGHLIGHT COLOR */
-//*:not(input):not(textarea){ user-select: none; }
+*:not(input):not(textarea){ user-select: none; }
 
 .pager-activepage{
   display: block;
