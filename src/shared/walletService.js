@@ -510,13 +510,13 @@ class WalletService {
 
     async check(password, delete_unconfirmed){
 
-        let delete_flag = '';
-        if(delete_unconfirmed == true){
-          delete_flag = '--delete_unconfirmed';
-        }
-        //--pass ${addQuotations(password)}
-        const cmd = `${this.configService.epicPath} -t ${this.configService.defaultAccountWalletdir} scan -h 0 ${delete_flag}`;
-        await window.nodeChildProcess.execScan(cmd, password);
+        let args = [
+          //'--pass', password,
+          '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+          'scan', '-h', 0,
+          ...(delete_unconfirmed ? ['--delete_unconfirmed'] : []),
+        ];
+        await window.nodeChildProcess.execScan(this.configService.epicPath, args, this.configService.platform, password);
 
     }
 

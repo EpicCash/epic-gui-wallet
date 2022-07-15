@@ -92,6 +92,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           let createProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
+
+
           let newSeedData = '';
           let errorData = '';
           let recordData = false;
@@ -102,7 +104,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
             debug ? console.log('execNew.stdout', data) : null;
 
             if(data.includes('Password:')){
-              createProcess.stdin.write(password+"\n");
+              createProcess.stdin.write( password+"\n");
             }
             //start recording data
             if(data.includes('Please back-up these words in a non-digital format.') || recordData){
@@ -155,13 +157,15 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       });
     },
-    async execScan(cmd, password){
+    async execScan(cmd, args, platform, password){
 
       return new Promise(function(resolve, reject) {
 
-          let scanProcess = exec(cmd);
+
+          let scanProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
           //scan process is self closing
+          scanProcess.stdout.setEncoding('utf8');
           scanProcess.stdout.on('data', function(data){
             debug ? console.log('execScan.stdout', data) : null;
 
@@ -171,6 +175,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
             ipcRenderer.send('scan-stdout', data);
           })
+
+          scanProcess.stderr.setEncoding('utf8');
           scanProcess.stderr.on('data', function(data){
             debug ? console.log('execScan.stderr', data) : null;
             ipcRenderer.send('scan-stdout', data);
