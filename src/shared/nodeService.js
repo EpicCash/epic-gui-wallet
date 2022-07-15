@@ -32,7 +32,7 @@ class NodeService {
 
       let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
       for(let process of pEpicnodeList) {
-        if(process.name.includes('epic')){
+        if(process.cmd.includes('server')){
           killPids.push(process);
         }
       }
@@ -58,7 +58,7 @@ class NodeService {
       let killPids = [];
       let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
       for(let process of pEpicnodeList) {
-        if(process.name.includes('epic')){
+        if(process.cmd.includes('server')){
           killPids.push(process);
         }
       }
@@ -80,7 +80,7 @@ class NodeService {
     let internalNodeProcess = [];
     let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
     for(let process of pEpicnodeList) {
-      if(process.name.includes('epic')){
+      if(process.cmd.includes('server')){
         internalNodeProcess.push(process);
       }
     }

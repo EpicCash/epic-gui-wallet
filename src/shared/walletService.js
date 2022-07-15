@@ -309,7 +309,7 @@ class WalletService {
 
         pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
         for(let process of pWalletList) {
-          if(process.name.includes('epic-wallet')){
+          if(process.cmd.includes('owner_api')){
             walletProcess.push(process);
           }
         }
@@ -364,7 +364,7 @@ class WalletService {
         let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
 
         for(let process of pWalletList) {
-          if(process.name.includes('epic-wallet')){
+          if(process.cmd.includes('listen')){
             walletIsListen.push(process);
           }
         }
@@ -376,7 +376,7 @@ class WalletService {
 
           let args = [
             ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
-            '--pass', password,
+            //'--pass', password,
             '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'listen',
@@ -387,7 +387,7 @@ class WalletService {
             args.push('--no_tor');
           }
 
-          walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform);
+          walletListenId = await window.nodeChildProcess.execListen(this.configService.epicPath, args, this.configService.platform, password);
 
           if(walletListenId && walletListenId.msg > 0){
               this.walletIsListen = true;
@@ -406,7 +406,7 @@ class WalletService {
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
 
       for(let process of pWalletList) {
-        if(process.name.includes('epic-wallet')){
+        if(process.cmd.includes('listen')){
           walletIsListen.push(process);
         }
       }
@@ -428,7 +428,7 @@ class WalletService {
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
 
       for(let process of pWalletList) {
-        if(process.name.includes('epic-wallet')){
+        if(process.cmd.includes('listen')){
           killPids.push(process);
         }
       }
@@ -454,7 +454,7 @@ class WalletService {
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api)/);
 
       for(let process of pWalletList) {
-        if(process.name.includes('epic-wallet')){
+        if(process.cmd.includes('owner_api')){
           killPids.push(process);
         }
       }
@@ -475,12 +475,12 @@ class WalletService {
 
         let args = [
           ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
-          '--pass', password,
+          //'--pass', password,
           '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
           'init'
         ];
 
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, password);
 
 
     }
@@ -488,11 +488,11 @@ class WalletService {
 
         let args = [
           ...(network != 'mainnet' ? ['--' + network] : []),
-          '--pass', password,
+          //'--pass', password,
           '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           'init'
         ];
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, password);
 
     }
 
@@ -500,12 +500,12 @@ class WalletService {
 
         let args = [
           ...(network != 'mainnet' ? ['--' + network] : []),
-          '--pass', password,
+          //'--pass', password,
           '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           'init', '-r'
         ];
 
-        return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds);
+        return await window.nodeChildProcess.execRecover(this.configService.epicPath, args, this.configService.platform, seeds, password);
     }
 
     async check(password, delete_unconfirmed){
@@ -514,9 +514,9 @@ class WalletService {
         if(delete_unconfirmed == true){
           delete_flag = '--delete_unconfirmed';
         }
-
-        const cmd = `${this.configService.epicPath} -t ${this.configService.defaultAccountWalletdir} --pass ${addQuotations(password)} scan -h 0 ${delete_flag}`;
-        await window.nodeChildProcess.execScan(cmd);
+        //--pass ${addQuotations(password)}
+        const cmd = `${this.configService.epicPath} -t ${this.configService.defaultAccountWalletdir} scan -h 0 ${delete_flag}`;
+        await window.nodeChildProcess.execScan(cmd, password);
 
     }
 
@@ -527,7 +527,7 @@ class WalletService {
         let walletCheckProcessList = await window.nodeFindProcess('name', /.*?epic-wallet.*(scan)/);
 
         for(let process of walletCheckProcessList) {
-          if(process.name.includes('epic-wallet')){
+          if(process.cmd.includes('scan')){
             killPids.push(process);
           }
         }

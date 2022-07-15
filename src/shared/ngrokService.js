@@ -48,7 +48,7 @@ class NgrokService {
 
     let pNgrokList = await window.nodeFindProcess('name', /.*?ngrok.*(start)/);
     for(let process of pNgrokList) {
-      if(process.name.includes('ngrok')){
+      if(process.cmd.includes('ngrok')){
         killPids.push(process);
       }
     }
@@ -82,7 +82,7 @@ class NgrokService {
 
     let pNgrokList = await window.nodeFindProcess('name', /.*?ngrok.*(start)/);
     for(let process of pNgrokList) {
-      if(process.name.includes('ngrok')){
+      if(process.cmd.includes('ngrok')){
         killPids.push(process);
       }
     }

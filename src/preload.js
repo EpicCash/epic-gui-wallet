@@ -9,7 +9,7 @@ const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
 
-const debug = false;
+const debug = true;
 
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
@@ -86,7 +86,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     },
 
-    async execNew(cmd, args, platform){
+    async execNew(cmd, args, platform, password){
 
       return new Promise(function(resolve, reject) {
 
@@ -101,6 +101,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
             debug ? console.log('execNew.stdout', data) : null;
 
+            if(data.includes('Password:')){
+              createProcess.stdin.write(password+"\n");
+            }
             //start recording data
             if(data.includes('Please back-up these words in a non-digital format.') || recordData){
               recordData = true;
@@ -152,7 +155,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
       });
     },
-    async execScan(cmd){
+    async execScan(cmd, password){
 
       return new Promise(function(resolve, reject) {
 
@@ -161,6 +164,11 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           //scan process is self closing
           scanProcess.stdout.on('data', function(data){
             debug ? console.log('execScan.stdout', data) : null;
+
+            if(data.includes('Password:')){
+              scanProcess.stdin.write(password+"\n");
+            }
+
             ipcRenderer.send('scan-stdout', data);
           })
           scanProcess.stderr.on('data', function(data){
@@ -291,7 +299,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
     /* start wallet listen */
-    async execListen(cmd, args, platform){
+    async execListen(cmd, args, platform, password){
 
       return new Promise(function(resolve, reject) {
 
@@ -301,6 +309,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           listenProcess.stdout.on('data', (data) => {
 
               debug ? console.log('execListen.stdout', data) : null;
+              if(data.includes('Password:')){
+                listenProcess.stdin.write(password+"\n");
+              }
 
               if(data.includes('[notice] Bootstrapped 100% (done): Done')){
                 isTorBooted = true;
@@ -323,7 +334,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
 
-    async execRecover(cmd, args, platform, seeds){
+    async execRecover(cmd, args, platform, seeds, password){
 
       return new Promise(function(resolve, reject) {
 
@@ -337,6 +348,10 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           recover.stdout.setEncoding('utf8');
           recover.stdout.on('data', (data) => {
             debug ? console.log('execRecover.stdout', data) : null;
+
+            if(data.includes('Password:')){
+              recover.stdin.write(password+"\n");
+            }
 
             if(data.includes('Please enter your recovery phrase')){
               recover.stdin.write(seeds+"\n");

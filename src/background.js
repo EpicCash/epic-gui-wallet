@@ -12,6 +12,35 @@ const ps = require('ps-node');
 const findProcess = require('find-process');
 let win;
 
+async function kill(pid){
+  return new Promise(function(resolve, reject) {
+    let iskilled;
+    if (process.platform === 'win32') {
+        exec(`taskkill /pid ${pid} /f /t`, function( err ) {
+           if (err) {
+             resolve(false);
+           }
+           else {
+
+             resolve(true);
+           }
+       });
+
+    }else{
+      //check if 3 seconds for node server is to short and makes problems
+      ps.kill(pid, {timeout: 3},function( err ) {
+          if (err) {
+            resolve(false);
+          }
+          else {
+
+            resolve(true);
+          }
+      });
+    }
+  });
+}
+
 
 //[13088:0215/073859.040:ERROR:gpu_init.cc(454)] Passthrough is not supported, GL is disabled, ANGLE is
 app.disableHardwareAcceleration();
@@ -30,7 +59,7 @@ async function createWindow() {
     height: 768,
     minWidth: 1024,
     maxWidth: 1600,
-    title: "Epiccash Wallet 3.0",
+    title: "Epiccash Wallet 4.0.0",
     webPreferences: {
       icon: path.join(__dirname, '../public/favicon.ico'),
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -70,25 +99,38 @@ async function createWindow() {
                       label:'Quit',
                       accelerator: "CmdOrCtrl+Q",
                       async click() {
-                          let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+                          let killPromise = [];
+                          let killProcess = false;
+                          let killPids = [];
 
-                           for(var pItem in plist){
-                             if (process.platform === 'win32') {
+                          let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+                          let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                          let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                          for(let process of pWalletList) {
+                            if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
+                              killPids.push(process);
+                            }
+                          }
+                          for(let process of pEpicnodeList) {
+                            if(process.cmd.includes('server')){
+                              killPids.push(process);
+                            }
+                          }
+                          for(let process of pNgrokList) {
+                            if(process.cmd.includes('ngrok')){
+                              killPids.push(process);
+                            }
+                          }
+                          if(killPids.length){
+                            for(let process of killPids) {
 
-                                 try{
-                                   exec(`taskkill /pid ${plist[pItem].pid} /f /t`);
-                                 }catch(e){
-                                   console.log('taskkill failed', e);
-                                 }
-                             }else{
-                               try{
-                                  ps.kill(plist[pItem].pid);
-                                }catch(e){
-                                  console.log('taskkill failed', e);
-                                }
-                             }
-                           };
-                           app.quit()
+                              killPromise.push(kill(process.pid))
+                            }
+                            await Promise.all(killPromise);
+                          }
+
+
+                          app.quit()
                       }
                   },
 
@@ -133,25 +175,36 @@ async function createWindow() {
                       label:'Quit',
                       accelerator: "CmdOrCtrl+Q",
                       async click() {
-                          let plist = await findProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+                        let killPromise = [];
+                        let killProcess = false;
+                        let killPids = [];
 
-                           for(var pItem in plist){
-                             if (process.platform === 'win32') {
+                        let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+                        let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                        let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                        for(let process of pWalletList) {
+                          if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
+                            killPids.push(process);
+                          }
+                        }
+                        for(let process of pEpicnodeList) {
+                          if(process.cmd.includes('server')){
+                            killPids.push(process);
+                          }
+                        }
+                        for(let process of pNgrokList) {
+                          if(process.cmd.includes('ngrok')){
+                            killPids.push(process);
+                          }
+                        }
+                        if(killPids.length){
+                          for(let process of killPids) {
 
-                                 try{
-                                   exec(`taskkill /pid ${plist[pItem].pid} /f /t`);
-                                 }catch(e){
-                                   console.log('taskkill failed', e);
-                                 }
-                             }else{
-                               try{
-                                  ps.kill(plist[pItem].pid);
-                                }catch(e){
-                                  console.log('taskkill failed', e);
-                                }
-                             }
-                           };
-                           app.quit()
+                            killPromise.push(kill(process.pid))
+                          }
+                          await Promise.all(killPromise);
+                        }
+                        app.quit()
                       }
                   },
 
@@ -189,7 +242,7 @@ async function createWindow() {
 
 
 // Quit when all windows are closed.
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async() => {
 
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
@@ -262,10 +315,6 @@ ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) =>
     return responce;
 });
 
-ipcMain.handle('quit', () => {
-  app.quit()
-});
-
 ipcMain.handle('locale', async() => {
   return await app.getLocale();
 });
@@ -274,7 +323,6 @@ ipcMain.handle('resize', (event, width, height) => {
   let browserWindow = BrowserWindow.fromWebContents(event.sender)
   browserWindow.setSize(width,height);
 });
-
 
 ipcMain.on('scan-stdout', (event, data) => {
   event.reply('scan-stdout', { data });

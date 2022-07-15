@@ -343,19 +343,19 @@ class ConfigService {
     let killProcess = false;
     let killPids = [];
 
-    let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen)/);
+    let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
     let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
 
     console.log(pWalletList);
     console.log(pEpicnodeList);
 
     for(let process of pWalletList) {
-      if(process.name.includes('epic-wallet')){
+      if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
         killPids.push(process);
       }
     }
     for(let process of pEpicnodeList) {
-      if(process.name.includes('epic')){
+      if(process.cmd.includes('server')){
         killPids.push(process);
       }
     }
