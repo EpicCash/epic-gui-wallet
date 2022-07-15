@@ -313,9 +313,12 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
                 listenProcess.stdin.write(password+"\n");
               }
 
-              if(data.includes('[notice] Bootstrapped 100% (done): Done')){
+              /* todo check why tor is not Bootstrapped on Linux */
+              if(data.includes('[notice] Bootstrapped 100% (done): Done') || data.includes('Starting TOR Hidden Service for API listener')){
                 isTorBooted = true;
-
+              }
+              if(data.includes('nable to start TOR listener') || data.includes('Tor Error: Tor Process Error: Timeout')){
+                isTorBooted = false;
               }
               if(data.includes('HTTP Foreign listener started.')){
 
