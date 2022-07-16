@@ -1,5 +1,9 @@
 require('promise.prototype.finally').shim();
 
+function addQuotations(s){
+    return '"' + s +'"'
+}
+
 class NodeService {
 
   constructor(emitter, configService) {
@@ -88,7 +92,7 @@ class NodeService {
     if(!internalNodeProcess.length){
       let args = [
         ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
-        ...(this.configService.nodeTOMLPath != '' ? ['server', '--config_file', this.configService.nodeTOMLPath, 'run'] : ['server', 'run']),
+        ...(this.configService.nodeTOMLPath != '' ? ['server', '--config_file', (this.configService.platform == "win" ? addQuotations(this.configService.nodeTOMLPath) : this.configService.nodeTOMLPath), 'run'] : ['server', 'run']),
 
       ];
 
