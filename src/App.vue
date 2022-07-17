@@ -272,8 +272,6 @@
           }else{
             let started  = await this.$nodeService.internalNodeStart();
 
-
-
             if(started){
               this.$toast.success("Node started");
               //start the status check for the node

@@ -114,7 +114,7 @@ class ConfigService {
 
     if(window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'})){
 
-        //rewrite some toml properties to work with owner_api lifecycle and foreign receive
+        //rewrite some toml properties to work with gui wallet
 
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
 
@@ -146,6 +146,11 @@ class ConfigService {
         const re4 = /stdout_log_level(\s)*=(\s).*/;
         if(tomlContent.search(re4) != -1){
             tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
+        }
+
+        const re5 = /run_tui(\s)*=(\s).*/;
+        if(tomlContent.search(re5) != -1){
+            tomlContent = tomlContent.replace(re5, 'run_tui = false');
         }
 
 

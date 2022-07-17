@@ -6,6 +6,7 @@ import path from 'path';
 const moment = require('moment');
 const base32 = require('rfc-3548-b32');
 const crypto = require('crypto-browserify');
+const qr = require("qrcode");
 import * as secp256k1 from "@noble/secp256k1";
 
 
@@ -470,6 +471,7 @@ contextBridge.exposeInMainWorld('log', log);
 contextBridge.exposeInMainWorld('debug', debug);
 contextBridge.exposeInMainWorld('nodeFs', fs);
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
+contextBridge.exposeInMainWorld('nodeQr', qr);
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
 

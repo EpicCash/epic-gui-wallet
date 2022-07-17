@@ -4,37 +4,51 @@
 
 
     <div v-show="store.state.walletListenerService">
-      <div class="message is-info">
+      <div class="columns">
+        <div class="column is-two-thirds">
+          <div class="message is-info">
 
-        <div class="message-header"><p>{{ $t("msg.httpReceive.listening") }}</p></div>
-        <div class="message-body">
+            <div class="message-header"><p>{{ $t("msg.httpReceive.listening") }}</p></div>
+            <div class="message-body">
 
-          <p v-if="store.state.ngrokService">
-            Current Ngrok Address:<br/>
-            <code>{{ ngrokAddress }}</code>&nbsp;<mdicon @click="copy(ngrokAddress)" name="content-copy" size=16 />
-          </p>
-          <p v-if="store.state.ngrokService">&nbsp;</p>
-          <p v-else>
-            Local Address:<br/>
-            <code>http(s)://[YOUR IP ADDRESS]:3415</code>
-          </p>
-          <p v-if="!store.state.ngrokService">&nbsp;</p>
+              <p v-if="store.state.ngrokService">
+                Current Ngrok Address:<br/>
+                <code>{{ ngrokAddress }}</code>&nbsp;<mdicon class="is-clickable" @click="copy(ngrokAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(ngrokAddress, 'ngrok')" name="qrcode-scan" size=16 />
+              </p>
+              <p v-if="store.state.ngrokService">&nbsp;</p>
+              <p v-else>
+                Local Address:<br/>
+                <code>http(s)://[YOUR IP ADDRESS]:3415</code>
+              </p>
+              <p v-if="!store.state.ngrokService">&nbsp;</p>
 
-          <p v-if="store.state.torService">
-            Tor onion Address:<br/>
-            <code>{{ onionAddress }}</code>&nbsp;<mdicon @click="copy(onionAddress)" name="content-copy" size=16 />
-          </p>
-          <p v-else>
-            Tor onion Address:<br/>
-            <code>Tor not available. Try to restart the wallet listener</code>
-          </p>
+              <p v-if="store.state.torService">
+                Tor onion Address:<br/>
+                <code>{{ onionAddress }}</code>&nbsp;<mdicon @click="copy(onionAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(onionAddress, 'TOR')" name="qrcode-scan" size=16 />
+              </p>
+              <p v-else>
+                Tor onion Address:<br/>
+                <code>Tor not available. Try to restart the wallet listener</code>
+              </p>
 
-          <p v-if="proofAddress">&nbsp;</p>
-          <p v-if="proofAddress">
-            Proof Address:<br/>
-            <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />
-          </p>
+              <p v-if="proofAddress">&nbsp;</p>
+              <p v-if="proofAddress">
+                Proof Address:<br/>
+                <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(proofAddress, 'proof')" name="qrcode-scan" size=16 />
+              </p>
 
+            </div>
+
+          </div>
+        </div>
+        <div class="column">
+          <div class="message is-info">
+
+            <div class="message-header"><p v-if="addressTypeHeader">Your qr code for your "{{addressTypeHeader}}" address</p><p v-else>Click the qr code icon</p></div>
+            <div v-show="addressTypeHeader"  class="message-body">
+              <canvas id="qrcodeCanvas"></canvas>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -113,7 +127,8 @@ export default {
     const passwordField = ref('');
     const { resetFormErrors } = useFormValidation();
     const isLoading = ref(false);
-
+    const vueCanvas = ref(null);
+    const addressTypeHeader = ref('');
     return {
       store,
       onionAddress,
@@ -121,7 +136,8 @@ export default {
       proofAddress,
       passwordField,
       resetFormErrors,
-      isLoading
+      isLoading,
+      addressTypeHeader
     }
   },
   async mounted(){
@@ -129,9 +145,22 @@ export default {
     if(this.store.state.user.ngrok != ''){
       this.ngrokAddress = await this.getNgrokAddress();
     }
+
+    var c = document.getElementById("qrcodeCanvas");
+    this.vueCanvas = c;
+
   },
   methods: {
+    async qrcode(text, addressType){
 
+      this.addressTypeHeader = addressType;
+      this.vueCanvas = document.getElementById("qrcodeCanvas");
+      window.nodeQr.toCanvas(this.vueCanvas, text, function (error) {
+        if (error) console.error('HttpReceive.qrcode', error)
+
+
+      })
+    },
     async getNgrokAddress(){
       return this.$ngrokService.getAddress()
     },
