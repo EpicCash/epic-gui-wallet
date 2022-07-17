@@ -158,7 +158,7 @@ export default {
       //check now requires settings
       if(!isFormAllValid.includes(false)){
         this.checking = true;
-        console.log('this.delete_unconfirmed', this.delete_unconfirmed);
+        
         this.$walletService.check(this.passwordField.defaultValue, this.delete_unconfirmed);
       }
     },

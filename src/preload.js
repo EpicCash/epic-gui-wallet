@@ -9,16 +9,19 @@ const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
 
-const debug = process.env.NODE_ENV !== 'production';
+
 
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
+const fs = require('fs');
 const util = require('util');
 const log = require('electron-log');
+
 const homedir = os.homedir();
 const rootdir = require('app-root-dir');
 export const ewalletPath = path.join(homedir, '.epic')
 export const logDir = path.join(ewalletPath, 'log')
+
 
 
 const resourcePath =
@@ -38,7 +41,13 @@ log.transports.file.streamConfig = {flags: 'w'};
 log.transports.console.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}'
 log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
 
-
+//add debug mode for production
+//user must create a file "debug" in ./epic folder
+let debug = process.env.NODE_ENV !== 'production';
+if(fs.existsSync(path.join(ewalletPath, 'debug'))){
+  debug = true;
+  console.log = log.log;
+}
 
 const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
@@ -91,8 +100,6 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       return new Promise(function(resolve, reject) {
 
           let createProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
-
-
 
           let newSeedData = '';
           let errorData = '';
@@ -460,7 +467,8 @@ contextBridge.exposeInMainWorld('nodeExecSync', require('child_process').execSyn
 contextBridge.exposeInMainWorld('nodeExecFile', require('child_process').execFile);
 contextBridge.exposeInMainWorld('clipboard', clipboard);
 contextBridge.exposeInMainWorld('log', log);
-contextBridge.exposeInMainWorld('nodeFs', require('fs'));
+contextBridge.exposeInMainWorld('debug', debug);
+contextBridge.exposeInMainWorld('nodeFs', fs);
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {

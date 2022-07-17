@@ -171,7 +171,7 @@
 
       this.emitter.on('app.accountLoggedIn', async () => {
 
-        console.log('accountLoggedIn');
+        window.debug ? console.log('accountLoggedIn') : null;
 
         this.loggedIn = true;
         this.store.dispatch('toggleFullPage', false);
@@ -207,7 +207,7 @@
 
       } else {
         //todo init app process here
-        console.log('app has no accounts');
+        window.debug ? console.log('app has no accounts') : null;
         this.$router.push('/new');
       }
 

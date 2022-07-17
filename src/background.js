@@ -247,7 +247,7 @@ app.on('window-all-closed', async() => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    
+
     let killPromise = [];
     let killProcess = false;
     let killPids = [];
@@ -299,15 +299,34 @@ app.on('activate', () => {
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    try {
-      await installExtension(VUEJS3_DEVTOOLS)
-    } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
-    }
+    setTimeout(() => {
+      try {
+
+        installExtension(VUEJS3_DEVTOOLS) .then(name => {
+          console.log(`Added Extension: ${name}`)
+          // get main window
+          const win = BrowserWindow.getFocusedWindow()
+          if (win) {
+            win.webContents.on('did-frame-finish-load', () => {
+              win.webContents.once('devtools-opened', () => {
+                win.webContents.focus()
+              })
+              // open electron debug
+              console.log('Opening dev tools')
+              win.webContents.openDevTools()
+            })
+          }
+        })
+        .catch(err => {
+          console.log('An error occurred: ', err)
+        })
+
+      } catch (e) {
+        console.error('Vue Devtools failed to install:', e.toString())
+      }
+    }, 250)
   }
 
-  let currentLocale = app.getLocale();
-  console.log('currentLocale',currentLocale);
   createWindow()
 })
 

@@ -1,5 +1,8 @@
 require('promise.prototype.finally').shim();
 
+const log = window.log;
+console.log = log.log;
+
 function addQuotations(s){
     return '"' + s +'"'
 }
@@ -14,7 +17,7 @@ class NodeService {
       this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
       this.sysnStatusStalltime = (60*3); //3 minutes
       this.restartSuccess = true;
-      this.debug = process.env.NODE_ENV !== 'production';
+      this.debug = window.debug;
       //do not restart on this node states
       this.safeSyncStates = [
         'txhashset_download',

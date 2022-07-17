@@ -5,7 +5,7 @@ export function checkFirstTime(){
    const isFirstTime = window.nodeFs.existsSync(ewalletPath) ? false:true
 
    if(isFirstTime){
-       console.log('isFirstTime', isFirstTime);
+        window.debug ? console.log('isFirstTime', isFirstTime) : null;
         window.nodeFs.mkdirSync(ewalletPath)
         window.nodeFs.mkdirSync(logDir)
         window.nodeFs.mkdirSync(tempTxDir)

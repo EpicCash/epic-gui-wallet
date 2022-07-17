@@ -13,7 +13,8 @@ class ConfigService {
       this.emitter = emitter;
       this.configAccount = '';
       this.configVersion = "4.0.1";
-      this.debug = process.env.NODE_ENV !== 'production';
+      this.debug = window.debug;
+
       //where to find accounts and wallet data
       this.userhomedir = '';
       this.langs = {'en': 'English', 'ru': 'Russian', 'zh': 'Chinese'};

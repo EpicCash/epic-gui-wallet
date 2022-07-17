@@ -140,7 +140,7 @@ export default {
 
           //load account else wizard
           let user = await this.$userService.getUser(this.accountField.defaultValue);
-          console.log('LOGIN USER:', user);
+          window.debug ? console.log('LOGIN USER:', user) : null;
           if(user.length && action != 'settings'){
             this.store.commit('user', user[0]);
           }else{

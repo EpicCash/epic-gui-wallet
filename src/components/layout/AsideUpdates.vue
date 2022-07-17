@@ -26,7 +26,6 @@ export default {
     const items = computed(() => store.state.updates)
 
     watch(items, () => {
-      console.log('watch items aside', items);
       emit('data-updated')
     })
 

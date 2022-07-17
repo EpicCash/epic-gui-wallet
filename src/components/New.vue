@@ -83,10 +83,8 @@ export default {
           this.userHomedir = customHomedir.filePaths[0];
           if(this.userHomedir){
 
-            console.log(this.userHomedir);
-
             let haswallet = await this.configService.walletDirExist(this.userHomedir);
-            console.log('haswallet', haswallet);
+
             if(!haswallet){
               this.error = 1;
               this.errMsg = this.$t("msg.new.selectErr");

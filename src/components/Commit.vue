@@ -143,9 +143,6 @@
 
 <script>
 
-
-
-  const log = window.log
   const clipboard = window.clipboard
 
   import { ref, computed } from 'vue';
@@ -165,14 +162,8 @@
         }
       }
     },
-    //TODO: update on nodeheight update
-    /*watch: {
-        'total_commits': function (newVal) {
-          console.log(newVal)
-        },
-    },*/
+
     setup(){
-      //division by 2
 
       const store = useStore();
       const count_per_page = ref(10);
@@ -271,7 +262,7 @@
             }
           }else{
             let resp = commits.error
-            console.log('commits error', commits.error);
+            window.debug ? console.log('commits error', commits.error) : null;
           }
 
       },

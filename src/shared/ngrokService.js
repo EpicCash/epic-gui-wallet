@@ -2,6 +2,9 @@
 require('promise.prototype.finally').shim();
 const nodeChildProcess = window.nodeChildProcess;
 
+const log = window.log;
+console.log = log.log;
+
 class NgrokService {
 
   constructor(emitter, configService) {
@@ -12,7 +15,7 @@ class NgrokService {
       this.tunnels = {};
       this.sharedSecret = '';
       this.restart = false;
-      this.debug = process.env.NODE_ENV !== 'production';
+      this.debug = window.debug;
   }
   async ngrokRestart(){
 

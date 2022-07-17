@@ -6,6 +6,7 @@ const crypto = window.nodeCrypto;
 require('promise.prototype.finally').shim();
 
 const log = window.log;
+console.log = log.log;
 const jsonRPCUrl = 'http://127.0.0.1:3420/v3/owner'
 const jsonRPCForeignUrl = 'http://127.0.0.1:3420/v2/foreign'
 
@@ -23,7 +24,7 @@ class WalletService {
         this.walletIsListen = false;
         this.shared_key;
         this.token;
-        this.debug = process.env.NODE_ENV !== 'production';
+        this.debug = window.debug;
     }
 
     logoutClient(){
@@ -59,7 +60,7 @@ class WalletService {
       }
 
       let response = await this.client.post(url, body, headers).catch(function (error) {
-            emitter.emit('wallet_error', {msg: error, code: '0x1645779384'})
+            this.debug ? console.log('walletService.initSecure', error) : null;
             return false;
       });
 
@@ -147,7 +148,7 @@ class WalletService {
             nonce2 = Buffer.from(response.data.result.Ok.nonce, 'hex');
             data = Buffer.from(response.data.result.Ok.body_enc, 'base64');
           }else{
-            this.debug ? console.log('WalletService.jsonRPC', response) : null;
+            this.debug ? console.log('WalletService.jsonRPC', method) : null;
             return false;
           }
 
@@ -170,7 +171,7 @@ class WalletService {
         if(response){
           return response;
         }else{
-          this.debug ? console.log('WalletService.noresponce', method, response) : null;
+          this.debug ? console.log('WalletService.noresponce', method) : null;
         }
 
       }

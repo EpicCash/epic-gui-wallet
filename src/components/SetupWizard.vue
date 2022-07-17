@@ -304,7 +304,7 @@
 
 
           case 'step2':
-          console.log(this.textField.validInput());
+
             isFormAllValid.push(this.textField.validInput('name'));
             isValid = !isFormAllValid.includes(false);
 

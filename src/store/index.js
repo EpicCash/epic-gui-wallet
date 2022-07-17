@@ -303,7 +303,7 @@ export const store = createStore({
 
 
         if(currentHeight > 0 && c.status == "Unspent" && (Number(c.height)+10) > currentHeight){
-          console.log('status to unspent', c);
+
           c.status = 'toUnspent';
           c.confirmed_count = currentHeight-Number(c.height);
         }

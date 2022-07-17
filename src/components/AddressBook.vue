@@ -265,10 +265,8 @@ export default {
       this.clearup(true);
       let keyword = this.keyword;
       if(keyword != ''){
-        console.log(keyword);
 
         this.addressList = await this.$addressBookService.findAddress(this.keyword);
-        console.log(this.addressList);
         this.searched = true;
       }
     },

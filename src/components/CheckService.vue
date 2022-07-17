@@ -13,12 +13,12 @@
     created(){
 
       this.emitter.on('checkSuccess', (msg) => {
-        console.log('checkService success: ', msg);
+        window.debug ? console.log('checkService success: ', msg) : null;
 
       });
 
       this.emitter.on('checkFail', (msg) => {
-        console.log('checkService error: ', msg);
+        window.debug ? console.log('checkService error: ', msg) : null;
 
       });
     },

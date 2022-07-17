@@ -65,7 +65,6 @@
 
 </template>
 <script>
-const log = window.log
 const fs = window.nodeFs;
 
 import { ref } from 'vue';
@@ -128,9 +127,9 @@ export default {
           }
 
           tx_id = data.id
-          log.debug('tx to finalize is ' + tx_id)
+
         }catch(e){
-          log.error('read tx file error:' + e)
+          window.debug ? console.log('read tx file error:' + e) : null;
           this.store.commit('updates', {
             "status":"is-danger",
             "text":e,
@@ -144,7 +143,7 @@ export default {
         let send = async function(){
 
           let res = await this.$walletService.finalizeTransaction(JSON.parse(content));
-          console.log('finalize', res);
+
           if(res && res.result && res.result.Ok){
             //TODO: implement fluff true/false (Dandelion)
             let tx = res.result.Ok.tx;

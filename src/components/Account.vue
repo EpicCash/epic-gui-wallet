@@ -82,8 +82,6 @@ import TextField from "@/components/form/textField";
         isFormAllValid.push(this.textField.validInput('name'));
 
         if(!isFormAllValid.includes(false)){
-          console.log('form valid save');
-
 
           let updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {name:this.textField.defaultValue, keybase: this.keybase});
           if(updated){
