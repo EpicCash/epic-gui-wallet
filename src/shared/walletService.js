@@ -471,19 +471,6 @@ class WalletService {
       return true;
     }
 
-    async newToml(password){
-
-        let args = [
-          ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
-          //'--pass', password,
-          '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
-          'init'
-        ];
-
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, password);
-
-
-    }
     async new(password, network, userhomedir){
 
         let args = [

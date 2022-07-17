@@ -117,17 +117,8 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
           createProcess.stderr.setEncoding('utf8');
           createProcess.stderr.on('data', (data) => {
-
             debug ? console.log('execNew.stderr', data) : null;
-
             errorData += data;
-
-            if(data.includes('Recovery word phrase is invalid.')){
-              recover.stdin.pause();
-              recover.kill();
-              resolve({success: false, msg: errorData});
-            }
-
           });
 
           createProcess.stdout.on('end', function () {

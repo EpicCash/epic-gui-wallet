@@ -271,9 +271,14 @@
             this.$toast.error("Can not setup internal node server");
           }else{
             let started  = await this.$nodeService.internalNodeStart();
-            this.emitter.emit('app.startRefreshNodeStatus');
+
+
+
             if(started){
               this.$toast.success("Node started");
+              //start the status check for the node
+              //give the node some time before api status is called
+              setTimeout(this.startRefreshNode, 10000);
             }else{
               this.$toast.error("Node not started");
             }
@@ -286,7 +291,9 @@
           if(respNode){
             this.$toast.success("External Node is online");
             this.store.commit('nodeStatus', respNode);
-            this.emitter.emit('app.startRefreshNodeStatus');
+            //start the status check for the node
+            //give the node some time before api status is called
+            setTimeout(this.startRefreshNode, 10000);
           }else{
             this.$toast.error("External Node is offline");
           }

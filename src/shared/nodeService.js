@@ -110,7 +110,6 @@ class NodeService {
 
   async getNodeStatus(internal){
 
-
     let baseURL = this.configService.config['check_node_api_http_addr'] ? this.configService.config['check_node_api_http_addr'] : this.configService.defaultEpicNode;
     let password = this.configService.apisecret;
 
