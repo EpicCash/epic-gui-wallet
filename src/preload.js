@@ -9,7 +9,7 @@ const crypto = require('crypto-browserify');
 import * as secp256k1 from "@noble/secp256k1";
 
 
-const debug = true;
+const debug = process.env.NODE_ENV !== 'production';
 
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
@@ -311,10 +311,10 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               }
 
               /* todo check why tor is not Bootstrapped on Linux */
-              if(data.includes('[notice] Bootstrapped 100% (done): Done') || data.includes('Starting TOR Hidden Service for API listener')){
+              if(data.includes('[notice] Bootstrapped 100% (done): Done')){
                 isTorBooted = true;
               }
-              if(data.includes('nable to start TOR listener') || data.includes('Tor Error: Tor Process Error: Timeout')){
+              if(data.includes('Unable to start TOR listener') || data.includes('Tor Error: Tor Process Error: Timeout')){
                 isTorBooted = false;
               }
               if(data.includes('HTTP Foreign listener started.')){

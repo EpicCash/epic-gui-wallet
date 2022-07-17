@@ -12,7 +12,7 @@ class NgrokService {
       this.tunnels = {};
       this.sharedSecret = '';
       this.restart = false;
-      this.debug = false;
+      this.debug = process.env.NODE_ENV !== 'production';
   }
   async ngrokRestart(){
 
@@ -29,7 +29,7 @@ class NgrokService {
           let ngrokStatus = await this.checkStatus();
           if(ngrokStatus){
             this.restart = false;
-            this.debug ? console.log('Ngrok restarted') : null;
+            this.debug ? console.log('ngrokService.ngrokRestart') : null;
             return true;
           }
         }
@@ -56,7 +56,7 @@ class NgrokService {
     if(killPids.length){
 
       for(let process of killPids) {
-        this.debug ? console.log('ngrokService kill', process) : null;
+        this.debug ? console.log('ngrokService.kill', process) : null;
         killPromise.push(nodeChildProcess.kill(process.pid))
       }
 
@@ -90,7 +90,7 @@ class NgrokService {
     if(killPids.length){
 
       for(let process of killPids) {
-        this.debug ? console.log('ngrokService kill', process) : null;
+        this.debug ? console.log('ngrokService.kill', process) : null;
         killPromise.push(nodeChildProcess.kill(process.pid))
       }
 
@@ -137,16 +137,16 @@ class NgrokService {
 
       let msg = 'Error connecting ngrok ' + baseURL + (error.status ? ' - '+ error.status : '') +' '+ (error.statusText ? error.statusText :'');
       msg += '\n\n ... make sure ngrok is accessible.';
-      console.log('ngrok error', error);
+      this.debug ? console.log('ngrokService.fetch', error) : null;
       return false;
 
     });
 
     if(!response){
       let restart = await this.ngrokRestart();
-      this.debug ? console.log('ngrokRestart', restart) : null;
+      this.debug ? console.log('ngrokService.ngrokRestart', restart) : null;
     }
-    this.debug ? console.log('getNgrokStatus', response) : null;
+    this.debug ? console.log('ngrokService.checkStatus', response) : null;
     return response;
   }
 
@@ -177,10 +177,7 @@ class NgrokService {
       if (res.ok != true) { throw Error(res) }
       return res.json();
     }).catch(function(error){
-
-      let msg = 'Error connecting ngrok ' + baseURL + (error.status ? ' - '+ error.status : '') +' '+ (error.statusText ? error.statusText :'');
-      msg += '\n\n ... make sure ngrok is accessible.';
-      console.log('ngrok error', error);
+      this.debug ? console.log('ngrokService.fetch', error) : null;
       return false;
 
     });

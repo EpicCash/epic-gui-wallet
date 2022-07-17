@@ -13,6 +13,7 @@ class ConfigService {
       this.emitter = emitter;
       this.configAccount = '';
       this.configVersion = "4.0.1";
+      this.debug = process.env.NODE_ENV !== 'production';
       //where to find accounts and wallet data
       this.userhomedir = '';
       this.langs = {'en': 'English', 'ru': 'Russian', 'zh': 'Chinese'};
@@ -346,9 +347,6 @@ class ConfigService {
     let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
     let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
 
-    console.log(pWalletList);
-    console.log(pEpicnodeList);
-
     for(let process of pWalletList) {
       if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
         killPids.push(process);
@@ -371,13 +369,13 @@ class ConfigService {
 
     if(killProcess){
       for(let process of killPids) {
-        console.log('configService kill', process);
+        this.debug ? console.log('configService.kill', process) : null;
         killPromise.push(nodeChildProcess.kill(process.pid))
       }
       await Promise.all(killPromise);
     }
 
-    console.log('all epic process killed');
+    this.debug ? console.log('configService.allkilled') : null;
 
   }
 
@@ -577,7 +575,8 @@ class ConfigService {
   }
 
   async startCheck(account){
-      console.log('startCheck account', account);
+
+      this.debug ? console.log('configService.startCheck', account) : null;
 
       let userHomedir = defaultUserdir;
       let defaultAccountWalletdir = '';

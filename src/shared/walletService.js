@@ -23,7 +23,7 @@ class WalletService {
         this.walletIsListen = false;
         this.shared_key;
         this.token;
-        this.debug = true;
+        this.debug = process.env.NODE_ENV !== 'production';
     }
 
     logoutClient(){
@@ -138,7 +138,7 @@ class WalletService {
 
           let response = await this.client.post(url, encBody, headers,{withCredentials:true})
           .catch(error => {
-                console.log('error', error);
+                this.debug ? console.log('WalletService.error', error) : null;
                 return false;
           });
           let nonce2;
@@ -147,7 +147,7 @@ class WalletService {
             nonce2 = Buffer.from(response.data.result.Ok.nonce, 'hex');
             data = Buffer.from(response.data.result.Ok.body_enc, 'base64');
           }else{
-            console.log('jsonRPC error', response);
+            this.debug ? console.log('WalletService.jsonRPC', response) : null;
             return false;
           }
 
@@ -162,7 +162,7 @@ class WalletService {
 
         let response = await this.client.post(url, body, headers, {withCredentials:true})
         .catch(error => {
-              console.log('jsonRPC error', error);
+              this.debug ? console.log('WalletService.jsonRPC', error) : null;
               return false;
         });
 
@@ -170,7 +170,7 @@ class WalletService {
         if(response){
           return response;
         }else{
-          console.log('return responce', method, response);
+          this.debug ? console.log('WalletService.noresponce', method, response) : null;
         }
 
       }
@@ -436,13 +436,13 @@ class WalletService {
       if(killPids.length){
 
         for(let process of killPids) {
-          this.debug ? console.log('stopListen kill', process) : null;
+          this.debug ? console.log('WalletService.stopListen', process) : null;
           killPromise.push(window.nodeChildProcess.kill(process.pid))
         }
         await Promise.all(killPromise);
       }
 
-      this.debug ? console.log('wallet listener stopped') : null;
+      this.debug ? console.log('WalletService.listener_stopped') : null;
       return true;
     }
 
@@ -462,7 +462,7 @@ class WalletService {
       if(killPids.length){
 
         for(let process of killPids) {
-          this.debug ? console.log('stopWallet kill', process) : null;
+          this.debug ? console.log('WalletService.stopWallet', process) : null;
           killPromise.push(window.nodeChildProcess.kill(process.pid))
         }
         await Promise.all(killPromise);
@@ -521,7 +521,7 @@ class WalletService {
 
         if(killPids.length){
           for(let process of killPids) {
-            this.debug ? console.log('stopCheck kill', process) : null;
+            this.debug ? console.log('WalletService.stopCheck', process) : null;
             killPromise.push(window.nodeChildProcess.kill(process.pid))
           }
         }
