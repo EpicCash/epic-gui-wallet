@@ -36,6 +36,7 @@ module.exports = {
         "mac": {
           "icon": "public/favicon_io/android-chrome-512x512.png",
           "category": "your.app.category.type",
+          "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
           "artifactName": "${productName}.${ext}",
           "target": "pkg",
           "extraFiles": [

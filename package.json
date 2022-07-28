@@ -1,9 +1,13 @@
 {
   "name": "EpicWallet",
-  "version": "4.0.0-beta",
+  "version": "4.0.1-beta",
   "private": true,
   "description": "Epic Wallet, mind your Epic!",
   "author": "v3: Johannes Hahn <j.hahn@eccence.digital>, v1: xiaojay, simpleduck, aiwe",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EpicCash/epic-gui-wallet.git"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -51,6 +55,7 @@
     "sass": "^1.49.9",
     "sass-loader": "^12.6.0",
     "spinkit": "^2.0.1",
+    "update-electron-app": "^2.0.1",
     "url-join": "^4.0.1",
     "urllib": "^2.38.0",
     "vue": "^3.0.0",
