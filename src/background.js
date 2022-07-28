@@ -12,8 +12,8 @@ const path = require('path')
 const ps = require('ps-node');
 const findProcess = require('find-process');
 const log = require('electron-log');
-//const {autoUpdater} = require("electron-updater");
-require('update-electron-app')()
+const {autoUpdater} = require("electron-updater");
+
 
 let win;
 
@@ -25,7 +25,7 @@ let win;
 // This logging setup is not required for auto-updates to work,
 // but it sure makes debugging easier :)
 //-------------------------------------------------------------------
-/*autoUpdater.logger = log;
+autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
@@ -34,7 +34,7 @@ function sendStatusToWindow(text) {
   log.info(text);
   win.webContents.send('message', text);
 }
-*/
+
 
 async function kill(pid){
   return new Promise(function(resolve, reject) {
@@ -311,7 +311,7 @@ app.on('window-all-closed', async() => {
 
 });
 
-/*autoUpdater.on('checking-for-update', () => {
+autoUpdater.on('checking-for-update', () => {
   sendStatusToWindow('Checking for update...');
 })
 autoUpdater.on('update-available', (info) => {
@@ -331,7 +331,7 @@ autoUpdater.on('download-progress', (progressObj) => {
 })
 autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');
-});*/
+});
 
 
 app.on('activate', () => {
@@ -376,7 +376,7 @@ app.on('ready', async () => {
       }
     }, 250)
   }else{
-    //autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify();
   }
 
   createWindow()
