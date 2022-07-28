@@ -43,10 +43,10 @@
 
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.account') }}<span class="required">*</span></label>
+                        <label class="label">{{ $t('msg.account.account') }}<span class="required">*</span></label>
                         <div class="control">
                           <AccountField ref="accountField" required="true" placeholder="default" />
-                          <p class="help">Only lower case letters from a-z, <!----></p>
+                          <p class="help">{{ $t('msg.only_letter') }} <!----></p>
                         </div>
                     </div>
 
@@ -69,7 +69,7 @@
                           <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
                             <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
                             <mdicon size="18" v-else name="menu-down" />
-                            Custom settings
+                            {{ $t('msg.custom_settings') }}
                           </a>
                         </div>
                     </div>
@@ -204,11 +204,11 @@ export default {
               this.newseeds = created.msg.split(' ');
               this.page = 'created'
             }else{
-              this.$toast.error('Fatal: created fail on action "' + action + '"', {duration:false});
+              this.$toast.error(this.$t('msg.create.fatal_create', [action]), {duration:false});
             }
 
           }else{
-            this.$toast.error('Fatal: App config not updated.', {duration:false});
+            this.$toast.error(this.$t('msg.create.fatal_update'), {duration:false});
           }
         }
 

@@ -9,10 +9,10 @@
       <div class="tabs is-toggle is-toggle-rounded">
         <ul>
           <li v-bind:class="{'is-active':transactionTab}">
-            <a @click="openTab('transactionTab')" >Transactions</a>
+            <a @click="openTab('transactionTab')" >{{ $t('msg.dashboard.transactions') }}</a>
           </li>
           <li v-bind:class="{'is-active':commitTab}">
-            <a @click="openTab('commitTab')" >Coins</a>
+            <a @click="openTab('commitTab')" >{{ $t('msg.dashboard.coins') }}</a>
           </li>
         </ul>
       </div>

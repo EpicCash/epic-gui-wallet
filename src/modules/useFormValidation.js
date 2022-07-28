@@ -2,6 +2,8 @@ import { reactive } from "@vue/reactivity";
 import useValidators from '@/modules/Validators';
 
 const errors = reactive({});
+
+
 const { isEmpty, isEqual, minLength, accountExist, isNumber, isSpendable, onlyLetter, isDirEmpty, isHttpAddress } = useValidators();
 
 export default function useFormValidation() {

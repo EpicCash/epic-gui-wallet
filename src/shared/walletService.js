@@ -31,7 +31,6 @@ class WalletService {
       this.client = undefined;
       this.shared_key = undefined;
       this.token = undefined;
-    //  this.walletProcess = false;
       this.walletIsListen = false;
     }
     async initSecure(url) {

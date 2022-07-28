@@ -3,9 +3,9 @@
     <header class="card-header">
       <p class="card-header-title">
 
-        <mdicon name="hand-coin-outline" size="18" />&nbsp;Coins
+        <mdicon name="hand-coin-outline" size="18" />&nbsp;{{ $t("msg.commit.coins") }}
       </p>
-      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getCommits()"><span class="icon"><mdicon name="refresh" /></span><span>Refresh</span></button>
+      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getCommits()"><span class="icon"><mdicon name="refresh" /></span><span>{{ $t("msg.refresh") }}</span></button>
 
     </header>
     <div class="notification is-card-toolbar is-upper">
@@ -13,8 +13,8 @@
         <div class="level-left">
           <div class="level-item">
             <div class="buttons has-addons">
-              <button v-bind:class="{'is-active': currentFilter == 'unspent'}" @click="filter('unspent', 0, true)" class="button">Unspent</button>
-              <button v-bind:class="{'is-active': currentFilter == 'unconfirmed'}" @click="filter('unconfirmed', 0, true)" class="button">Unconfirmed</button>
+              <button v-bind:class="{'is-active': currentFilter == 'unspent'}" @click="filter('unspent', 0, true)" class="button">{{ $t("msg.commit.unspent") }}</button>
+              <button v-bind:class="{'is-active': currentFilter == 'unconfirmed'}" @click="filter('unconfirmed', 0, true)" class="button">{{ $t("msg.commit.unconfirmed") }}</button>
             </div>
           </div>
         </div>
@@ -24,7 +24,7 @@
               <div class="field has-addons">
                 <div class="control">
 
-                  <input class="input" type="text" placeholder="Search..." v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
+                  <input class="input" type="text" :placeholder="$t('msg.placeholder_search')" v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
                 </div>
                 <div class="control">
 
@@ -47,10 +47,10 @@
             <thead>
               <tr class="th">
                 <th width="60">#</th>
-                <th>Coin ID</th>
+                <th>{{ $t("msg.commit.coin_id") }}</th>
                 <th>{{ $t("msg.commit.heightCreated") }}</th>
-                <th>Value</th>
-                <th>Status</th>
+                <th>{{ $t("msg.commit.value") }}</th>
+                <th>{{ $t("msg.commit.status") }}</th>
               </tr>
             </thead>
             <tbody v-if="current_commits.length">
@@ -131,7 +131,7 @@
           </div>
           <div class="level-right">
             <div class="level-item">
-              <small>Page {{current_page_index}} of {{pages_count}}</small>
+              <small>{{ $t("msg.page_of", [current_page_index, pages_count]) }}</small>
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@
       copy(index){
         let ct = this.current_commits[index]
         clipboard.writeText(ct.commit);
-        this.$toast.success("Commit copied");
+        this.$toast.success(this.$t("msg.commit.copy"));
         this.copied = index
         this.showCopy = -1
       },

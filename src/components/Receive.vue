@@ -9,7 +9,7 @@
               <span class="icon">
                 <mdicon name="cloud-upload" />
               </span>
-              &nbsp;<span>Drag &amp; drop file</span>
+              &nbsp;<span>{{ $t("msg.receive.dragdrop") }}</span>
             </p><!---->
           </header>
           <div class="card-content">
@@ -26,7 +26,7 @@
                             <mdicon name="upload" size="48" />
                           </span>
                         </p>
-                        <p>{{ $t("msg.fileReceive.dropMsg") }}</p>
+                        <p>{{ $t("msg.receive.dropMsg") }}</p>
                       </div>
                     </section>
                   </div>
@@ -39,7 +39,7 @@
             <div v-show="isSent">
 
               <div class="notification is-primary" >
-                {{ $t("msg.finalize.success") }}
+                {{ $t("msg.receive.success") }}
               </div>
 
             </div>
@@ -104,22 +104,22 @@ export default {
           }catch(e){
 
             this.store.commit('updates', {
-              "status":"is-danger",
-              "text":e,
-              "icon":"information"
+              "status": "is-danger",
+              "text": e,
+              "icon": "information"
             });
-            this.$toast.error("Error reading file content");
+            this.$toast.error(this.$t('msg.receive.error_read'));
             return;
           }
 
         }catch(e){
 
           this.store.commit('updates', {
-            "status":"is-danger",
-            "text":e,
-            "icon":"information"
+            "status": "is-danger",
+            "text": e,
+            "icon": "information"
           });
-          this.$toast.error(this.$t('msg.fileReceive.WrongFileType'));
+          this.$toast.error(this.$t('msg.receive.WrongFileType'));
           return
         }
 
@@ -153,15 +153,15 @@ export default {
 
                 }
 
-                this.$toast.error(this.$t('msg.fileReceive.CreateFailed'));
+                this.$toast.error(this.$t('msg.receive.CreateFailed'));
               })
         }else{
 
-          this.$toast.error(this.$t('msg.fileReceive.NoSavePlace'));
+          this.$toast.error(this.$t('msg.receive.NoSavePlace'));
         }
       }
       else{
-        this.$toast.error(this.$t('msg.fileReceive.WrongFileType'));
+        this.$toast.error(this.$t('msg.receive.WrongFileType'));
 
       }
     },

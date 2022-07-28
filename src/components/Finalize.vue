@@ -9,7 +9,7 @@
             <span class="icon">
               <mdicon name="cloud-upload" />
             </span>
-            &nbsp;<span>Drag &amp; drop file</span>
+            &nbsp;<span>{{ $t("msg.finalize.dragdrop") }}</span>
           </p><!---->
         </header>
         <div class="card-content">
@@ -118,11 +118,11 @@ export default {
           }catch(e){
 
             this.store.commit('updates', {
-              "status":"is-danger",
-              "text":e,
-              "icon":"information"
+              "status": "is-danger",
+              "text": e,
+              "icon": "information"
             });
-            this.$toast.error("Error reading file content");
+            this.$toast.error(this.$t('msg.finalize.error_read'));
             return;
           }
 
@@ -131,9 +131,9 @@ export default {
         }catch(e){
           window.debug ? console.log('read tx file error:' + e) : null;
           this.store.commit('updates', {
-            "status":"is-danger",
-            "text":e,
-            "icon":"information"
+            "status": "is-danger",
+            "text": e,
+            "icon": "information"
           });
           this.$toast.error(this.$t('msg.finalize.WrongFileType'));
           return

@@ -12,7 +12,8 @@ module.exports = {
       builderOptions: {
 
         "productName": "EpicWallet-4.0.0-beta",
-        "appId": "epic.tech",
+        "afterSign": "./build/notarize.js",
+        "appId": "com.github.epiccash.epic-gui-wallet",
         "directories": {
           "output": "build"
         },
@@ -34,6 +35,7 @@ module.exports = {
         },
         "mac": {
           "icon": "public/favicon_io/android-chrome-512x512.png",
+          "category": "your.app.category.type",
           "artifactName": "${productName}.${ext}",
           "target": "pkg",
           "extraFiles": [
@@ -127,8 +129,7 @@ module.exports = {
           "artifactName": "${productName}.${ext}",
           "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": [
-            "deb",
-            "appImage"
+            "AppImage"
           ],
           "extraFiles": [
             {

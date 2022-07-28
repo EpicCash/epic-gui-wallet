@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell } from 'electron'
+
 import { exec } from 'child_process'
 
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -10,7 +11,28 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 const ps = require('ps-node');
 const findProcess = require('find-process');
+const log = require('electron-log');
+const {autoUpdater} = require("electron-updater");
+
 let win;
+
+//-------------------------------------------------------------------
+// Logging
+//
+// THIS SECTION IS NOT REQUIRED
+//
+// This logging setup is not required for auto-updates to work,
+// but it sure makes debugging easier :)
+//-------------------------------------------------------------------
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
+
+
+function sendStatusToWindow(text) {
+  log.info(text);
+  win.webContents.send('message', text);
+}
 
 async function kill(pid){
   return new Promise(function(resolve, reject) {
@@ -82,6 +104,9 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+
+
+
   if (!isDevelopment) {
     if(process.platform == 'darwin'){
       var menu = Menu.buildFromTemplate([
@@ -284,7 +309,27 @@ app.on('window-all-closed', async() => {
 
 });
 
-
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...');
+})
+autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  sendStatusToWindow('Update not available.');
+})
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error in auto-updater. ' + err);
+})
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  sendStatusToWindow(log_message);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Update downloaded');
+});
 
 
 app.on('activate', () => {
@@ -297,6 +342,9 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+
+
+
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     setTimeout(() => {
@@ -325,6 +373,8 @@ app.on('ready', async () => {
         console.error('Vue Devtools failed to install:', e.toString())
       }
     }, 250)
+  }else{
+    autoUpdater.checkForUpdatesAndNotify();
   }
 
   createWindow()

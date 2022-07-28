@@ -13,7 +13,7 @@
 
                 <form @submit.prevent novalidate>
                   <div class="field">
-                    <label class="label">{{ $t("msg.account") }}</label>
+                    <label class="label">{{ $t("msg.account.account") }}</label>
                     <div class="control">
                       <AccountField ref="accountField" placeholder="default" required="true" />
                     </div>
@@ -65,6 +65,7 @@ import AccountField from "@/components/form/accountField";
 import useFormValidation from "@/modules/useFormValidation";
 import { useRouter } from '@/router';
 import { useStore } from '@/store';
+
 
 export default {
   name: "login",
@@ -122,18 +123,18 @@ export default {
             const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
 
             if(isListen && isListen.success){
-              this.$toast.success("Wallet listener started");
+              this.$toast.success(this.$t("msg.login.listener_started"));
               this.store.commit('walletListenerService', true);
             }else{
-              this.$toast.error("Error starting wallet listener");
+              this.$toast.error(this.$t("msg.login.error_listener_started"));
               this.store.commit('walletListenerService', false);
             }
 
             if(isListen && isListen.tor){
-              this.$toast.success("Tor started");
+              this.$toast.success(this.$t("msg.login.tor_started"));
               this.store.commit('torService', true);
             }else{
-              this.$toast.error("Tor not started");
+              this.$toast.error(this.$t("msg.login.error_tor_started"));
               this.store.commit('torService', false);
             }
           }

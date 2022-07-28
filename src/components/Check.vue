@@ -25,7 +25,7 @@
             <div class="field">
               <div class="control">
                   <input class="switch is-success" id="unconfirmedSwitch" type="checkbox" v-model="delete_unconfirmed">
-                  <label for="unconfirmedSwitch">Delete unconfirmed coin outputs</label>
+                  <label for="unconfirmedSwitch">{{ $t("msg.check.delete_unconfirmed") }}</label>
               </div>
 
             </div>
@@ -117,7 +117,7 @@ export default {
           this.checking = false;
           this.checkOutputs = [];
           this.emitter.emit('app.update');
-          this.$toast.success("Wallet scan finished.");
+          this.$toast.success(this.$t("msg.check.scan_finished"));
         }
 
       });
@@ -125,7 +125,7 @@ export default {
       window.nodeChildProcess.on('scan-error', () => {
         if(this.checking){
 
-          this.$toast.error("Error start scan. Is password correct?");
+          this.$toast.error(this.$t("msg.check.error_scan"));
         }
 
       })
@@ -158,7 +158,7 @@ export default {
       //check now requires settings
       if(!isFormAllValid.includes(false)){
         this.checking = true;
-        
+
         this.$walletService.check(this.passwordField.defaultValue, this.delete_unconfirmed);
       }
     },
@@ -166,7 +166,7 @@ export default {
     stop(){
       this.$walletService.stopCheck()
       this.checking = false;
-      this.$toast.success("Wallet scan stopped.");
+      this.$toast.success(this.$t("msg.check.scan_stop"));
 
     },
 

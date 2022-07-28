@@ -2,7 +2,7 @@
 import { createApp } from 'vue'
 import { store } from './store/index'
 import router from './router'
-import { createI18n } from 'vue-i18n/index'
+import { i18n } from './i18n';
 import walletService from './shared/walletService.js';
 import nodeService from './shared/nodeService.js';
 import ngrokService from './shared/ngrokService.js';
@@ -24,9 +24,7 @@ import './assets/css/animate.css';
 import mdiVue from 'mdi-vue/v3';
 import * as mdijs from '@mdi/js';
 
-import en from './lang/en';
-import zh from './lang/zh';
-import ru from './lang/ru';
+
 
 moment.updateLocale('en', {
     longDateFormat : {
@@ -39,18 +37,11 @@ moment.updateLocale('de', {
     }
 });
 
-const messages = {
-  en,
-  ru,
-  zh,
-}
+
 
 const emitter = mitt();
 const app = createApp(App);
-const i18n = createI18n({
-  locale: 'en',
-  messages
-})
+
 
 app.use(i18n);
 app.use(mdiVue, {

@@ -5,33 +5,25 @@
       <div class="column is-half">
 
         <div class="field">
-          <label class="label">Your name<span class="required">*</span></label>
+          <label class="label">{{ $t("msg.account.your_name") }}<span class="required">*</span></label>
           <TextField ref="textField" fieldname="name" />
-
         </div>
 
         <div class="field">
-          <label class="label">Keybase</label>
+          <label class="label">{{ $t("msg.account.keybase") }}</label>
           <div class="control">
             <input class="input" type="keybase" required v-model="keybase" />
-
           </div>
         </div>
 
-
-
-
-
-      <div class="field">
-        <div class="control">
-          <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
+        <div class="field">
+          <div class="control">
+            <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
+          </div>
         </div>
 
       </div>
-
-
-      </div>
-      </div>
+    </div>
   </section>
 
 </template>
@@ -85,11 +77,10 @@ import TextField from "@/components/form/textField";
 
           let updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {name:this.textField.defaultValue, keybase: this.keybase});
           if(updated){
-            this.$toast.success('Account settings saved');
+            this.$toast.success(this.$t("msg.account.settings_saved"));
           }else{
-            this.$toast.error('Error saving account');
+            this.$toast.error(this.$t("msg.account.error_save"));
           }
-
 
 
         }else{

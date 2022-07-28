@@ -14,69 +14,69 @@
     </div>
     <div class="menu-container">
       <div class="menu is-menu-main">
-        <p class="menu-label">General</p>
+        <p class="menu-label">{{ $t("msg.menu.general") }}</p>
         <ul class="menu-list">
           <li>
             <router-link class="has-icon" to="/dashboard">
               <span class="icon"><mdicon name="desktop-mac" /></span>
-              <span class="menu-item-label">Dashboard</span>
+              <span class="menu-item-label">{{ $t("msg.menu.dashboard") }}</span>
             </router-link>
 
           </li>
           <li>
             <router-link class="has-icon" to="/addressBook">
               <span class="icon"><mdicon name="book-open-outline" /></span>
-              <span class="menu-item-label">Address Book</span>
+              <span class="menu-item-label">{{ $t("msg.menu.address_book") }}</span>
             </router-link>
           </li>
         </ul>
-        <p class="menu-label">SEND</p>
+        <p class="menu-label" >{{ $t("msg.menu.send") }}</p>
         <ul class="menu-list">
           <li>
             <router-link class="has-icon" to="/httpSend">
               <span class="icon"><mdicon name="package-up" /></span>
-              <span class="menu-item-label">Send</span>
+              <span class="menu-item-label">{{ $t("msg.menu.send") }}</span>
             </router-link>
           </li>
 
           <li>
             <router-link class="has-icon" to="/finalizeTransaction">
               <span class="icon"><mdicon name="basket" /></span>
-              <span class="menu-item-label">Finalize offline transaction</span>
+              <span class="menu-item-label">{{ $t("msg.menu.finalize") }}</span>
             </router-link>
           </li>
 
         </ul>
 
 
-        <p class="menu-label">RECEIVE</p>
+        <p class="menu-label" >{{ $t("msg.menu.receive") }}</p>
         <ul class="menu-list">
           <li>
             <router-link class="has-icon" to="/httpReceive">
               <span class="icon"><mdicon name="package-down" /></span>
-              <span class="menu-item-label">Receive</span>
+              <span class="menu-item-label">{{ $t("msg.menu.receive") }}</span>
             </router-link>
           </li>
           <li>
             <router-link class="has-icon" to="/importTransaction">
               <span class="icon"><mdicon name="basket-fill" /></span>
-              <span class="menu-item-label">Import offline transaction</span>
+              <span class="menu-item-label">{{ $t("msg.menu.import") }}</span>
             </router-link>
           </li>
 
         </ul>
-        <p class="menu-label">MISC</p>
+        <p class="menu-label">{{ $t("msg.menu.misc") }}</p>
         <ul class="menu-list">
           <li>
             <router-link class="has-icon" to="/about">
               <span class="icon"><mdicon name="information-outline" /></span>
-              <span class="menu-item-label">About</span>
+              <span class="menu-item-label">{{ $t("msg.menu.about") }}</span>
             </router-link>
           </li>
           <li>
             <router-link class="has-icon" to="/help">
               <span class="icon"><mdicon name="account-question-outline" /></span>
-              <span class="menu-item-label">Help</span>
+              <span class="menu-item-label">{{ $t("msg.menu.help") }}</span>
             </router-link>
           </li>
         </ul>
@@ -88,7 +88,7 @@
           <a :class="{ 'button__loader': isLoading }" @click="logout" title="Log out" class="has-icon is-state-info is-hoverable">
             <span class="button__text">
               <span class="icon"><mdicon name="logout" /></span>
-              <span class="menu-item-label">Log out</span>
+              <span class="menu-item-label">{{ $t("msg.menu.logout") }}</span>
             </span>
           </a>
         </li>

@@ -1,79 +1,76 @@
 <template>
 
 
-    <section class="section is-main-section" >
-      <div class="columns">
-        <div class="column is-half">
-
-          <div>
+  <section class="section is-main-section" >
+    <div class="columns">
+      <div class="column is-half">
 
 
-        <NodeserverField ref="nodeserverField" class="is-fullwidth" />
+          <NodeserverField ref="nodeserverField" class="is-fullwidth" />
 
-        <div class="field">
-          <label class="label">{{ $t("msg.lang.lang") }}</label>
-          <div class="control">
-            <div class="select is-fullwidth">
-              <select v-model="localeSelected">
-                <option v-for="(lang, value) in langs" :value="value" :key="lang.id" >{{lang}}</option>
-              </select>
+          <div class="field">
+            <label class="label">{{ $t("msg.lang.lang") }}</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select v-model="localeSelected">
+                  <option v-for="(lang, value) in langs" :value="value" :key="lang.id" >{{lang}}</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="field">
-          <label class="label">Wallet listener</label>
-          <div class="control">
+          <div class="field">
+            <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
+            <div class="control">
 
-              <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
-              <label for="walletListenSwitch">automatically start wallet listener after login</label>
+                <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
+                <label for="walletListenSwitch">{{ $t("msg.settings.auto_start") }}</label>
 
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label">Your Ngrok Authtoken</label>
-
-          <div class="control">
-            <input
-              class="input"
-              type="ngrok"
-              required
-              v-model="ngrok" />
-          </div>
-          <div class="control">
-              <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
-                <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
-                <mdicon size="18" v-else name="menu-down" />
-                How to get your Authtoken from ngrok
-              </a>
             </div>
-        </div>
-
-        <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
-          <div class="card-content">
-           <div class="content">
-             <div class="field">
-
-               <div class="control">
-                 <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-               </div>
-             </div>
           </div>
-        </div>
+
+          <div class="field">
+            <label class="label">{{ $t("msg.settings.authtoken") }}</label>
+
+            <div class="control">
+              <input
+                class="input"
+                type="ngrok"
+                required
+                v-model="ngrok" />
+            </div>
+            <div class="control">
+                <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+                  <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+                  <mdicon size="18" v-else name="menu-down" />
+                  {{ $t("msg.settings.howto") }}
+                </a>
+              </div>
+          </div>
+
+          <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+            <div class="card-content">
+              <div class="content">
+                <div class="field">
+
+                   <div class="control">
+                     <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
+                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
+            </div>
+          </div>
+
+        
       </div>
-
-
-        <div class="field">
-          <div class="control">
-            <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
-          </div>
-
-        </div>
-        </div>
-        </div>
-        </div>
-    </section>
+    </div>
+  </section>
 
 
 </template>
@@ -176,11 +173,11 @@ import { videoPlay } from "vue3-video-play";
           /*todo simple node restart user update wallet restart here*/
           if(updated){
             this.store.commit('nodeType', this.nodeserverField.select);
-            this.$toast.success('Settings saved');
+            this.$toast.success(this.$t("msg.settings.settings_saved"));
             this.emitter.emit('app.nodeStart');
             this.emitter.emit('app.ngrokStart');
           }else{
-            this.$toast.error('Error saving settings');
+            this.$toast.error(this.$t("msg.settings.error_save"));
           }
 
 

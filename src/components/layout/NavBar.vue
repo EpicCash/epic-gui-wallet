@@ -46,30 +46,30 @@
 
               <router-link class="navbar-item" to="/account">
                 <span class="icon"><mdicon name="account" /></span>
-                <span>Account</span>
+                <span>{{ $t("msg.menu.account") }}</span>
               </router-link>
               <router-link class="navbar-item" to="/settings">
                 <span class="icon"><mdicon name="settings" /></span>
-                <span>Settings</span>
+                <span>{{ $t("msg.menu.settings") }}</span>
               </router-link>
               <router-link class="navbar-item" to="/recheckBalance">
                 <span class="icon"><mdicon name="sync" /></span>
-                <span>Recheck Balance</span>
+                <span>{{ $t("msg.menu.recheck") }}</span>
               </router-link>
               <router-link class="navbar-item" to="/mnemonic">
                 <span class="icon"><mdicon name="spellcheck" /></span>
-                <span>Mnemonic Words</span>
+                <span>{{ $t("msg.menu.mnemonic") }}</span>
               </router-link>
               <router-link class="navbar-item" to="/setupwizard">
                 <span class="icon"><mdicon name="wizard-hat" /></span>
-                <span>Run Setup Assistant</span>
+                <span>{{ $t("msg.menu.run_setup") }}</span>
               </router-link>
 
               <hr class="navbar-divider">
               <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">
                 <span class="button__text">
                   <span class="icon"><mdicon name="logout" /></span>
-                  <span>Log Out</span>
+                  <span>{{ $t("msg.menu.logout") }}</span>
                 </span>
               </a>
           </div>
@@ -83,7 +83,7 @@
         :class="{'is-active':isAsideRightActive}"
       >
         <span :class="{'has-update-mark':hasUpdates}" class="icon"><mdicon :class="{'animated':hasUpdates}" class="icon faa-ring " name="bell" /></span>
-        <span>Updates</span>
+        <span>{{ $t("msg.menu.updates") }}</span>
       </a>
 
     </div>
