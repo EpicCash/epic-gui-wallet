@@ -29,11 +29,7 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'debug';
 log.info('App starting...');
 
-autoUpdater.setFeedURL({
-  provider: "github",
-  owner: "EpicCash",
-  repo: "epic-gui-wallet",
-});
+
 autoUpdater.channel = "beta"
 
 function sendStatusToWindow(text) {
