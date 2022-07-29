@@ -13,7 +13,7 @@ const ps = require('ps-node');
 const findProcess = require('find-process');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
-
+autoUpdater.channel = "beta"
 
 let win;
 
@@ -30,11 +30,9 @@ autoUpdater.logger.transports.file.level = 'debug';
 log.info('App starting...');
 
 
-autoUpdater.channel = "beta"
-
 function sendStatusToWindow(text) {
   log.info(text);
-
+  win.webContents.send('message', text);
 }
 
 
@@ -80,7 +78,7 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
 
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1024,
     height: 768,
     minWidth: 1024,
@@ -268,6 +266,7 @@ async function createWindow() {
 
     Menu.setApplicationMenu(menu);
   }
+  return win;
 }
 
 
