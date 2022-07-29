@@ -3,6 +3,7 @@
 /**
  * @type {import('@vue/cli-service').ProjectOptions}
  */
+
 module.exports = {
   pluginOptions: {
     electronBuilder: {
@@ -14,9 +15,17 @@ module.exports = {
         "productName": "EpicWallet-4.0.0-beta",
         "afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
+        directories: {
+          output: "build",
+        },
+
+
+        /*
         "directories": {
           "output": "build"
         },
+        */
+
 
         "dmg": {
           "contents": [
@@ -33,12 +42,24 @@ module.exports = {
             }
           ]
         },
+        "pkg": {
+          "isRelocatable": true,
+          "isVersionChecked": false,
+          "hasStrictIdentifier": false,
+          "overwriteAction": "upgrade"
+        },
         "mac": {
           "icon": "public/favicon_io/android-chrome-512x512.png",
-          "category": "your.app.category.type",
+          "category": "public.app-category.finance",
           "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
-          "artifactName": "${productName}.${ext}",
-          "target": "pkg",
+          //"artifactName": "${productName}.${ext}",
+          "target": "dmg",
+          "publish": {
+            "provider": "github",
+            //"private": false,
+            //"owner": "EpicCash",
+            //"repo": "epic-gui-wallet",
+          },
           "extraFiles": [
             {
               "from": "resources/bin/mac",

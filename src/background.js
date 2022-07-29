@@ -26,13 +26,18 @@ let win;
 // but it sure makes debugging easier :)
 //-------------------------------------------------------------------
 autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
+autoUpdater.logger.transports.file.level = 'debug';
 log.info('App starting...');
 
+autoUpdater.setFeedURL({
+  provider: "github",
+  owner: "EpicCash",
+  repo: "epic-gui-wallet",
+});
 
 function sendStatusToWindow(text) {
   log.info(text);
-  win.webContents.send('message', text);
+
 }
 
 
@@ -105,6 +110,8 @@ async function createWindow() {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
+    autoUpdater.checkForUpdatesAndNotify();
+
   }
 
 
@@ -375,8 +382,6 @@ app.on('ready', async () => {
         console.error('Vue Devtools failed to install:', e.toString())
       }
     }, 250)
-  }else{
-    autoUpdater.checkForUpdatesAndNotify();
   }
 
   createWindow()
