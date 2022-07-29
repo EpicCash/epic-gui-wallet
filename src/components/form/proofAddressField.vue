@@ -2,7 +2,7 @@
   <input
     class="input"
     type="proof_address"
-    placeholder="Recipient proof address"
+    placeholder="$t('msg.recipient_proof_address')"
     autocomplete="off"
     v-model="input"
 

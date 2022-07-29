@@ -13,11 +13,11 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} Step 1/3</h2>
+                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} {{ $t('msg.step_of', [1,3]) }}</h2>
 
                     <div class="field has-addons-fullwidth" style="margin-bottom: 24px;">
                       <div class="control">
-                        <input @keyup="keyEvent" v-on:keyup.enter="add" v-model="search" placeholder="type to search words / or paste seed phrase" type="text" class="input" style="width: 100%;">
+                        <input @keyup="keyEvent" v-on:keyup.enter="add" v-model="search" :placeholder="$t('msg.restore.search_placeholder')" type="text" class="input" style="width: 100%;">
 
                       </div>
                     </div>
@@ -55,7 +55,7 @@
                         <mdicon name="arrow-left-bold-hexagon-outline" />
                         {{ $t("msg.back") }}
                       </router-link>
-                      <button :disabled="seeds.length<=0" class="button is-primary" @click="delete_"><mdicon name="delete" />{{ $t('msg.restore.delete') }}</button>
+                      <button :disabled="seeds.length<=0" class="button is-primary" @click="delete_"><mdicon name="delete" />{{ $t('msg.delete') }}</button>
 
                       <button :disabled="!enoughSeeds" class="button is-primary" @click="page='addPassword'">
                         <mdicon name="arrow-right-bold-hexagon-outline" />{{ $t('msg.restore.added') }}
@@ -75,16 +75,16 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} Step 2/3</h2>
+                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} {{ $t('msg.step_of', [2,3]) }}</h2>
                     <p class="has-text-weight-semibold has-text-warning" style="color: #d19944!important;margin-bottom: 24px;">
-                      Create new account
+                      {{ $t('msg.restore.create_new') }}
                     </p>
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.account') }}</label>
+                        <label class="label">{{ $t('msg.account.account') }}</label>
                         <div class="control">
                           <AccountField ref="accountField" placeholder="default" />
-                          <p class="help">Only lower case letters from a-z, <!----></p>
+                          <p class="help">{{ $t('msg.account.only_letter') }} <!----></p>
                         </div>
                     </div>
 
@@ -108,7 +108,7 @@
                           <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
                             <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
                             <mdicon size="18" v-else name="menu-down" />
-                            Custom settings
+                            {{ $t('msg.custom_settings') }}
                           </a>
                         </div>
                     </div>
@@ -137,7 +137,7 @@
 
 
                     <div class="buttons is-centered">
-                        <button class="button is-primary" @click="page='addSeeds'"><mdicon name="arrow-left-bold-hexagon-outline" />Change seed words</button>
+                        <button class="button is-primary" @click="page='addSeeds'"><mdicon name="arrow-left-bold-hexagon-outline" />{{ $t('msg.restore.change_seed') }}</button>
                         <button class="button is-primary" @click="initR" >{{ $t('msg.restore.recover') }}</button>
                     </div>
 
@@ -155,9 +155,9 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} Step 3/3</h2>
+                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} {{ $t('msg.step_of', [3,3]) }}</h2>
                     <p class="has-text-weight-semibold has-text-warning" style="color: #d19944!important;margin-bottom: 24px;">
-                      Your wallet is recoverd. Please login and finish the setup.
+                      {{ $t('msg.restore.wallet_recovered') }}
                     </p>
 
                     <div class="buttons is-centered">
@@ -328,11 +328,11 @@
                 //this.newseeds = recovered.msg.split(' ');
                 this.page = 'restored'
               }else{
-                this.$toast.error('Fatal: recover fail on action "' + action + '"', {duration:false});
+                this.$toast.error(this.$t('msg.restore.recover_fail', [action]), {duration:false});
               }
 
             }else{
-              this.$toast.error('Fatal: App config not updated.', {duration:false});
+              this.$toast.error(this.$t('msg.restore.fatal_app'), {duration:false});
             }
           }
 

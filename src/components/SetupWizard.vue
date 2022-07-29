@@ -12,7 +12,7 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div class="card-content">
-                    <h2 class="title" style="color: #d19944; text-transform: uppercase; text-align: center;">Setup Assistant</h2>
+                    <h2 class="title" style="color: #d19944; text-transform: uppercase; text-align: center;">{{ $t("msg.setupwizard.setup_assistant") }}</h2>
 
                     <div id="stepContainerWrap">
 
@@ -62,20 +62,21 @@
                     </div><!-- end stepContainerWrap -->
 
                     <div v-show="step==='step1'" >
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Account information</h2>
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.account_information") }}</h2>
 
                         <div class="field">
-                          <label class="label">Your name<span class="required">*</span></label>
+                          <label class="label">{{ $t("msg.setupwizard.your_name") }}<span class="required">*</span></label>
                           <TextField ref="textField" fieldname="name" />
-                          <p class="help">Name is only internal used</p>
+                          <p class="help">{{ $t("msg.setupwizard.name_only_internal") }}</p>
                         </div>
 
                         <div class="field">
-                          <label class="label">Keybase</label>
+                          <label class="label">{{ $t("msg.setupwizard.keybase") }}</label>
                           <div class="control">
                             <input class="input" type="keybase" required v-model="keybase" />
                             <p class="help">
-                               If you have a Keybase Account, you can enter here.</p>
+                               {{ $t("msg.setupwizard.enter_keybase") }}
+                             </p>
                           </div>
                         </div>
 
@@ -92,7 +93,7 @@
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
                         <div class="buttons is-centered">
-                          <button class="button is-primary" @click="nextStep('step2')" >Next step&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
+                          <button class="button is-primary" @click="nextStep('step2')" >{{ $t("msg.setupwizard.next_step") }}&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
                         </div>
 
                     </div><!-- end step 1 -->
@@ -101,22 +102,20 @@
                     <div v-show="step==='step2'">
 
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">
-                        Network node
+                        {{ $t("msg.setupwizard.network_node") }}
                       </h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          Your wallet requires a network node to send and receive transactions.<br/>
-                          You can choose between the built-in node server and an external node server.<br/>
-                          <br/>
-                          If you are not sure which one to use, then leave the settings as they are.<br/>
+                          <span v-html="$t('msg.setupwizard.network_node_txt')" ></span>
+
                         </div>
                       </article>
                       <NodeserverField ref="nodeserverField" />
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />&nbsp;Previous step</button>
-                          <button class="button is-primary" @click="nextStep('step3')" >Next step&nbsp;<mdicon name="arrow-right-circle-outline" /></button>
+                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ $t("msg.setupwizard.previous_step") }}</button>
+                          <button class="button is-primary" @click="nextStep('step3')" >{{ $t("msg.setupwizard.next_step") }}&nbsp;<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
 
                     </div><!-- end step 2 -->
@@ -124,25 +123,14 @@
 
                     <div v-show="step==='step3'">
 
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Receiving transactions</h2>
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.receive_transactions") }}</h2>
                       <article class="message is-info">
                         <div class="message-body">
-
-                          To receive transactions from other wallets, your wallet must be accessible over the Internet.<br/>
-                          <br/>
-                          To simplify this process, we have integrated the ngrok tool into the wallet.<br/>
-                          Once ngrok has been activated, your wallet will be accessible via a temporary ngrok address.<br/>
-                          If you are not familiar with router settings and port forwarding, we recommend using the ngrok service.<br/>
-                          <br/>
-                          To receive your ngrok authentication token, please create a new account at ngrok.com.<br/>
-                          <br/>
-                          <br/>
-                          Leave the field below blank, if you don’t want to use the ngrok service.<br/>
-
+                          {{ $t("msg.setupwizard.receive_transactions_txt") }}
                         </div>
                       </article>
                       <div class="field">
-                        <label class="label">Your ngrok Authtoken</label>
+                        <label class="label">{{ $t("msg.setupwizard.authtoken") }}</label>
 
                           <div class="control">
                             <input class="input" type="ngrok" required v-model="ngrok" />
@@ -152,7 +140,7 @@
                           <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
                             <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
                             <mdicon size="18" v-else name="menu-down" />
-                            How to get your Authtoken from ngrok
+                            {{ $t("msg.setupwizard.howto") }}
                           </a>
                       </div>
                       <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
@@ -170,27 +158,27 @@
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />&nbsp;Previous step</button>
-                        <button class="button is-primary" @click="nextStep('step4')" >&nbsp;Next step<mdicon name="arrow-right-circle-outline" /></button>
+                        <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ $t("msg.setupwizard.previous_step") }}</button>
+                        <button class="button is-primary" @click="nextStep('step4')" >&nbsp;{{ $t("msg.setupwizard.next_step") }}<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
 
                     </div><!-- end step 3 -->
 
                     <div v-show="step==='step4'">
 
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">Are these values correct?</h2>
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.values_correct") }}</h2>
                       <p>
-                        Name: {{this.textField.defaultValue}}<br/>
-                        Keybase Account: {{keybase}}<span v-if="!keybase">-</span><br/>
-                        Language: {{localeSelected}}<br/>
-                        Ngrok Auth-Token: {{ngrok}}<span v-if="!ngrok">-</span><br/>
-                        Network node: {{nodeserverField.nodeInternal ? 'built-in' : this.nodeserverField.defaultValue}}<br/>
+                        {{ $t("msg.setupwizard.name") }}: {{this.textField.defaultValue}}<br/>
+                        {{ $t("msg.setupwizard.keybase_account") }}: {{keybase}}<span v-if="!keybase">-</span><br/>
+                        {{ $t("msg.setupwizard.language") }}: {{localeSelected}}<br/>
+                        {{ $t("msg.setupwizard.ngrok_authtoken") }}: {{ngrok}}<span v-if="!ngrok">-</span><br/>
+                        {{ $t("msg.setupwizard.network_node") }}: {{nodeserverField.nodeInternal ? 'built-in' : this.nodeserverField.defaultValue}}<br/>
                       </p>
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />&nbsp;Previous step</button>
-                        <button class="button is-primary" @click="save" >Save and finish</button>
+                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ $t("msg.setupwizard.previous_step") }}</button>
+                        <button class="button is-primary" @click="save" >{{ $t("msg.setupwizard.save_and_finish") }}</button>
                       </div>
 
 
@@ -362,7 +350,7 @@
             if(inserted.length){
               user = inserted;
             }else{
-              this.$toast.error("DB Fatal: can not insert DB");
+              this.$toast.error(this.$t("msg.setupwizard.db_fatal"));
               return;
             }
 
@@ -386,7 +374,7 @@
 
 
         }catch(e){
-          this.$toast.error("Error saving user settings: " + e.message);
+          this.$toast.error(this.$t("msg.setupwizard.errors_save", [e.message]));
           return
         }
 

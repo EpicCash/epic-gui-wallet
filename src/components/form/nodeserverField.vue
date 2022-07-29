@@ -1,18 +1,18 @@
 <template>
   <div class="field">
-    <label class="label">Node Server<span class="required">*</span></label>
+    <label class="label">{{ $t("msg.node_server") }}<span class="required">*</span></label>
     <div class="control">
 
       <div class="select is-fullwidth" >
         <select v-model="select" required>
-          <option value="internal">Built-in node server</option>
-          <option value="external">External node server</option>
+          <option value="internal">{{ $t("msg.node_server_builtin") }}</option>
+          <option value="external">{{ $t("msg.node_server_external") }}</option>
         </select>
       </div>
     </div>
   </div>
   <div class="field" v-if="select == 'external'">
-    <label class="label">Node Server Address<span class="required">*</span></label>
+    <label class="label">{{ $t("msg.node_server_address") }}<span class="required">*</span></label>
     <div class="control">
       <input
         class="input"

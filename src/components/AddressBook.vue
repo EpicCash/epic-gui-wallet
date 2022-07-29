@@ -15,7 +15,7 @@
           <form v-on:submit.prevent="search" >
             <div class="field has-addons">
               <div class="control is-expanded">
-                <input class="input" type="text" placeholder="Search..." v-model="keyword" >
+                <input class="input" type="text" :placeholder="$t('msg.placeholder_search')" v-model="keyword" >
               </div>
               <div class="control">
                 <button v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
@@ -53,49 +53,49 @@
 
             <div class="field">
               <div class="control">
-                <label>Name</label>
+                <label>{{ $t("msg.addressbook.name") }}</label>
                 <input class="input" type="text" v-model="name" >
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>Country</label>
+                <label>{{ $t("msg.addressbook.country") }}</label>
                 <input class="input" type="text" v-model="country" >
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>City</label>
+                <label>{{ $t("msg.addressbook.city") }}</label>
                 <input class="input" type="text" v-model="city" >
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>Tor-Onion Address</label>
+                <label>{{ $t("msg.addressbook.tor_onion_address") }}</label>
                 <input class="input" type="text" v-model="onion" >
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>Keybase Account</label>
+                <label>{{ $t("msg.addressbook.keybase_account") }}</label>
                 <input class="input" type="text" v-model="keybase" >
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>External Address 1</label>
+                <label>{{ $t("msg.addressbook.external_one") }}</label>
                 <input class="input" type="text" v-model="externalOne" >
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>External Address 2</label>
+                <label>{{ $t("msg.addressbook.external_two") }}</label>
                 <input class="input" type="text" v-model="externalTwo" >
               </div>
             </div>
@@ -103,7 +103,7 @@
             <div class="field">
               <div class="control">
 
-                <label>Proof Address</label>
+                <label>{{ $t("msg.addressbook.proof_address") }}</label>
                 <input class="input" type="text" v-model="proofaddr" >
               </div>
             </div>
@@ -112,14 +112,14 @@
               <div class="control">
                 <label class="checkbox">
                   <input class="switch is-success" id="alwaysProofSwitch" type="checkbox" v-model="alwaysproof">
-                  <label for="alwaysProofSwitch">send always proof</label>
+                  <label for="alwaysProofSwitch">{{ $t("msg.addressbook.send_always") }}</label>
                 </label>
               </div>
             </div>
 
             <div class="field">
               <div class="control">
-                <label>Notice</label>
+                <label>{{ $t("msg.addressbook.notice") }}</label>
                 <textarea class="textarea" v-model="notice" ></textarea>
               </div>
             </div>
@@ -128,10 +128,10 @@
           </div>
           <footer class="card-footer">
 
-              <a v-if="!isNewAddress" href="#" class="card-footer-item" @click="updateAddressById()">Save</a>
-              <a v-else href="#" class="card-footer-item" @click="addAddress()">Save</a>
-              <a href="#" class="card-footer-item" @click="cancel()">Cancel</a>
-              <a v-if="!isNewAddress" href="#" class="card-footer-item" @click.prevent="trashModalOpen(selectedAddress)">Delete</a>
+              <a v-if="!isNewAddress" href="#" class="card-footer-item" @click="updateAddressById()">{{ $t("msg.save") }}</a>
+              <a v-else href="#" class="card-footer-item" @click="addAddress()">{{ $t("msg.save") }}</a>
+              <a href="#" class="card-footer-item" @click="cancel()">{{ $t("msg.cancel") }}</a>
+              <a v-if="!isNewAddress" href="#" class="card-footer-item" @click.prevent="trashModalOpen(selectedAddress)">{{ $t("msg.delete") }}</a>
 
           </footer>
 
@@ -149,24 +149,24 @@
 
           <div class="card-content">
 
-            <p class="block" v-if="country"><label class="label">Country</label>{{country}}</p>
-            <p class="block" v-if="city"><label class="label">City</label> {{city}}</p>
-            <p class="block" v-if="onion"><label class="label">Tor-Onion Address</label><span>{{onion}}</span>&nbsp;<mdicon @click="copy(onion)" name="content-copy" size=16 /></p>
-            <p class="block" v-if="keybase"><label class="label">Keybase Account</label> {{keybase}}&nbsp;<mdicon @click="copy(keybase)" name="content-copy" size=16 /></p>
-            <p class="block" v-if="externalOne"><label class="label">External Address 1</label> {{externalOne}}&nbsp;<mdicon @click="copy(externalOne)" name="content-copy" size=16 /></p>
-            <p class="block" v-if="externalTwo"><label class="label">External Address 2</label> {{externalTwo}}&nbsp;<mdicon @click="copy(externalTwo)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="country"><label class="label">{{ $t("msg.addressbook.country") }}</label>{{country}}</p>
+            <p class="block" v-if="city"><label class="label">{{ $t("msg.addressbook.city") }}</label> {{city}}</p>
+            <p class="block" v-if="onion"><label class="label">{{ $t("msg.addressbook.tor_onion_address") }}</label><span>{{onion}}</span>&nbsp;<mdicon @click="copy(onion)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="keybase"><label class="label">{{ $t("msg.addressbook.keybase_account") }}</label> {{keybase}}&nbsp;<mdicon @click="copy(keybase)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="externalOne"><label class="label">{{ $t("msg.addressbook.external_one") }}</label> {{externalOne}}&nbsp;<mdicon @click="copy(externalOne)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="externalTwo"><label class="label">{{ $t("msg.addressbook.external_two") }}</label> {{externalTwo}}&nbsp;<mdicon @click="copy(externalTwo)" name="content-copy" size=16 /></p>
 
 
-            <p class="block" v-if="proofaddr"><label class="label">Proof Address</label> {{proofaddr}}&nbsp;<mdicon @click="copy(proofaddr)" name="content-copy" size=16 /></p>
-            <p class="block" v-if="proofaddr"><label class="label">Send always proof</label> {{alwaysproof == true ? 'yes' : 'no'}}</p>
+            <p class="block" v-if="proofaddr"><label class="label">{{ $t("msg.addressbook.proof_address") }}</label> {{proofaddr}}&nbsp;<mdicon @click="copy(proofaddr)" name="content-copy" size=16 /></p>
+            <p class="block" v-if="proofaddr"><label class="label">{{ $t("msg.addressbook.send_always") }}</label> {{alwaysproof == true ? 'yes' : 'no'}}</p>
 
-            <p class="block" v-if="notice"><label class="label">Notice</label> <pre>{{notice}}</pre></p>
+            <p class="block" v-if="notice"><label class="label">{{ $t("msg.addressbook.notice") }}</label> <pre>{{notice}}</pre></p>
 
 
           </div>
           <footer class="card-footer">
-              <a href="#" class="card-footer-item" @click="edit()">Edit</a>
-              <a href="#" class="card-footer-item" @click.prevent="trashModalOpen(selectedAddress)">Delete</a>
+              <a href="#" class="card-footer-item" @click="edit()">{{ $t("msg.edit") }}</a>
+              <a href="#" class="card-footer-item" @click.prevent="trashModalOpen(selectedAddress)">{{ $t("msg.delete") }}</a>
 
           </footer>
 
@@ -294,7 +294,7 @@ export default {
     },
     copy(text){
       window.clipboard.writeText(text);
-      this.$toast.show("Copied to clipboard!", {duration:1000});
+      this.$toast.show(this.$t("msg.copy_to_clipboard"), {duration:1000});
 
     },
     callAddress(addressItem){
@@ -348,7 +348,7 @@ export default {
       if(id){
         let deleted = await this.$addressBookService.removeAddress(id);
         if(deleted){
-          this.$toast.error("Address deleted!", {duration:1000});
+          this.$toast.error(this.$t("msg.addressbook.deleted"), {duration:1000});
           this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
           this.isEditAddress = false;
           this.selectedAddress = {};
@@ -356,7 +356,7 @@ export default {
           this.addressLoaded = false;
           this.id = 0;
         }else{
-          this.$toast.error("Error delete address!", {duration:1000});
+          this.$toast.error(this.$t("msg.addressbook.error_delete"), {duration:1000});
         }
       }
 

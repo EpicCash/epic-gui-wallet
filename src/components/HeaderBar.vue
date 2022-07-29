@@ -22,7 +22,7 @@
               </div>
               <div class="level-item is-hero-content-item">
                 <div>
-                  <h1 class="title is-spaced">Howdy, <b>{{ userName }}</b></h1>
+                  <h1 class="title is-spaced">{{ $t('msg.headerbar.howdy') }} <b>{{ userName }}</b></h1>
                   <h3 class="subtitle">
                     <span class="is-clickable" @click="hideValues">
                       <mdicon size=20 v-if="!store.state.hideValues" name="eye-outline" />
@@ -40,13 +40,13 @@
             <div class="level-right">
               <div class="level-item is-hero-content-item">
                 <div class="is-size-7">
-                  <h3 class="subtitle"><span><mdicon size=20 name="server-network" /> Node ({{ store.state.nodeType}})</span></h3>
-                  <div>Version: {{store.state.nodeStatus.user_agent}}</div>
-                  <div>Peers: {{store.state.nodeStatus.connections}}</div>
-                  <div>Status: {{store.state.nodeStatus.sync_status}}</div>
+                  <h3 class="subtitle"><span><mdicon size=20 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{ store.state.nodeType}})</span></h3>
+                  <div>{{ $t('msg.headerbar.version') }}: {{store.state.nodeStatus.user_agent}}</div>
+                  <div>{{ $t('msg.headerbar.peers') }}: {{store.state.nodeStatus.connections}}</div>
+                  <div>{{ $t('msg.headerbar.status') }}: {{store.state.nodeStatus.sync_status}}</div>
 
-                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">Sync Height: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
-                    <div v-else >Blockchain Height: {{height}}</div>
+                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">{{ $t('msg.headerbar.sync_height') }}: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
+                    <div v-else >{{ $t('msg.headerbar.block_height') }}: {{height}}</div>
                   <div>
                     <progress v-if="store.state.nodeStatus.sync_status != 'synced'" style="margin-top:5px;" class="progress is-success is-small" :value="currentHeight" :max="highestHeight">0%</progress>
                     <progress v-else style="margin-top:5px;" class="progress is-success is-small" :value="100" :max="100"></progress>
