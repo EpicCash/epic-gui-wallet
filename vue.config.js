@@ -43,7 +43,7 @@ module.exports = {
           "target": "default",
           "publish": {
             "provider": "github",
-            "releaseType": "release",
+            "releaseType": "draft",
 
             //"private": false,
             //"owner": "EpicCash",
