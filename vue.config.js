@@ -12,7 +12,7 @@ module.exports = {
       preload: 'src/preload.js',
       builderOptions: {
 
-        "productName": "EpicWallet-4.0.0-beta",
+        "productName": "EpicWallet",
         //"afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
         directories: {
@@ -34,12 +34,7 @@ module.exports = {
             }
           ]
         },
-        "pkg": {
-          "isRelocatable": true,
-          "isVersionChecked": false,
-          "hasStrictIdentifier": false,
-          "overwriteAction": "upgrade"
-        },
+
         "mac": {
           "icon": "public/favicon_io/android-chrome-512x512.png",
           "category": "public.app-category.finance",
@@ -140,7 +135,7 @@ module.exports = {
         },
         "linux": {
           "category": "Utility",
-          "executableName": "EpicWallet-4.0.0-beta",
+          "executableName": "EpicWallet",
           "artifactName": "${productName}.${ext}",
           "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": [
@@ -184,7 +179,7 @@ module.exports = {
             }
           ],
           "desktop": {
-            "Name": "Epic-Wallet 4.0.0-beta",
+            "Name": "Epic-Wallet",
             "Encoding": "UTF-8",
             "Type": "Application",
             "Comment": "Epic Wallet, mind your Epic!",
