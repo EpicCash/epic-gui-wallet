@@ -1,18 +1,14 @@
 {
   "name": "EpicWallet",
-  "version": "v4.0.1-beta",
+  "version": "4.0.1-beta",
   "private": true,
   "description": "Epic Wallet, mind your Epic!",
   "author": "v3: Johannes Hahn <j.hahn@eccence.digital>, v1: xiaojay, simpleduck, aiwe",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/EpicCash/epic-gui-wallet.git"
-  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build --publish=never",
+    "electron:build": "vue-cli-service electron:build",
     "electron:publish": "vue-cli-service electron:build --publish=always",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
@@ -75,10 +71,16 @@
     "@vue/compiler-sfc": "^3.0.0",
     "electron": "^17.0.0",
     "electron-devtools-installer": "^3.1.0",
+    "electron-installer-dmg": "^4.0.0",
     "electron-notarize": "^1.2.1",
     "eslint-plugin-vue": "^7.0.0",
     "file-loader": "^6.2.0",
-    "vue-cli-plugin-electron-builder": "~3.0.0-alpha.4"
+    "vue-cli-plugin-electron-builder": "^3.0.0-alpha.4"
+  },
+  "overrides": {
+    "vue-cli-plugin-electron-builder": {
+      "electron-builder": "^23.0.6"
+    }
   },
   "eslintConfig": {
     "root": true,
@@ -101,5 +103,9 @@
     "last 2 versions",
     "not dead"
   ],
-  "homepage": "./"
+  "homepage": "./",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EpicCash/epic-gui-wallet.git"
+  }
 }

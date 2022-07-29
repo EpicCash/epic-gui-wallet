@@ -13,20 +13,11 @@ module.exports = {
       builderOptions: {
 
         "productName": "EpicWallet-4.0.0-beta",
-        "afterSign": "./build/notarize.js",
+        //"afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
         directories: {
           output: "build",
         },
-
-
-        /*
-        "directories": {
-          "output": "build"
-        },
-        */
-
-
         "dmg": {
           "contents": [
             {
@@ -38,7 +29,8 @@ module.exports = {
             {
               "x": 130,
               "y": 150,
-              "type": "file"
+              "type": "file",
+
             }
           ]
         },
@@ -53,9 +45,10 @@ module.exports = {
           "category": "public.app-category.finance",
           "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
           //"artifactName": "${productName}.${ext}",
-          "target": "dmg",
+          "target": "default",
           "publish": {
             "provider": "github",
+            "releaseType": "release"
             //"private": false,
             //"owner": "EpicCash",
             //"repo": "epic-gui-wallet",

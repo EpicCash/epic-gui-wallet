@@ -34,6 +34,7 @@ autoUpdater.setFeedURL({
   owner: "EpicCash",
   repo: "epic-gui-wallet",
 });
+autoUpdater.channel = "beta"
 
 function sendStatusToWindow(text) {
   log.info(text);
