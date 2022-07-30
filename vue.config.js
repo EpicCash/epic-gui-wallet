@@ -35,7 +35,7 @@ module.exports = {
         },
 
         "mac": {
-          "icon": "public/favicon_io/android-chrome-1024x1024.png",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "category": "public.app-category.finance",
           "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
           "target": "default",
@@ -83,7 +83,7 @@ module.exports = {
           ]
         },
         "win": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "target": "nsis",
           "extraFiles": [
             {
@@ -131,7 +131,7 @@ module.exports = {
         "linux": {
           "category": "Utility",
           "executableName": "EpicWallet",
-          "icon": "public/favicon_io/android-chrome-1024x1024.png",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "target": [
             "AppImage"
           ],
