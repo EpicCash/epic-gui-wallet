@@ -83,7 +83,7 @@ module.exports = {
           ]
         },
         "win": {
-          "icon": "public/favicon_io/android-chrome-1024x1024.png",
+          "icon": "public/favicon_io/android-chrome-512x512.png",
           "target": "nsis",
           "extraFiles": [
             {
