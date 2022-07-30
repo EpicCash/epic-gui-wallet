@@ -26,7 +26,7 @@ const messages = {
     delete: 'Delete',
     edit: 'Edit',
 
-    welcome: 'Welcome to Epic wallet',
+    welcome: 'Welcome to EPIC wallet',
     back: 'Back',
     reset: 'Reset',
     addall: 'Add all from above',
@@ -82,11 +82,11 @@ const messages = {
       coins: 'Coins'
     },
     create:{
-      select: 'Select directory for your wallet',
+      select: 'Select a directory for your wallet',
       seedPhrase: 'Seed Phrase',
       toNewMsg: 'Create a New Wallet.',
       newWallet: 'Create new wallet',
-      backupNote: 'Important！Please backup your seed phrase to restore your wallet',
+      backupNote: 'Important！ Please backup your seed phrase to restore your wallet',
       fatal_create: 'Fatal: created fail on action "{0}"',
       fatal_update: 'Fatal: App config not updated.'
     },
@@ -95,9 +95,9 @@ const messages = {
       setup_assistant: 'Setup Assistant',
       account_information: 'Account information',
       your_name:'Your name',
-      name_only_internal: 'Name is only internal used',
+      name_only_internal: 'Name is only internally used',
       keybase: 'Keybase',
-      enter_keybase: 'If you have a Keybase Account, you can enter here.',
+      enter_keybase: 'If you have a Keybase Account, you can enter it here.',
       next_step: 'Next step',
       network_node: 'Network node',
       network_node_txt: `Your wallet requires a network node to send and receive transactions.<br/>
@@ -123,7 +123,7 @@ const messages = {
       name: 'Name',
       keybase_account: 'Keybase Account',
       language: 'Language',
-      ngrok_authtoken: 'Ngrok Auth-Token',
+      ngrok_authtoken: 'ngrok Auth-Token',
       db_fatal: 'DB Fatal: can not insert DB',
       errors_save: 'Error saving user settings: {0}'
     },
@@ -233,7 +233,7 @@ const messages = {
       create_new: 'Create new account',
       change_seed: 'Change seed words',
       wallet_recovered: 'Your wallet is recoverd. Please login and finish the setup.',
-      recover_fail: 'Fatal: recover fail on action "{0}"',
+      recover_fail: 'Fatal: recover failed on action "{0}"',
       fatal_app: 'Fatal: App config not updated.'
 
     },
@@ -246,7 +246,7 @@ const messages = {
       httpReceive: 'Receive via HTTP/HTTPS',
       height:'Block Height',
       updateTitle: 'Found new version',
-      updateMsg: 'Found new version of Epic wallet. Please update Right NOW.',
+      updateMsg: 'Found new version of EPIC wallet. Please update Right NOW.',
       yes: 'yes',
       no: 'no',
       hedwig: 'Receive via Hedwig'
@@ -291,7 +291,7 @@ const messages = {
       TxResponseFailed: 'Failed to get right respose from receiver',
       TxCreateFailed: 'Create transaction failed',
       salteVersion: 'Slate file version',
-      salteVersionHelp: 'If you failed to send epic, try change the Slate file version then resend'
+      salteVersionHelp: 'If you failed to send EPIC, try changing the Slate file version then resend'
     },
 
     receive: {
@@ -319,7 +319,7 @@ const messages = {
 
     httpReceive: {
       launchSucess: 'Started successfully',
-      listening: "Your wallet can receive transactions through this addresses.",
+      listening: "Your wallet can receive transactions through these addresses.",
       address: 'Wallet Address',
       reachableMsg2: 'Ensure your IP Address is public and reachable by the internet.',
       close: 'Stop listener',
@@ -330,7 +330,7 @@ const messages = {
       error: 'No password.',
       failed: 'Start Failed, Maybe wrong password',
       failed2: 'HTTP listen failed, your public ip is not reachable by the internet user. Try transaction file',
-      failed3: 'Failed to get your public ip; try it later',
+      failed3: 'Failed to get your public ip; try again later',
       failed4: 'Listener is now running on localhost:3415. However your ip is not reachable by the internet user. Try transaction file',
       ip: 'your public ip'
     },
@@ -343,21 +343,21 @@ const messages = {
       tip:'Please keep wallet online.',
       close: 'Stop Hedwig',
       introTitle: 'Introduction',
-      intro1: 'Hedwig(v1) is a relay service for users without a public ip. It provides a temporary address to receive epic.',
-      intro2: 'When someone send epic to the address, Hedwig(v1) will forward the send request to your wallet. So you will get your epic.',
+      intro1: 'Hedwig(v1) is a relay service for users without a public ip. It provides a temporary address to receive EPIC.',
+      intro2: 'When someone send EPIC to the address, Hedwig(v1) will forward the send request to your wallet. So you will get your EPIC.',
       start: 'Start',
-      failed: 'Error when try to connect Hedwig server, try it latter maybe',
-      failed2: 'Error when test Hedwig address, try it later maybe or restart wallet.',
-      failed3: 'Failed to start local epic receive service, try it later maybe or restart wallet.',
+      failed: 'Error when try to connect Hedwig server, try again later',
+      failed2: 'Error when testing Hedwig address, try it again later or restart wallet.',
+      failed3: 'Failed to start local EPIC receive service, try it again later or restart wallet.',
       copy: 'copy address',
-      copied: 'address was copied in clipboard'
+      copied: 'address was copied to clipboard'
     },
 
     check: {
       checking: 'Re-checking, be patient ...',
       stop: 'Stop Check',
       introTitle: 'Info',
-      intro1: 'This will scan the entire Blockchain for the unspent coin outputs that belongs to your wallet.',
+      intro1: 'This will scan the entire Blockchain for the unspent coin outputs that belong to your wallet.',
       start: 'Start',
       delete_unconfirmed: 'Delete unconfirmed coin outputs',
       scan_finished: 'Wallet scan finished.',
@@ -382,7 +382,7 @@ const messages = {
       network: 'Network',
       wallet_listener: 'Wallet listener',
       auto_start: 'automatically start wallet listener after login',
-      authtoken: 'Your Ngrok Authtoken',
+      authtoken: 'Your ngrok Authtoken',
       howto: 'How to get your Authtoken from ngrok',
       settings_saved: 'Settings saved',
       error_save: 'Error saving settings'

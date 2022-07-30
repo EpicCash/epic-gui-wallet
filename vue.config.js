@@ -13,7 +13,6 @@ module.exports = {
       builderOptions: {
         "generateUpdatesFilesForAllChannels": true,
         "productName": "EpicWallet",
-        //"afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
         directories: {
           output: "build",
@@ -36,18 +35,13 @@ module.exports = {
         },
 
         "mac": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/android-chrome-1024x1024.png",
           "category": "public.app-category.finance",
           "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
-          //"artifactName": "${productName}.${ext}",
           "target": "default",
           "publish": {
             "provider": "github",
             "releaseType": "draft",
-
-            //"private": false,
-            //"owner": "EpicCash",
-            //"repo": "epic-gui-wallet",
           },
           "extraFiles": [
             {
@@ -89,7 +83,7 @@ module.exports = {
           ]
         },
         "win": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/android-chrome-1024x1024.png",
           "target": "nsis",
           "extraFiles": [
             {
@@ -137,8 +131,7 @@ module.exports = {
         "linux": {
           "category": "Utility",
           "executableName": "EpicWallet",
-          "artifactName": "${productName}.${ext}",
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/android-chrome-1024x1024.png",
           "target": [
             "AppImage"
           ],

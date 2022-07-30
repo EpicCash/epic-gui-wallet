@@ -5,8 +5,8 @@ const messages = [
     <br/>
     The transaction can either be carried out instantaneously using either the Tor network or http(s) address, or done manually through the exchange of files.<br/>
     <br/>
-    To start a new transaction, make sure your node server is fully synced<br/>
-    to the Epic Cash network.<br/>
+    To start a new transaction, make sure your node server is fully synced 
+    to the Epic Cash network.<br/></br>
     The status of your node server should read, “synced.”<br/>
     <br/>
     The recipient address can either be a Tor onion address or any external http(s) address.<br/>
@@ -15,9 +15,9 @@ const messages = [
   },
   {
     title: 'Receive coins',
-    text: `To receive coins, your wallet must be in listen mode.<br/>
-    <br/>
-    The wallet’s default settings activate the listen/receive mode by default.<br/>
+    text: `To receive coins, your wallet must be in listen mode.<br/><br/>
+    Every time you start/restart the listener your ngrok address will change so copy each time.<br/><br/>
+    The wallet’s default settings activate the listen/receive mode by default.<br/><br/>
     This feature can be changed in Settings.<br/>
     <br/>
     On the Receive Page, there will be a list of addresses that can be used to receive coins.<br/>
@@ -35,7 +35,7 @@ const messages = [
     title: 'Import offline transaction',
     text: `Use this page to import the transaction file provided by the receiver.<br/>
     <br/>
-    After importing the transaction file, save a finalized transaction file and deliver it<br/>
+    After importing the transaction file, save a finalized transaction file and deliver it 
     to the sender.<br/>`
   },
   {
@@ -57,7 +57,8 @@ const messages = [
     title: 'Wallet listener',
     text: `The wallet listener must be running to receive coins from other wallets.<br/>
     <br/>
-    The listener can be started or stopped on the Receive Page.<br/>`
+    The listener can be started or stopped on the Receive Page.<br/><br/>
+     Your ngrok address will change each time you start the listener.`
   },
   {
     title: 'Account',
@@ -75,30 +76,30 @@ const messages = [
     <br/>
     A node server is required for the wallet to send and receive coins.<br/>
     <br/>
-    You can choose between the built-in node server and an external node server.<br/>
+    You can choose between the built-in node server and an external node server.<br/><br/>
     If you change this value, please restart your wallet.<br/>`
   },
   {
     title: 'Your Ngrok Authtoken',
-    text: `The ngrok auth-token is required for the ngrok service to receive coins from other wallets.<br/>
-    If you dont want to use the ngrok service, then leave "our Ngrok Authtoken" field empty.<br/>`
+    text: `The ngrok auth-token is required for the ngrok service to find your Wallet PC.<br/><br/>
+    If you dont want to use the ngrok service, then leave the "Ngrok Authtoken" field empty.<br/>`
   },
   {
     title: 'Import offline transaction',
-    text: `If somebody sends you a offline transaction, then you can import it on page "Import offline transaction".<br/>
-    After the import you must save a finalization transaction file and send it back to sender.<br/>`
+    text: `If somebody sends you an offline transaction, you can import it on page "Import offline transaction".<br/>
+    <br/>After the import you must save a finalization transaction file and send it back to the sender.<br/>`
   },
   {
     title: 'Mnemonic Words',
-    text: `The Mnemoonic Words are the words you need to recover your wallet. Make a backup of this words
-    in the same order they are displayed.<br/>
+    text: `The Mnemoonic Words are the words you need to recover your wallet. Make a backup of these words
+    in the same order they are displayed. Write down on paper, take a screenshot and save image file, etc.<br/>
     <br/>
     Later if you loose your wallet data, you can recover the wallet<br/>
     with this words.<br/>`
   },
   {
     title: 'Send Payment proof and proof address',
-    text: `In epic you can make transactions with a additional proof.<br/>
+    text: `In epic you can make transactions with an additional proof.<br/>
     <br/>
     With a proof its possible for others
     to verify that the transaction was made between the sender and receiver.<br/>
@@ -107,24 +108,29 @@ const messages = [
   },
   {
     title: 'Tor',
-    text: `You can send and receive transactions via a tor address by default. You find your tor address on page "Receive"<br/>`
+    text: `You can send and receive transactions via a tor address by default.<br/><br/>
+    You will find your tor address on the "Receive" page.<br/>`
   },
   {
     title: 'Ngrok',
-    text: `ngrok is the programmable network edge that adds connectivity,<br/>
-    security, and observability to your apps with no code changes<br/>`
+    text: `ngrok is a service that provides a public address that is linked to your wallet's
+           private IP address behind your router.<br/><br/> You share the ngrok address with wallet senders
+           or use it in the Receive Address on exchanges.<br/>`
   },
   {
     title: 'Network node',
-    text: `A network node is a server which stores the blockchain data.<br/>`
+    text: `A network node is a server which stores the blockchain data.<br/><br/>
+           Your wallet has a built-in node you can use or select an external node you are running on another 
+           computer or an external public node.<br/><br/>
+           The first time you run the built-in node it will take approx. 2 hrs to sync the blockchain data.`
   },
   {
     title: 'Peers',
-    text: `Peers are other network nodes which are connected to your network node<br/>`
+    text: `Peers are other network nodes that are connected to your network node<br/>`
   },
   {
     title: 'Blockchain Height',
-    text: `The blockchain height is the latest block number the chain have. Every 60 seconds the blockchain creates a new block height.<br/>`
+    text: `The blockchain height is the latest block number in the chain. Every 60 seconds the blockchain creates a new block and the height value changes.<br/>`
   },
   /* use this for new topic
   {
