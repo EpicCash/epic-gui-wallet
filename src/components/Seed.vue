@@ -4,17 +4,21 @@
     <section class="section is-main-section">
 
 
-      <div v-if="seeds.length">
+      <div v-show="seeds.length > 0">
         <p class="has-text-weight-semibold has-text-warning">
           {{ $t('msg.create.backupNote') }}
         </p>
         <p>&nbsp;</p>
-        <div class="tags">
-          <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}</span>
+        <div class="tags" style="justify-content: center;">
+          <span style="color:#000000" class="mnemonic-word tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}<span class="space"> </span></span>
+        </div>
+        <div style="text-align: center;">
+          <canvas id="qrcodeCanvas" ></canvas>
         </div>
       </div>
 
-      <div v-else>
+
+      <div v-show="seeds.length == 0">
 
         <div class="field">
           <label class="label">{{ $t("msg.password") }}</label>
@@ -48,23 +52,37 @@ export default {
   components: {
     PasswordField
   },
+  watch: {
+    qrText: function (val) {
+      this.qrcode(val);
+    }
+  },
   setup() {
 
     const passwordField = ref('');
     const { resetFormErrors } = useFormValidation();
     const seeds = ref([]);
-
+    const vueCanvas = ref(null);
+    const qrText = ref('');
 
     return {
       passwordField,
       resetFormErrors,
-      seeds
+      seeds,
+      qrText
     }
 
   },
 
 
   methods: {
+    async qrcode(text){
+
+      this.vueCanvas = document.getElementById("qrcodeCanvas");
+      window.nodeQr.toCanvas(this.vueCanvas, text, function (error) {
+        if (error) console.error('HttpReceive.qrcode', error)
+      })
+    },
     async start(){
 
       this.resetFormErrors();
@@ -76,6 +94,7 @@ export default {
       if(!isFormAllValid.includes(false)){
         let res = await this.$walletService.getMnemonic(this.passwordField.defaultValue);
         if(res && res.result && res.result.Ok){
+          this.qrText = res.result.Ok;
           let valueChunks = res.result.Ok.split(" ").map(item => item.trim());
           this.seeds = valueChunks;
         }else{

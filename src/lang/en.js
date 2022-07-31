@@ -82,11 +82,11 @@ const messages = {
       coins: 'Coins'
     },
     create:{
-      select: 'Select a directory for your wallet',
+      select: 'Select a directory for your wallet data',
       seedPhrase: 'Seed Phrase',
       toNewMsg: 'Create a New Wallet.',
       newWallet: 'Create new wallet',
-      backupNote: 'Important！ Please backup your seed phrase to restore your wallet',
+      backupNote: 'Important！Please backup your seed phrase to restore your wallet',
       fatal_create: 'Fatal: created fail on action "{0}"',
       fatal_update: 'Fatal: App config not updated.'
     },
@@ -214,7 +214,7 @@ const messages = {
     new:{
       create: 'Create new wallet',
       restore: 'Restore wallet',
-      select: 'Select existing wallet location',
+      select: 'Select existing wallet data location',
       selectErr: 'selected folder has no "wallet_data" dir and wallet config.',
       networkErr: 'Network type can not be determined.<br/>Please select one.',
       selectNetwork: 'continue',
@@ -228,7 +228,7 @@ const messages = {
       added: 'Recover wallet',
       newPassword: 'Set a new password',
       recover: 'Recover',
-      walletLocation: 'Wallet location',
+      walletLocation: 'Wallet data location',
       search_placeholder: 'type to search words / or paste seed phrase',
       create_new: 'Create new account',
       change_seed: 'Change seed words',
@@ -249,7 +249,6 @@ const messages = {
       updateMsg: 'Found new version of EPIC wallet. Please update Right NOW.',
       yes: 'yes',
       no: 'no',
-      hedwig: 'Receive via Hedwig'
     },
 
     info: {
@@ -335,24 +334,6 @@ const messages = {
       ip: 'your public ip'
     },
 
-    hedwig: {
-      title: 'Receive via Hedwig(v1)',
-      launchSucess: 'Started successful',
-      reachable: 'Hedwig address is available',
-      address: 'Address to receive',
-      tip:'Please keep wallet online.',
-      close: 'Stop Hedwig',
-      introTitle: 'Introduction',
-      intro1: 'Hedwig(v1) is a relay service for users without a public ip. It provides a temporary address to receive EPIC.',
-      intro2: 'When someone send EPIC to the address, Hedwig(v1) will forward the send request to your wallet. So you will get your EPIC.',
-      start: 'Start',
-      failed: 'Error when try to connect Hedwig server, try again later',
-      failed2: 'Error when testing Hedwig address, try it again later or restart wallet.',
-      failed3: 'Failed to start local EPIC receive service, try it again later or restart wallet.',
-      copy: 'copy address',
-      copied: 'address was copied to clipboard'
-    },
-
     check: {
       checking: 'Re-checking, be patient ...',
       stop: 'Stop Check',
@@ -387,7 +368,7 @@ const messages = {
       settings_saved: 'Settings saved',
       error_save: 'Error saving settings'
     },
-    
+
     validators:{
       empty: 'The {0} field is required',
       equal: 'The {0} must be equal',

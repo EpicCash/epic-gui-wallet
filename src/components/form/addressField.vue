@@ -2,7 +2,7 @@
   <input
     class="input"
     type="address"
-    placeholder="$t('msg.httpSend.address')"
+    :placeholder="$t('msg.httpSend.address')"
     autocomplete="off"
     required
     v-model="input"

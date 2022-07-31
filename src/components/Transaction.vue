@@ -99,7 +99,7 @@
                     </button>
                     <button class="button is-small is-primary" @click="detail(tx)">
                       <span title="Details" class="is-icon">
-                        <mdicon v-if="tx.id != txDetail" name="eye" size="12" />
+                        <mdicon v-if="tx.id !== txDetail" name="eye" size="12" />
                         <mdicon v-else name="eye-off" size="12" />
                       </span>
                     </button>
@@ -242,7 +242,7 @@
       const searched = ref(false);
 
       const detailToggle = ref(false);
-      const txDetail = ref(0);
+      const txDetail = ref(-1);
       const isRefresh = ref(false);
       const locale = ref('en');
 
@@ -307,7 +307,7 @@
         }
 
         this.detailToggle = this.detailToggle !== true;
-        this.txDetail = this.detailToggle ? tx.id : 0;
+        this.txDetail = this.detailToggle ? tx.id : -1;
 
       },
       async getTxs() {

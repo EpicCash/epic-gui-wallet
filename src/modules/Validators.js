@@ -44,9 +44,9 @@ export default function useValidators() {
   const accountExist = (fieldName, fieldValue, configService, exist) => {
 
     if(exist){
-      return configService.accountExist(fieldValue) ? i18n.global.t("msg.validators.exist", [fieldName]) : null;
+      return configService.accountExist(fieldValue) ? i18n.global.t("msg.validators.exist", [fieldValue]) : null;
     }else{
-      return !configService.accountExist(fieldValue) ? i18n.global.t("msg.validators.notexist", [fieldName]) : null;
+      return !configService.accountExist(fieldValue) ? i18n.global.t("msg.validators.notexist", [fieldValue]) : null;
     }
 
   }
