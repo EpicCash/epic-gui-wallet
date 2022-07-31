@@ -6,7 +6,12 @@
     :placeholder="placeholder"
     :required="required"
     autocomplete="off"
-    v-model="input" />
+    v-model="input"
+    @keyup="loadcaps"
+     />
+    <span v-if="isCapslock" class="icon is-small is-right">
+      <mdicon size="20" name="apple-keyboard-caps" />
+    </span>
 
   <div style="color:red;" v-if="errors[name]">
      {{ errors[name] }}
@@ -22,8 +27,9 @@
     setup(props) {
       let input = ref('');
       let defaultValue = ref(null);
-      const { validatePasswordField, errors } = useFormValidation();
 
+      const { validatePasswordField, errors } = useFormValidation();
+      const isCapslock = ref(false);
       const validInput = () => {
 
         defaultValue.value = input.value;
@@ -32,8 +38,22 @@
 
       };
 
-      return { input, defaultValue, errors, validInput };
+      return { input, defaultValue, errors, validInput, isCapslock };
     },
+    methods:{
+
+      loadcaps(event) {
+        this.isCapslock = event.getModifierState("CapsLock");
+        /*  if(event.code === "CapsLock"){
+              let isCapsLockOn = event.getModifierState("CapsLock");
+              if(isCapsLockOn) {
+                  console.log("Caps Lock turned on");
+              } else {
+                  console.log("Caps Lock turned off");
+              }
+          }*/
+      },
+    }
 
   };
 </script>

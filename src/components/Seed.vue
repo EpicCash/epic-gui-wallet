@@ -22,7 +22,7 @@
 
         <div class="field">
           <label class="label">{{ $t("msg.password") }}</label>
-          <div class="control">
+          <div class="control has-icons-right">
             <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
           </div>
         </div>
