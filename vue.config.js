@@ -13,6 +13,7 @@ module.exports = {
       builderOptions: {
         "generateUpdatesFilesForAllChannels": true,
         "productName": "EpicWallet",
+        "afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
         directories: {
           output: "build",
