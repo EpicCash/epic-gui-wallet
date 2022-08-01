@@ -426,9 +426,16 @@ class WalletService {
       let killProcess = false;
 
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
+      let pWalletTorList = await window.nodeFindProcess('name', /tor/);
 
       for(let process of pWalletList) {
         if(process.cmd.includes('listen')){
+          killPids.push(process);
+        }
+      }
+
+      for(let process of pWalletTorList) {
+        if(process.cmd.includes('tor/listener/torrc')){
           killPids.push(process);
         }
       }

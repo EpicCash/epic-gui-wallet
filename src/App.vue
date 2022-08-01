@@ -55,6 +55,8 @@
       const isNodeModalActive = ref(false);
       const isFirstscanModalActive = ref(false);
       const scanoutput = ref([]);
+
+
       let startRefreshNodeId = 0;
       let startRefreshNgrokId = 0;
       let refreshId = 0;
@@ -124,8 +126,14 @@
       });
 
       this.emitter.on('app.ngrokStart', async () => {
-        await this.ngrokStart();
+         await this.ngrokStart();
       });
+
+      this.emitter.on('app.ngrokStop', async () => {
+         await this.ngrokStop();
+      });
+
+
 
       this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
@@ -187,7 +195,8 @@
 
       this.emitter.on('killEpicProcess', async (callback) => {
         //todo replace with customized dialog/prompt
-        const confirmed = await confirm('We found some running wallet and node processes in the background. Please close them first before you run this App.');
+        let msg = this.$t("msg.app.background_process");
+        const confirmed = await confirm(msg);
         callback(confirmed);
       });
 
@@ -206,7 +215,7 @@
         this.$router.push('/login');
 
       } else {
-        //todo init app process here
+
         window.debug ? console.log('app has no accounts') : null;
         this.$router.push('/new');
       }
@@ -233,32 +242,47 @@
         this.isFirstscanModalActive = false
       },
 
+      async ngrokStop(){
+        this.stopRefreshNgrok();
+        let respNgrok = await this.$ngrokService.stopNgrok();
+        if(respNgrok){
+          this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
+          this.store.commit('ngrokService', false);
+          this.store.commit('ngrokTunnels', {});
+        }
+      },
+
       async ngrokStart(){
 
-        if(this.store.state.user.ngrok != ''){
-          let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok);
+        if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
+
+          let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok == '' ? '' : this.store.state.user.ngrok);
 
 
           if(ngrokService.success){
             let respNgrok = await this.$ngrokService.openTunnel();
             if(respNgrok){
-              this.$toast.success("Ngrok service started");
+              this.$toast.success(this.$t("msg.app.ngrok_service_started"));
               this.store.commit('ngrokService', true);
+              this.store.commit('ngrokTunnels', respNgrok);
               this.emitter.emit('app.startRefreshNgrokStatus');
             }else{
-              this.$toast.error("Error starting Ngrok service");
+              this.$toast.error(this.$t("msg.app.ngrok_service_error"));
               this.store.commit('ngrokService', false);
+              this.store.commit('ngrokTunnels', {});
             }
           }else{
-            this.$toast.error("Error starting Ngrok service");
+            this.$toast.error(this.$t("msg.app.ngrok_service_error"));
             this.store.commit('updates', {
                   "status": "is-danger",
                   "text":   "Ngrok: " + ngrokService.msg,
                   "icon":   "information"
             });
             this.store.commit('ngrokService', false);
+            this.store.commit('ngrokTunnels', {});
           }
         }
+
       },
 
       async nodeStart(){
@@ -268,17 +292,17 @@
 
           this.store.commit('nodeType', 'internal');
           if(!this.configService.startCheckNode()){
-            this.$toast.error("Can not setup internal node server");
+            this.$toast.error(this.$t("msg.app.error_setup_internal_node"));
           }else{
             let started  = await this.$nodeService.internalNodeStart();
 
             if(started){
-              this.$toast.success("Node started");
+              this.$toast.success(this.$t("msg.app.node_started"));
               //start the status check for the node
               //give the node some time before api status is called
               setTimeout(this.startRefreshNode, 10000);
             }else{
-              this.$toast.error("Node not started");
+              this.$toast.error(this.$t("msg.app.node_not_started"));
             }
           }
 
@@ -287,13 +311,13 @@
           this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
           let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
           if(respNode){
-            this.$toast.success("External Node is online");
+            this.$toast.success(this.$t("msg.app.external_node_online"));
             this.store.commit('nodeStatus', respNode);
             //start the status check for the node
             //give the node some time before api status is called
             setTimeout(this.startRefreshNode, 10000);
           }else{
-            this.$toast.error("External Node is offline");
+            this.$toast.error(this.$t("msg.app.external_node_offline"));
           }
 
         }
@@ -318,9 +342,9 @@
           this.store.commit('nodeStatus', respNode);
         }else{
           if(this.store.state.user.nodeInternal){
-            this.$toast.error("Node is offline");
+            this.$toast.error(this.$t("msg.app.node_offline"));
           }else{
-            this.$toast.error("External Node is offline");
+            this.$toast.error(this.$t("msg.app.external_node_offline"));
           }
           this.stopRefreshNode();
         }
@@ -372,18 +396,20 @@
         clearTimeout(this.startRefreshNodeId);
       },
 
-      /* refresh node status */
+      /* refresh ngrok status */
       async startRefreshNgrok() {
           let refresh = _ => this.startRefreshNgrokId = setTimeout(this.startRefreshNgrok, 1000*30)
 
           try {
             let ngrokStatus = await this.$ngrokService.checkStatus();
             if(ngrokStatus){
+              console.log('ngrokService.getTunnelLifetime', this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime()));
               this.store.commit('ngrokService', true);
+              this.store.commit('ngrokTunnelLifetime', this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime()));
             }else{
               this.store.commit('ngrokService', false);
+              this.store.commit('ngrokTunnelLifetime', '00:00');
             }
-
           }
           catch (e) {
             clearTimeout(this.startRefreshNgrokId);

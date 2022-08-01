@@ -12,39 +12,45 @@
             <div class="message-body">
 
               <p v-if="store.state.ngrokService">
-                Current Ngrok Address:<br/>
+                {{ $t("msg.httpReceive.current_ngrok_address") }}:<br/>
                 <code>{{ ngrokAddress }}</code>&nbsp;<mdicon class="is-clickable" @click="copy(ngrokAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(ngrokAddress, 'ngrok')" name="qrcode-scan" size=16 />
+
+
               </p>
+              <p v-if="store.state.ngrokService" class="help">{{ $t("msg.httpReceive.session_end", [store.state.ngrokTunnelLifetime]) }}</p>
+
               <p v-if="store.state.ngrokService">&nbsp;</p>
               <p v-else>
-                Local Address:<br/>
+                {{ $t("msg.httpReceive.local_address") }}:<br/>
                 <code>http(s)://[YOUR IP ADDRESS]:3415</code>
               </p>
               <p v-if="!store.state.ngrokService">&nbsp;</p>
 
               <p v-if="store.state.torService">
-                Tor onion Address:<br/>
+                {{ $t("msg.httpReceive.tor_onion_address") }}:<br/>
                 <code>{{ onionAddress }}</code>&nbsp;<mdicon @click="copy(onionAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(onionAddress, 'TOR')" name="qrcode-scan" size=16 />
               </p>
               <p v-else>
-                Tor onion Address:<br/>
-                <code>Tor not available. Try to restart the wallet listener</code>
-              </p>
-
-              <p v-if="proofAddress">&nbsp;</p>
-              <p v-if="proofAddress">
-                Proof Address:<br/>
-                <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(proofAddress, 'proof')" name="qrcode-scan" size=16 />
+                {{ $t("msg.httpReceive.tor_onion_address") }}:<br/>
+                <code>{{ $t("msg.httpReceive.tor_not_available") }}</code>
               </p>
 
             </div>
 
           </div>
+
+          <div class="message is-info">
+            <div class="message-header"><p>{{ $t("msg.httpReceive.proof_address") }}</p></div>
+            <div class="message-body">
+              <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(proofAddress, 'proof')" name="qrcode-scan" size=16 />
+            </div>
+          </div>
+
         </div>
         <div class="column">
           <div class="message is-info">
 
-            <div class="message-header"><p v-if="addressTypeHeader">Your qr code for your "{{addressTypeHeader}}" address</p><p v-else>Click the qr code icon</p></div>
+            <div class="message-header"><p v-if="addressTypeHeader">{{ $t("msg.httpReceive.your_qrcode", [addressTypeHeader]) }}</p><p v-else>{{ $t("msg.httpReceive.click_qrcode_icon") }}</p></div>
             <div v-show="addressTypeHeader"  class="message-body">
               <canvas id="qrcodeCanvas"></canvas>
             </div>
@@ -117,7 +123,15 @@ export default {
   components: {
     PasswordField,
   },
+  watch: {
+      'store.state.ngrokTunnels': function (newVal) {
 
+        if(newVal){
+          this.ngrokAddress = newVal.public_url;
+        }
+      },
+
+  },
   setup(){
 
     const store = useStore();
@@ -129,6 +143,8 @@ export default {
     const isLoading = ref(false);
     const vueCanvas = ref(null);
     const addressTypeHeader = ref('');
+
+
     return {
       store,
       onionAddress,
@@ -137,17 +153,21 @@ export default {
       passwordField,
       resetFormErrors,
       isLoading,
-      addressTypeHeader
+      addressTypeHeader,
+
     }
   },
+
   async mounted(){
     this.onionAddress = await this.getOnionAndProofAddress();
-    if(this.store.state.user.ngrok != ''){
+    if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
       this.ngrokAddress = await this.getNgrokAddress();
     }
 
     var c = document.getElementById("qrcodeCanvas");
     this.vueCanvas = c;
+
+    this.tunnelLifetime = this.store.state.ngrokTunnelLifetime;
 
   },
   methods: {
@@ -201,9 +221,8 @@ export default {
         if(isListen && isListen.success){
 
           this.onionAddress = await this.getOnionAndProofAddress();
-          this.ngrokAddress = this.$ngrokService.getAddress();
+          this.emitter.emit('app.ngrokStart');
           this.$toast.success("Wallet listener started");
-
           this.store.commit('walletListenerService', true);
 
         }else if(isListen.success == false){
@@ -231,6 +250,7 @@ export default {
       let killed = await this.$walletService.stopListen();
       this.isLoading = false;
       if(killed){
+        this.emitter.emit('app.ngrokStop');
         this.store.commit('walletListenerService', false);
         this.$toast.success("Wallet listener stopped");
       }

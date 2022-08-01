@@ -50,6 +50,8 @@ export const store = createStore({
     walletListenerService: false,
     torService: false,
     ngrokService: false,
+    ngrokTunnels: {},
+    ngrokTunnelLifetime: '00:00',
     nodeType: '',
     nodeStatus: {
 
@@ -87,6 +89,16 @@ export const store = createStore({
     ngrokService(state, payload){
       state.ngrokService = payload;
     },
+    ngrokTunnels(state, payload){
+      state.ngrokTunnels = payload;
+    },
+    ngrokTunnelLifetime(state, payload){
+      state.ngrokTunnelLifetime = payload;
+    },
+
+
+
+
     torService(state, payload){
       state.torService = payload;
     },

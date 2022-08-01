@@ -249,6 +249,18 @@ const messages = {
       updateMsg: 'Found new version of EPIC wallet. Please update Right NOW.',
       yes: 'yes',
       no: 'no',
+
+      ngrok_service_started: 'Ngrok service started',
+      ngrok_service_stopped: 'Ngrok service stopped',
+      ngrok_service_error: 'Error starting Ngrok service',
+      error_setup_internal_node: 'Can not setup internal node server',
+      node_started: 'Node started',
+      node_not_started: 'Node not started',
+      node_offline: 'Node is offline',
+      external_node_online: 'External Node is online',
+      external_node_offline: 'External Node is offline',
+      background_process: 'We found some running wallet and node processes in the background. Please close them first before you run this App.',
+
     },
 
     info: {
@@ -331,7 +343,15 @@ const messages = {
       failed2: 'HTTP listen failed, your public ip is not reachable by the internet user. Try transaction file',
       failed3: 'Failed to get your public ip; try again later',
       failed4: 'Listener is now running on localhost:3415. However your ip is not reachable by the internet user. Try transaction file',
-      ip: 'your public ip'
+      ip: 'your public ip',
+      current_ngrok_address: 'Current Ngrok Address',
+      local_address: 'Local address',
+      session_end: 'You are using ngrok without an account. Your session will end in: {0}',
+      tor_onion_address: 'Tor onion Address',
+      proof_address: 'Proof Address',
+      your_qrcode: 'Your qr code for your "{0}" address',
+      click_qrcode_icon: 'Click the qr code icon',
+      tor_not_available: 'Tor not available. Try to restart the wallet listener'
     },
 
     check: {
@@ -364,6 +384,8 @@ const messages = {
       wallet_listener: 'Wallet listener',
       auto_start: 'automatically start wallet listener after login',
       authtoken: 'Your ngrok Authtoken',
+      ngrok_force_start: 'start ngrok without Authtoken',
+      ngrok_hint: 'The ngrok address is 2 hours valid.',
       howto: 'How to get your Authtoken from ngrok',
       settings_saved: 'Settings saved',
       error_save: 'Error saving settings'

@@ -42,16 +42,8 @@
     },
     methods:{
 
-      loadcaps(event) {
+      loadcaps(event) {  
         this.isCapslock = event.getModifierState("CapsLock");
-        /*  if(event.code === "CapsLock"){
-              let isCapsLockOn = event.getModifierState("CapsLock");
-              if(isCapsLockOn) {
-                  console.log("Caps Lock turned on");
-              } else {
-                  console.log("Caps Lock turned off");
-              }
-          }*/
       },
     }
 

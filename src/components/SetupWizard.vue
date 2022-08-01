@@ -8,6 +8,7 @@
             <div class="columns is-centered">
               <div class="column is-three-quarters">
                 <div class="card has-card-header-background">
+
                   <header class="card-header" style="justify-content: center;">
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
@@ -93,7 +94,10 @@
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
                         <div class="buttons is-centered">
+
+                          <button v-if="fromRoute == 'navbar'" class="button is-primary" @click="backToDashbaord()"><mdicon name="arrow-left-bold-hexagon-outline" />{{ $t("msg.back") }}</button>
                           <button class="button is-primary" @click="nextStep('step2')" >{{ $t("msg.setupwizard.next_step") }}&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
+
                         </div>
 
                     </div><!-- end step 1 -->
@@ -135,6 +139,15 @@
                           <div class="control">
                             <input class="input" type="ngrok" required v-model="ngrok" />
                           </div>
+                      </div>
+                      <div class="field">
+                        <div class="control">
+                            <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
+                            <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
+                            <p class="help">
+                              {{ $t("msg.settings.ngrok_hint") }}
+                            </p>
+                        </div>
                       </div>
                       <div class="control">
                           <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
@@ -193,8 +206,6 @@
         </div><!-- end hero-body -->
       </section>
     </section>
-
-
 </template>
 <script>
 
@@ -203,6 +214,7 @@
   import TextField from "@/components/form/textField";
   import useFormValidation from "@/modules/useFormValidation";
   import { useRouter } from '@/router';
+  import { useRoute } from 'vue-router';
   import { useStore } from '@/store';
   import "vue3-video-play/dist/style.css";
   import { videoPlay } from "vue3-video-play";
@@ -218,9 +230,12 @@
     setup(){
       const store = useStore();
       const router = useRouter();
+      const route = useRoute();
       const check_node_api_http_addr = ref('');
       const network = ref('');
       const ngrok = ref('');
+      const ngrok_force_start = ref(false);
+
       const locale = ref('en');
       const localeSelected = ref('en');
       const langs = ref([]);
@@ -234,6 +249,8 @@
       const nodeserverField = ref('');
       const textField = ref('');
       const advancedSettings = ref(false);
+      const fromRoute = route.params.from ? route.params.from : 'login';
+
       const playerOptions = reactive({
           // videojs options
           autoPlay: true,
@@ -262,11 +279,13 @@
         name,
         keybase,
         ngrok,
+        ngrok_force_start,
         advancedSettings,
         playerOptions,
         textField,
         moveback,
-        onPlay
+        onPlay,
+        fromRoute
 
       }
     },
@@ -277,7 +296,6 @@
       this.locale = this.configService.config['locale'];
       this.localeSelected = this.configService.config['locale'];
       this.langs = this.configService.langs;
-
     },
     methods: {
       toggleAdvancedSettings(){
@@ -319,6 +337,9 @@
         this.step = step;
 
       },
+      backToDashbaord(){
+        this.emitter.emit('app.accountLoggedIn');
+      },
       async save(){
         try{
 
@@ -331,6 +352,7 @@
               name: this.textField.defaultValue,
               keybase: this.keybase,
               ngrok: this.ngrok,
+              ngrok_force_start: this.ngrok_force_start,
               language: this.localeSelected,
               nodeInternal: this.nodeserverField.nodeInternal,
               email: ''
@@ -343,6 +365,7 @@
               name: this.textField.defaultValue,
               keybase: this.keybase,
               ngrok: this.ngrok,
+              ngrok_force_start: this.ngrok_force_start,
               language: this.localeSelected,
               nodeInternal: this.nodeserverField.nodeInternal,
               email: ''

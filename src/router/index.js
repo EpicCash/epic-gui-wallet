@@ -215,7 +215,7 @@ const routes = [
     meta: {
       title: 'Setup Wizard'
     },
-    path: '/setupwizard',
+    path: '/setupwizard:from?',
     name: 'setupwizard',
     components: {
       default: SetupWizard,

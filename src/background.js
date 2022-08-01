@@ -83,7 +83,7 @@ async function createWindow() {
     height: 768,
     minWidth: 1024,
     maxWidth: 1600,
-    title: "Epiccash Wallet 4.0.0",
+    title: "Epiccash Wallet",
     webPreferences: {
       icon: path.join(__dirname, '../public/favicon.ico'),
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -135,6 +135,7 @@ async function createWindow() {
                           let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
                           let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
                           let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                          let pWalletTorList = await findProcess('name', /tor/);
                           for(let process of pWalletList) {
                             if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
                               killPids.push(process);
@@ -147,6 +148,11 @@ async function createWindow() {
                           }
                           for(let process of pNgrokList) {
                             if(process.cmd.includes('ngrok')){
+                              killPids.push(process);
+                            }
+                          }
+                          for(let process of pWalletTorList) {
+                            if(process.cmd.includes('tor/listener/torrc')){
                               killPids.push(process);
                             }
                           }
@@ -348,7 +354,7 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async (event) => {
   console.log(event);
-  
+
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
