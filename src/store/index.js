@@ -170,7 +170,7 @@ export const store = createStore({
 
       if (payload.name) {
         let filteredName = payload.name.replace(/^\s*([a-zA-Z]).*\s+([a-zA-Z])\S+$/g, '$1$2');
-        state.userAvatar = filteredName.slice(0,2).toUpperCase();
+        state.userAvatar = filteredName.slice(0, (payload.name.split(' ').length > 1 ? 2 : 1)).toUpperCase();
       }
 
     },

@@ -533,8 +533,15 @@ contextBridge.exposeInMainWorld('explorer', {
   open(data){
       shell.openExternal('https://explorer.epic.tech/blockdetail/' + data);
   }
-
 });
+
+contextBridge.exposeInMainWorld('openlink', {
+  //can be block height or commit
+  open(url){
+      shell.openExternal(url);
+  }
+});
+
 // Adds an object 'api' to the global window object:
 contextBridge.exposeInMainWorld('api', {
     showSaveDialog: async (title, message, defaultPath) => {
