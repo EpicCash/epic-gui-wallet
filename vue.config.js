@@ -11,7 +11,6 @@ module.exports = {
       mainProcessFile: 'src/background.js',
       preload: 'src/preload.js',
       builderOptions: {
-
         "productName": "EpicWallet-4.0.0-beta",
         //"afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
