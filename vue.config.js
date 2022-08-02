@@ -11,7 +11,7 @@ module.exports = {
       mainProcessFile: 'src/background.js',
       preload: 'src/preload.js',
       builderOptions: {
-        "productName": "EpicWallet-4.0.0-beta",
+        "productName": "EpicWallet",
         "afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
         directories: {
@@ -47,7 +47,8 @@ module.exports = {
           "target": "default",
           "publish": {
             "provider": "github",
-            "releaseType": "release"
+            "releaseType": "release",
+            "channel": "latest",
             //"private": false,
             //"owner": "EpicCash",
             //"repo": "epic-gui-wallet",
@@ -183,7 +184,7 @@ module.exports = {
             }
           ],
           "desktop": {
-            "Name": "Epic-Wallet 4.0.0-beta",
+            "Name": "Epic-Wallet",
             "Encoding": "UTF-8",
             "Type": "Application",
             "Comment": "Epic Wallet, mind your Epic!",
