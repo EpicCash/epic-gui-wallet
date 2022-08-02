@@ -402,13 +402,39 @@
 
           try {
             let ngrokStatus = await this.$ngrokService.checkStatus();
+
             if(ngrokStatus){
-              
+
+              this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
               this.store.commit('ngrokService', true);
-              this.store.commit('ngrokTunnelLifetime', this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime()));
+
+              if(this.store.state.user.ngrok_force_start){
+
+                let timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
+
+
+                if(timeFormat.length && timeFormat[0] == 0 && timeFormat[1] == 0){
+                  
+                  let restart = await this.$ngrokService.ngrokRestart();
+                  if(restart){
+                    this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
+                    timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
+                    this.store.commit('ngrokTunnelLifetime', timeFormat);
+
+                  }else{
+                    this.store.commit('ngrokService', false);
+                    this.store.commit('ngrokTunnelLifetime', [0,0]);
+                    this.store.commit('ngrokTunnels', {});
+                  }
+                }else{
+                  this.store.commit('ngrokTunnelLifetime', timeFormat);
+                }
+              }
+
             }else{
               this.store.commit('ngrokService', false);
               this.store.commit('ngrokTunnelLifetime', [0,0]);
+              this.store.commit('ngrokTunnels', {});
             }
           }
           catch (e) {
