@@ -30,7 +30,7 @@ autoUpdater.logger.transports.file.level = 'debug';
 log.info('App starting...');
 
 
-autoUpdater.channel = "beta"
+autoUpdater.channel = "latest"
 
 function sendStatusToWindow(text) {
   log.info(text);
