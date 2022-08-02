@@ -23,11 +23,11 @@ class NgrokService {
     if(!this.restart){
 
       this.restart = true;
-      let ngrokService = await this.internalStart();
+      let ngrokService = await this.internalStart(this.sharedSecret);
 
       if(ngrokService){
         this.tunnels = {};
-        let respNgrok = await this.openTunnel();
+        let respNgrok = await this.openTunnel(true);
         if(respNgrok){
           let ngrokStatus = await this.checkStatus();
           if(ngrokStatus){
@@ -125,37 +125,42 @@ class NgrokService {
     let baseURL = this.configService.ngrokApiAddress+this.tunnels.uri;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
-    let response = await fetch(baseURL, {
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal
-    }).then(function(res){
+    let response;
+    try{
+      response = await fetch(baseURL, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal
+      }).then(function(res){
 
-      if (res.ok != true) { throw Error(res) }
-      return res.json();
-    }).catch(function(error){
+        if (res.ok != true) { throw 'ngrok api offline'; }
+        return res.json();
+      }).catch(function(error){
 
-      let msg = 'Error connecting ngrok ' + baseURL + (error.status ? ' - '+ error.status : '') +' '+ (error.statusText ? error.statusText :'');
-      msg += '\n\n ... make sure ngrok is accessible.';
-      this.debug ? console.log('ngrokService.fetch', error) : null;
-      return false;
+        this.debug ? console.log('ngrokService.fetch', error) : null;
+        return false;
 
-    });
+      });
+    } catch (error) {
+      this.debug ? console.log('ngrokService.checkStatus', 'error fetch') : null;
+    }
 
     if(!response){
       let restart = await this.ngrokRestart();
       this.debug ? console.log('ngrokService.ngrokRestart', restart) : null;
+      return restart;
+
     }
     this.debug ? console.log('ngrokService.checkStatus', response) : null;
     return response;
   }
 
   /* ngrok quits if tunnels was called once !? */
-  async openTunnel(){
+  async openTunnel(refresh){
 
-    if(this.tunnels.name){
+    if(this.tunnels.name && !refresh){
       return this.tunnels;
     }
 

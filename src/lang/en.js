@@ -108,14 +108,11 @@ const messages = {
       receive_transactions: 'Receiving transactions',
       receive_transactions_txt: `To receive transactions from other wallets, your wallet must be accessible over the Internet.<br/>
       <br/>
-      To simplify this process, we have integrated the ngrok tool into the wallet.<br/>
-      Once ngrok has been activated, your wallet will be accessible via a temporary ngrok address.<br/>
       If you are not familiar with router settings and port forwarding, we recommend using the ngrok service.<br/>
+      Once ngrok has been activated, your wallet will be accessible via a temporary ngrok address.<br/>
       <br/>
-      To receive your ngrok authentication token, please create a new account at ngrok.com.<br/>
       <br/>
-      <br/>
-      Leave the field below blank, if you don’t want to use the ngrok service.<br/>`,
+      Leave the fields below blank if you don’t want to use the ngrok service.`,
       authtoken: 'Your ngrok Authtoken',
       howto: 'How to get your Authtoken from ngrok',
       values_correct: 'Are these values correct?',
@@ -384,8 +381,10 @@ const messages = {
       wallet_listener: 'Wallet listener',
       auto_start: 'automatically start wallet listener after login',
       authtoken: 'Your ngrok Authtoken',
-      ngrok_force_start: 'start ngrok without Authtoken',
-      ngrok_hint: 'The ngrok address is 2 hours valid.',
+      ngrok_force_start: 'use ngrok without Authtoken',
+      ngrok_hint: 'The ngrok address is 2 hours active and will be renewed.',
+      ngrok_account_hint: 'To receive your ngrok authentication token, please create a new account at https://ngrok.com',
+      authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
       howto: 'How to get your Authtoken from ngrok',
       settings_saved: 'Settings saved',
       error_save: 'Error saving settings'

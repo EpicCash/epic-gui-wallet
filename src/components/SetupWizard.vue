@@ -130,14 +130,35 @@
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.receive_transactions") }}</h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          {{ $t("msg.setupwizard.receive_transactions_txt") }}
+                          <span v-html="$t('msg.setupwizard.receive_transactions_txt')" ></span>
                         </div>
                       </article>
                       <div class="field">
-                        <label class="label">{{ $t("msg.setupwizard.authtoken") }}</label>
+                        <label class="label">{{ $t("msg.setupwizard.authtoken") }}
+                          <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+                            <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+                            <mdicon size="18" v-else name="menu-down" />
+                            {{ $t("msg.setupwizard.howto") }}
+                          </a>
 
+                        </label>
+                        <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+                          <div class="card-content">
+                           <div class="content">
+                             <div class="field">
+                               <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
+                               <div class="control">
+                                 <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
+                               </div>
+                             </div>
+                          </div>
+                        </div>
+                      </div>
                           <div class="control">
                             <input class="input" type="ngrok" required v-model="ngrok" />
+                            <p class="help">
+                              {{ $t("msg.settings.authtoken_hint") }}
+                            </p>
                           </div>
                       </div>
                       <div class="field">
@@ -149,25 +170,9 @@
                             </p>
                         </div>
                       </div>
-                      <div class="control">
-                          <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
-                            <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
-                            <mdicon size="18" v-else name="menu-down" />
-                            {{ $t("msg.setupwizard.howto") }}
-                          </a>
-                      </div>
-                      <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
-                        <div class="card-content">
-                         <div class="content">
-                           <div class="field">
 
-                             <div class="control">
-                               <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-                             </div>
-                           </div>
-                        </div>
-                      </div>
-                    </div>
+
+
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
@@ -226,7 +231,20 @@
       TextField,
       videoPlay,
     },
+    watch: {
+        'ngrok': function (newVal) {
 
+          if(newVal !== ''){
+            this.ngrok_force_start = false
+          }
+        },
+        'ngrok_force_start': function (newVal) {
+
+          if(newVal){
+            this.ngrok = '';
+          }
+        },
+    },
     setup(){
       const store = useStore();
       const router = useRouter();

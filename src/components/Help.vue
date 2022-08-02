@@ -66,7 +66,8 @@ import { useHelp } from '@/help/help';
        let textElements = document.querySelectorAll('.message-body-content, .message-header > p');
        searchableText.value = [];
        for(let el of textElements){
-         searchableText.value.push({el:el, text:el.textContent});
+
+         searchableText.value.push({el:el, text:el.textContent, origin: null});
        }
 
       });
@@ -103,20 +104,22 @@ import { useHelp } from '@/help/help';
             let match = el.text.match(pattern);
             if(match){
 
-
               if(el.el.dataset.toggle){
                 this.toggleState(undefined, el.el.dataset.toggle);
               }
 
               let elInner = el.el.innerHTML;
+              //save original html structure before modify
+              el.origin = elInner;
+
               var index = elInner.toLowerCase().indexOf(keyword.toLowerCase());
 
               if (index >= 0) {
+
                elInner = elInner.substring(0, index) + "<span class='has-background-warning has-text-black-bis'>" + elInner.substring(index,index+keyword.length) + "</span>" + elInner.substring(index + keyword.length);
                el.el.innerHTML = elInner;
+
               }
-            }else{
-              el.el.innerHTML = el.el.innerText;
             }
           }
 
@@ -134,7 +137,9 @@ import { useHelp } from '@/help/help';
           el.classList.add("is-hidden");
         }
         for(let el of this.searchableText){
-          el.el.innerHTML = el.el.innerText;
+          if(el.origin != null){
+            el.el.innerHTML = el.html;
+          }
         }
       },
       toggleState(event, dataset){

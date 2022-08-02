@@ -88,6 +88,8 @@ app.config.globalProperties.$filters = {
        return '-'
      }
   },
+
+  /* used for ngrok tunnle lifetime only */
   timeFormat(endtime){
     if(endtime != undefined){
       //return moment().format("HH:mm");
@@ -98,7 +100,8 @@ app.config.globalProperties.$filters = {
       let hours = parseInt(duration.asHours());
       let minutes = parseInt(duration.asMinutes()) % 60;
 
-      hours = hours < 10 ? '0' + hours : hours;
+      hours = hours < 0 ? 0 : hours;
+      minutes = minutes < 0 ? 0 : minutes;
 
 
       return [hours, minutes];
@@ -106,6 +109,7 @@ app.config.globalProperties.$filters = {
       return [0, 0];
     }
   },
+
   truncate(text, length) {
     if (text.length > length) {
         return text.substring(0, length);

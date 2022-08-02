@@ -28,22 +28,35 @@
           </div>
 
           <div class="field">
-            <label class="label">{{ $t("msg.settings.authtoken") }}</label>
+            <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+              <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+              <mdicon size="18" v-else name="menu-down" />
+              {{ $t("msg.settings.howto") }}
+            </a></label>
 
+            <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+              <div class="card-content">
+                <div class="content">
+                  <div class="field">
+                     <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
+                     <div class="control">
+                       <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="control">
               <input
                 class="input"
                 type="ngrok"
                 required
                 v-model="ngrok" />
+                <p class="help">
+                  {{ $t("msg.settings.authtoken_hint") }}
+                </p>
             </div>
-            <div class="control">
-                <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
-                  <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
-                  <mdicon size="18" v-else name="menu-down" />
-                  {{ $t("msg.settings.howto") }}
-                </a>
-              </div>
+
           </div>
 
           <div class="field">
@@ -56,21 +69,11 @@
             </div>
           </div>
 
-          <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
-            <div class="card-content">
-              <div class="content">
-                <div class="field">
 
-                   <div class="control">
-                     <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div class="field">
             <div class="control">
+              <p>&nbsp;</p>
               <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
             </div>
           </div>
