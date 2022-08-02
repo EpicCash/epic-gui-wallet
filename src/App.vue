@@ -403,12 +403,12 @@
           try {
             let ngrokStatus = await this.$ngrokService.checkStatus();
             if(ngrokStatus){
-              console.log('ngrokService.getTunnelLifetime', this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime()));
+              
               this.store.commit('ngrokService', true);
               this.store.commit('ngrokTunnelLifetime', this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime()));
             }else{
               this.store.commit('ngrokService', false);
-              this.store.commit('ngrokTunnelLifetime', '00:00');
+              this.store.commit('ngrokTunnelLifetime', [0,0]);
             }
           }
           catch (e) {

@@ -17,12 +17,12 @@
 
 
               </p>
-              <p v-if="store.state.ngrokService" class="help">{{ $t("msg.httpReceive.session_end", [store.state.ngrokTunnelLifetime]) }}</p>
+              <p v-if="store.state.user.ngrok_force_start" class="help">{{ $t("msg.httpReceive.session_end", store.state.ngrokTunnelLifetime) }}</p>
 
               <p v-if="store.state.ngrokService">&nbsp;</p>
               <p v-else>
                 {{ $t("msg.httpReceive.local_address") }}:<br/>
-                <code>http(s)://[YOUR IP ADDRESS]:3415</code>
+                <code>http://{{ publicIp.ip }}:3415</code>&nbsp;<mdicon v-if="portIsForwarded" name="flag-checkered" style="color:hsl(141, 53%, 53%);" title="port is open" /><mdicon v-else name="flag-checkered" style="color:hsl(348, 100%, 61%);" title="port is closed" />&nbsp;<mdicon class="is-clickable" @click="copy('http://' + publicIp.ip + ':3415')" name="content-copy" size=16 />
               </p>
               <p v-if="!store.state.ngrokService">&nbsp;</p>
 
@@ -143,7 +143,8 @@ export default {
     const isLoading = ref(false);
     const vueCanvas = ref(null);
     const addressTypeHeader = ref('');
-
+    const publicIp = ref('');
+    const portIsForwarded = ref(false);
 
     return {
       store,
@@ -154,11 +155,17 @@ export default {
       resetFormErrors,
       isLoading,
       addressTypeHeader,
+      publicIp,
+      portIsForwarded
 
     }
   },
 
   async mounted(){
+
+    this.publicIp = await window.config.getPublicIp();
+    this.portIsForwarded = await window.config.isPortReachable();
+
     this.onionAddress = await this.getOnionAndProofAddress();
     if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
       this.ngrokAddress = await this.getNgrokAddress();
@@ -168,6 +175,8 @@ export default {
     this.vueCanvas = c;
 
     this.tunnelLifetime = this.store.state.ngrokTunnelLifetime;
+
+
 
   },
   methods: {

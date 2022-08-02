@@ -13,7 +13,7 @@ const ps = require('ps-node');
 const findProcess = require('find-process');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
-autoUpdater.channel = "beta"
+autoUpdater.channel = "latest"
 
 let win;
 

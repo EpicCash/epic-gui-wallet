@@ -346,7 +346,7 @@ const messages = {
       ip: 'your public ip',
       current_ngrok_address: 'Current Ngrok Address',
       local_address: 'Local address',
-      session_end: 'You are using ngrok without an account. Your session will end in: {0}',
+      session_end: 'You are using ngrok without an account. Your session will end in {0} hour, {1} minutes',
       tor_onion_address: 'Tor onion Address',
       proof_address: 'Proof Address',
       your_qrcode: 'Your qr code for your "{0}" address',

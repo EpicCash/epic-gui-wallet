@@ -51,7 +51,7 @@ export const store = createStore({
     torService: false,
     ngrokService: false,
     ngrokTunnels: {},
-    ngrokTunnelLifetime: '00:00',
+    ngrokTunnelLifetime: [0,0],
     nodeType: '',
     nodeStatus: {
 

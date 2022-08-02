@@ -101,9 +101,9 @@ app.config.globalProperties.$filters = {
       hours = hours < 10 ? '0' + hours : hours;
 
 
-      return hours + ':' + minutes;
+      return [hours, minutes];
     }else{
-      return '00:00';
+      return [0, 0];
     }
   },
   truncate(text, length) {
