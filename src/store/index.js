@@ -50,6 +50,8 @@ export const store = createStore({
     walletListenerService: false,
     torService: false,
     ngrokService: false,
+    ngrokTunnels: {},
+    ngrokTunnelLifetime: [0,0],
     nodeType: '',
     nodeStatus: {
 
@@ -87,6 +89,16 @@ export const store = createStore({
     ngrokService(state, payload){
       state.ngrokService = payload;
     },
+    ngrokTunnels(state, payload){
+      state.ngrokTunnels = payload;
+    },
+    ngrokTunnelLifetime(state, payload){
+      state.ngrokTunnelLifetime = payload;
+    },
+
+
+
+
     torService(state, payload){
       state.torService = payload;
     },
@@ -158,7 +170,7 @@ export const store = createStore({
 
       if (payload.name) {
         let filteredName = payload.name.replace(/^\s*([a-zA-Z]).*\s+([a-zA-Z])\S+$/g, '$1$2');
-        state.userAvatar = filteredName.slice(0,2).toUpperCase();
+        state.userAvatar = filteredName.slice(0, (payload.name.split(' ').length > 1 ? 2 : 1)).toUpperCase();
       }
 
     },

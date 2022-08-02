@@ -33,25 +33,16 @@ module.exports = {
             }
           ]
         },
-        "pkg": {
-          "isRelocatable": true,
-          "isVersionChecked": false,
-          "hasStrictIdentifier": false,
-          "overwriteAction": "upgrade"
-        },
+
         "mac": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "category": "public.app-category.finance",
           "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
-          //"artifactName": "${productName}.${ext}",
           "target": "default",
           "publish": {
             "provider": "github",
-            "releaseType": "release",
+            "releaseType": "draft",
             "channel": "latest",
-            //"private": false,
-            //"owner": "EpicCash",
-            //"repo": "epic-gui-wallet",
           },
           "extraFiles": [
             {
@@ -93,7 +84,7 @@ module.exports = {
           ]
         },
         "win": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "target": "nsis",
           "extraFiles": [
             {
@@ -136,13 +127,12 @@ module.exports = {
         },
         "nsis": {
           "oneClick": false,
-          "allowToChangeInstallationDirectory": true
+          "allowToChangeInstallationDirectory": false
         },
         "linux": {
           "category": "Utility",
-          "executableName": "EpicWallet-4.0.0-beta",
-          "artifactName": "${productName}.${ext}",
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "executableName": "EpicWallet",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "target": [
             "AppImage"
           ],

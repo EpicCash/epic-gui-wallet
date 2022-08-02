@@ -16,14 +16,14 @@ class NgrokService {
       this.sharedSecret = '';
       this.restart = false;
       this.debug = window.debug;
+      this.tunnelLifetime = 0;
   }
   async ngrokRestart(){
 
-
-    if(this.sharedSecret != '' && !this.restart){
+    if(!this.restart){
 
       this.restart = true;
-      let ngrokService = await this.internalStart(this.sharedSecret);
+      let ngrokService = await this.internalStart();
 
       if(ngrokService){
         this.tunnels = {};
@@ -68,13 +68,11 @@ class NgrokService {
     this.internalNgrokProcess = false;
     this.sharedSecret = '';
 
+    return true;
+
   }
 
   async internalStart(sharedSecret){
-
-    if(sharedSecret == undefined || sharedSecret == ''){
-      return false;
-    }
 
     this.sharedSecret = sharedSecret;
 
@@ -103,11 +101,12 @@ class NgrokService {
     let args = [
             'start',
             '--none',
-            '--authtoken',
-            sharedSecret,
+            ...(this.sharedSecret != '' ? ['--authtoken', this.sharedSecret] : []),
             '--log',
             'stdout'
     ];
+
+    this.debug ? console.log('ngrokService.args', args) : null;
 
     let ngrokMsg = await window.nodeChildProcess.execNgrok(this.configService.ngrokBinPath, args, this.configService.platform);
 
@@ -185,12 +184,14 @@ class NgrokService {
 
     });
     this.tunnels = response;
-
+    this.tunnelLifetime = Math.floor(Date.now() + (1000*60*60*2));
     return this.tunnels;
 
 
   }
-
+  getTunnelLifetime(){
+    return this.tunnelLifetime;
+  }
   getAddress(){
     return this.tunnels.public_url;
   }

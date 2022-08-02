@@ -1,6 +1,6 @@
-<template>
-  <section class="section hero is-fullheight is-dark-mode-active">
-    <div class="hero-body">
+<template >
+  <section class="section hero is-fullheight is-dark-mode-active" >
+    <div class="hero-body" >
       <div class="container">
         <div class="columns is-centered">
           <div class="column is-two-fifths">
@@ -20,7 +20,7 @@
                   </div>
                   <div class="field">
                     <label class="label">{{ $t("msg.password") }}</label>
-                    <div class="control">
+                    <div class="control has-icons-right">
                       <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
                     </div>
                   </div>
@@ -67,6 +67,11 @@ import { useRouter } from '@/router';
 import { useStore } from '@/store';
 
 
+/*.addEventListener("focus", function(event) {
+    // here is the Vue code
+    //console.log('window loaded', event.getModifierState("CapsLock"));
+});
+*/
 export default {
   name: "login",
   components: {
@@ -93,6 +98,7 @@ export default {
       resetFormErrors,
     }
   },
+
   methods: {
 
     async login(){

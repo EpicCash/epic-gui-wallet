@@ -352,6 +352,7 @@ class ConfigService {
 
     let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
     let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+    let pWalletTorList = await window.nodeFindProcess('name', /tor/);
 
     for(let process of pWalletList) {
       if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
@@ -360,6 +361,12 @@ class ConfigService {
     }
     for(let process of pEpicnodeList) {
       if(process.cmd.includes('server')){
+        killPids.push(process);
+      }
+    }
+    for(let process of pWalletTorList) {
+
+      if(process.cmd.includes('tor/listener/torrc')){
         killPids.push(process);
       }
     }

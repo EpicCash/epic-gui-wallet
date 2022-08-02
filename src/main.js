@@ -88,6 +88,24 @@ app.config.globalProperties.$filters = {
        return '-'
      }
   },
+  timeFormat(endtime){
+    if(endtime != undefined){
+      //return moment().format("HH:mm");
+
+      let a = moment();
+      let b = moment(endtime);
+      let duration = moment.duration(b.diff(a));
+      let hours = parseInt(duration.asHours());
+      let minutes = parseInt(duration.asMinutes()) % 60;
+
+      hours = hours < 10 ? '0' + hours : hours;
+
+
+      return [hours, minutes];
+    }else{
+      return [0, 0];
+    }
+  },
   truncate(text, length) {
     if (text.length > length) {
         return text.substring(0, length);

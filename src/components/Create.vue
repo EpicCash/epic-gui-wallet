@@ -4,7 +4,7 @@
       <section class="hero">
         <div class="hero-body">
 
-          <div v-if="page==='created'" class="container" >
+          <div v-show="page==='created'" class="container" >
             <div class="columns is-centered">
               <div class="column is-three-quarters">
                 <div class="card has-card-header-background">
@@ -17,8 +17,13 @@
                       {{ $t('msg.create.backupNote') }}
                     </p>
                     <div class="tags" style="justify-content: center;">
-                      <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in newseeds" :key="seed">{{seed}}</span>
+                      <span style="color:#000000" class="mnemonic-word tag is-light is-medium is-rounded is-link" v-for="seed in newseeds" :key="seed">{{seed}}<span class="space"> </span></span>
                     </div>
+
+                    <div style="text-align: center;">
+                      <canvas id="qrcodeCanvas" ></canvas>
+                    </div>
+                    <p>&nbsp;</p>
                     <div class="buttons is-centered">
                       <router-link class="button is-outlined is-primary" to="/login">
                         {{ $t("msg.login_") }}
@@ -31,7 +36,7 @@
 
           </div>
 
-          <div v-else class="container" >
+          <div v-show="page==='create'" class="container" >
             <div class="columns is-centered">
               <div class="column is-three-quarters">
                 <div class="card has-card-header-background">
@@ -52,14 +57,14 @@
 
                     <div class="field">
                         <label class="label">{{ $t('msg.restore.newPassword') }}<span class="required">*</span></label>
-                        <div class="control">
+                        <div class="control has-icons-right">
                           <PasswordField ref="passwordField" required="true" name="password"  />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">{{ $t('msg.passwordAgain') }}<span class="required">*</span></label>
-                        <div class="control">
+                        <div class="control has-icons-right">
                           <PasswordField ref="passwordField2" required="true" :repeat="passwordField ? passwordField.input : null" name="password2"  />
                         </div>
                     </div>
@@ -97,7 +102,9 @@
                         <mdicon name="arrow-left-bold-hexagon-outline" />
                         {{ $t("msg.back") }}
                       </router-link>
-                      <button class="button is-primary" @click="create" >{{ $t('msg.create.newWallet') }}</button>
+                      <button class="button is-primary" :class="{ 'button__loader': isLoading }" @click="create" >
+                        <span class="button__text">{{ $t('msg.create.newWallet') }}</span>
+                      </button>
                     </div>
 
                   </div>
@@ -113,7 +120,7 @@
 
 <script>
 
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from '@/router';
 import { useRoute } from 'vue-router';
 import AccountField from "@/components/form/accountField";
@@ -124,11 +131,17 @@ import useFormValidation from "@/modules/useFormValidation";
 
 export default {
   name: "create",
+
   components: {
     PasswordField,
     AccountField,
     WalletdirField,
     NetworkField,
+  },
+  watch: {
+    qrText: function (val) {
+      this.qrcode(val);
+    }
   },
   setup(){
     const router = useRouter();
@@ -142,7 +155,12 @@ export default {
     const { resetFormErrors } = useFormValidation();
     const advancedSettings = ref(false);
     const newseeds = ref([]);
+    const isLoading = ref(false);
+    const qrText = ref('');
     const fromRoute = route.params.from ? route.params.from : 'login';
+    const vueCanvas = ref(null);
+
+
 
     return{
       router,
@@ -154,12 +172,23 @@ export default {
       resetFormErrors,
       advancedSettings,
       networkField,
-      fromRoute
+      fromRoute,
+      isLoading,
+      qrText,
+      newseeds
+
+
     }
   },
 
-
   methods: {
+    async qrcode(text){
+
+      this.vueCanvas = document.getElementById("qrcodeCanvas");
+      window.nodeQr.toCanvas(this.vueCanvas, text, function (error) {
+        if (error) console.error('HttpReceive.qrcode', error)
+      })
+    },
     toggleAdvancedSettings(){
 
       this.advancedSettings = !this.advancedSettings;
@@ -169,6 +198,7 @@ export default {
 
 
       this.resetFormErrors();
+
       let isFormAllValid = [];
       let userhomedir = '';
       //check if not exist => false
@@ -181,6 +211,9 @@ export default {
 
       //we create a complete new wallet
       if(!isFormAllValid.includes(false)){
+
+        this.isLoading = true;
+
         userhomedir = window.nodePath.join(this.walletdirField.defaultValue, this.accountField.defaultValue);
 
         if(this.accountField.defaultValue == 'default'){
@@ -202,7 +235,9 @@ export default {
             let action = await this.configService.startCheck(this.accountField.defaultValue);
             if(action === 'settings'){
               this.newseeds = created.msg.split(' ');
+              this.qrText = created.msg;
               this.page = 'created'
+
             }else{
               this.$toast.error(this.$t('msg.create.fatal_create', [action]), {duration:false});
             }
@@ -211,6 +246,9 @@ export default {
             this.$toast.error(this.$t('msg.create.fatal_update'), {duration:false});
           }
         }
+
+        this.isLoading = false;
+
 
 
       }else{

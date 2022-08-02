@@ -22,10 +22,8 @@
           <div class="field">
             <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
             <div class="control">
-
                 <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
                 <label for="walletListenSwitch">{{ $t("msg.settings.auto_start") }}</label>
-
             </div>
           </div>
 
@@ -48,6 +46,16 @@
               </div>
           </div>
 
+          <div class="field">
+            <div class="control">
+                <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
+                <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
+                <p class="help">
+                  {{ $t("msg.settings.ngrok_hint") }}
+                </p>
+            </div>
+          </div>
+
           <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
             <div class="card-content">
               <div class="content">
@@ -67,7 +75,7 @@
             </div>
           </div>
 
-        
+
       </div>
     </div>
   </section>
@@ -89,6 +97,20 @@ import { videoPlay } from "vue3-video-play";
       NodeserverField,
       videoPlay,
     },
+    watch: {
+        'ngrok': function (newVal) {
+
+          if(newVal !== ''){
+            this.ngrok_force_start = false
+          }
+        },
+        'ngrok_force_start': function (newVal) {
+
+          if(newVal){
+            this.ngrok = '';
+          }
+        },
+    },
     setup(){
 
       const { resetFormErrors } = useFormValidation();
@@ -98,6 +120,7 @@ import { videoPlay } from "vue3-video-play";
       const langs = ref([]);
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
+      const ngrok_force_start = ref(false);
       const ngrok = ref('');
       const advancedSettings = ref(false);
       const playerOptions = reactive({
@@ -121,6 +144,7 @@ import { videoPlay } from "vue3-video-play";
         check_node_api_http_addr,
         walletlisten_on_startup,
         ngrok,
+        ngrok_force_start,
         playerOptions,
         advancedSettings,
         onPlay
@@ -136,7 +160,7 @@ import { videoPlay } from "vue3-video-play";
       this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
       this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
       this.ngrok = this.store.state.user.ngrok;
-
+      this.ngrok_force_start = this.store.state.user.ngrok_force_start;
     },
 
     methods: {
@@ -165,9 +189,9 @@ import { videoPlay } from "vue3-video-play";
 
           let updated = 0;
           if(this.nodeserverField.select == 'external'){
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
           }else{
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
           }
 
           /*todo simple node restart user update wallet restart here*/
@@ -175,7 +199,11 @@ import { videoPlay } from "vue3-video-play";
             this.store.commit('nodeType', this.nodeserverField.select);
             this.$toast.success(this.$t("msg.settings.settings_saved"));
             this.emitter.emit('app.nodeStart');
-            this.emitter.emit('app.ngrokStart');
+            if(this.ngrok != '' || this.ngrok_force_start){
+              this.emitter.emit('app.ngrokStart');
+            }else{
+              this.emitter.emit('app.ngrokStop');
+            }
           }else{
             this.$toast.error(this.$t("msg.settings.error_save"));
           }

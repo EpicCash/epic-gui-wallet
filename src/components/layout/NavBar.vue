@@ -60,7 +60,7 @@
                 <span class="icon"><mdicon name="spellcheck" /></span>
                 <span>{{ $t("msg.menu.mnemonic") }}</span>
               </router-link>
-              <router-link class="navbar-item" to="/setupwizard">
+              <router-link class="navbar-item" :to="{name:'setupwizard', params:{from:'navbar'}}" >
                 <span class="icon"><mdicon name="wizard-hat" /></span>
                 <span>{{ $t("msg.menu.run_setup") }}</span>
               </router-link>

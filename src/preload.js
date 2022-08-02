@@ -8,9 +8,7 @@ const base32 = require('rfc-3548-b32');
 const crypto = require('crypto-browserify');
 const qr = require("qrcode");
 import * as secp256k1 from "@noble/secp256k1";
-
-
-
+import isPortReachable from 'is-port-reachable';
 
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
@@ -44,7 +42,7 @@ log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 
 
 //add debug mode for production
 //user must create a file "debug" in ./epic folder
-let debug = process.env.NODE_ENV !== 'production';
+let debug = false;//process.env.NODE_ENV !== 'production';
 if(fs.existsSync(path.join(ewalletPath, 'debug'))){
   debug = true;
   console.log = log.log;
@@ -475,6 +473,27 @@ contextBridge.exposeInMainWorld('nodeQr', qr);
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
 
+  async isPortReachable(){
+    return await isPortReachable(80, {host: 'google.com'});
+  },
+  async getPublicIp(){
+    let response = await fetch('https://api.ipify.org?format=json', {
+      method:'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(function(res){
+
+      if (!res.ok) { throw Error(res) }
+      return res.json();
+    }).catch(function(error){
+
+      let msg = 'Error connecting api.ipify.org ';
+      return false;
+    });
+    return response;
+  },
+
   async getPrice(){
 
     let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=epic-cash', {
@@ -533,8 +552,15 @@ contextBridge.exposeInMainWorld('explorer', {
   open(data){
       shell.openExternal('https://explorer.epic.tech/blockdetail/' + data);
   }
-
 });
+
+contextBridge.exposeInMainWorld('openlink', {
+  //can be block height or commit
+  open(url){
+      shell.openExternal(url);
+  }
+});
+
 // Adds an object 'api' to the global window object:
 contextBridge.exposeInMainWorld('api', {
     showSaveDialog: async (title, message, defaultPath) => {

@@ -94,12 +94,13 @@
                     <router-link v-if="tx.address && tx.address.type == 'file' && tx.status=='unconfirmed'" class="button is-small is-primary" to="/finalizeTransaction">
                       <span title="Finalize" class="is-icon"><mdicon name="basket" size="12" /></span>
                     </router-link>
-                    <button v-if="tx.cancelable" class="button is-small is-primary" @click="cancel(`${tx.tx_slate_id}`)">
-                      <span title="Cancel" class="is-icon"><mdicon name="cancel" size="12" /></span>
+                    <button v-if="tx.cancelable" class="button is-small is-primary" :class="{ 'button__loader': isLoading }" @click="cancel(`${tx.tx_slate_id}`)">
+                      <span title="Cancel" class="is-icon"><span class="button__text"><mdicon name="cancel" size="12" /></span></span>
                     </button>
+
                     <button class="button is-small is-primary" @click="detail(tx)">
                       <span title="Details" class="is-icon">
-                        <mdicon v-if="tx.id != txDetail" name="eye" size="12" />
+                        <mdicon v-if="tx.id !== txDetail" name="eye" size="12" />
                         <mdicon v-else name="eye-off" size="12" />
                       </span>
                     </button>
@@ -242,9 +243,10 @@
       const searched = ref(false);
 
       const detailToggle = ref(false);
-      const txDetail = ref(0);
+      const txDetail = ref(-1);
       const isRefresh = ref(false);
       const locale = ref('en');
+      const isLoading = ref(false);
 
       return{
         store,
@@ -260,7 +262,8 @@
         txDetail,
         isRefresh,
         count_per_page,
-        locale
+        locale,
+        isLoading
       }
     },
     watch: {
@@ -307,7 +310,7 @@
         }
 
         this.detailToggle = this.detailToggle !== true;
-        this.txDetail = this.detailToggle ? tx.id : 0;
+        this.txDetail = this.detailToggle ? tx.id : -1;
 
       },
       async getTxs() {
@@ -427,10 +430,10 @@
       },
 
       async cancel(tx_slate_id){
+        this.isLoading = true;
         let res = await this.$walletService.cancelTransactions(null, tx_slate_id);
+        this.isLoading = false;
         if(res && res.result && res.result.Ok == null){
-
-
 
           this.$toast.success(this.$t("msg.txs.cancelSuccess"));
           this.emitter.emit('app.update');

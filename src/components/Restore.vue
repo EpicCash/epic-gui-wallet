@@ -90,14 +90,14 @@
 
                     <div class="field">
                         <label class="label">{{ $t('msg.restore.newPassword') }}<span class="required">*</span></label>
-                        <div class="control">
+                        <div class="control has-icons-right">
                           <PasswordField ref="passwordField" required="true" name="password"  />
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">{{ $t('msg.passwordAgain') }}<span class="required">*</span></label>
-                        <div class="control">
+                        <div class="control has-icons-right">
                           <PasswordField ref="passwordField2" required="true" :repeat="passwordField ? passwordField.input : null" name="password2"  />
                         </div>
                     </div>

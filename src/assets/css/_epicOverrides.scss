@@ -270,7 +270,17 @@ html{
 
 /* (C) NO SELECT + HIGHLIGHT COLOR */
 *:not(input):not(textarea){ user-select: none; }
+span.mnemonic-word{
+  user-select: all;
+}
+#aboutPage{
+  span,p,h1,code{
+    user-select:text;
+  }
+}
+/*
 
+*/
 .pager-activepage{
   display: block;
   position: absolute;

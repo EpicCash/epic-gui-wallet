@@ -26,7 +26,7 @@ const messages = {
     delete: 'Delete',
     edit: 'Edit',
 
-    welcome: 'Welcome to Epic wallet',
+    welcome: 'Welcome to EPIC wallet',
     back: 'Back',
     reset: 'Reset',
     addall: 'Add all from above',
@@ -82,7 +82,7 @@ const messages = {
       coins: 'Coins'
     },
     create:{
-      select: 'Select directory for your wallet',
+      select: 'Select a directory for your wallet data',
       seedPhrase: 'Seed Phrase',
       toNewMsg: 'Create a New Wallet.',
       newWallet: 'Create new wallet',
@@ -95,9 +95,9 @@ const messages = {
       setup_assistant: 'Setup Assistant',
       account_information: 'Account information',
       your_name:'Your name',
-      name_only_internal: 'Name is only internal used',
+      name_only_internal: 'Name is only internally used',
       keybase: 'Keybase',
-      enter_keybase: 'If you have a Keybase Account, you can enter here.',
+      enter_keybase: 'If you have a Keybase Account, you can enter it here.',
       next_step: 'Next step',
       network_node: 'Network node',
       network_node_txt: `Your wallet requires a network node to send and receive transactions.<br/>
@@ -123,7 +123,7 @@ const messages = {
       name: 'Name',
       keybase_account: 'Keybase Account',
       language: 'Language',
-      ngrok_authtoken: 'Ngrok Auth-Token',
+      ngrok_authtoken: 'ngrok Auth-Token',
       db_fatal: 'DB Fatal: can not insert DB',
       errors_save: 'Error saving user settings: {0}'
     },
@@ -214,7 +214,7 @@ const messages = {
     new:{
       create: 'Create new wallet',
       restore: 'Restore wallet',
-      select: 'Select existing wallet location',
+      select: 'Select existing wallet data location',
       selectErr: 'selected folder has no "wallet_data" dir and wallet config.',
       networkErr: 'Network type can not be determined.<br/>Please select one.',
       selectNetwork: 'continue',
@@ -228,12 +228,12 @@ const messages = {
       added: 'Recover wallet',
       newPassword: 'Set a new password',
       recover: 'Recover',
-      walletLocation: 'Wallet location',
+      walletLocation: 'Wallet data location',
       search_placeholder: 'type to search words / or paste seed phrase',
       create_new: 'Create new account',
       change_seed: 'Change seed words',
       wallet_recovered: 'Your wallet is recoverd. Please login and finish the setup.',
-      recover_fail: 'Fatal: recover fail on action "{0}"',
+      recover_fail: 'Fatal: recover failed on action "{0}"',
       fatal_app: 'Fatal: App config not updated.'
 
     },
@@ -246,10 +246,21 @@ const messages = {
       httpReceive: 'Receive via HTTP/HTTPS',
       height:'Block Height',
       updateTitle: 'Found new version',
-      updateMsg: 'Found new version of Epic wallet. Please update Right NOW.',
+      updateMsg: 'Found new version of EPIC wallet. Please update Right NOW.',
       yes: 'yes',
       no: 'no',
-      hedwig: 'Receive via Hedwig'
+
+      ngrok_service_started: 'Ngrok service started',
+      ngrok_service_stopped: 'Ngrok service stopped',
+      ngrok_service_error: 'Error starting Ngrok service',
+      error_setup_internal_node: 'Can not setup internal node server',
+      node_started: 'Node started',
+      node_not_started: 'Node not started',
+      node_offline: 'Node is offline',
+      external_node_online: 'External Node is online',
+      external_node_offline: 'External Node is offline',
+      background_process: 'We found some running wallet and node processes in the background. Please close them first before you run this App.',
+
     },
 
     info: {
@@ -291,7 +302,7 @@ const messages = {
       TxResponseFailed: 'Failed to get right respose from receiver',
       TxCreateFailed: 'Create transaction failed',
       salteVersion: 'Slate file version',
-      salteVersionHelp: 'If you failed to send epic, try change the Slate file version then resend'
+      salteVersionHelp: 'If you failed to send EPIC, try changing the Slate file version then resend'
     },
 
     receive: {
@@ -319,7 +330,7 @@ const messages = {
 
     httpReceive: {
       launchSucess: 'Started successfully',
-      listening: "Your wallet can receive transactions through this addresses.",
+      listening: "Your wallet can receive transactions through these addresses.",
       address: 'Wallet Address',
       reachableMsg2: 'Ensure your IP Address is public and reachable by the internet.',
       close: 'Stop listener',
@@ -330,34 +341,24 @@ const messages = {
       error: 'No password.',
       failed: 'Start Failed, Maybe wrong password',
       failed2: 'HTTP listen failed, your public ip is not reachable by the internet user. Try transaction file',
-      failed3: 'Failed to get your public ip; try it later',
+      failed3: 'Failed to get your public ip; try again later',
       failed4: 'Listener is now running on localhost:3415. However your ip is not reachable by the internet user. Try transaction file',
-      ip: 'your public ip'
-    },
-
-    hedwig: {
-      title: 'Receive via Hedwig(v1)',
-      launchSucess: 'Started successful',
-      reachable: 'Hedwig address is available',
-      address: 'Address to receive',
-      tip:'Please keep wallet online.',
-      close: 'Stop Hedwig',
-      introTitle: 'Introduction',
-      intro1: 'Hedwig(v1) is a relay service for users without a public ip. It provides a temporary address to receive epic.',
-      intro2: 'When someone send epic to the address, Hedwig(v1) will forward the send request to your wallet. So you will get your epic.',
-      start: 'Start',
-      failed: 'Error when try to connect Hedwig server, try it latter maybe',
-      failed2: 'Error when test Hedwig address, try it later maybe or restart wallet.',
-      failed3: 'Failed to start local epic receive service, try it later maybe or restart wallet.',
-      copy: 'copy address',
-      copied: 'address was copied in clipboard'
+      ip: 'your public ip',
+      current_ngrok_address: 'Current Ngrok Address',
+      local_address: 'Local address',
+      session_end: 'You are using ngrok without an account. Your session will end in {0} hour, {1} minutes',
+      tor_onion_address: 'Tor onion Address',
+      proof_address: 'Proof Address',
+      your_qrcode: 'Your qr code for your "{0}" address',
+      click_qrcode_icon: 'Click the qr code icon',
+      tor_not_available: 'Tor not available. Try to restart the wallet listener'
     },
 
     check: {
       checking: 'Re-checking, be patient ...',
       stop: 'Stop Check',
       introTitle: 'Info',
-      intro1: 'This will scan the entire Blockchain for the unspent coin outputs that belongs to your wallet.',
+      intro1: 'This will scan the entire Blockchain for the unspent coin outputs that belong to your wallet.',
       start: 'Start',
       delete_unconfirmed: 'Delete unconfirmed coin outputs',
       scan_finished: 'Wallet scan finished.',
@@ -382,12 +383,14 @@ const messages = {
       network: 'Network',
       wallet_listener: 'Wallet listener',
       auto_start: 'automatically start wallet listener after login',
-      authtoken: 'Your Ngrok Authtoken',
+      authtoken: 'Your ngrok Authtoken',
+      ngrok_force_start: 'start ngrok without Authtoken',
+      ngrok_hint: 'The ngrok address is 2 hours valid.',
       howto: 'How to get your Authtoken from ngrok',
       settings_saved: 'Settings saved',
       error_save: 'Error saving settings'
     },
-    
+
     validators:{
       empty: 'The {0} field is required',
       equal: 'The {0} must be equal',

@@ -112,7 +112,17 @@ const getDatabase = () => {
     };
     const tblUser = {
         name: 'User',
-        version: 2,
+        version: 3,
+        alter:{
+          3: {
+            add:{
+               ngrok_force_start:{
+                 default: false,
+                 dataType: DATA_TYPE.Boolean
+               }
+            },
+          }
+        },
         columns: {
             id: {
               primaryKey: true,
