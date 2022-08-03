@@ -5,7 +5,7 @@
   "description": "Epic Wallet, mind your Epic!",
   "author": "v3,v4: Johannes Hahn <j.hahn@eccence.digital>, v1: xiaojay, simpleduck, aiwe",
   "license": "Apache-2.0",
-  "homepage": "epic.tech",
+  "homepage": "./",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -34,6 +34,7 @@
     "core-js": "^3.6.5",
     "cross-spawn": "^7.0.3",
     "crypto-browserify": "^3.12.0",
+    "electron-context-menu": "^3.3.0",
     "electron-log": "^4.4.6",
     "electron-osx-sign": "^0.6.0",
     "electron-updater": "^5.0.5",
@@ -105,7 +106,6 @@
     "last 2 versions",
     "not dead"
   ],
-  "homepage": "./",
   "repository": {
     "type": "git",
     "url": "https://github.com/EpicCash/epic-gui-wallet.git"

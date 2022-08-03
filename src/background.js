@@ -1,7 +1,7 @@
 'use strict'
 
 import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell } from 'electron'
-
+const contextMenu = require('electron-context-menu');
 import { exec } from 'child_process'
 
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -16,6 +16,11 @@ const {autoUpdater} = require("electron-updater");
 autoUpdater.channel = "latest"
 
 let win;
+
+
+contextMenu({
+	showSaveImageAs: true
+});
 
 //-------------------------------------------------------------------
 // Logging

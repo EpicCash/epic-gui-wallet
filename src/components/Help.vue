@@ -138,7 +138,7 @@ import { useHelp } from '@/help/help';
         }
         for(let el of this.searchableText){
           if(el.origin != null){
-            el.el.innerHTML = el.html;
+            el.el.innerHTML = el.origin;
           }
         }
       },
