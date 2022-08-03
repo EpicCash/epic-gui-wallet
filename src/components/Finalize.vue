@@ -1,79 +1,108 @@
 <template>
 
-<div class="modal" :class="{'is-active': showModal}">
-  <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" >
-    <header class="modal-card-head">
-      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.finalize.finalize") }}</p>
-      <button class="delete" aria-label="close" @click="closeModal"></button>
-    </header>
-    <section class="modal-card-body" >
 
-      <div class="notification is-warning" v-if="errors.length">
-        <p v-for="error in errors" :key="error">{{ error }}</p>
-      </div>
-      <div class="center">
-        <a class="button is-link is-outlined" v-if="errors.length" @click="clearup">{{ $t("msg.clearup") }}</a>
-      </div>
+    <section class="section is-main-section">
 
-      <div class="notification is-link" v-show="isSent">
-        {{ $t("msg.finalize.success") }}
-      </div>
-      <div class="center">
-        <a class="button is-link is-outlined" v-show="isSent" @click="closeModal">
-          {{ $t("msg.finalize.ok") }}
-        </a>
-      </div>
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">
+            <span class="icon">
+              <mdicon name="cloud-upload" />
+            </span>
+            &nbsp;<span>{{ $t("msg.finalize.dragdrop") }}</span>
+          </p><!---->
+        </header>
+        <div class="card-content">
 
-      <div v-show="isSending">
-        <p class="is-size-5">{{ $t("msg.finalize.sending") }}</p>
-        <br/>
-        <progress class="progress is-link" max="100"></progress>
-      </div>
 
-      <div class="center" v-show="toDrag" id="filebox2" v-bind:class="{'drag-over':isDragOver}"
-         @dragover.prevent="isDragOver=true" @dragleave.prevent="isDragOver=false" @drop.prevent="drop">
-        <p class="is-size-5 has-text-link has-text-weight-semibold">{{ $t("msg.finalize.dropMsg") }}</p>
-      </div>
+          <div v-show="!isSent" id="filebox" @dragover.prevent="isDragOver=true" @dragleave.prevent="isDragOver=false" @drop.prevent="drop">
+            <div class="field"><!---->
+              <label class="upload control">
+                <div class="upload-draggable is-primary" v-bind:class="{'is-hovered':isDragOver}">
+                  <section class="section">
+                    <div class="content has-text-centered">
+                      <p>
+                        <span class="icon is-large">
+                          <mdicon name="upload" size="48" />
+                        </span>
+                      </p>
+                      <p>{{ $t("msg.finalize.dropMsg") }}</p>
+                    </div>
+                  </section>
+                </div>
+                <input type="file" @change="drop">
+
+              </label><!---->
+            </div>
+            <div class="upload-file-list" style="display: none;"></div>
+          </div>
+          <div v-show="isSent">
+
+            <div class="notification is-primary" >
+              {{ $t("msg.finalize.success") }}
+            </div>
+
+
+            <div v-show="isSending">
+              <p class="is-size-5">{{ $t("msg.finalize.sending") }}</p>
+              <br/>
+              <progress class="progress is-link" max="100"></progress>
+            </div>
+
+          </div>
+
+
+
+      </div><!---->
+    </div>
+
+
+
 
     </section>
 
-  </div>
-</div>
+
 
 </template>
 <script>
-const log = window.log
 const fs = window.nodeFs;
+
+import { ref } from 'vue';
+import { useStore } from '@/store';
 
 export default {
   name: "finalize",
-  props: {
-    showModal: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
+  setup(){
+
+    const store = useStore();
+    const isDragOver =ref(false);
+    const isSent =ref(false);
+    const isSending =ref(false);
+
     return {
-      errors: [],
-      toDrag:true,
-      isDragOver:false,
-      isSent:false,
-      isSending:false
+      store,
+      isDragOver,
+      isSent,
+      isSending
+
     }
+
   },
+
   methods: {
-    closeModal() {
-      this.clearup()
-      this.emitter.emit('close', 'windowFinalize');
-    },
+
 
     drop(event){
-      let fn = event.dataTransfer.files[0]
-      this.toDrag = false
+
+      let fn = '';
+      if(event.dataTransfer){
+         fn = event.dataTransfer.files[0];
+      }else{
+         fn = event.target.files[0];
+      }
 
       if(this.fileTypeIsSupported(fn)){
+
         let tx_id
         let content
 
@@ -82,12 +111,31 @@ export default {
             encoding: "utf8",
             flag: "r"
           });
-          let data = JSON.parse(content)
+
+          let data = {};
+          try{
+            data = JSON.parse(content);
+          }catch(e){
+
+            this.store.commit('updates', {
+              "status": "is-danger",
+              "text": e,
+              "icon": "information"
+            });
+            this.$toast.error(this.$t('msg.finalize.error_read'));
+            return;
+          }
+
           tx_id = data.id
-          log.debug('tx to finalize is ' + tx_id)
+
         }catch(e){
-          log.error('read tx file error:' + e)
-          this.errors.push(this.$t('msg.finalize.WrongFileType'))
+          window.debug ? console.log('read tx file error:' + e) : null;
+          this.store.commit('updates', {
+            "status": "is-danger",
+            "text": e,
+            "icon": "information"
+          });
+          this.$toast.error(this.$t('msg.finalize.WrongFileType'));
           return
         }
 
@@ -95,7 +143,7 @@ export default {
         let send = async function(){
 
           let res = await this.$walletService.finalizeTransaction(JSON.parse(content));
-          console.log('finalize', res);
+
           if(res && res.result && res.result.Ok){
             //TODO: implement fluff true/false (Dandelion)
             let tx = res.result.Ok.tx;
@@ -104,34 +152,35 @@ export default {
               this.isSent = true
               tx_id = res.result.Ok;
 
-              this.$dbService.addPostedUnconfirmedTx(tx_id)
             }else{
-              this.errors.push(res2.error.message);
+              this.$toast.error(res2.error.message);
             }
 
-
-
-
           }else{
-            this.errors.push(res.error.message);
+
+            this.$toast.error(res.error.message);
           }
 
 
           this.isSending = false;
-          this.emitter.emit('update')
+          this.emitter.emit('app.update');
+
         }
         send.call(this)
 
+      }else{
+        this.$toast.error(this.$t('msg.finalize.WrongFileType'));
+
       }
+
     },
     clearup(){
-      this.errors = []
-      this.toDrag = true
       this.isDragOver = false
       this.isSent = false
       this.isSending= false
     },
     fileTypeIsSupported(file){
+
       if( !file.type || file.type.search('text')!=-1 ||	file.type.search('json')!=-1){
         return true
       }else{
@@ -141,24 +190,3 @@ export default {
   }
 }
 </script>
-<style>
-#filebox2 {
-  height:280px;
-  border-style:dashed;
-  border-width:2px;
-  color:#dbdbdb;/*#3273dc;*/
-  background-color: white;
-
-}
-
-#filebox2.drag-over{
-  border-color:#22509a;
-  background-color:#f6f9fe;
-}
-
-.center{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>

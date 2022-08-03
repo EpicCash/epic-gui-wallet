@@ -1,250 +1,176 @@
-<template>
-
-  <section class="hero">
-    <div class="hero-body">
+<template >
+  <section class="section hero is-fullheight is-dark-mode-active" >
+    <div class="hero-body" >
       <div class="container">
-
         <div class="columns is-centered">
-          <div class="column is-6">
-            <div class="block" >
-              <div class="card-image has-text-centered">
-                <figure class="image is-inline-block">
-                  <img src="../assets/epiccash_logo.png" style="width:36%;height:auto;">
-                </figure>
+          <div class="column is-two-fifths">
+            <div class="card has-card-header-background">
+              <header class="card-header" style="justify-content: center;">
+                <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
+              </header>
+
+              <div class="card-content">
+
+                <form @submit.prevent novalidate>
+                  <div class="field">
+                    <label class="label">{{ $t("msg.account.account") }}</label>
+                    <div class="control">
+                      <AccountField ref="accountField" placeholder="default" required="true" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="label">{{ $t("msg.password") }}</label>
+                    <div class="control has-icons-right">
+                      <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="field is-grouped" style="justify-content: center;">
+                    <div class="control">
+                      <button type="submit" class="button is-primary" :class="{ 'button__loader': isLoading }" @click.prevent="login">
+                        <span class="button__text">{{ $t("msg.login_") }}</span>
+                      </button>
+                    </div>
+                    <div class="control">
+                      <router-link class="button is-outlined is-primary" to="/create">
+                        {{ $t("msg.new.create") }}
+                      </router-link>
+                    </div>
+                    <div class="control">
+                      <router-link class="button is-outlined is-primary" to="/restore">
+                        {{ $t("msg.restore.recover") }}
+                      </router-link>
+                    </div>
+                  </div>
+                </form>
               </div>
-              <h2 class="title" style="margin-top:24px; margin-left:70px;font-size:1.6rem" >{{ $t("msg.title") }}</h2>
             </div>
           </div>
         </div>
-
-        <div class="columns is-centered">
-          <div class="column is-6" >
-
-            <form class="box">
-              <div class="field">
-                <label class="label">{{ $t("msg.account") }}</label>
-                <div class="control">
-                  <input class="input" type="account" placeholder="default" required :class="{'is-danger': error}" v-model="account">
-                  <p style="color:red;" class="help is-warning" v-if="errorAccount">Account does not exist</p>
-                </div>
-
-              </div>
-              <div class="field">
-                <label class="label">{{ $t("msg.password") }}</label>
-                <div class="control">
-                  <input class="input" type="password" placeholder="********" required :class="{'is-danger': error}" v-model="password">
-                </div>
-                <p style="color:red;" class="help is-warning" v-if="error">{{ $t("msg.wrongPassword") }}</p>
-                <p style="color:red;" class="help is-warning" v-if="errorEmpty">{{ $t("msg.login.errorPasswdEmpty") }}</p>
-                <p style="color:red;" class="help is-warningapi" v-if="errorapi">{{ this.errorapiMsg }}</p>
-                <p class="help is-warningapi" v-if="errorapi">Code: {{ this.errorCode }}</p>
-              </div>
-
-              <div class="field is-grouped">
-                  <template v-if="continueBtn == false" >
-                  <div class="control">
-                        <button class="button" @click.prevent="login">
-                          {{ $t("msg.login_") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
-                        </button>
-                  </div>
-                  <div class="control">
-                      <button class="button" @click.prevent="create">
-                        {{ $t("msg.new.create") }}
-                      </button>
-                  </div>
-                  <div class="control">
-                      <button class="button" @click.prevent="restore">{{ $t("msg.restore.recover") }}</button>
-                  </div>
-                </template>
-
-                <template v-if="continueBtn == true" >
-                  <button class="button" @click.prevent="login">
-                    {{ $t("msg.continue") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
-                  </button>
-                </template>
-              </div>
-            </form>
-
-
-
-          </div>
-        </div>
-
       </div>
     </div>
+    <div class="hero-foot has-text-centered">
+      <div class="logo"></div>
+    </div>
+
   </section>
 </template>
 
 <script>
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner, faGear } from '@fortawesome/free-solid-svg-icons'
-library.add(faSpinner, faGear)
 
-const log = window.log
+import { ref } from 'vue';
+import PasswordField from "@/components/form/passwordField";
+import AccountField from "@/components/form/accountField";
+import useFormValidation from "@/modules/useFormValidation";
+import { useRouter } from '@/router';
+import { useStore } from '@/store';
 
+
+/*.addEventListener("focus", function(event) {
+    // here is the Vue code
+    //console.log('window loaded', event.getModifierState("CapsLock"));
+});
+*/
 export default {
   name: "login",
   components: {
-    FontAwesomeIcon
+    PasswordField,
+    AccountField,
   },
-  data() {
+  setup() {
+
+    const store = useStore();
+    const router = useRouter();
+    const passwordField = ref('');
+    const accountField = ref();
+    const canLogin = ref(true);
+    const isLoading = ref(false);
+    const { resetFormErrors } = useFormValidation();
+
     return {
-      password: '',
-      account: '',
-      error: false,
-      errorEmpty: false,
-      errorapi: false,
-      errorapiMsg: '',
-      errorCode: '',
-      errorAccount: false,
-      isLoading: false,
-      continueBtn: false,
+      store,
+      router,
+      passwordField,
+      accountField,
+      canLogin,
+      isLoading,
+      resetFormErrors,
     }
-  },
-
-  created(){
-
-
-    this.emitter.on('wallet_error', ({msg, code})=>{
-        this.errorapi = true;
-        this.errorapiMsg = msg;
-        this.errorCode = code;
-    });
-    this.emitter.on('wallet_error_clean',()=>{
-        this.errorapi = false;
-        this.errorapiMsg = '';
-        this.errorCode = '';
-        this.continueBtn = false;
-    });
-    this.emitter.on('continueLogin', () => {
-       this.continueLogin(false);
-    });
-
-    this.emitter.on('continueLoginFirst', () => {
-
-      this.continueLogin(true);
-    });
-
   },
 
   methods: {
-    async continueLogin(firstlogin){
 
-
-      if(firstlogin){
-        this.emitter.emit('close', 'windowSettings');
-        this.emitter.emit('open', 'windowFirstrunCheck');
-      }
-
-      let account = this.account ? this.account : 'default';
-      let loginSucccess = await this.$walletService.start(this.password, account, firstlogin);
-
-      this.isLoading = false;
-      //we have a valid login to wallet
-
-      if(loginSucccess){
-
-        let nodeOnline = false;
-        if(!this.continueBtn && !firstlogin){
-          nodeOnline = await this.$nodeService.nodeOnline();
-        }else{
-          nodeOnline = true;
-        }
-        let apiCallable = await this.$walletService.getNodeHeight();
-
-        if(!nodeOnline){
-          this.continueBtn = true
-        }
-
-        if( !apiCallable || !nodeOnline ){
-          this.isLoading = false;
-          return this.errorapi = true;
-        }
-
-        this.password = '';
-        this.account = '';
-        account = '';
-
-        if(firstlogin){
-
-          //call txs for first wallet scan outputs
-          //because a recovered wallet makes a scan on first start
-          //bug if multible
-          let txs = await this.$walletService.getTransactions(true, null, null);
-          if(txs){
-            this.emitter.emit('logined');
-          }
-
-        }else{
-          this.emitter.emit('logined');
-          this.continueBtn = false;
-          this.errorapiMsg = '';
-          this.errorCode = '';
-        }
-      }else{
-
-        return this.error = true
-
-      }
-    },
-    create(){
-
-      this.emitter.emit('initMode', 'create');
-    },
-    restore(){
-
-      this.emitter.emit('initMode', 'restore');
-    },
     async login(){
 
-      this.resetErrors()
-      //check if acount exist.
-      let account = this.account ? this.account : 'default';
 
 
-      if(this.password.length == 0 ){
-        this.errorEmpty = true
-        return
-      }
+      this.resetFormErrors();
+      let isFormAllValid = [];
 
-      if(this.configService.accountExist(account)){
+      isFormAllValid.push(this.passwordField.validInput());
+      isFormAllValid.push(this.accountField.validInput(this.configService));
 
-        //check now requires settings
+      //check now requires settings
+      if(!isFormAllValid.includes(false)){
+
         this.isLoading = true;
-        let action = await this.configService.startCheck(account, true);
+
+        //first check config and setup
+        let action = await this.configService.startCheck(this.accountField.defaultValue);
+
+        this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
 
 
-        if(action === 'toml'){
-          await this.$walletService.newToml(this.password);
-          action = await this.configService.startCheck(account, true);
-        }
+        if(this.canLogin.success){
 
-        if(action === 'settings'){
+          if(this.configService.config['walletlisten_on_startup']){
+
+            const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
+
+            if(isListen && isListen.success){
+              this.$toast.success(this.$t("msg.login.listener_started"));
+              this.store.commit('walletListenerService', true);
+            }else{
+              this.$toast.error(this.$t("msg.login.error_listener_started"));
+              this.store.commit('walletListenerService', false);
+            }
+
+            if(isListen && isListen.tor){
+              this.$toast.success(this.$t("msg.login.tor_started"));
+              this.store.commit('torService', true);
+            }else{
+              this.$toast.error(this.$t("msg.login.error_tor_started"));
+              this.store.commit('torService', false);
+            }
+          }
+
+          //load account else wizard
+          let user = await this.$userService.getUser(this.accountField.defaultValue);
+          window.debug ? console.log('LOGIN USER:', user) : null;
+          if(user.length && action != 'settings'){
+            this.store.commit('user', user[0]);
+          }else{
+            this.router.push('/setupwizard');
+            return;
+          }
+
+
           this.isLoading = false;
-          this.emitter.emit('open', 'windowSettings');
+          this.emitter.emit('app.accountLoggedIn');
+
         }else{
-
-          await this.continueLogin(false);
-
+          this.$toast.error(this.canLogin.msg.message);
         }
 
+        this.isLoading = false;
 
       }else{
-        return this.errorAccount = true;
+        return;
       }
 
-
     },
-    resetErrors(){
-      this.error = false;
-      this.errorapi = false;
-      this.errorAccount = false;
-      this.errorEmpty = false;
-      this.isLoading = false;
 
-    }
   }
 }
 </script>

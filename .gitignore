@@ -127,5 +127,8 @@ pnpm-debug.log*
 
 #Electron-builder output
 /dist_electron
-/build
+/build/*
+!/build/notarize.js
+!/build/entitlements.mac.plist
 /resources/app.json
+electron-builder.yml

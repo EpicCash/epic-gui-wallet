@@ -1,124 +1,173 @@
 <template>
 
-<div class="modal" :class="{'is-active': showModal}">
-  <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" >
-    <header class="modal-card-head">
-      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.receive") }}</p>
-      <button class="delete" aria-label="close" @click="closeModal"></button>
-    </header>
-    <section class="modal-card-body" >
-      <div class="notification is-warning" v-if="errors.length">
-        <p v-for="error in errors" :key="error">{{ error }}</p>
-      </div>
-      <div class="center">
-        <a class="button is-link is-outlined" v-if="errors.length" @click="clearup">{{ $t("msg.clearup") }}</a>
-      </div>
 
-      <div class="center" v-show="toDrag" id="filebox" v-bind:class="{'drag-over':isDragOver}"
-         @dragover.prevent="isDragOver=true" @dragleave.prevent="isDragOver=false" @drop.prevent="drop">
-        <p class="is-size-5 has-text-link has-text-weight-semibold">{{ $t("msg.fileReceive.dropMsg") }}</p>
+      <section class="section is-main-section">
+
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="icon">
+                <mdicon name="cloud-upload" />
+              </span>
+              &nbsp;<span>{{ $t("msg.receive.dragdrop") }}</span>
+            </p><!---->
+          </header>
+          <div class="card-content">
+
+
+            <div v-show="!isSent" id="filebox" @dragover.prevent="isDragOver=true" @dragleave.prevent="isDragOver=false" @drop.prevent="drop">
+              <div class="field"><!---->
+                <label class="upload control">
+                  <div class="upload-draggable is-primary" v-bind:class="{'is-hovered':isDragOver}">
+                    <section class="section">
+                      <div class="content has-text-centered">
+                        <p>
+                          <span class="icon is-large">
+                            <mdicon name="upload" size="48" />
+                          </span>
+                        </p>
+                        <p>{{ $t("msg.receive.dropMsg") }}</p>
+                      </div>
+                    </section>
+                  </div>
+                  <input type="file" @change="drop">
+
+                </label><!---->
+              </div>
+              <div class="upload-file-list" style="display: none;"></div>
+            </div>
+            <div v-show="isSent">
+
+              <div class="notification is-primary" >
+                {{ $t("msg.receive.success") }}
+              </div>
+
+            </div>
+
+
+
+        </div><!---->
       </div>
 
     </section>
 
-  </div>
-</div>
-
 </template>
 <script>
-const log = window.log
+
 const fs = window.nodeFs;
 const path = window.nodePath;
 
+import { ref } from 'vue';
+import { useStore } from '@/store';
+
 export default {
   name: "receive",
-  props: {
-    showModal: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data() {
+
+  setup(){
+
+    const store = useStore();
+    const isDragOver =ref(false);
+    const isSent =ref(false);
+
+
     return {
-      toDrag:true,
-      isDragOver:false,
-      errors: [],
-      //ip:''
+      store,
+      isDragOver,
+      isSent
+
     }
+
   },
   methods: {
-    closeModal() {
-      this.clearup()
-      this.emitter.emit('close', 'windowReceive');
-    },
 
     async drop(event){
-      let fn = event.dataTransfer.files[0]
-      this.toDrag = false
+      let fn = '';
+      if(event.dataTransfer){
+         fn = event.dataTransfer.files[0];
+      }else{
+         fn = event.target.files[0];
+      }
 
       if(this.fileTypeIsSupported(fn)){
         let content
 
         try{
+
           content = fs.readFileSync(fn.path, {
             encoding: "utf8",
             flag: "r"
           });
 
+          let data = {};
+          try{
+            data = JSON.parse(content);
+          }catch(e){
+
+            this.store.commit('updates', {
+              "status": "is-danger",
+              "text": e,
+              "icon": "information"
+            });
+            this.$toast.error(this.$t('msg.receive.error_read'));
+            return;
+          }
+
         }catch(e){
-          log.error('read tx file error:' + e)
-          this.errors.push(this.$t('msg.fileReceive.WrongFileType'))
+
+          this.store.commit('updates', {
+            "status": "is-danger",
+            "text": e,
+            "icon": "information"
+          });
+          this.$toast.error(this.$t('msg.receive.WrongFileType'));
           return
         }
 
-        let filePath = path.dirname(fn.path);
-        let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), filePath);
+
+        let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), 'finalize_' + fn.name);
 
         if(fn_output){
+
           this.$walletService.receiveTransaction(JSON.parse(content), null, null)
               .then( (res) => {
                 let data = res.data.result;
-                console.log('################# receive ################', data);
+
                 if(data.Ok){
 
                   fs.writeFileSync(fn_output.filePath, JSON.stringify(data.Ok), {
                     encoding: "utf8",
                     flag: "w"
                   });
-                  this.emitter.emit('update')
-                  this.closeModal()
-                  log.debug(`Generated responce file ok`)
 
+                  this.isSent = true
+                  this.emitter.emit('app.update');
 
                 }else if(data.Err){
-                  log.error(`resp.data:${data.Err}`);
-                  let e1 = data.Err;
-                  this.errors.push(e1)
+                  this.$toast.error(data.Err);
                 }
 
               }).catch((error) => {
-                log.error('receiveTransaction error:' + error)
+
                 if (error.response) {
                   let resp = error.response
-                  log.error(`resp.data:${resp.data}; status:${resp.status};headers:${resp.headers}`)
+
                 }
-                let e1 = this.$t('msg.fileReceive.CreateFailed')
-                this.errors.push(e1)
+
+                this.$toast.error(this.$t('msg.receive.CreateFailed'));
               })
         }else{
-          this.errors.push(this.$t('msg.fileReceive.NoSavePlace'))
+
+          this.$toast.error(this.$t('msg.receive.NoSavePlace'));
         }
       }
       else{
-        this.errors.push(this.$t('msg.fileReceive.WrongFileType'))
+        this.$toast.error(this.$t('msg.receive.WrongFileType'));
+
       }
     },
     clearup(){
-      this.errors = [];
-      this.toDrag = true;
-      this.isDragOver = false;
-
+      this.isDragOver = false
+      this.isSent = false
     },
     fileTypeIsSupported(file){
       if( !file.type || file.type.search('text')!=-1 ||	 file.type.search('json')!=-1){
@@ -130,23 +179,3 @@ export default {
   }
 }
 </script>
-<style>
-#filebox {
-  height:280px;
-  border-style:dashed;
-  border-width:2px;
-  color:#dbdbdb;/*#3273dc;*/
-  background-color: white;
-}
-
-#filebox.drag-over{
-  border-color:#22509a;
-  background-color:#f6f9fe;
-}
-
-.center{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>

@@ -1,545 +1,517 @@
 <template>
 
-  <div v-show="!checkservice">
-  <settings :showModal="openSettings" :config="config" :key="resetKey"></settings>
+  <router-view name="navBar" />
+  <router-view name="asideMenu" />
+  <router-view name="headerbar" />
 
+  <router-view v-slot="{ Component }">
+      <component :is="Component" :key="$route.fullPath" />
+  </router-view>
+  <aside-right />
 
-  <div class="columns ">
+  <modal-node-box
+    :is-active="isNodeModalActive"
+    @confirm="nodesyncedConfirm"
+    @cancel="nodesyncedCancel"
 
-    <div class="column is-half">
-      <div v-show="ownerApiRunning" class="hero-head" style="padding: 1.5rem;">
-        <figure  class="image ">
-          <img src="./assets/epiccash_logo.png" style="width:36%;height:auto;">
-        </figure>
-      </div>
+  />
 
-    </div>
-    <div class="column">
-
-        <div v-show="userLoggedIn"  class="hero-head nodeInfo">
-
-          Node ({{ this.epicNode }}):
-          <span v-if="nodeOnline && nodeIsSync" class="dotGreen"></span><span v-if="nodeOnline && nodeIsSync">&nbsp;online</span>
-          <span v-if="nodeOnline && nodeIsSync == false" class="dotYellow"></span><span v-if="nodeOnline && nodeIsSync == false">&nbsp;syncing</span><span v-if="nodeOnline && nodeIsSync == false">&nbsp;{{ sync_status }}&nbsp;{{ current_height}}/{{ highest_height}}</span>
-          <span v-if="nodeOnline == false" class="dotRed"></span><span v-if="nodeOnline==false">&nbsp;offline</span>
-
-          <span v-if="walletListen" class="walletListenInfo" >{{ $t("msg.app.httpReceive") }}
-            <span v-if="nodeOnline" class="dotGreen"></span>
-          </span>
-          <span>&nbsp;&nbsp;</span>
-          <span v-if="ownerApiRunning" class="is-small tag is-warning is-rounded animated" v-bind:class="{headShake: isAnimate}" style="animation-iteration-count:3">
-          {{ $t("msg.app.height") }}: {{height}}</span>&nbsp;
-          <button class="button is-small is-rounded" @click="openWalletSettings">
-            <font-awesome-icon :icon="['fas', 'gear']"/>
-          </button>
-        </div>
-
-    </div>
-  </div>
-
-    <div class="section" v-show="ownerApiRunning" style="padding: 1.5rem 1.5rem;">
-
-
-      <div class="columns">
-        <div class="column is-one-quarter">
-
-          <summary-info></summary-info>
-
-
-          <aside class="menu" id="wallet_menu">
-            <p class="menu-label">{{ $t("msg.send") }}</p>
-            <ul class="menu-list">
-              <li><a href="#" class="dropdown-item" @click="openFileSend = true">{{ $t("msg.app.create") }}</a></li>
-              <li><a href="#" class="dropdown-item" @click="openFinalize = true">{{ $t("msg.app.finalize") }}</a></li>
-              <li><a class="dropdown-item" @click="openHttpSend = true">{{ $t("msg.app.httpSend") }}</a></li>
-            </ul>
-            <p class="menu-label"> {{ $t("msg.receive") }} </p>
-            <ul class="menu-list">
-              <li><a href="#" class="dropdown-item" @click="openReceive = true">{{ $t("msg.app.createRespFile") }}</a></li>
-              <li><a class="dropdown-item" @click="openHttpReceive = true">{{ $t("msg.app.httpReceive") }}</a></li>
-            </ul>
-            <p class="menu-label"> Misc</p>
-            <ul class="menu-list">
-              <li><a href="#" class="dropdown-item" @click="openCheck = true">{{ $t("msg.check.title") }}</a></li>
-              <li><a href="#" class="dropdown-item" @click="openSeed = true">{{ $t("msg.seed.mnemonic") }}</a></li>
-              <li><a href="#" class="dropdown-item" @click="openSettings = true">{{ $t("msg.settings.title") }}</a></li>
-            </ul>
-
-            <p class="menu-label">Account</p>
-            <ul class="menu-list">
-              <li><a href="#" class="dropdown-item"  @click.prevent="showProofAddress" >
-                Proof Address
-              </a>
-              </li>
-              <li>
-              <a href="#" class="dropdown-item" @click.prevent="logout" >
-                {{ $t("msg.logout") }}<span v-if="isLoading">&nbsp;<font-awesome-icon :icon="['fas', 'spinner']"/></span>
-              </a>
-              </li>
-            </ul>
-
-          </aside>
-        </div>
-
-        <div class="column is-three-quarters">
-
-          <div class="tabs is-boxed">
-            <ul>
-              <li v-bind:class="{'is-active':transactionTab}"><a @click="openTab('transactionTab')">Transactions</a></li>
-              <li v-bind:class="{'is-active':commitTab}"><a @click="openTab('commitTab')">Outputs</a></li>
-            </ul>
-          </div>
-
-          <div v-show="transactionTab" class="content-tab" >
-            <transaction v-bind:count_per_page="10"></transaction>
-          </div>
-          <div v-show="commitTab" class="content-tab" >
-            <commit v-bind:count_per_page="10" v-bind:nodeHeight="height"></commit>
-          </div>
-
-
-        </div>
-
-
-
-      </div> <!-- // columns -->
-    </div>
-
-    <login v-show="!checkservice && !ownerApiRunning && action == 'login'"></login>
-
-  </div>
-  <receive :showModal="openReceive"></receive>
-  <http-receive :showModal="openHttpReceive" :onion-address="onionAddress"></http-receive>
-  <http-send :showModal="openHttpSend"></http-send>
-  <file-send :showModal="openFileSend"></file-send>
-  <finalize :showModal="openFinalize"></finalize>
-
-  <firstrun-check :showModal="openFirstrunCheck"></firstrun-check>
-  <seed :showModal="openSeed"></seed>
-  <check :showModal="openCheck"></check>
-  <checkService v-show="action === 'check'"></checkService>
-  <create v-show="action === 'create'"></create>
-  <restore v-show="action === 'restore'"></restore>
-  <new v-show="action === 'init'"></new>
-  <message :showMsg="openProofAddressMsg" v-on:close="openProofAddressMsg = false" v-bind:msg=proofAddressMsg msgType="link"></message>
+  <modal-firstsync-box
+    :is-active="isFirstscanModalActive"
+    @confirm="firstscanConfirm"
+    @cancel="firstscanCancel"
+    :output-data="scanoutput"
+  />
 
 </template>
 
 <script>
 
-const log = window.log;
-const clipboard = window.clipboard;
+  import mixin from './mixin.js';
+  import { useI18n } from 'vue-i18n/index';
+  import { ref, onUnmounted } from 'vue';
+  import { useStore } from '@/store';
+  import { useRouter } from '@/router';
+  import AsideRight from '@/components/layout/AsideRight.vue'
+  import ModalNodeBox from '@/components/layout/NodesyncedModalBox.vue'
+  import ModalFirstsyncBox from '@/components/layout/FirstsyncModalBox.vue'
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner, faGear } from '@fortawesome/free-solid-svg-icons'
-library.add(faSpinner, faGear)
-
-
-import CheckService from './components/CheckService.vue'
-import SummaryInfo from './components/SummaryInfo.vue'
-import Transaction from './components/Transaction.vue'
-import Commit from './components/Commit.vue'
-import Receive from './components/Receive.vue'
-import HttpSend from './components/HttpSend.vue'
-import HttpReceive from './components/HttpReceive.vue'
-import FileSend from './components/FileSend.vue'
-import Finalize from './components/Finalize.vue'
-
-import New from './components/New.vue'
-import Restore from './components/Restore.vue'
-import Create from './components/Create.vue'
-import Login from './components/Login.vue'
-
-
-import Check from './components/Check.vue'
-import Seed from './components/Seed.vue'
-import Settings from './components/Settings.vue'
-
-import Message from './components/Message.vue'
-
-import FirstrunCheck from './components/FirstrunCheck.vue'
-
-import mixin from './mixin.js'
-import { useI18n } from 'vue-i18n/index'
-
-export default {
-  name: 'App',
-  mixins: [mixin],
-  components: {
-    SummaryInfo,
-    Transaction,
-    Commit,
-    Receive,
-    HttpSend,
-    HttpReceive,
-    FileSend,
-    Finalize,
-    Check,
-    Seed,
-    Settings,
-    FontAwesomeIcon,
-    CheckService,
-    New,
-    Restore,
-    Create,
-    Login,
-    Message,
-    FirstrunCheck
-  },
-    data(){
-      return {
-        checkservice: false,
-        openReceive: false,
-        openHttpReceive:false,
-        openHttpSend: false,
-        openFileSend: false,
-        openFinalize: false,
-        openCheck: false,
-        openSeed: false,
-        openSettings: false,
-        isDroppingDown: false,
-        isDroppingDown2: false,
-        isDroppingDown3: false,
-        ownerApiRunning: false,
-        openFirstrunCheck: false,
-        height:null,
-        isAnimate:false,
-        walletExist:false,
-        isRu: false,
-        nodeOnline: false,
-        nodeIsSync: false,
-        epicNode: '',
-        walletListen: false,
-        address: '',
-        onionAddress: '',
-        showCopyAddress: true,
-        error: '',
-        action: '',
-        current_height: 0,
-        highest_height: 0,
-        sync_status: '',
-        transactionTab:true,
-        commitTab:false,
-        userLoggedIn: false,
-        isLoading: false,
-        config: {},
-        resetKey: 0,
-        openProofAddressMsg: false,
-        proofAddressMsg: '',
-        refresh: undefined,
-
-
-    }},
-    setup () {
-      const { locale } = useI18n()
-      return {
-        locale
-      }
+  //app components
+  export default {
+    name: 'Epic GUI Wallet',
+    mixins: [mixin],
+    components: {
+      AsideRight,
+      ModalNodeBox,
+      ModalFirstsyncBox
     },
-    async mounted() {
 
-      this.clearup();
-      window.api.resize(1160, 850);
-      this.checkAccountOnStart();
+    setup() {
 
-    },
-    async created () {
+      const { locale } = useI18n();
+      const loggedIn = ref(false);
+      const store = useStore();
+      const router = useRouter();
+      const isNodeModalActive = ref(false);
+      const isFirstscanModalActive = ref(false);
+      const scanoutput = ref([]);
 
-      this.emitter.on('initMode', (action) => {
 
-        this.action = action;
+      let startRefreshNodeId = 0;
+      let startRefreshNgrokId = 0;
+      let refreshId = 0;
+
+      store.commit('darkModeToggle', true);
+      router.push('/');
+
+      /* is this called ever ? */
+      onUnmounted (_ => {
+
+        clearTimeout(startRefreshNodeId);
+        clearTimeout(startRefreshNgrokId);
+        clearTimeout(refreshId);
       })
 
-      this.emitter.on('selectLocale', (locale)=>{
+      return {
+        locale,
+        loggedIn,
+        store,
+        isNodeModalActive,
+        isFirstscanModalActive,
+        scanoutput
+      }
+    },
+
+
+    created() {
+
+      window.nodeChildProcess.on('firstscan-stdout', (payload) => {
+
+        let lines = payload.data.split("\n");
+
+        for(var i = 0;i<lines.length;i++){
+          let cleanString = lines[i].replace(/^.+(?:WARN\s|DEBUG\s)/gm, '');
+          if(cleanString !== lines[i]){
+            if(cleanString.includes('This wallet has not been scanned against the current chain')){
+              this.isFirstscanModalActive = true;
+            }
+
+            this.scanoutput.unshift("\n"+cleanString);
+          }
+        }
+
+      });
+
+      this.emitter.on('app.startRefreshNodeStatus', () => {
+        this.stopRefreshNode();
+        this.startRefreshNode();
+      });
+
+      this.emitter.on('app.stopRefreshNodeStatus', () => {
+        this.stopRefreshNode();
+      });
+
+      this.emitter.on('app.nodeStart', async () => {
+        await this.nodeStart();
+      });
+
+
+      this.emitter.on('app.startRefreshNgrokStatus', () => {
+        this.stopRefreshNgrok();
+        this.startRefreshNgrok();
+      });
+
+      this.emitter.on('app.stopRefreshNgrokStatus', () => {
+        this.stopRefreshNgrok();
+      });
+
+      this.emitter.on('app.ngrokStart', async () => {
+         await this.ngrokStart();
+      });
+
+      this.emitter.on('app.ngrokStop', async () => {
+         await this.ngrokStop();
+      });
+
+
+
+      this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
       })
-      this.emitter.on('close', (window)=>{
-        if(window == 'windowReceive'){
-          this.openReceive = false
-        }
-        if(window == 'windowHttpSend'){
-          this.openHttpSend = false
-        }
-        if(window == 'windowFileSend'){
-          this.openFileSend = false
-        }
-        if(window == 'windowFinalize'){
-          this.openFinalize = false
-        }
-        if(window == 'windowHttpReceive'){
-          this.openHttpReceive = false
-        }
-        if(window == 'windowCheck'){
-          this.openCheck = false
-        }
-        if(window == 'windowSeed'){
-          this.openSeed = false
-        }
-        if(window == 'windowSettings'){
 
-          this.openSettings = false
-        }
-        if(window == 'windowFirstrunCheck'){
+      this.emitter.on('app.update', () => {
+        this.stopRefresh();
+        this.startRefresh();
+      });
 
-          this.openFirstrunCheck = false
-        }
+      this.emitter.on('app.logout', async () => {
 
+        this.stopRefreshNode();
+        this.stopRefreshNgrok();
+        this.stopRefresh();
+        this.store.commit('user', {});
+        this.store.commit('txs', []);
+        this.store.commit('commits', []);
+        this.store.commit('summary', {
+          spendable: 0,
+          total: 0,
+          unconfirmed: 0,
+          unfinalization: 0,
+          immature: 0,
+          locked: 0,
+        });
+
+
+
+        await this.$walletService.stopListen();
+        await this.$walletService.stopWallet();
+        await this.$ngrokService.stopNgrok();
+        await this.$nodeService.stopNode();
+        this.$walletService.logoutClient();
+        this.loggedIn = false;
+        this.configService.resetConfig();
+
+        this.store.dispatch('toggleFullPage', true);
+        this.store.commit('asideStateToggle', false);
+        this.$router.push('/login');
 
       });
 
-      this.emitter.on('open', (window)=>{
-        if(window == 'windowSettings'){
-          this.openWalletSettings();
-        }
-        if(window == 'windowFirstrunCheck'){
-          this.openFirstrunCheck = true;
-        }
+      this.emitter.on('app.accountLoggedIn', async () => {
 
-      });
-      this.emitter.on('restartNode', async ()=>{
-        let nodeRestarted = await this.$nodeService.reconnectNode();
-        this.epicNode = this.configService.config['check_node_api_http_addr'];
-        this.getNode();
-      });
+        window.debug ? console.log('accountLoggedIn') : null;
 
-      this.emitter.on('toLogin', (recover)=>{
+        this.loggedIn = true;
+        this.store.dispatch('toggleFullPage', false);
+        this.store.commit('asideStateToggle');
+        this.$router.push('/dashboard');
+        this.emitter.emit('app.nodeStart');
+        this.emitter.emit('app.ngrokStart');
 
-        this.checkAccountOnStart();
-      });
-
-
-      this.emitter.on('logined', async()=>{
-        log.info('app.vue got user logined event')
-
-        this.openSettings = false;
-        this.ownerApiRunning = true;
-        this.isLoading = false;
-        this.userLoggedIn = true;
-        this.emitter.emit('update');
-        this.config = this.configService.config;
-        this.getAddress();
-        this.epicNode = this.configService.config['check_node_api_http_addr'];
-        this.getNode();
-        this.getHeight();
-
+        //always at the very end
+        this.emitter.emit('app.update');
 
       });
 
-      this.emitter.on('updateNode', () => {
-
-        if(this.nodeOnline && this.userLoggedIn){
-          this.getNode();
-          this.getHeight();
-        }
-      });
-
-      this.emitter.on('walletListen', ()=>{
-        this.walletListen = this.$walletService.isListen();
-      });
-
-
-      this.emitter.on('update', ()=>{
-
-
-          this.emitter.emit('updateSummary');
-          this.emitter.emit('updateNode');
-          this.emitter.emit('updateCommits');
-          this.emitter.emit('updateTxs');
-
-
+      this.emitter.on('killEpicProcess', async (callback) => {
+        //todo replace with customized dialog/prompt
+        let msg = this.$t("msg.app.background_process");
+        const confirmed = await confirm(msg);
+        callback(confirmed);
       });
 
     },
 
-    watch: {
-      isDroppingDown:function(newVal){
-        if(newVal){
-          setTimeout(
-            ()=>{
-              this.isDroppingDown = false},
-            5*1000)
-        }
-      },
-      isDroppingDown2:function(newVal){
-        if(newVal){
-          setTimeout(
-            ()=>{
-              this.isDroppingDown2 = false},
-            5*1000)
-        }
-      },
-      isDroppingDown3:function(newVal){
-        if(newVal){
-          setTimeout(
-            ()=>{
-              this.isDroppingDown3 = false},
-            5*1000)
-        }
-      },
-      ownerApiRunning:function(newVal){
-        if(newVal){
-          this.autoRefresh((2*60)*1000)
-        }
-      },
-      height: function(){
-        this.isAnimate = true
-        setTimeout(()=>{this.isAnimate = false}, 1000)
+    async mounted() {
+
+      //App main window min size
+      window.api.resize(1400, 1000);
+      //App has started - first close running wallet and node server process
+      await this.configService.killEpicProcess();
+
+      if(this.configService.appHasAccounts()){
+        //continue to login
+
+        this.$router.push('/login');
+
+      } else {
+
+        window.debug ? console.log('app has no accounts') : null;
+        this.$router.push('/new');
       }
+
     },
     methods: {
-      showProofAddress(){
-
-        this.openProofAddressMsg = true;
-        this.proofAddressMsg = this.address;
+      nodesyncedModalOpen(){
+        this.isNodeModalActive = true
       },
 
-      clearup(){
-        this.nodeOnline = false;
-        this.ownerApiRunning = false;
-        this.userLoggedIn = false;
-        if(this.refresh != undefined){
-          clearInterval(this.refresh);
+      nodesyncedConfirm(){
+        this.isNodeModalActive = false
+        this.emitter.emit('app.logout');
+      },
+
+      nodesyncedCancel(){
+        this.isNodeModalActive = false
+      },
+
+      firstscanConfirm(){
+        this.isFirstscanModalActive = false
+      },
+      firstscanCancel(){
+        this.isFirstscanModalActive = false
+      },
+
+      async ngrokStop(){
+        this.stopRefreshNgrok();
+        let respNgrok = await this.$ngrokService.stopNgrok();
+        if(respNgrok){
+          this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
+          this.store.commit('ngrokService', false);
+          this.store.commit('ngrokTunnels', {});
         }
-
       },
 
-      openWalletSettings(){
+      async ngrokStart(){
 
-        this.openSettings=true;
-        this.config = this.configService.config;
-      },
+        if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
 
-      async checkAccountOnStart(recover){
+          let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok == '' ? '' : this.store.state.user.ngrok);
 
-        if(await this.configService.killWalletProcess()){
-          if(this.configService.appHasAccounts()){
 
-            this.checkservice = false;
-            this.ownerApiRunning = false;
-            this.action = 'login';
-
+          if(ngrokService.success){
+            let respNgrok = await this.$ngrokService.openTunnel();
+            if(respNgrok){
+              this.$toast.success(this.$t("msg.app.ngrok_service_started"));
+              this.store.commit('ngrokService', true);
+              this.store.commit('ngrokTunnels', respNgrok);
+              this.emitter.emit('app.startRefreshNgrokStatus');
+            }else{
+              this.$toast.error(this.$t("msg.app.ngrok_service_error"));
+              this.store.commit('ngrokService', false);
+              this.store.commit('ngrokTunnels', {});
+            }
           }else{
-            this.checkservice = false;
-            this.action = 'init';
+            this.$toast.error(this.$t("msg.app.ngrok_service_error"));
+            this.store.commit('updates', {
+                  "status": "is-danger",
+                  "text":   "Ngrok: " + ngrokService.msg,
+                  "icon":   "information"
+            });
+            this.store.commit('ngrokService', false);
+            this.store.commit('ngrokTunnels', {});
           }
         }
 
       },
 
-      openTab(tabName) {
-          if(tabName == 'transactionTab'){
-            this.transactionTab = true;
-            this.commitTab = false;
+      async nodeStart(){
+
+        //start internal server only if its setup else just check if external node is running
+        if(this.store.state.user.nodeInternal){
+
+          this.store.commit('nodeType', 'internal');
+          if(!this.configService.startCheckNode()){
+            this.$toast.error(this.$t("msg.app.error_setup_internal_node"));
           }else{
-            this.transactionTab = false;
-            this.commitTab = true;
-          }
-      },
+            let started  = await this.$nodeService.internalNodeStart();
 
-
-      copyAdress(){
-        clipboard.writeText(this.address);
-        this.showCopyAddress = false;
-        setTimeout(()=> {
-          this.showCopyAddress = true;
-        }, 2000)
-
-
-      },
-
-
-      async getAddress(){
-        let addressRes = await this.$walletService.getPubliProofAddress();
-        if(addressRes.result.Ok){
-
-          this.address = addressRes.result.Ok;
-
-          if(this.address != ''){
-            this.onionAddress = window.config.getOnionV3(this.address);
+            if(started){
+              this.$toast.success(this.$t("msg.app.node_started"));
+              //start the status check for the node
+              //give the node some time before api status is called
+              setTimeout(this.startRefreshNode, 10000);
+            }else{
+              this.$toast.error(this.$t("msg.app.node_not_started"));
+            }
           }
 
-        }
-      },
-
-      async getNode(){
-        this.nodeOnline = await this.$nodeService.nodeOnline();
-
-        if(this.nodeOnline.sync_info){
-          this.current_height = this.nodeOnline.sync_info.current_height
-          this.highest_height = this.nodeOnline.sync_info.highest_height
-
-        }
-        if(this.nodeOnline.sync_status == 'no_sync'){
-          this.nodeIsSync = true;
         }else{
-          this.nodeIsSync = false;
-        }
 
-        switch(this.nodeOnline.sync_status){
-          case 'header_sync':
-            this.sync_status = 'Block Headers'
-          break;
-          case 'body_sync':
-            this.sync_status = 'Block Bodies'
-          break;
-        }
-
-
-      },
-
-      lang(){
-        this.$i18n.locale = 'en'
-      },
-
-      getHeight(){
-
-        this.$walletService.getNodeHeight().then(
-          (res) =>{
-
-            this.height = parseInt(res.result.Ok.height)
-            return true;
-          }).catch((error)=>{
-            log.error(error)
-            return false;
-          })
-          return false;
-      },
-
-      logout(){
-        this.isLoading = true;
-        this.$walletService.logoutClient();
-        this.userLoggedIn = false;
-
-        //clean info from previous user
-        this.emitter.emit('logoutTxs');
-        this.emitter.emit('logoutCommits');
-        this.emitter.emit('logoutSummary');
-
-
-        this.emitter.emit('toLogin');
-
-
-
-      },
-
-
-      autoRefresh(interval){
-
-        if(this.refresh != undefined){
-          clearInterval(this.refresh);
-        }
-        this.refresh = setInterval(()=>{
-
-          if(this.ownerApiRunning && this.userLoggedIn){
-            this.emitter.emit('update');
+          this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
+          let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
+          if(respNode){
+            this.$toast.success(this.$t("msg.app.external_node_online"));
+            this.store.commit('nodeStatus', respNode);
+            //start the status check for the node
+            //give the node some time before api status is called
+            setTimeout(this.startRefreshNode, 10000);
+          }else{
+            this.$toast.error(this.$t("msg.app.external_node_offline"));
           }
-        }, interval)
 
+        }
+      },
+
+      async nodeStatus(){
+
+        let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
+        if(respNode){
+
+          if(this.store.state.user.nodeInternal && this.configService.config.nodesynced == false){
+            if(respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync'){
+              this.configService.updateConfig({
+                nodesynced: true,
+                check_node_api_http_addr: 'http://127.0.0.1:3413'
+              });
+              this.configService.checkTomlFile();
+              this.nodesyncedModalOpen();
+
+            }
+          }
+          this.store.commit('nodeStatus', respNode);
+        }else{
+          if(this.store.state.user.nodeInternal){
+            this.$toast.error(this.$t("msg.app.node_offline"));
+          }else{
+            this.$toast.error(this.$t("msg.app.external_node_offline"));
+          }
+          this.stopRefreshNode();
+        }
 
       },
-    },
-  }
+      stopRefresh(){
+        clearTimeout(this.refreshId);
+      },
 
+      /* refresh wallet summary txs and outputs */
+      async startRefresh() {
+
+          let refresh = _ => this.refreshId = setTimeout(this.startRefresh, 1000*60)
+          try {
+
+            await this.getSummaryinfo();
+            await this.getTxs();
+            await this.getCommits();
+
+          }
+          catch (e) {
+            clearTimeout(this.refreshId);
+          }
+          finally {
+            refresh()
+          }
+
+      },
+
+      /* refresh node status */
+      async startRefreshNode() {
+
+
+          let refresh = _ => this.startRefreshNodeId = setTimeout(this.startRefreshNode, 1000*30)
+
+          try {
+            await this.nodeStatus();
+
+          }
+          catch (e) {
+            clearTimeout(this.startRefreshNodeId);
+          }
+          finally {
+            refresh()
+          }
+
+      },
+      stopRefreshNode(){
+        clearTimeout(this.startRefreshNodeId);
+      },
+
+      /* refresh ngrok status */
+      async startRefreshNgrok() {
+          let refresh = _ => this.startRefreshNgrokId = setTimeout(this.startRefreshNgrok, 1000*30)
+
+          try {
+            let ngrokStatus = await this.$ngrokService.checkStatus();
+
+            if(ngrokStatus){
+
+              this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
+              this.store.commit('ngrokService', true);
+
+              if(this.store.state.user.ngrok_force_start){
+
+                let timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
+
+
+                if(timeFormat.length && timeFormat[0] <= 0 && timeFormat[1] <= 0){
+
+                  let restart = await this.$ngrokService.ngrokRestart();
+                  if(restart){
+                    this.$toast.warning(this.$t("msg.app.ngrok_address_changed"), {duration:false});
+                    this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
+                    timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
+                    this.store.commit('ngrokTunnelLifetime', timeFormat);
+
+                  }else{
+                    this.store.commit('ngrokService', false);
+                    this.store.commit('ngrokTunnelLifetime', [0,0]);
+                    this.store.commit('ngrokTunnels', {});
+                  }
+                }else{
+                  this.store.commit('ngrokTunnelLifetime', timeFormat);
+                }
+              }
+
+            }else{
+              this.store.commit('ngrokService', false);
+              this.store.commit('ngrokTunnelLifetime', [0,0]);
+              this.store.commit('ngrokTunnels', {});
+            }
+          }
+          catch (e) {
+            clearTimeout(this.startRefreshNgrokId);
+          }
+          finally {
+            refresh()
+          }
+
+      },
+      stopRefreshNgrok(){
+        clearTimeout(this.startRefreshNgrokId);
+      },
+
+      async getSummaryinfo() {
+
+          let summary = await this.$walletService.getSummaryInfo(10);
+          if(summary && summary.result && summary.result.Ok){
+            let data = summary.result.Ok
+            this.store.commit('summary', {
+              spendable: data[1]['amount_currently_spendable']/100000000,
+              total: data[1]['total']/100000000,
+              unconfirmed: data[1]['amount_awaiting_confirmation']/100000000,
+              locked: data[1]['amount_locked']/100000000,
+              unfinalization: data[1]['amount_awaiting_finalization']/100000000,
+              immature: data[1]['amount_immature']/100000000,
+            });
+          }else{
+            this.store.commit('updates', {
+                  "status": "is-danger",
+                  "text": "Summary: " + summary.error.message,
+                  "icon":   "information"
+            });
+
+          }
+      },
+
+      async getTxs() {
+
+        let txs = await this.$walletService.getTransactions(true, null, null);
+
+        if(txs && txs.result && txs.result.Ok){
+          let data = txs.result.Ok[1].reverse()
+          this.store.dispatch('processTxs', {data: data, table: this.$addressTransactionsService})
+
+        }else{
+          this.store.commit('updates', {
+                "status": "is-danger",
+                "text":   "Txs: " + txs.error.message,
+                "icon":   "information"
+          });
+
+        }
+
+      },
+
+      async getCommits() {
+
+          let commits = await this.$walletService.getCommits(false, true, null);
+
+          if(commits && commits.result && commits.result.Ok){
+            //this.total_commits =
+            let data = commits.result.Ok[1].reverse();
+            this.store.dispatch('processCommits', data)
+
+          }else{
+
+            this.store.commit('updates', {
+                  "status": "is-danger",
+                  "text": "Commits: " +  commits.error.message,
+                  "icon":   "information"
+            });
+
+          }
+      },
+    }
+  }
 
 </script>

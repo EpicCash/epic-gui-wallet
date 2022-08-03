@@ -1,0 +1,86 @@
+@charset "utf-8";
+
+
+/* Theme style (colors & sizes) */
+@import "theme-light-dark";
+$aside-width: $size-base * 16;
+/* Core Libs & Lib configs */
+@import "libs/all";
+
+/* Mixins */
+@import "mixins";
+
+/* App */
+@import "app";
+
+/* Theme components */
+@import "nav-bar";
+@import "aside";
+@import "container";
+@import "title-bar";
+@import "hero-bar";
+@import "card";
+@import "tabs";
+@import "table";
+@import "tiles";
+@import "form";
+@import "form-b-slider";
+@import "form-addons";
+@import "media-item";
+@import "main-section";
+@import "modal";
+@import "overlay";
+@import "footer";
+@import "misc";
+@import "error-page";
+@import "dark-mode";
+@import "epicSetupWizard";
+@import "epicOverrides";
+
+
+/* For better theme preview. Remove on live projects */
+@import "iframe-preview";
+
+/* Config box */
+@import "config-box";
+
+
+
+.button__loader {
+
+    position: relative;
+    overflow: hidden;
+    cursor:wait;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150%;
+        height: 100%;
+      //  background: repeating-linear-gradient(60deg, darken($epicCashGold, 100%), $epicCashGold 10%);
+        background: repeating-linear-gradient(
+            60deg,
+            $epicCashGold,
+            $epicCashGold 4px,
+            $black-ter 4px,
+            $black-ter 8px
+          );
+
+        /*animation:load 1s infinite linear;*/
+        animation: barberpole 2s linear infinite;
+    }
+}
+
+.button__text {
+    position:relative
+}
+@keyframes barberpole {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-2.2rem);
+  }
+}

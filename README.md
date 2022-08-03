@@ -2,7 +2,7 @@
 
 ## Project setup
 ```
-npm install
+npm install (sudo npm install -g electron --unsafe-perm=true --allow-root)
 ```
 
 ### Compiles and hot-reloads for development

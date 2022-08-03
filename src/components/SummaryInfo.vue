@@ -1,85 +1,110 @@
 <template>
-  <div id="balances" class="box" >
-   <div id="balances-content">
-    <p class="subtitle is-5">{{ $t("msg.info.total") }}:</p>
-    <p class="title" v-bind:class="{'is-2':!smallTitle, 'is-4':smallTitle}">{{total}} EPIC</p>
-    <p>{{ $t("msg.info.spendable") }}: {{spendable}}</p>
-    <p>{{ $t("msg.unconfirmed") }}: {{unconfirmed}}</p>
-    <p>{{ $t("msg.info.unfinalization") }}: {{unfinalization}}</p>
-    <p v-if="immature>0">{{ $t("msg.info.immature") }}: {{immature}}</p>
-    <p>{{ $t("msg.locked") }}: {{locked}}</p>
-	<div style="clear:both"></div>
-   </div>
+
+
+  <div class="tile is-ancestor">
+    <div class="tile is-parent">
+          <div class="card is-card-widget tile is-child">
+            <div class="card-content">
+              <div class="level is-mobile">
+                <div class="level-item">
+                  <div class="is-widget-label">
+                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.info.spendable") }}:</h3>
+                    <h2 class="title is-4">
+                      <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.spendable}}</span>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="card is-card-widget tile is-child">
+            <div class="card-content">
+              <div class="level is-mobile">
+                <div class="level-item">
+                  <div class="is-widget-label">
+                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.unconfirmed") }}:</h3>
+                    <h2 class="title is-4">
+                      <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.unconfirmed}}</span>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="card is-card-widget tile is-child">
+            <div class="card-content">
+              <div class="level is-mobile">
+                <div class="level-item">
+                  <div class="is-widget-label">
+                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.info.unfinalization") }}:</h3>
+                    <h2 class="title is-4">
+                      <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.unfinalization}}</span>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="summary.immature>0" class="tile is-parent">
+          <div class="card is-card-widget tile is-child">
+            <div class="card-content">
+              <div class="level is-mobile">
+                <div class="level-item">
+                  <div class="is-widget-label">
+                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.info.immature") }}:</h3>
+                    <h2 class="title is-4">
+                      <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.immature}}</span>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <div class="card is-card-widget tile is-child">
+            <div class="card-content">
+              <div class="level is-mobile">
+                <div class="level-item">
+                  <div class="is-widget-label">
+                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.locked") }}:</h3>
+                    <h2 class="title is-4">
+                      <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.locked}}</span>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
   </div>
+
 </template>
 
 <script>
-  const log = window.log;
+
+  import { ref, computed } from 'vue';
+  import { useStore } from '@/store'
 
   export default {
     name: 'summary-info',
 
-    data(){
+    setup(){
+
+      const store = useStore();
+      const summary = computed(() => store.state.summary)
+
       return {
-        spendable: 0,
-        total: 0,
-        unconfirmed: 0,
-        unfinalization: 0,
-        immature: 0,
-        locked: 0,
-        smallTitle: true,
-
+        store,
+        summary,
       }
+
     },
-    created () {
-      this.emitter.on('updateSummary', () => {
-          this.getSummaryinfo();
-      });
-      this.emitter.on('logoutSummary', ()=>{
-          this.spendable = 0;
-          this.total = 0;
-          this.unconfirmed = 0;
-          this.unfinalization = 0;
-          this.immature = 0;
-          this.locked = 0;
-      });
-    },
-     methods: {
 
-        getSummaryinfo: async function() {
-
-        let info = await this.$walletService.getSummaryInfo(10);
-        if(info && info.result){
-          let data = info.result.Ok
-          this.spendable = data[1]['amount_currently_spendable']/100000000
-          this.total = data[1]['total']/100000000
-          this.unconfirmed = data[1]['amount_awaiting_confirmation']/100000000
-          this.locked = data[1]['amount_locked']/100000000
-          this.unfinalization = data[1]['amount_awaiting_finalization']/100000000
-          this.immature = data[1]['amount_immature']/100000000
-          this.$dbService.setSpendable(this.spendable)
-
-          if(this.spendable.toString().length > 6)this.smallTitle=true
-        }else if(info && info.error){
-          console.log('error getSummaryinfo', info.error);
-        }else{
-          console.log('error getSummaryinfo', info);
-        }
-
-      }
-    }
   }
 </script>
-
-<style>
-  #balances {
-    min-height: 210px;
-    padding: 0;
-    z-index: 1;
-
-  }
-
-  #balances-content {
-    padding: 10px;
-  }
-</style>

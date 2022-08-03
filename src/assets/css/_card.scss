@@ -1,0 +1,115 @@
+.card:not(:last-child) {
+  margin-bottom: $default-padding;
+}
+
+.card {
+  border-radius: $radius-large;
+  border: $card-border;
+
+  &.has-shadow {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  &.is-scrollable-height-medium {
+    .card-content {
+      @include scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
+      height: $card-height-medium;
+      position: relative;
+      overflow-y: auto;
+    }
+  }
+
+  &.is-card-widget, &.has-card-header-background {
+    .card-header {
+      background-color: $card-header-background-color;
+      border-bottom: $card-widget-header-border;
+
+      p {
+        font-weight: normal;
+        padding: $default-padding * .75 $default-padding * .5;
+      }
+    }
+  }
+
+  &.is-card-widget {
+    .card-header {
+      p {
+        font-size: .85rem;
+        line-height: .85rem;
+        padding: $default-padding * .33;
+        color: $grey;
+      }
+
+      .button {
+        margin-right: $default-padding * .33;
+
+        &:not(:hover) {
+          border-color: $white-ter;
+        }
+      }
+    }
+
+    .card-content {
+      padding: $default-padding * .5;
+    }
+  }
+
+  &.has-table {
+    .card-content {
+      padding: 0;
+    }
+    .b-table {
+      border-radius: $radius-large;
+      overflow: hidden;
+    }
+  }
+
+  .card-header {
+    border-bottom: $card-header-border;
+
+    .button {
+      display: inline-flex;
+      align-self: center;
+      margin-right: $default-padding * .5;
+    }
+  }
+
+  .card-content {
+    hr {
+      margin-left: $card-content-padding * -1;
+      margin-right: $card-content-padding * -1;
+    }
+    .media-list {
+      margin-left: $card-content-padding * -1;
+      margin-right: $card-content-padding * -1;
+      .media {
+        padding-left: $card-content-padding;
+        padding-right: $card-content-padding;
+      }
+    }
+  }
+
+  .notification.is-card-toolbar {
+    border-radius: 0;
+    padding-left: $default-padding * .5;
+    padding-right: $default-padding * .5;
+    margin-bottom: 0;
+
+    &.is-upper {
+      border-bottom: $card-notification-bar-border;
+    }
+  }
+
+  .is-widget-icon {
+    .icon {
+      width: 5rem;
+      height: 5rem;
+    }
+  }
+
+  .is-widget-label {
+    .subtitle {
+      color: $grey;
+    }
+  }
+}

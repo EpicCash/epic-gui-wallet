@@ -1,0 +1,26 @@
+@import "~spinkit/spinkit.css";
+
+#spinner {
+  position: absolute;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  background-color: rgba($white, .9);
+
+  .spinner-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.has-spinner-active {
+  overflow: hidden;
+
+  #spinner {
+    display: block;
+  }
+}

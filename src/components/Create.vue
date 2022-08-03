@@ -1,242 +1,262 @@
 <template>
-  <section class="hero" >
-    <div class="hero-body">
-      <div class="container">
-        <div class="columns is-centered">
 
-          <div v-if="walletCreated" class="column is-8" >
-              <div class="columns is-centered is-multiline">
-                  <img src="../assets/epiccash_logo.png" style="width:30%;height:auto;">
-              </div>
-              <p>&nbsp;</p>
-              <h1 class="title">{{ $t('msg.create.seedPhrase') }}</h1>
+  <section class="section hero is-fullheight">
+      <section class="hero">
+        <div class="hero-body">
 
-              <p class="animated bounce has-text-weight-semibold has-text-warning" style="animation-iteration-count:3">
-                {{ $t('msg.create.backupNote') }}
-              </p>
+          <div v-show="page==='created'" class="container" >
+            <div class="columns is-centered">
+              <div class="column is-three-quarters">
+                <div class="card has-card-header-background">
+                  <header class="card-header" style="justify-content: center;">
+                    <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
+                  </header>
+                  <div id="restoreMnemonicWords" class="card-content">
+                    <h2 class="title" style="text-align: center;">{{ $t('msg.create.seedPhrase') }}</h2>
+                    <p class="has-text-weight-semibold has-text-warning" style="color: #d19944!important;margin-bottom: 24px;">
+                      {{ $t('msg.create.backupNote') }}
+                    </p>
+                    <div class="tags" style="justify-content: center;">
+                      <span style="color:#000000" class="mnemonic-word tag is-light is-medium is-rounded is-link" v-for="seed in newseeds" :key="seed">{{seed}}<span class="space"> </span></span>
+                    </div>
 
-              <br/>
-              <div class="tags are-medium">
-                <span class="tag" v-for="seed in seeds" :key="seed">{{seed}}</span>
-              </div>
-              <a class="button is-link is-outlined" @click="toLogin">{{ $t('msg.create.backupFinish') }}</a>
-
-          </div>
-
-          <div v-else class="column is-8" >
-
-            <div class="columns is-centered is-multiline">
-                <img src="../assets/epiccash_logo.png" style="width:30%;height:auto;">
-            </div>
-            <p>&nbsp;</p>
-            <h2 class="title" >{{ $t("msg.create.toNewMsg") }}</h2>
-
-            <form class="box">
-              <div class="field">
-                <label class="label">{{ $t('msg.restore.walletLocation') }}</label>
-                <a class="button is-link is-outlined" @click="selectDir">{{ $t("msg.create.select") }}</a>
-                <p class="button is-link is-success is-outlined" v-if="userHomedir != ''"><br/><strong>{{ userHomedir }}</strong></p>
-              </div>
-              <div class="field">
-                <label class="label">{{ $t("msg.account") }}</label>
-                <div class="control">
-                  <input class="input" type="text" placeholder="default" :class="{'is-danger': error}" v-model="account">
-                </div>
-
-              </div>
-              <div class="field">
-                <label class="label">{{ $t('msg.password') }}</label>
-                  <div class="control">
-                    <input class="input" type="password" placeholder="********" required
-                      :class="{'is-danger': error}" v-model="password">
-                  </div>
-                </div>
-                <div class="field">
-                  <label class="label">{{ $t('msg.passwordAgain') }}</label>
-                  <div class="control">
-                    <input class="input" type="password" placeholder="********" required
-                      :class="{'is-danger': error}" v-model="password2">
-                  </div>
-
-                </div>
-                <div class="field">
-                  <label class="label">{{ $t("msg.settings.network") }}</label>
-                  <div class="control">
-                    <div class="select" >
-                        <select v-model="network">
-                          <option value="mainnet">Mainnet</option>
-                          <option value="floonet">Floonet</option>
-                          <option value="usernet">Usernet</option>
-                        </select>
+                    <div style="text-align: center;">
+                      <canvas id="qrcodeCanvas" ></canvas>
+                    </div>
+                    <p>&nbsp;</p>
+                    <div class="buttons is-centered">
+                      <router-link class="button is-outlined is-primary" to="/login">
+                        {{ $t("msg.login_") }}
+                      </router-link>
                     </div>
                   </div>
                 </div>
-                <div class="field">
-                  <button class="button" @click.prevent="create" v-bind:class="{'is-loading':walletCreating}">{{ $t('msg.create.newWallet') }}</button>
-                  <button class="button is-text" @click="back">{{ $t("msg.back") }}</button>
-                </div>
-                  <p class="help is-danger" v-if="error">{{errorInfo}}</p>
-            </form>
+              </div>
+            </div>
+
           </div>
-        </div>
+
+          <div v-show="page==='create'" class="container" >
+            <div class="columns is-centered">
+              <div class="column is-three-quarters">
+                <div class="card has-card-header-background">
+                  <header class="card-header" style="justify-content: center;">
+                    <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
+                  </header>
+                  <div id="restoreMnemonicWords" class="card-content">
+                    <h2 class="title" style="text-align: center;">{{ $t('msg.create.toNewMsg') }}</h2>
+
+
+                    <div class="field">
+                        <label class="label">{{ $t('msg.account.account') }}<span class="required">*</span></label>
+                        <div class="control">
+                          <AccountField ref="accountField" required="true" placeholder="default" />
+                          <p class="help">{{ $t('msg.only_letter') }} <!----></p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ $t('msg.restore.newPassword') }}<span class="required">*</span></label>
+                        <div class="control has-icons-right">
+                          <PasswordField ref="passwordField" required="true" name="password"  />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">{{ $t('msg.passwordAgain') }}<span class="required">*</span></label>
+                        <div class="control has-icons-right">
+                          <PasswordField ref="passwordField2" required="true" :repeat="passwordField ? passwordField.input : null" name="password2"  />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                      <div class="control">
+                          <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+                            <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+                            <mdicon size="18" v-else name="menu-down" />
+                            {{ $t('msg.custom_settings') }}
+                          </a>
+                        </div>
+                    </div>
+
+                    <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+
+                      <div class="card-content">
+                         <div class="content">
+                           <div class="field">
+                              <label class="label">{{ $t('msg.restore.walletLocation') }}</label>
+                              <WalletdirField ref="walletdirField" />
+                          </div>
+                          <div class="field">
+                              <label class="label">{{ $t("msg.settings.network") }}</label>
+                              <div class="control">
+                                <NetworkField ref="networkField" />
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="buttons is-centered">
+                      <router-link class="button is-primary" :to="{name: fromRoute}">
+                        <mdicon name="arrow-left-bold-hexagon-outline" />
+                        {{ $t("msg.back") }}
+                      </router-link>
+                      <button class="button is-primary" :class="{ 'button__loader': isLoading }" @click="create" >
+                        <span class="button__text">{{ $t('msg.create.newWallet') }}</span>
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
       </div>
-    </div>
+    </section>
   </section>
 </template>
 
 <script>
-const log = window.log
 
+import { ref } from 'vue';
+import { useRouter } from '@/router';
+import { useRoute } from 'vue-router';
+import AccountField from "@/components/form/accountField";
+import PasswordField from "@/components/form/passwordField";
+import WalletdirField from "@/components/form/walletdirField";
+import NetworkField from "@/components/form/networkField";
+import useFormValidation from "@/modules/useFormValidation";
 
 export default {
   name: "create",
-  data() {
-    let config = this.configService.config;
-    let network = config['network'] ? config['network'] : 'mainnet';
 
-    return {
-      password: "",
-      password2: "",
-      account: "",
-      network: network,
-      walletCreated: false,
-      walletCreating: false,
-      error: false,
-      errorInfo: '',
-      userHomedir: '',
-      seeds: []
+  components: {
+    PasswordField,
+    AccountField,
+    WalletdirField,
+    NetworkField,
+  },
+  watch: {
+    qrText: function (val) {
+      this.qrcode(val);
+    }
+  },
+  setup(){
+    const router = useRouter();
+    const route = useRoute();
+    const page = ref('create');//ref('addSeeds');//
+    const accountField = ref();
+    const passwordField = ref('');
+    const passwordField2 = ref('');
+    const walletdirField = ref('');
+    const networkField = ref('');
+    const { resetFormErrors } = useFormValidation();
+    const advancedSettings = ref(false);
+    const newseeds = ref([]);
+    const isLoading = ref(false);
+    const qrText = ref('');
+    const fromRoute = route.params.from ? route.params.from : 'login';
+    const vueCanvas = ref(null);
+
+
+
+    return{
+      router,
+      page,
+      accountField,
+      passwordField,
+      passwordField2,
+      walletdirField,
+      resetFormErrors,
+      advancedSettings,
+      networkField,
+      fromRoute,
+      isLoading,
+      qrText,
+      newseeds
+
+
     }
   },
 
   methods: {
+    async qrcode(text){
 
-    async selectDir(){
-
-        this.userHomedir = '';
-        let customHomedir = await window.api.showOpenDialog();
-
-        if(customHomedir.canceled == false){
-          this.userHomedir = customHomedir.filePaths[0];
-        }
-
+      this.vueCanvas = document.getElementById("qrcodeCanvas");
+      window.nodeQr.toCanvas(this.vueCanvas, text, function (error) {
+        if (error) console.error('HttpReceive.qrcode', error)
+      })
     },
+    toggleAdvancedSettings(){
+
+      this.advancedSettings = !this.advancedSettings;
+    },
+
     async create(){
 
-      this.resetErrors()
-      if(this.userHomedir == ''){
-        this.error = true;
-        this.errorInfo = this.$t('msg.create.selectErr');
-        return
-      }
 
-      let account = this.account != '' ? this.account.trim() : 'default';
-      let network = this.network;
+      this.resetFormErrors();
 
-
-      if(!this.onlyLetters(account)){
-        this.error = true
-        this.errorInfo = this.$t('msg.create.errorAccountName')
-        return
-      }
-
-      for(var existingAccount in this.configService.appConfig.account_dirs){
-
-        if(this.configService.appConfig.account_dirs[existingAccount]['account'] == account && this.configService.appConfig.account_dirs[existingAccount]['network'] == network){
-          this.error = true
-          this.errorInfo = this.$t('msg.create.errorAccountExist')
-          return
-        }
-      }
-
-      if(this.password.length == 0 ){
-        this.error = true
-        this.errorInfo = this.$t('msg.create.errorPasswdEmpty')
-        return
-      }
-      if(this.password != this.password2 ){
-        this.error = true
-        this.errorInfo = this.$t('msg.create.errorPasswdConsistency')
-        return
-      }
-
+      let isFormAllValid = [];
       let userhomedir = '';
-      let networkShortname = '';
-      if(this.network == 'floonet'){
-        networkShortname = 'floo';
-      } else if(this.network == 'usernet') {
-        networkShortname = 'user';
-      } else {
-        networkShortname = 'main';
-      }
+      //check if not exist => false
+      isFormAllValid.push(this.passwordField.validInput());
+      isFormAllValid.push(this.passwordField2.validInput());
+      //only recover for non existing acount yet
+      isFormAllValid.push(this.accountField.validInput(this.configService, true));
+      isFormAllValid.push(this.walletdirField.validInput(this.configService));
+      isFormAllValid.push(this.networkField.validInput());
 
-      if(account == 'default'){
-        userhomedir = window.nodePath.join(this.userHomedir, networkShortname);
-      }else{
-        userhomedir = window.nodePath.join(this.userHomedir, networkShortname, account);
-      }
+      //we create a complete new wallet
+      if(!isFormAllValid.includes(false)){
 
+        this.isLoading = true;
 
-      let created = await this.$walletService.new(this.password, this.network, userhomedir);
-      if(created && created.success){
-        console.log('created', created);
+        userhomedir = window.nodePath.join(this.walletdirField.defaultValue, this.accountField.defaultValue);
 
-        if(await this.configService.updateAppConfig('account_dirs', {
-            account: account,
-            userhomedir: this.userHomedir,
-            network: this.network,
-            isdefault: false
-          }) )
-          {
-
-          if(await this.configService.startCheck(account)){
-            this.walletCreated = true
-            this.seeds = created.msg.split(' ')
-          }
-
-
-        }else{
-          this.error = true;
-          this.errorInfo = 'Error update config';
+        if(this.accountField.defaultValue == 'default'){
+          userhomedir = window.nodePath.join(this.walletdirField.defaultValue);
         }
 
-      }else{
-        this.error = true;
-        this.errorInfo = created.msg;
+        let walletRecoverDir = window.nodePath.join(userhomedir, this.networkField.shortName);
+        let created = await this.$walletService.new(this.passwordField.defaultValue, this.networkField.defaultValue, walletRecoverDir);
+        if(created && !created.success){
+          this.$toast.error(created.msg, {duration:false});
+        }else{
+          //save new account settings and run a check against recoverd wallet
+          if(await this.configService.updateAppConfig('account_dirs', {
+              account: this.accountField.defaultValue,
+              userhomedir: userhomedir,
+              network: this.networkField.defaultValue,
+              isdefault: this.accountField.defaultValue == 'default' ? true : false
+            })){
+            let action = await this.configService.startCheck(this.accountField.defaultValue);
+            if(action === 'settings'){
+              this.newseeds = created.msg.split(' ');
+              this.qrText = created.msg;
+              this.page = 'created'
 
+            }else{
+              this.$toast.error(this.$t('msg.create.fatal_create', [action]), {duration:false});
+            }
+
+          }else{
+            this.$toast.error(this.$t('msg.create.fatal_update'), {duration:false});
+          }
+        }
+
+        this.isLoading = false;
+
+
+
+      }else{
+        return;
       }
 
-      this.userHomedir = '';
-
     },
-    resetErrors(){
-      this.error = false;
-    },
-    onlyLetters(str) {
-      return /^[a-z]*$/.test(str);
-    },
-    clearup(){
-      this.password = "";
-      this.password2 = "";
-      this.walletCreating = false;
-      this.error = false;
-      this.errorInfo = '';
-      this.userHomedir = '';
-      this.seeds = [];
-      this.walletCreated = false;
-    },
-    toLogin(){
-      this.clearup()
-      this.emitter.emit('toLogin')
-    },
-    back(){
-      this.clearup()
-      this.emitter.emit('toLogin')
-    }
 
   }
 }
 </script>
-
-<style>
-
-</style>

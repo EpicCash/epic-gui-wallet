@@ -1,217 +1,222 @@
 <template>
 
-<div class="modal" :class="{'is-active': showModal}">
-  <div class="modal-background" @click="closeModal"></div>
-  <div class="modal-card" >
-    <header class="modal-card-head">
-      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">{{ $t("msg.settings.title") }}</p>
-      <button class="delete" aria-label="close" @click="closeModal"></button>
-    </header>
-    <section class="modal-card-body">
+
+  <section class="section is-main-section" >
+    <div class="columns">
+      <div class="column is-half">
 
 
-        <div class="notification is-warning" v-if="errors.length">
-          <p v-for="error in errors" :key="error">{{ error }}</p>
-        </div>
+          <NodeserverField ref="nodeserverField" class="is-fullwidth" />
 
-
-        <div class="field">
-          <label class="label">{{ $t("msg.settings.network") }}</label>
-          <div class="control">
-            <div class="select" >
-                <select v-model="network">
-                  <option value="mainnet">Mainnet</option>
-                  <option value="floonet">Floonet</option>
-                  <option value="usernet">Usernet</option>
+          <div class="field">
+            <label class="label">{{ $t("msg.lang.lang") }}</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select v-model="localeSelected">
+                  <option v-for="(lang, value) in langs" :value="value" :key="lang.id" >{{lang}}</option>
                 </select>
-
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="field">
-          <label class="label">{{ $t("msg.settings.check_node_api_http_addr") }}</label>
-          <div class="control has-icons-right">
-            <input class="input" type="text" v-model="check_node_api_http_addr" placeholder="http://127.0.0.1:3413">
-            <span class="icon is-small is-right" v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span>
-            <p class="hint">{{ $t("msg.settings.node_api_addr_hint") }}</p>
-            <div class="box" v-if="errorapi">
-              <p style="color:red;" class="help is-warningapi" >{{ this.errorapiMsg }}</p>
+          <div class="field">
+            <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
+            <div class="control">
+                <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
+                <label for="walletListenSwitch">{{ $t("msg.settings.auto_start") }}</label>
             </div>
           </div>
-        </div>
 
-        <div class="field">
-          <label class="label">{{ $t("msg.lang.lang") }}</label>
+          <div class="field">
+            <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+              <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+              <mdicon size="18" v-else name="menu-down" />
+              {{ $t("msg.settings.howto") }}
+            </a></label>
 
-          <div class="control">
-            <div class="select">
-              <select v-model="localeSelected">
-                <option v-for="(lang, locale) in langs" :value="locale" :key="lang">{{lang}}</option>
-              </select>
+            <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+              <div class="card-content">
+                <div class="content">
+                  <div class="field">
+                     <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
+                     <div class="control">
+                       <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+              <input
+                class="input"
+                type="ngrok"
+                required
+                v-model="ngrok" />
+                <p class="help">
+                  {{ $t("msg.settings.authtoken_hint") }}
+                </p>
+            </div>
+
+          </div>
+
+          <div class="field">
+            <div class="control">
+                <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
+                <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
+                <p class="help">
+                  {{ $t("msg.settings.ngrok_hint") }}
+                </p>
             </div>
           </div>
-        </div>
 
 
-        <p>&nbsp;</p>
-        <div class="field is-grouped">
-          <div class="control">
-            <button class="button is-link" @click="save" >{{ $t("msg.save") }}&nbsp;<span v-if="isLoading"><font-awesome-icon :icon="['fas', 'spinner']"/></span></button>
+
+          <div class="field">
+            <div class="control">
+              <p>&nbsp;</p>
+              <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
+            </div>
           </div>
-          <div class="control">
-            <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
-          </div>
-        </div>
-    </section>
-  </div>
-</div>
+
+
+      </div>
+    </div>
+  </section>
+
 
 </template>
 <script>
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-library.add(faSpinner)
+import { ref, reactive } from 'vue';
+import { useStore } from '@/store';
+import NodeserverField from "@/components/form/nodeserverField";
+import useFormValidation from "@/modules/useFormValidation";
+import "vue3-video-play/dist/style.css";
+import { videoPlay } from "vue3-video-play";
 
   export default {
     name: "settings",
     components: {
-      FontAwesomeIcon
+      NodeserverField,
+      videoPlay,
     },
-    props: {
-      showModal: {
-        type: Boolean,
-        default: false
-      },
-      config:{
-        type: Object,
-      }
-    },
-    data() {
+    watch: {
+        'ngrok': function (newVal) {
 
-      return {
-
-        errors: [],
-        check_node_api_http_addr: '',
-        network: '',
-        locale: 'en',
-        localeSelected: this.configService.config.locale,
-        langs: this.configService.langs,
-        isLoading: false,
-        errorapiMsg: '',
-        errorapi: false,
-        errorCode: ''
-
-      }
-    },
-    mounted(){
-      if(this.config){
-        this.check_node_api_http_addr = this.config['check_node_api_http_addr'];
-        this.network = this.config['network'];
-        this.locale = this.config['local'];
-      }
-    },
-    created(){
-
-      this.emitter.on('settings_error', ({msg, code})=>{
-          if(msg != '' && code != ''){
-            this.errorapi = true;
-            this.errorapiMsg = msg;
-            this.errorCode = code;
-          }else{
-            this.errorapi = false;
-            this.errorapiMsg = '';
-            this.errorCode = '';
+          if(newVal !== ''){
+            this.ngrok_force_start = false
           }
+        },
+        'ngrok_force_start': function (newVal) {
+
+          if(newVal){
+            this.ngrok = '';
+          }
+        },
+    },
+    setup(){
+
+      const { resetFormErrors } = useFormValidation();
+      const nodeserverField = ref('');
+      const store = useStore();
+      const localeSelected = ref('en');
+      const langs = ref([]);
+      const check_node_api_http_addr = ref('');
+      const walletlisten_on_startup = ref(false);
+      const ngrok_force_start = ref(false);
+      const ngrok = ref('');
+      const advancedSettings = ref(false);
+      const playerOptions = reactive({
+          // videojs options
+          autoPlay: true,
+          loop: true,
+          src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
+          control: false,
+
       });
+
+      //dont remove or videoplay throws errors
+      const onPlay = (ev) => {};
+
+      return{
+        store,
+        nodeserverField,
+        resetFormErrors,
+        localeSelected,
+        langs,
+        check_node_api_http_addr,
+        walletlisten_on_startup,
+        ngrok,
+        ngrok_force_start,
+        playerOptions,
+        advancedSettings,
+        onPlay
+      }
+    },
+
+    mounted(){
+
+      this.nodeserverField.select = !this.store.state.user.nodeInternal ? 'external' : 'internal';
+
+      this.localeSelected = this.configService.config['locale'];
+      this.langs = this.configService.langs;
+      this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
+      this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
+      this.ngrok = this.store.state.user.ngrok;
+      this.ngrok_force_start = this.store.state.user.ngrok_force_start;
     },
 
     methods: {
+      toggleAdvancedSettings(){
 
+        this.advancedSettings = !this.advancedSettings;
+      },
       async save(){
 
-        this.isLoading = true;
+        this.resetFormErrors();
+        let isFormAllValid = [];
+
+        isFormAllValid.push(this.nodeserverField.validInput());
+
+        if(!isFormAllValid.includes(false)){
 
 
+          this.configService.updateConfig({
 
-        if(await this.checkForm()){
+            check_node_api_http_addr: this.nodeserverField.defaultValue,
+            locale: this.localeSelected,
+            walletlisten_on_startup: this.walletlisten_on_startup
 
-          this.emitter.emit('selectLocale', this.localeSelected);
+          });
+          this.configService.checkTomlFile();
 
-          if(this.configService.config.firstTime == true){
-
-
-            //change app user settings and update wallet toml
-            this.configService.updateConfig({
-              check_node_api_http_addr: this.check_node_api_http_addr,
-              network: this.network,
-              locale: this.localeSelected,
-              firstTime: false
-
-            });
-            this.configService.checkTomlFile();
-
-            this.emitter.emit('continueLoginFirst');
-            this.isLoading = false;
-            return;
-
+          let updated = 0;
+          if(this.nodeserverField.select == 'external'){
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
           }else{
-
-              //change app user settings and update wallet toml
-              this.configService.updateConfig({
-                check_node_api_http_addr: this.check_node_api_http_addr,
-                network: this.network,
-                locale: this.localeSelected
-              });
-              this.configService.checkTomlFile();
-
-              this.emitter.emit('restartNode');
-              this.emitter.emit('close', 'windowSettings');
-              this.isLoading = false;
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
           }
 
+          /*todo simple node restart user update wallet restart here*/
+          if(updated){
+            this.store.commit('nodeType', this.nodeserverField.select);
+            this.$toast.success(this.$t("msg.settings.settings_saved"));
+            this.emitter.emit('app.nodeStart');
+            if(this.ngrok != '' || this.ngrok_force_start){
+              this.emitter.emit('app.ngrokStart');
+            }else{
+              this.emitter.emit('app.ngrokStop');
+            }
+          }else{
+            this.$toast.error(this.$t("msg.settings.error_save"));
+          }
+
+
+
         }else{
-          this.isLoading = false;
-        }
-      },
-      clearup(){
-        this.errors = []
-      },
-      closeModal() {
-        this.clearup();
-        this.emitter.emit('close', 'windowSettings');
-
-      },
-
-      validAddress(address) {
-        let re = new RegExp('^(https?:\\/\\/)'+ // protocol
-          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-          '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-          '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-          '(\\#[-a-z\\d_]*)?$','i');
-        return re.test(address);
-      },
-      async checkForm(){
-
-        this.errors = []
-        if (!this.check_node_api_http_addr || !this.validAddress(this.check_node_api_http_addr)) {
-          this.errors.push(this.$t('msg.wrongAddressFormat'));
+          return;
         }
 
-        this.check_node_api_http_addr = this.check_node_api_http_addr.trim();
-        this.check_node_api_http_addr = this.check_node_api_http_addr.replace(/\/$/, "");
-
-
-        let nodeOnline = await this.$nodeService.nodeOnline(this.check_node_api_http_addr);
-        if(!nodeOnline){
-          return false;
-        }
-        if (!this.errors.length) {
-          return true;
-        }
       },
 
     }

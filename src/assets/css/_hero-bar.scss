@@ -1,0 +1,39 @@
+section.hero.is-hero-bar {
+  background-color: $hero-bar-background;
+  border-bottom: $light-border;
+
+  &.is-main-hero {
+    background-image: $hero-bar-main-background-image;
+    background-size: cover;
+
+    img {
+      width: $hero-avatar-size;
+      height: $hero-avatar-size;
+      border-radius: $radius-rounded;
+    }
+  }
+
+  .hero-body {
+    padding: $default-padding;
+
+    .level-item {
+      &.is-hero-avatar-item {
+        margin-right: $default-padding;
+      }
+
+      > div > .level {
+        margin-bottom: $default-padding * .5;
+      }
+
+      .subtitle + p {
+        margin-top: $default-padding * .5;
+      }
+    }
+  }
+}
+
+@include touch {
+  .is-hero-content-item {
+    text-align: center;
+  }
+}

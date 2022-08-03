@@ -1,116 +1,109 @@
 <template>
 
-<div class="modal" :class="{'is-active': showModal}">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title is-size-4 has-text-link has-text-weight-semibold">Mnemonic words</p>
-    </header>
-    <section class="modal-card-body" >
+
+    <section class="section is-main-section">
 
 
-      <div v-if="checked">
+      <div v-show="seeds.length > 0">
         <p class="has-text-weight-semibold has-text-warning">
           {{ $t('msg.create.backupNote') }}
         </p>
         <p>&nbsp;</p>
-        <div class="tags">
-          <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}</span>
+        <div class="tags" style="justify-content: center;">
+          <span style="color:#000000" class="mnemonic-word tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}<span class="space"> </span></span>
         </div>
-
-        <button class="button is-link is-outlined center" @click="closeModal">ok</button>
+        <div style="text-align: center;">
+          <canvas id="qrcodeCanvas" ></canvas>
+        </div>
       </div>
 
-      <div v-else>
+
+      <div v-show="seeds.length == 0">
 
         <div class="field">
           <label class="label">{{ $t("msg.password") }}</label>
+          <div class="control has-icons-right">
+            <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
+          </div>
+        </div>
+
+        <div class="field" >
           <div class="control">
-            <input class="input" type="password" placeholder="********" required v-model="password" :class="{'is-danger': error}">
-          </div>
-          <p class="help is-danger" v-if="error">{{errorInfo}}</p>
-
-        </div>
-
-
-        <div class="center">
-
-          <div class="field is-grouped" >
-            <div class="control">
-              <button class="button is-link" @click="start">
-                {{ $t("msg.check.start") }}
-              </button>
-            </div>
-            <div class="control">
-              <button class="button is-text" @click="closeModal">{{ $t("msg.cancel") }}</button>
-            </div>
-
+            <button class="button is-primary" @click="start">
+              {{ $t("msg.check.start") }}
+            </button>
           </div>
 
         </div>
-
       </div>
 
     </section>
-  </div>
-</div>
 
 </template>
+
 <script>
+
+import { ref } from 'vue';
+import PasswordField from "@/components/form/passwordField";
+import useFormValidation from "@/modules/useFormValidation";
 
 export default {
   name: "seed",
-  props: {
-    showModal: {
-      type: Boolean,
-      default: false
+  components: {
+    PasswordField
+  },
+  watch: {
+    qrText: function (val) {
+      this.qrcode(val);
     }
   },
-  data() {
+  setup() {
+
+    const passwordField = ref('');
+    const { resetFormErrors } = useFormValidation();
+    const seeds = ref([]);
+    const vueCanvas = ref(null);
+    const qrText = ref('');
+
     return {
-      checked: false,
-      password: '',
-      error: false,
-      errorInfo: '',
-      seeds:[],
+      passwordField,
+      resetFormErrors,
+      seeds,
+      qrText
     }
+
   },
+
 
   methods: {
+    async qrcode(text){
 
+      this.vueCanvas = document.getElementById("qrcodeCanvas");
+      window.nodeQr.toCanvas(this.vueCanvas, text, function (error) {
+        if (error) console.error('HttpReceive.qrcode', error)
+      })
+    },
     async start(){
-      this.checked = false;
 
-      if(this.password.length == 0 ){
-        this.error = true;
-        this.errorInfo = this.$t('msg.create.errorPasswdEmpty');
-        return;
+      this.resetFormErrors();
+
+      let isFormAllValid = [];
+
+      isFormAllValid.push(this.passwordField.validInput());
+
+      if(!isFormAllValid.includes(false)){
+        let res = await this.$walletService.getMnemonic(this.passwordField.defaultValue);
+        if(res && res.result && res.result.Ok){
+          this.qrText = res.result.Ok;
+          let valueChunks = res.result.Ok.split(" ").map(item => item.trim());
+          this.seeds = valueChunks;
+        }else{
+          this.$toast.error(res.error.message);
+        }
       }
 
-      let res = await this.$walletService.getMnemonic(this.password);
-      if(res && res.result.Ok){
-        let valueChunks = res.result.Ok.split(" ").map(item => item.trim());
-        this.checked = true;
-        this.seeds = valueChunks;
-      }else{
-        this.error = true;
-        this.errorInfo = this.$t('msg.seed.errorGetMnemonic');
-      }
     },
 
-    closeModal() {
-      this.clearup()
-      this.emitter.emit('close', 'windowSeed');
-    },
-
-    clearup(){
-      this.password = '';
-      this.checked = false;
-      this.error = false;
-      this.errorInfo = '';
-      this.seeds = [];
-
-    },
   }
 }
 </script>

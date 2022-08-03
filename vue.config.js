@@ -3,6 +3,7 @@
 /**
  * @type {import('@vue/cli-service').ProjectOptions}
  */
+
 module.exports = {
   pluginOptions: {
     electronBuilder: {
@@ -10,23 +11,12 @@ module.exports = {
       mainProcessFile: 'src/background.js',
       preload: 'src/preload.js',
       builderOptions: {
-
         "productName": "EpicWallet",
-        "appId": "epic.tech",
-        "directories": {
-          "output": "build"
+        "afterSign": "./build/notarize.js",
+        "appId": "com.github.epiccash.epic-gui-wallet",
+        directories: {
+          output: "build",
         },
-        "extraFiles": [
-          {
-            "from": "hedwig",
-            "to": "resources/bin/hedwig",
-            "filter": [
-              "**/*",
-              "!test.js"
-            ]
-          }
-        ],
-
         "dmg": {
           "contents": [
             {
@@ -38,13 +28,22 @@ module.exports = {
             {
               "x": 130,
               "y": 150,
-              "type": "file"
+              "type": "file",
+
             }
           ]
         },
+
         "mac": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
-          "target": "pkg",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
+          "category": "public.app-category.finance",
+          "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
+          "target": "default",
+          "publish": {
+            "provider": "github",
+            "releaseType": "draft",
+            "channel": "latest",
+          },
           "extraFiles": [
             {
               "from": "resources/bin/mac",
@@ -53,16 +52,7 @@ module.exports = {
                 "**/*"
               ]
             },
-            {
-              "from": "epicRs",
-              "to": "resources/bin/epicRs",
-              "filter": [
-                "**/*",
-                "!native",
-                "!test.js",
-                "!node.exe"
-              ]
-            },
+
             {
               "from": "resources/default.app.json",
               "to": "Resources/default.app.json",
@@ -76,11 +66,25 @@ module.exports = {
               "filter": [
                 "**/*"
               ]
+            },
+            {
+              "from": "resources/foundation.json",
+              "to": "Resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/epic-server.toml",
+              "to": "Resources/epic-server.toml",
+              "filter": [
+                "**/*"
+              ]
             }
           ]
         },
         "win": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "target": "nsis",
           "extraFiles": [
             {
@@ -90,15 +94,7 @@ module.exports = {
                 "**/*"
               ]
             },
-            {
-              "from": "epicRs",
-              "to": "resources/bin/epicRs",
-              "filter": [
-                "**/*",
-                "!native",
-                "!test.js"
-              ]
-            },
+
             {
               "from": "resources/default.app.json",
               "to": "Resources/default.app.json",
@@ -112,18 +108,36 @@ module.exports = {
               "filter": [
                 "**/*"
               ]
+            },
+            {
+              "from": "resources/foundation.json",
+              "to": "Resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/epic-server.toml",
+              "to": "Resources/epic-server.toml",
+              "filter": [
+                "**/*"
+              ]
             }
           ]
         },
         "nsis": {
           "oneClick": false,
-          "allowToChangeInstallationDirectory": true
+          "allowToChangeInstallationDirectory": false
         },
         "linux": {
-          "icon": "public/favicon_io/android-chrome-512x512.png",
+          "category": "Utility",
+          "executableName": "EpicWallet",
+          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
+          "packageCategory": "Utility",
+          "maintainer": "Johannes Hahn <j.hahn@eccence.digital>",
+          "synopsis": "Epic Wallet, mind your Epic!",
           "target": [
-            "deb",
-            "appImage"
+            "AppImage"
           ],
           "extraFiles": [
             {
@@ -143,6 +157,20 @@ module.exports = {
             {
               "from": "resources/default.config.json",
               "to": "resources/default.config.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/foundation.json",
+              "to": "resources/foundation.json",
+              "filter": [
+                "**/*"
+              ]
+            },
+            {
+              "from": "resources/epic-server.toml",
+              "to": "resources/epic-server.toml",
               "filter": [
                 "**/*"
               ]

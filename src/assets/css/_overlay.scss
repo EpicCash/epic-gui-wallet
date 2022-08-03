@@ -1,0 +1,24 @@
+.ui-overlay {
+  display: block;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: $overlay-background-color;
+  top: 0;
+  z-index: 35;
+}
+
+.has-aside-hidden-layout {
+  .ui-overlay {
+    height: calc(100vh - #{$navbar-height} - 1px);
+    top: calc(#{$navbar-height} + 1px);
+  }
+}
+
+.has-boxed-layout {
+  .ui-overlay {
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
