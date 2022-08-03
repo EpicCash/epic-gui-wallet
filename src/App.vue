@@ -413,10 +413,11 @@
                 let timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
 
 
-                if(timeFormat.length && timeFormat[0] == 0 && timeFormat[1] == 0){
-                  
+                if(timeFormat.length && timeFormat[0] <= 0 && timeFormat[1] <= 0){
+
                   let restart = await this.$ngrokService.ngrokRestart();
                   if(restart){
+                    this.$toast.warning(this.$t("msg.app.ngrok_address_changed"), {duration:false});
                     this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
                     timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
                     this.store.commit('ngrokTunnelLifetime', timeFormat);

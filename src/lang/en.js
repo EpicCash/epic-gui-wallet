@@ -248,6 +248,7 @@ const messages = {
       no: 'no',
 
       ngrok_service_started: 'Ngrok service started',
+      ngrok_address_changed: 'Your ngrok address has changed',
       ngrok_service_stopped: 'Ngrok service stopped',
       ngrok_service_error: 'Error starting Ngrok service',
       error_setup_internal_node: 'Can not setup internal node server',
@@ -346,7 +347,7 @@ const messages = {
       session_end: 'You are using ngrok without an account. Your session will end in {0} hour, {1} minutes',
       tor_onion_address: 'Tor onion Address',
       proof_address: 'Proof Address',
-      your_qrcode: 'Your qr code for your "{0}" address',
+      your_qrcode: 'Your QRcode for your "{0}" address',
       click_qrcode_icon: 'Click the qr code icon',
       tor_not_available: 'Tor not available. Try to restart the wallet listener'
     },
@@ -382,7 +383,7 @@ const messages = {
       auto_start: 'automatically start wallet listener after login',
       authtoken: 'Your ngrok Authtoken',
       ngrok_force_start: 'use ngrok without Authtoken',
-      ngrok_hint: 'The ngrok address is 2 hours active and will be renewed.',
+      ngrok_hint: 'The ngrok address is active for 2 hours then gets renewed.',
       ngrok_account_hint: 'To receive your ngrok authentication token, please create a new account at https://ngrok.com',
       authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
       howto: 'How to get your Authtoken from ngrok',
