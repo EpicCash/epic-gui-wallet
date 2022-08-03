@@ -4,6 +4,8 @@
   "private": true,
   "description": "Epic Wallet, mind your Epic!",
   "author": "v3,v4: Johannes Hahn <j.hahn@eccence.digital>, v1: xiaojay, simpleduck, aiwe",
+  "license": "Apache-2.0",
+  "homepage": "epic.tech",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

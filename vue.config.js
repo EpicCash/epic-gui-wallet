@@ -133,6 +133,9 @@ module.exports = {
           "category": "Utility",
           "executableName": "EpicWallet",
           "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
+          "packageCategory": "Utility",
+          "maintainer": "Johannes Hahn <j.hahn@eccence.digital>",
+          "synopsis": "Epic Wallet, mind your Epic!",
           "target": [
             "AppImage"
           ],
