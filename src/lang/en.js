@@ -3,7 +3,6 @@ const messages = {
 
     title: '',
     password: 'Password',
-
     passwordAgain: 'Enter password again',
     wrongPassword: 'Wrong password',
     login_: 'Login',
@@ -17,15 +16,11 @@ const messages = {
     confirmed: 'Confirmed',
     unconfirmed: 'Awaiting confirmation',
     locked: 'Locked',
-
     send: 'Send',
-
-
     cancel:'Cancel',
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
-
     welcome: 'Welcome to EPIC wallet',
     back: 'Back',
     reset: 'Reset',
@@ -33,13 +28,11 @@ const messages = {
     msg: 'Message',
     more: 'More',
     wrongAddressFormat: 'wrong address format',
-
     node_server: 'Node Server',
     node_server_builtin: 'Built-in node server',
     node_server_external: 'External node server',
     node_server_address: 'Node Server Address',
     recipient_proof_address: 'Recipient proof address',
-
     copy_to_clipboard: 'Copied to clipboard!',
     placeholder_search: 'Search...',
     refresh: 'Refresh',
@@ -67,7 +60,6 @@ const messages = {
       run_setup: 'Run Setup Assistant',
       updates: 'Updates'
     },
-
     headerbar: {
       howdy: 'Howdy,',
       version: 'Version',
@@ -90,7 +82,6 @@ const messages = {
       fatal_create: 'Fatal: created fail on action "{0}"',
       fatal_update: 'Fatal: App config not updated.'
     },
-
     setupwizard:{
       setup_assistant: 'Setup Assistant',
       account_information: 'Account information',
@@ -125,7 +116,6 @@ const messages = {
       errors_save: 'Error saving user settings: {0}'
     },
     transaction:{
-
       received: 'Received',
       send: 'Send',
       transaction_id: 'Transaction ID',
@@ -148,9 +138,7 @@ const messages = {
       sender_address: 'Sender address',
       sender_signature: 'Sender signature',
       sender_address_path: 'Sender address path'
-
     },
-
     commit:{
       unspentCmt: 'Unspent outputs',
       heightCreated: 'Block height when Created',
@@ -165,8 +153,6 @@ const messages = {
       value: 'Value',
       status: 'Status',
       copy: 'Commit copied'
-
-
     },
     account: {
       account: 'Account',
@@ -206,8 +192,6 @@ const messages = {
       errorGetMnemonic: 'Error getting Mnemonic. Is password correct?',
       mnemonic: 'Mnemonic Words'
     },
-
-
     new:{
       create: 'Create new wallet',
       restore: 'Restore wallet',
@@ -216,9 +200,7 @@ const messages = {
       networkErr: 'Network type can not be determined.<br/>Please select one.',
       selectNetwork: 'continue',
     },
-
     restore:{
-
       title: 'Restore wallet via seed phrase',
       addSeedsInfo: 'Add seed phrase by clicking the word(s) please',
       yourSeedsInfo: 'Your seed phrase is',
@@ -232,9 +214,7 @@ const messages = {
       wallet_recovered: 'Your wallet is recoverd. Please login and finish the setup.',
       recover_fail: 'Fatal: recover failed on action "{0}"',
       fatal_app: 'Fatal: App config not updated.'
-
     },
-
     app:{
       create: 'Create transaction (File)',
       finalize: 'Finalize transaction (File)',
@@ -246,7 +226,6 @@ const messages = {
       updateMsg: 'Found new version of EPIC wallet. Please update Right NOW.',
       yes: 'yes',
       no: 'no',
-
       ngrok_service_started: 'Ngrok service started',
       ngrok_address_changed: 'Your ngrok address has changed',
       ngrok_service_stopped: 'Ngrok service stopped',
@@ -258,16 +237,13 @@ const messages = {
       external_node_online: 'External Node is online',
       external_node_offline: 'External Node is offline',
       background_process: 'We found some running wallet and node processes in the background. Please close them first before you run this App.',
-
     },
-
     info: {
       spendable: 'Spendable',
       total: 'Balance',
       unfinalization: 'Unconfirmed',
       immature: 'Immature'
     },
-
     txs:{
       tx: 'Transactions',
       canceled:'Canceled',
@@ -275,9 +251,6 @@ const messages = {
       noTx:'No transactions',
       cancelSuccess:'This transaction canceled',
     },
-
-
-
     fileSend:{
       sendAmount: 'Amount to send',
       createTxFile: 'Create transaction',
@@ -287,7 +260,6 @@ const messages = {
       CreateFailed: 'Failed to create new transaction file',
       proof_address_recipient: 'Wrong proof address length',
     },
-
     httpSend:{
       sendAmount: 'Amount to send',
       address:'Recipient Address',
@@ -302,7 +274,6 @@ const messages = {
       salteVersion: 'Slate file version',
       salteVersionHelp: 'If you failed to send EPIC, try changing the Slate file version then resend'
     },
-
     receive: {
       dropMsg: 'Drop transaction file to receive or click to upload',
       WrongFileType: 'Wrong transaction file type',
@@ -313,7 +284,6 @@ const messages = {
       error_read: 'Error reading file content',
       success: 'Transaction success',
     },
-
     finalize: {
       finalize: 'Finalize',
       success: 'Transaction success',
@@ -325,22 +295,14 @@ const messages = {
       dragdrop: 'Drag & drop file',
       error_read: 'Error reading file content'
     },
-
     httpReceive: {
-      launchSucess: 'Started successfully',
       listening: "Your wallet can receive transactions through these addresses.",
       address: 'Wallet Address',
-      reachableMsg2: 'Ensure your IP Address is public and reachable by the internet.',
       close: 'Stop listener',
       attention: 'Attention',
       reachableMsg: 'To receive online transactions, your wallet must be started in listen mode.',
-      password: 'Wallet Password (used to start HTTP listen)',
       start: 'Start',
       error: 'No password.',
-      failed: 'Start Failed, Maybe wrong password',
-      failed2: 'HTTP listen failed, your public ip is not reachable by the internet user. Try transaction file',
-      failed3: 'Failed to get your public ip; try again later',
-      failed4: 'Listener is now running on localhost:3415. However your ip is not reachable by the internet user. Try transaction file',
       ip: 'your public ip',
       current_ngrok_address: 'Current Ngrok Address',
       local_address: 'Local address',
@@ -349,9 +311,10 @@ const messages = {
       proof_address: 'Proof Address',
       your_qrcode: 'Your QRcode for your "{0}" address',
       click_qrcode_icon: 'Click the qr code icon',
-      tor_not_available: 'Tor not available. Try to restart the wallet listener'
+      tor_not_available: 'Tor not available. Try to restart the wallet listener',
+      check_port_open_done: 'Recheck done!',
+      listener_stopped: 'Wallet listener stopped',
     },
-
     check: {
       checking: 'Re-checking, be patient ...',
       stop: 'Stop Check',
@@ -362,18 +325,12 @@ const messages = {
       scan_finished: 'Wallet scan finished.',
       error_scan: 'Error start scan. Is password correct?',
       scan_stop: 'Wallet scan stopped.'
-
     },
-    firstruncheck: {
-      title: 'Scan blockchain for your wallet outputs, be patient ...',
-    },
-
     lang: {
       title: 'Select language',
       lang: 'Language',
       select: 'Select'
     },
-
     settings: {
       title: 'Settings',
       check_node_api_http_addr: 'Node api address',
@@ -390,7 +347,6 @@ const messages = {
       settings_saved: 'Settings saved',
       error_save: 'Error saving settings'
     },
-
     validators:{
       empty: 'The {0} field is required',
       equal: 'The {0} must be equal',
@@ -402,7 +358,6 @@ const messages = {
       exist: 'The account "{0}" already exists',
       notexist: 'The account "{0}" does not exist'
     }
-
   }
 }
 export default messages

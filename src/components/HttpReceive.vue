@@ -22,7 +22,11 @@
               <p v-if="store.state.ngrokService">&nbsp;</p>
               <p v-else>
                 {{ $t("msg.httpReceive.local_address") }}:<br/>
-                <code>http://{{ publicIp.ip }}:3415</code>&nbsp;<mdicon v-if="portIsForwarded" name="flag-checkered" style="color:hsl(141, 53%, 53%);" title="port is open" /><mdicon v-else name="flag-checkered" style="color:hsl(348, 100%, 61%);" title="port is closed" />&nbsp;<mdicon class="is-clickable" @click="copy('http://' + publicIp.ip + ':3415')" name="content-copy" size=16 />
+                <code>{{ localAddress }}</code>
+                &nbsp;<mdicon v-if="portIsForwarded" name="flag-checkered" style="color:hsl(141, 53%, 53%);" title="port is open" /><mdicon v-else name="flag-checkered" style="color:hsl(348, 100%, 61%);" title="port is closed" />
+                &nbsp;<mdicon class="is-clickable" @click="checkPortOpen()" name="refresh" size=16 />
+                &nbsp;<mdicon class="is-clickable" @click="copy(localAddress)" name="content-copy" size=16 />
+                &nbsp;<mdicon class="is-clickable" @click="qrcode(localAddress, 'local')" name="qrcode-scan" size=16 />
               </p>
               <p v-if="!store.state.ngrokService">&nbsp;</p>
 
@@ -135,6 +139,8 @@ export default {
   setup(){
 
     const store = useStore();
+
+    const localAddress = ref('');
     const onionAddress = ref('');
     const ngrokAddress = ref('');
     const proofAddress = ref('');
@@ -148,6 +154,8 @@ export default {
 
     return {
       store,
+      localAddress,
+
       onionAddress,
       ngrokAddress,
       proofAddress,
@@ -163,8 +171,10 @@ export default {
 
   async mounted(){
 
+
     this.publicIp = await window.config.getPublicIp();
-    this.portIsForwarded = await window.config.isPortReachable();
+    this.localAddress = 'http://' + this.publicIp.ip + ':' + this.configService.walletListenerPort;
+    this.portIsForwarded = await window.config.isPortReachable(this.publicIp.ip, this.configService.walletListenerPort);
 
     this.onionAddress = await this.getOnionAndProofAddress();
     if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
@@ -180,6 +190,10 @@ export default {
 
   },
   methods: {
+    async checkPortOpen(){
+      this.portIsForwarded = await window.config.isPortReachable(this.publicIp.ip, this.configService.walletListenerPort);
+      this.$toast.show(this.$t("msg.httpReceive.check_port_open_done"), {duration:1000});
+    },
     async qrcode(text, addressType){
 
       this.addressTypeHeader = addressType;
@@ -209,7 +223,7 @@ export default {
 
     copy(text){
       window.clipboard.writeText(text);
-      this.$toast.show("Copied to clipboard!", {duration:1000});
+      this.$toast.show(this.$t("msg.copy_to_clipboard"), {duration:1000});
     },
     async start(){
 
@@ -231,20 +245,20 @@ export default {
 
           this.onionAddress = await this.getOnionAndProofAddress();
           this.emitter.emit('app.ngrokStart');
-          this.$toast.success("Wallet listener started");
+          this.$toast.success(this.$t("msg.login.listener_started"));
           this.store.commit('walletListenerService', true);
 
         }else if(isListen.success == false){
 
-          this.$toast.error("Error starting wallet listener");
+          this.$toast.error(this.$t("msg.login.error_listener_started"));
           this.store.commit('walletListenerService', false);
         }
 
         if(isListen && isListen.tor){
-          this.$toast.success("Tor started");
+          this.$toast.success(this.$t("msg.login.tor_started"));
           this.store.commit('torService', true);
         }else{
-          this.$toast.error("Tor not started");
+          this.$toast.error(this.$t("msg.login.error_tor_started"));
           this.store.commit('torService', false);
         }
 
@@ -261,7 +275,7 @@ export default {
       if(killed){
         this.emitter.emit('app.ngrokStop');
         this.store.commit('walletListenerService', false);
-        this.$toast.success("Wallet listener stopped");
+        this.$toast.success(this.$t("msg.httpReceive.listener_stopped"));
       }
     },
 

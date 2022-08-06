@@ -473,8 +473,8 @@ contextBridge.exposeInMainWorld('nodeQr', qr);
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
 
-  async isPortReachable(){
-    return await isPortReachable(80, {host: 'google.com'});
+  async isPortReachable(host, port){
+    return await isPortReachable(port, {host: host});
   },
   async getPublicIp(){
     let response = await fetch('https://api.ipify.org?format=json', {

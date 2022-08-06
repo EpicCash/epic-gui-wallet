@@ -52,7 +52,7 @@ class ConfigService {
 
       this.walletTOMLPath = '';
       this.walletTOMLName = 'epic-wallet.toml';
-
+      this.walletListenerPort = 3415;
       this.nodeTOMLPath = '';
       this.nodeTOMLName = 'epic-server.toml';
       this.nodeFoundationName = 'foundation.json';
