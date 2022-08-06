@@ -224,6 +224,7 @@ async function createWindow() {
                         let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
                         let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
                         let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                        let pWalletTorList = await findProcess('name', /tor/);
                         for(let process of pWalletList) {
                           if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
                             killPids.push(process);
@@ -236,6 +237,11 @@ async function createWindow() {
                         }
                         for(let process of pNgrokList) {
                           if(process.cmd.includes('ngrok')){
+                            killPids.push(process);
+                          }
+                        }
+                        for(let process of pWalletTorList) {
+                          if(process.cmd.includes('tor/listener/torrc')){
                             killPids.push(process);
                           }
                         }
