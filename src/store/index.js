@@ -1,8 +1,6 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 
-
-
 export const store = createStore({
   state: {
     /* AppStyle (needed for demo render() in main.js) */

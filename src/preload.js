@@ -575,8 +575,11 @@ contextBridge.exposeInMainWorld('api', {
     resize: (width, height) => {
       ipcRenderer.invoke('resize', width, height);
     },
-    locale: async () => {
+    locale: async() => {
       return await ipcRenderer.invoke('locale');
+    },
+    version: async() => {
+      return await ipcRenderer.invoke('version');
     },
 
 });

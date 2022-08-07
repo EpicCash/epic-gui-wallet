@@ -7,6 +7,7 @@ import { exec } from 'child_process'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 const ps = require('ps-node');
@@ -441,6 +442,11 @@ ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) =>
 ipcMain.handle('locale', async() => {
   return await app.getLocale();
 });
+ipcMain.handle('version', async() => {
+  return await process.env.npm_package_version;
+});
+
+
 
 ipcMain.handle('resize', (event, width, height) => {
   let browserWindow = BrowserWindow.fromWebContents(event.sender)
