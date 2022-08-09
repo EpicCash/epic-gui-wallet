@@ -82,33 +82,33 @@ const messages = {
       coins: 'سکه ها'
     },
     create:{
-      select: 'Select a directory for your wallet data',
-      seedPhrase: 'Seed Phrase',
-      toNewMsg: 'Create a New Wallet.',
-      newWallet: 'Create new wallet',
-      backupNote: 'Important！Please backup your seed phrase to restore your wallet',
-      fatal_create: 'Fatal: created fail on action "{0}"',
-      fatal_update: 'Fatal: App config not updated.'
+      select: 'یک پوشه برای داده های کیف پول خود انتخاب کنید',
+      seedPhrase: 'عبارات بازیابی Seed Phrase',
+      toNewMsg: 'یک کیف پول جدید ایجاد کنید.',
+      newWallet: 'کیف پول جدید ایجاد کنید',
+      backupNote: 'مهم! لطفاً از عبارت بازیابی خود برای بازیابی کیف پول خود نسخه پشتیبان تهیه کنید',
+      fatal_create: 'جیاتی: شکست در عمل ایجاد شده است Fatal: created fail on action "{0}"',
+      fatal_update: 'جیاتی: پیکربندی برنامه به‌روزرسانی نشد '
     },
 
     setupwizard:{
-      setup_assistant: 'Setup Assistant',
-      account_information: 'Account information',
-      your_name:'Your name',
-      name_only_internal: 'Name is only internally used',
+      setup_assistant: 'دستیار تنظیم',
+      account_information: 'اطلاعات حساب',
+      your_name:'نام شما',
+      name_only_internal: 'نام فقط در داخل کیف شمااستفاده می شود',
       keybase: 'Keybase',
-      enter_keybase: 'If you have a Keybase Account, you can enter it here.',
-      next_step: 'Next step',
-      network_node: 'Network node',
-      network_node_txt: `Your wallet requires a network node to send and receive transactions.<br/>
-      You can choose between the built-in node server and an external node server.<br/>
+      enter_keybase: 'اگر یک حساب اپلیکیشن چت کیبیس دارید، می توانید آن را در اینجا وارد کنید.',
+      next_step: 'مرجله بعد',
+      network_node: 'نود شبکه',
+      network_node_txt: `کیف پول شما به یک نود شبکه برای ارسال و دریافت تراکنش ها نیاز دارد<br/>
+      می توانید بین سرور نود داخلی و سرور نود خارجی یکی را انتخاب کنید<br/>
       <br/>
-      If you are not sure which one to use, then leave the settings as they are.<br/>`,
-      previous_step: 'Previous step',
-      receive_transactions: 'Receiving transactions',
-      receive_transactions_txt: `To receive transactions from other wallets, your wallet must be accessible over the Internet.<br/>
+      اگر مطمئن نیستید که از کدام یک استفاده کنید، تنظیمات را همانطور که هستند رها کنید<br/>`,
+      previous_step: 'مرحله قبلی',
+      receive_transactions: 'درحال دریافت تراکنش',
+      receive_transactions_txt: `برای دریافت تراکنش از کیف پول های دیگر، کیف پول شما باید از طریق اینترنت قابل دسترسی باشد<br/>
       <br/>
-      If you are not familiar with router settings and port forwarding, we recommend using the ngrok service.<br/>
+      اگر با تنظیمات روتر و ارسال پورت آشنایی ندارید، استفاده از سرویس ngrok را به شما توصیه می کنیم<br/>
       Once ngrok has been activated, your wallet will be accessible via a temporary ngrok address.<br/>
       <br/>
       <br/>
