@@ -87,8 +87,8 @@ const messages = {
       toNewMsg: 'یک کیف پول جدید ایجاد کنید.',
       newWallet: 'کیف پول جدید ایجاد کنید',
       backupNote: 'مهم! لطفاً از عبارت بازیابی خود برای بازیابی کیف پول خود نسخه پشتیبان تهیه کنید',
-      fatal_create: 'جیاتی: شکست در عمل ایجاد شده است Fatal: created fail on action "{0}"',
-      fatal_update: 'جیاتی: پیکربندی برنامه به‌روزرسانی نشد '
+      fatal_create: 'حیاتی: شکست در عمل ایجاد شده است Fatal: created fail on action "{0}"',
+      fatal_update: 'حیاتی: پیکربندی برنامه به‌روزرسانی نشد '
     },
 
     setupwizard:{
