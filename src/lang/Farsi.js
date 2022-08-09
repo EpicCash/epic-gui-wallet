@@ -87,7 +87,7 @@ const messages = {
       toNewMsg: 'یک کیف پول جدید ایجاد کنید.',
       newWallet: 'کیف پول جدید ایجاد کنید',
       backupNote: 'مهم! لطفاً از عبارت بازیابی خود برای بازیابی کیف پول خود نسخه پشتیبان تهیه کنید',
-      fatal_create: 'حیاتی: شکست در عمل ایجاد شده است Fatal: created fail on action "{0}"',
+      fatal_create: 'حیاتی: شکست در عملیات ایجاد شده است Fatal: created fail on action "{0}"',
       fatal_update: 'حیاتی: پیکربندی برنامه به‌روزرسانی نشد '
     },
 
@@ -108,54 +108,62 @@ const messages = {
       receive_transactions: 'درحال دریافت تراکنش',
       receive_transactions_txt: `برای دریافت تراکنش از کیف پول های دیگر، کیف پول شما باید از طریق اینترنت قابل دسترسی باشد<br/>
       <br/>
-      اگر با تنظیمات روتر و ارسال پورت آشنایی ندارید، استفاده از سرویس ngrok را به شما توصیه می کنیم<br/>
-      Once ngrok has been activated, your wallet will be accessible via a temporary ngrok address.<br/>
+      اگر با تنظیمات روتر و ارسال پورت آشنایی ندارید، استفاده از سرویس 
+      ngrok
+      را به شما توصیه می کنیم<br/>
+     هنگامی که 
+     ngrok
+     فعال شد، کیف پول شما از طریق یک آدرس موقت 
+     ngrok
+     قابل دسترسی خواهد بود.<br/>
       <br/>
       <br/>
-      Leave the fields below blank if you don’t want to use the ngrok service.`,
+      اگر نمی خواهید از سرویس 
+      ngrok
+      استفاده کنید، قسمت های زیر را خالی بگذارید`,
       authtoken: 'Your ngrok Authtoken',
-      howto: 'How to get your Authtoken from ngrok',
-      values_correct: 'Are these values correct?',
-      save_and_finish: 'Save and finish',
-      name: 'Name',
+      howto: 'خود را دریافت کنید ngrok ،Auttoken چگونه',
+      values_correct: 'آیا این مقادیر صحیح است؟',
+      save_and_finish: 'ذخیره و پایان',
+      name: 'نام',
       keybase_account: 'Keybase Account',
-      language: 'Language',
+      language: 'زبان',
       ngrok_authtoken: 'ngrok Auth-Token',
-      db_fatal: 'DB Fatal: can not insert DB',
-      errors_save: 'Error saving user settings: {0}'
+      db_fatal: ' مهلک: دی بی را نمی توان وارد کرد DB ',
+      errors_save: 'خطا در ذخیره تنظیمات کاربر: {0}'
     },
     transaction:{
 
-      received: 'Received',
-      send: 'Send',
-      transaction_id: 'Transaction ID',
-      creation_date: 'Creation date',
-      receiver: 'Receiver',
-      payment_proof: 'Payment proof',
-      amount: 'Amount (fee)',
-      status: 'Status',
-      transfer_type: 'Transfer Type',
-      id: 'ID',
-      slate_id: 'Slate ID',
-      confirmation_date: 'Confirmation date',
-      amount_credited: 'Amount credited',
-      amount_debited: 'Amount debited',
-      fee: 'Fee',
-      message: 'Message',
-      type: 'Type',
-      receiver_address: 'Receiver address',
-      receiver_signature: 'Receiver signature',
-      sender_address: 'Sender address',
-      sender_signature: 'Sender signature',
-      sender_address_path: 'Sender address path'
+      received: 'دریافت شده',
+      send: 'فرستادن',
+      transaction_id: 'شناسه تراکنش',
+      creation_date: 'تاریخ ایجاد',
+      receiver: 'گیرنده',
+      payment_proof: 'سند پرداخت',
+      amount: 'مبلغ (کارمزد)',
+      status: 'وضعیت',
+      transfer_type: 'نوع انتقال',
+      id: 'آی دی یا شناسه',
+      slate_id: ' آی دی حک شده Slate ID',
+      confirmation_date: 'تاریخ تایید',
+      amount_credited: 'مبلغ اعتبار داده شده',
+      amount_debited: 'مبلغ بدهکار شده',
+      fee: 'کارمزد',
+      message: 'پیفام',
+      type: 'نوع',
+      receiver_address: 'آدرس گیرنده',
+      receiver_signature: 'امضای گیرنده',
+      sender_address: 'آدرس فرستنده',
+      sender_signature: 'امضای فرستنده',
+      sender_address_path: 'مسیر آدرس فرستنده'
 
     },
 
     commit:{
-      unspentCmt: 'Unspent outputs',
-      heightCreated: 'Block height when Created',
-      unspent: 'Unspent',
-      spent: 'Spent',
+      unspentCmt: 'خروجی های مصرف نشده',
+      heightCreated: 'ارتفاع بلاک در زمان ایجاد',
+      unspent: 'خرج نشده',
+      spent: 'خرج کردن',
       noCmtFound: 'No Unspent output commit found',
       noCmt:'No unspent output commit',
       copied: 'Copied',
