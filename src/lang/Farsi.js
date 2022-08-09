@@ -191,7 +191,7 @@ const messages = {
       keybase_account: 'Keybase جساب',
       external_one: 'آدرس خارجی 1',
       external_two: 'آدرس خارجی 2',
-      proof_address: 'آدرس اثباتیا گواهی',
+      proof_address: 'آدرس اثبات یا گواهی',
       notice: 'توجه',
       send_always: 'همیشه گواهی ارسال کنید',
       deleted: 'آدرس حذف شد!',
@@ -352,61 +352,61 @@ const messages = {
       local_address: 'آدرس محلی',
       session_end: 'شما از انگروک بدون حساب کاربری استفاده می کنید. مهلت استفاده شما در {0} ساعت و {1} دقیقه به پایان می رسد',
       tor_onion_address: 'آدرس پیازی شبکه تور',
-      proof_address: 'Proof Address',
-      your_qrcode: 'Your QRcode for your "{0}" address',
-      click_qrcode_icon: 'Click the qr code icon',
-      tor_not_available: 'Tor not available. Try to restart the wallet listener'
+      proof_address: 'آدرس گواهی اثبات',
+      your_qrcode: 'کد کیوآر شما برای آدرس "{0}" شما',
+      click_qrcode_icon: 'روی نماد کد کیوآر کلیک کنید',
+      tor_not_available: 'تور در دسترس نیست. سعی کنید شنونده کیف پول را مجددا راه اندازی کنید'
     },
 
     check: {
-      checking: 'Re-checking, be patient ...',
-      stop: 'Stop Check',
-      introTitle: 'Info',
-      intro1: 'This will scan the entire Blockchain for the unspent coin outputs that belong to your wallet.',
-      start: 'Start',
-      delete_unconfirmed: 'Delete unconfirmed coin outputs',
-      scan_finished: 'Wallet scan finished.',
-      error_scan: 'Error start scan. Is password correct?',
-      scan_stop: 'Wallet scan stopped.'
+      checking: 'بررسی مجدد، لطفا صبور باشید...',
+      stop: 'توقف بررسی',
+      introTitle: 'اطلاعات',
+      intro1: 'این کار کل بلاک چین را برای یافتن خروجی سکه های خرج نشده که به کیف پول شما تعلق دارد اسکن می کند',
+      start: 'شروع',
+      delete_unconfirmed: 'خروجی های سکه تایید نشده را حذف کنید',
+      scan_finished: 'اسکن کیف پول تمام شد',
+      error_scan: 'خطای شروع اسکن. آیا رمز عبور صحیح است؟',
+      scan_stop: 'اسکن کیف پول متوقف شد'
 
     },
     firstruncheck: {
-      title: 'Scan blockchain for your wallet outputs, be patient ...',
+      title: 'بلاک چین را برای خروجی های کیف پول خود اسکن کنید، لطفا صبور باشید...',
     },
 
     lang: {
-      title: 'Select language',
-      lang: 'Language',
-      select: 'Select'
+      title: 'زبان را انتخاب کنید',
+      lang: 'زبان',
+      select: 'انتخاب'
     },
 
     settings: {
-      title: 'Settings',
-      check_node_api_http_addr: 'Node api address',
-      node_api_addr_hint: 'where the wallet should find a running node',
-      network: 'Network',
-      wallet_listener: 'Wallet listener',
-      auto_start: 'automatically start wallet listener after login',
-      authtoken: 'Your ngrok Authtoken',
-      ngrok_force_start: 'use ngrok without Authtoken',
-      ngrok_hint: 'The ngrok address is active for 2 hours then gets renewed.',
-      ngrok_account_hint: 'To receive your ngrok authentication token, please create a new account at https://ngrok.com',
-      authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
-      howto: 'How to get your Authtoken from ngrok',
-      settings_saved: 'Settings saved',
-      error_save: 'Error saving settings'
+      title: 'تنظیمات',
+      check_node_api_http_addr: 'نود api آدرس',
+      node_api_addr_hint: 'جایی که کیف پول باید یک نود در حال اجرا پیدا کند',
+      network: 'شبکه',
+      wallet_listener: 'شنونده کیف پول',
+      auto_start: 'پس از ورود به سیستم، شنونده کیف پول را به طور خودکار راه اندازی کنید',
+      authtoken: 'شما ngrok Authtoken',
+      ngrok_force_start: 'استفاده کنیدAuttoken بدون ngrok از',
+      ngrok_hint: 'آدرس انگروک به مدت 2 ساعت فعال است و سپس تمدید می شود.',
+      ngrok_account_hint: 'https://ngrok.com برای دریافت رمز احراز هویت انگروک خود، لطفاً یک حساب کاربری جدید در آدرس ایجاد کنید',
+      authtoken_hint: 'آدرس شما تا زمانی که کیف پول در حالت گوش دادن است فعال است ،ngrok Authtoken با یک،',
+      howto: ' ngrokخود را از Auttokenچگونه ',
+      settings_saved: 'تنظیمات ذخیره شدند',
+      error_save: 'خطا در ذخیره کردن تنظیمات'
     },
 
     validators:{
-      empty: 'The {0} field is required',
-      equal: 'The {0} must be equal',
-      http_address: 'No valid HTTP(S) Address',
-      min_length: 'The {0} field must be at least {1} characters long',
-      only_letters: 'The {0} can have only lower letters from a-z with no spaces',
-      number: 'The {0} field must be a number',
-      spendable: 'Not enough balance',
-      exist: 'The account "{0}" already exists',
-      notexist: 'The account "{0}" does not exist'
+      empty: 'فیلد {0} الزامی است',
+      equal: '{0} باید برابر باشد',
+      http_address: 'معتبری وجود ندارد HTTP(S) آدرس',
+      min_length: 'فیلد {0} باید حداقل {1} کاراکتر داشته باشد',
+      only_letters: '{0} فقط می تواند حروف کوچک انگلیسی آی تا زی را بدون فاصله داشته باشد',
+      number: 'فیلد {0} باید یک عدد باشد',
+      spendable: 'موجودی کافی وجود ندارد',
+      exist: 'حساب "{0}" از قبل وجود دارد',
+      notexist: 'حساب "{0}" وجود ندارد'
     }
 
   }
