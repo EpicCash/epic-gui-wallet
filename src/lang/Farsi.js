@@ -44,7 +44,7 @@ const messages = {
     placeholder_search: 'جستجو...',
     refresh: 'تازه کردن',
     page_of: 'Page {0} of {1}',
-    only_letter: 'فقط حروف کوچک از a-z,',
+    only_letter: ' a-z فقط حروف کوچک از,',
     custom_settings: 'تنظیمات سفارشی',
     step_of: 'مرحله {0}/{1}',
 
