@@ -366,13 +366,19 @@ class ConfigService {
               appConfig[configKey][index].userhomedir = data.userhomedir;
               appConfig[configKey][index].network     = data.network;
               appConfig[configKey][index].isdefault   = data.isdefault;
-
+              data = undefined;
+              break;
             }
           }
         }
       }
 
+      if(data != undefined){
+        appConfig[configKey].push(data);
+      }
+
       this.appConfig = appConfig;
+      console.log('account create updateAppConfig', this.appConfig);
       return this.saveAppConfig();
   }
 
