@@ -211,7 +211,7 @@ const messages = {
       search_placeholder: 'type to search words / or paste seed phrase',
       create_new: 'Create new account',
       change_seed: 'Change seed words',
-      wallet_recovered: 'Your wallet is recoverd. Please login and finish the setup.',
+      wallet_recovered: 'Your wallet is recovered. Please login and finish the setup.',
       recover_fail: 'Fatal: recover failed on action "{0}"',
       fatal_app: 'Fatal: App config not updated.'
     },
