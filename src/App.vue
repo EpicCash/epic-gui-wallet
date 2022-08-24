@@ -210,9 +210,16 @@
       await this.configService.killEpicProcess();
 
       if(this.configService.appHasAccounts()){
-        //continue to login
+        //upgrade wallet 3.0 paths to 4.0 paths
+        if(await !this.configService.checkAccountsFolderStructure()){
 
-        this.$router.push('/login');
+          console.log('checking accounts folder structure has issues');
+
+        }else{
+          //continue to login page
+          this.$router.push('/login');
+        }
+
 
       } else {
 

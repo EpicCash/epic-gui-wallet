@@ -84,7 +84,6 @@ export default {
     const router = useRouter();
     const passwordField = ref('');
     const accountField = ref();
-    const canLogin = ref(true);
     const isLoading = ref(false);
     const { resetFormErrors } = useFormValidation();
 
@@ -93,7 +92,6 @@ export default {
       router,
       passwordField,
       accountField,
-      canLogin,
       isLoading,
       resetFormErrors,
     }
@@ -119,10 +117,9 @@ export default {
         //first check config and setup
         let action = await this.configService.startCheck(this.accountField.defaultValue);
 
-        this.canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
+        let canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
 
-
-        if(this.canLogin.success){
+        if(canLogin.success){
 
           if(this.configService.config['walletlisten_on_startup']){
 
@@ -160,7 +157,7 @@ export default {
           this.emitter.emit('app.accountLoggedIn');
 
         }else{
-          this.$toast.error(this.canLogin.msg.message);
+          this.$toast.error(canLogin.msg);
         }
 
         this.isLoading = false;

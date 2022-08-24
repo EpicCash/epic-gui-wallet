@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell, remote } from 'electron'
 const contextMenu = require('electron-context-menu');
 import { exec } from 'child_process'
 
@@ -442,8 +442,15 @@ ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) =>
 ipcMain.handle('locale', async() => {
   return await app.getLocale();
 });
-ipcMain.handle('version', async() => {
-  return await process.env.npm_package_version;
+ipcMain.handle('version', () => {
+  let currentVersion = '';
+  if (process.env.NODE_ENV === 'development') {
+     currentVersion = require('../package.json').version;
+   } else {
+     currentVersion = remote.app.getVersion();
+   }
+   return currentVersion;
+
 });
 
 

@@ -52,6 +52,7 @@ class ConfigService {
 
       this.walletTOMLPath = '';
       this.walletTOMLName = 'epic-wallet.toml';
+      this.walletTOMLLogfile = 'epic-wallet.log';
       this.walletListenerPort = 3415;
       this.nodeTOMLPath = '';
       this.nodeTOMLName = 'epic-server.toml';
@@ -118,7 +119,7 @@ class ConfigService {
 
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
 
-        const re = /db_root(\s)*=(\s).*/;
+        const re = /^db_root(\s)*=(\s).*/gm;
         if(tomlContent.search(re) != -1){
           if(this.platform == 'win'){
                   //double escaped path
@@ -128,12 +129,12 @@ class ConfigService {
           }
         }
 
-        const re2 = /chain_type(\s)*=(\s).*/;
+        const re2 = /^chain_type(\s)*=(\s).*/gm;
         if(tomlContent.search(re2) != -1){
           tomlContent = tomlContent.replace(re2, 'chain_type = "' + this.tomlNetworkname + '"');
         }
 
-        const re3 = /foundation_path(\s)*=(\s).*/;
+        const re3 = /^foundation_path(\s)*=(\s).*/gm;
         if(tomlContent.search(re3) != -1){
           if(this.platform == 'win'){
                   //double escaped path
@@ -143,12 +144,12 @@ class ConfigService {
           }
         }
 
-        const re4 = /stdout_log_level(\s)*=(\s).*/;
+        const re4 = /^stdout_log_level(\s)*=(\s).*/gm;
         if(tomlContent.search(re4) != -1){
             tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
         }
 
-        const re5 = /run_tui(\s)*=(\s).*/;
+        const re5 = /^run_tui(\s)*=(\s).*/gm;
         if(tomlContent.search(re5) != -1){
             tomlContent = tomlContent.replace(re5, 'run_tui = false');
         }
@@ -233,7 +234,7 @@ class ConfigService {
       window.nodeFs.writeFileSync(this.appConfigFile, JSON.stringify(this.appConfig), {encoding: "utf8", flag: "w"});
       return true;
     }catch(e){
-
+      console.log('error write app config', e);
       return false;
     }
 
@@ -242,8 +243,10 @@ class ConfigService {
   checkTomlFile(defaultAccountWalletdir){
 
     let walletDir = defaultAccountWalletdir ? defaultAccountWalletdir : this.defaultAccountWalletdir;
+    let walletTOMLLogfilePath = path.join(walletDir, this.walletTOMLLogfile);
     //check if toml file exist
     let tomlFile = path.join(walletDir, this.walletTOMLName);
+
     if (window.nodeFs.existsSync(tomlFile) && window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'})) {
         this.emitter.emit('checkSuccess', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file exist and readable');
 
@@ -251,13 +254,13 @@ class ConfigService {
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
 
-        const re = /owner_api_include_foreign(\s)*=(\s)*false/;
+        const re = /^owner_api_include_foreign(\s)*=(\s)*false/gm;
         if(tomlContent.search(re) != -1){
 
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
         }
 
-        const re2 = /data_file_dir(\s)*=(\s).*/;
+        const re2 = /^data_file_dir(\s)*=(\s).*/gm;
         if(tomlContent.search(re2) != -1){
 
             if(this.platform == 'win'){
@@ -268,7 +271,7 @@ class ConfigService {
             }
         }
 
-        const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
+        const re3 = /^check_node_api_http_addr(\s)*=(\s).*/gm;
 
 
         let nodeApiHttp = '';
@@ -283,9 +286,49 @@ class ConfigService {
           tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + nodeApiHttp + '"');
         }
 
-        const re4 = /stdout_log_level(\s)*=(\s).*/;
+        const re4 = /^stdout_log_level(\s)*=(\s).*/gm;
         if(tomlContent.search(re4) != -1){
             tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
+        }
+
+        const re5 = /^api_secret_path(\s)*=(\s).*/gm;
+        if(tomlContent.search(re5) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re5, 'api_secret_path = "' + this.ownerApiSecretPath.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re5, 'api_secret_path = "' + this.ownerApiSecretPath + '"');
+          }
+        }
+
+        const re6 = /^node_api_secret_path(\s)*=(\s).*/gm;
+        if(tomlContent.search(re6) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re6, 'node_api_secret_path = "' + this.apiSecretPath.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re6, 'node_api_secret_path = "' + this.apiSecretPath + '"');
+          }
+        }
+
+        const re7 = /^send_config_dir(\s)*=(\s).*/gm;
+        if(tomlContent.search(re7) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re7, 'send_config_dir = "' + walletDir.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re7, 'send_config_dir = "' + walletDir + '"');
+          }
+        }
+
+        const re8 = /^log_file_path(\s)*=(\s).*/gm;
+        if(tomlContent.search(re8) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re8, 'log_file_path = "' + walletTOMLLogfilePath.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re8, 'log_file_path = "' + walletTOMLLogfilePath + '"');
+          }
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -297,6 +340,7 @@ class ConfigService {
     } else {
 
         this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file does not exist or readable');
+        console.log('check fail toml does not exist', tomlFile);
         return false;
 
 
@@ -316,27 +360,19 @@ class ConfigService {
       if(appConfig[configKey]){
 
         if(appConfig[configKey].length >= 1){
-          appConfig[configKey].forEach(function(element, key){
 
-            if(appConfig[configKey][key].account == data.account){
-
-              appConfig[configKey][key].userhomedir = data.userhomedir;
-              appConfig[configKey][key].network     = data.network;
-              appConfig[configKey][key].isdefault   = data.isdefault;
-              data = undefined;
-              return false;
+          for(let index in appConfig[configKey]){
+            if(appConfig[configKey][index].account == data.account){
+              appConfig[configKey][index].userhomedir = data.userhomedir;
+              appConfig[configKey][index].network     = data.network;
+              appConfig[configKey][index].isdefault   = data.isdefault;
 
             }
-          });
-        }
-
-        if(data != undefined){
-          appConfig[configKey].push(data);
+          }
         }
       }
 
       this.appConfig = appConfig;
-
       return this.saveAppConfig();
   }
 
@@ -394,7 +430,7 @@ class ConfigService {
 
 
   /* check if the select dir is a valid epic wallet dir */
-  async walletDirExist(selectedDir){
+  async walletDirExist(selectedDir, updateConfig){
 
       let walletDir = path.join(selectedDir, 'wallet_data');
       let tomlFile = path.join(selectedDir, this.walletTOMLName);
@@ -406,6 +442,7 @@ class ConfigService {
         return false;
       }
       let userdata;
+
       if(!window.nodeFs.existsSync(walletDir)){
         return false;
       }
@@ -508,15 +545,86 @@ class ConfigService {
 
       }
 
-      if(userdata){
+      if(userdata && updateConfig){
 
         this.updateAppConfig('account_dirs', userdata);
       }
 
       return true;
 
+  }
+
+  updateAccountsConfig(newAccountConfig){
+    let parent = this;
+    newAccountConfig.forEach(function(account){
+      parent.updateAppConfig('account_dirs', account);
+    });
+
+  }
+
+  /* check if the folder structure of all accounts is consistence with current app folder structure */
+  async checkAccountsFolderStructure(){
+      let appConfig = this.appConfig['account_dirs'];
+      let move = [];
+      let newAccountconfig = [];
+      for (let account of appConfig){
+
+        if(account.account !== 'default'){
+          //wallet 3.0 folder structure is [wallet dir]/[network type]/[account name]/
+          //wallet 4.0 folder structure is [wallet dir]/[account name]/[network type]/
+          let walletpathV3 = path.join(account.userhomedir, this.getNetworkfolderShortname(account.network), account.account);
+          let walletpathV4 = path.join(account.userhomedir, account.account, this.getNetworkfolderShortname(account.network));
+
+          let pathType = 4;
+          let src = '';
+          let dest = '';
+          if(!await this.walletDirExist(walletpathV4)){
+            if(await this.walletDirExist(walletpathV3)){
+              pathType = 3;
+              src = walletpathV3;
+              dest = walletpathV4
+            }else{
+              pathType = 0;
+            }
+          }
+
+          //if path type == 0 ... no folder exist for account -> prompt for it
+          //if path type == 3 ... update path type to 4 -> prompt for it
+          //if path type == 4 ... all fine, do nothing
+          if(src != '' && dest != '' ){
+
+             move.push(window.nodeFsExtra.move(src, dest));
+             let homedir = path.join(account.userhomedir, account.account);
+             let newAccount = {
+                 account: account.account,
+                 userhomedir: homedir,
+                 network: account.network,
+                 isdefault: false
+             };
+             newAccountconfig.push(newAccount);
+          }
 
 
+        }else{
+
+          console.log('check folder structure for default account');
+
+        }
+      }
+
+      await Promise.all(move).then(values => {
+        console.log('all renamed');
+        if(newAccountconfig.length){
+          this.updateAccountsConfig(newAccountconfig);
+        }
+
+      })
+      .catch(error => {
+        this.debug ? console.log('error move old folder structure', error) : null;
+        return false;
+      });
+      console.log('finish');
+      return true;
   }
 
   /* check if app has its config file */
@@ -543,6 +651,7 @@ class ConfigService {
     }
     return true;
   }
+
   getNetworkfolderShortname(network){
 
     let shortName = 'main';
@@ -588,7 +697,8 @@ class ConfigService {
   }
 
   async startCheck(account){
-
+      console.log('start check account', account);
+      console.log('start check this.appConfig', this.appConfig['account_dirs']);
       this.debug ? console.log('configService.startCheck', account) : null;
 
       let userHomedir = defaultUserdir;
@@ -598,7 +708,7 @@ class ConfigService {
       let network = '';
       let networkToml = '';
       //this fails if user create a wallet without default name
-      if(account){
+      if(account == 'default'){
 
             this.appConfig['account_dirs'].forEach(function(existingAccount){
                 if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
@@ -612,7 +722,7 @@ class ConfigService {
       }else{
 
           this.appConfig['account_dirs'].forEach(function(existingAccount){
-              if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
+              if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
                 userHomedir = existingAccount['userhomedir'];
                 defaultAccountWalletdir = path.join(userHomedir, parent.getNetworkfolderShortname(existingAccount['network']));
                 networkToml = parent.getNetworkTomlName(existingAccount['network']);
@@ -640,6 +750,8 @@ class ConfigService {
       this.tomlNetworkname = networkToml;
       this.defaultAccountNetwork = network;
 
+      console.log('start check userhomedir', this.userhomedir);
+      console.log('start check defaultAccountWalletdir', this.defaultAccountWalletdir);
 
       //await delay(sleepTime);
 
@@ -691,7 +803,7 @@ class ConfigService {
 
         //check if owner api secret file exist
         let ownerApiSecretFile = path.join(defaultAccountWalletdir, '.owner_api_secret');
-
+        console.log('ownerApiSecretFile', ownerApiSecretFile);
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.ownerApiSecretPath = ownerApiSecretFile;
