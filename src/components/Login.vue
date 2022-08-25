@@ -157,7 +157,8 @@ export default {
           this.emitter.emit('app.accountLoggedIn');
 
         }else{
-          this.$toast.error(canLogin.msg);
+          console.log(canLogin);
+          this.$toast.error(canLogin.msg.message);
         }
 
         this.isLoading = false;

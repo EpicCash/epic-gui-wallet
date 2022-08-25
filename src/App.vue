@@ -205,7 +205,7 @@
     async mounted() {
 
       //App main window min size
-      window.api.resize(1400, 1000);
+      window.api.resize(1024, 768);
       //App has started - first close running wallet and node server process
       await this.configService.killEpicProcess();
 

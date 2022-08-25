@@ -38,6 +38,7 @@ class ConfigService {
       if(window.config.getPlatform() == 'win'){
         this.epicBinPath = '"' + path.resolve(this.epicBinPath) + '"';
         this.epicNodeBinPath = '"' + path.resolve(this.epicNodeBinPath) + '"';
+        this.ngrokBinPath = '"' + path.resolve(this.ngrokBinPath) + '"';
       }
 
       this.epicPath = this.epicBinPath;
