@@ -283,8 +283,7 @@ class ConfigService {
         }else{
           nodeApiHttp = this.config.check_node_api_http_addr;
         }
-
-
+      
         if(tomlContent.search(re3) != -1){
           tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + nodeApiHttp + '"');
         }
@@ -837,7 +836,7 @@ epicbox_domain = "${epicboxDomain}"
 
         //check if owner api secret file exist
         let ownerApiSecretFile = path.join(defaultAccountWalletdir, '.owner_api_secret');
-        console.log('ownerApiSecretFile', ownerApiSecretFile);
+
         if (window.nodeFs.existsSync(ownerApiSecretFile) && window.nodeFs.readFileSync(ownerApiSecretFile, {encoding:'utf8', flag:'r'})) {
 
             this.ownerApiSecretPath = ownerApiSecretFile;
@@ -852,17 +851,18 @@ epicbox_domain = "${epicboxDomain}"
         //make some settings
         //load settings before change wallet toml
         this.config = this.loadConfig(this.configFile);
+
+        this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
+        if(!this.walletTOMLPath){
+          return 'toml';
+        }
+
         if(!this.configVersionOk()){
           return 'settings'
         }
         if(this.config['firstTime']){
           this.accountExist(account);
           return 'settings'
-        }
-
-        this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
-        if(!this.walletTOMLPath){
-          return 'toml';
         }
 
 

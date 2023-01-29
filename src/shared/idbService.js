@@ -164,6 +164,14 @@ const getDatabase = () => {
             nodeInternal:{
               default: false,
               dataType: DATA_TYPE.Boolean
+            },
+            ngrok_force_start:{
+              default: false,
+              dataType: DATA_TYPE.Boolean
+            },
+            epicbox_domain:{
+              notNull: true,
+              dataType: DATA_TYPE.String
             }
         }
     };
