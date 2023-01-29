@@ -253,7 +253,7 @@
         this.stopRefreshNgrok();
         let respNgrok = await this.$ngrokService.stopNgrok();
         if(respNgrok){
-          this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
+          //this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
           this.store.commit('ngrokService', false);
           this.store.commit('ngrokTunnels', {});
         }

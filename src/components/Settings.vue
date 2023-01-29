@@ -41,46 +41,66 @@
           </div>
 
           <div class="field">
-            <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
-              <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
-              <mdicon size="18" v-else name="menu-down" />
-              {{ $t("msg.settings.howto") }}
-            </a></label>
+            <div class="control">
+                <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedNgrokSettings" >
+                  <mdicon size="18" v-if="!advancedNgrokSettings" name="menu-right" />
+                  <mdicon size="18" v-else name="menu-down" />
+                  {{ $t('msg.custom_settings') }}
+                </a>
+              </div>
+          </div>
 
-            <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
-              <div class="card-content">
-                <div class="content">
+          <div class="card" v-bind:class="{'is-hidden':!advancedNgrokSettings}" >
+
+            <div class="card-content">
+               <div class="content">
+
                   <div class="field">
-                     <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
-                     <div class="control">
-                       <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-                     </div>
+                    <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
+                      <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
+                      <mdicon size="18" v-else name="menu-down" />
+                      {{ $t("msg.settings.howto") }}
+                    </a></label>
+
+                    <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+                      <div class="card-content">
+                        <div class="content">
+                          <div class="field">
+                             <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
+                             <div class="control">
+                               <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
+                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="control">
+                      <input
+                        class="input"
+                        type="ngrok"
+                        required
+                        v-model="ngrok" />
+                        <p class="help">
+                          {{ $t("msg.settings.authtoken_hint") }}
+                        </p>
+                    </div>
+
                   </div>
+
+                  <div class="field">
+                    <div class="control">
+                        <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
+                        <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
+                        <p class="help">
+                          {{ $t("msg.settings.ngrok_hint") }}
+                        </p>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
-            <div class="control">
-              <input
-                class="input"
-                type="ngrok"
-                required
-                v-model="ngrok" />
-                <p class="help">
-                  {{ $t("msg.settings.authtoken_hint") }}
-                </p>
-            </div>
 
-          </div>
-
-          <div class="field">
-            <div class="control">
-                <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
-                <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
-                <p class="help">
-                  {{ $t("msg.settings.ngrok_hint") }}
-                </p>
-            </div>
-          </div>
 
 
 
@@ -140,6 +160,7 @@ import { videoPlay } from "vue3-video-play";
       const ngrok_force_start = ref(false);
       const ngrok = ref('');
       const advancedSettings = ref(false);
+      const advancedNgrokSettings = ref(false);
       const playerOptions = reactive({
           // videojs options
           autoPlay: true,
@@ -165,6 +186,7 @@ import { videoPlay } from "vue3-video-play";
         ngrok_force_start,
         playerOptions,
         advancedSettings,
+        advancedNgrokSettings,
         onPlay
       }
     },
@@ -187,6 +209,13 @@ import { videoPlay } from "vue3-video-play";
 
         this.advancedSettings = !this.advancedSettings;
       },
+      toggleAdvancedNgrokSettings(){
+
+        this.advancedNgrokSettings = !this.advancedNgrokSettings;
+      },
+
+
+
       async save(){
 
         this.resetFormErrors();

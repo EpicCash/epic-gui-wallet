@@ -125,7 +125,7 @@ const messages = {
       <br/>
       How it works:<br/>
       Transactions are parked for 48 hours on the Epicbox server and delivered to the recipient as soon as they start their wallet.<br/>
-      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which the sender 'finalize' as soon as they are online.<br/>
+      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which the sender 'finalizes' as soon as they are online.<br/>
       If both wallets are online when a transaction is created, the process takes place immediately.<br/>
       <br/>
       *Please note that the relay server does not allow anonymous transactions, as your IP address<br/>
