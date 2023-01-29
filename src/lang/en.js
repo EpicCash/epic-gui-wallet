@@ -119,14 +119,19 @@ const messages = {
       epicbox_domain_hint: `Leave field blank if you don't want to use this service.`,
       noninteractive_transactions: `*What's Epic Address?<br/>
       <br/>
-      Epic address provides an easy way for parties to exchange transactions without both parties having to be online at the same time.<br/>
+      Your Epic address provides an easy way for your send  transactions to get to their destination wallet without that wallet needing to be online to receive.<br/>
       <br/>
-      For this purpose, there is an external service called "Epicbox" provided by our community at epicbox.epic.tech.<br/>
+      This is accomplished securely and privately using an external 'relay' server called "Epicbox" provided by our community at epicbox.epic.tech.<br/>
       <br/>
-      Transactions are parked encrypted on this server and delivered to the recipient as soon as they are online with their wallet. <br/>
+      How it works:<br/>
+      Transactions are parked for 48 hours on the Epicbox server and delivered to the recipient as soon as they start their wallet.<br/>
+      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which the sender 'finalize' as soon as they are online.<br/>
+      If both wallets are online when a transaction is created, the process takes place immediately.<br/>
+      <br/>
+      *Please note that the relay server does not allow anonymous transactions, as your IP address<br/>
+      and your Epic public key wallet address are used for exchange.<br/>
       Transactions are fully encrypted and can only be exchanged between the sender and receiver.<br/>
-      <br/>
-      *Please note that this service does not allow anonymous transactions, as your IP address and your public wallet address are used for exchange.<br/>
+      This supports a private transaction only between sender and receiver.<br/>
       <br/>
       `,
     },
