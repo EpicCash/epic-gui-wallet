@@ -268,7 +268,10 @@
       }
     },
 
-    mounted(){
+    async mounted(){
+
+      let user = await this.$userService.getUser(this.configService.configAccount);
+
       this.store.dispatch('toggleFullPage', true);
       this.store.commit('asideStateToggle', false);
       this.locale = this.configService.config['locale'];
@@ -276,6 +279,11 @@
       this.langs = this.configService.langs;
       this.epicboxDomain.input = this.configService.epicboxDomain;
 
+
+      if(user && user[0]){
+        this.textField.input = user[0].name ? user[0].name : '';
+        this.keybase = user[0].keybase ? user[0].keybase : '';
+      }
 
     },
     methods: {
