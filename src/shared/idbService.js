@@ -18,7 +18,7 @@ export const dbname = 'Epicwallet';
 const getDatabase = () => {
     const tblAddressbook = {
         name: 'Addressbook',
-        version:4,
+
         columns: {
             id: {
                 primaryKey: true,
@@ -85,7 +85,7 @@ const getDatabase = () => {
     };
     const tblAddressTransaction = {
         name: 'AddressTransactions',
-        version: 3,
+
         columns: {
             id: {
                 primaryKey: true,
@@ -112,13 +112,21 @@ const getDatabase = () => {
     };
     const tblUser = {
         name: 'User',
-        version: 3,
+
         alter:{
-          3: {
+          4: {
             add:{
                ngrok_force_start:{
                  default: false,
                  dataType: DATA_TYPE.Boolean
+               }
+            },
+          },
+          5: {
+            add:{
+               epicbox_domain:{
+                 notNull: true,
+                 dataType: DATA_TYPE.String
                }
             },
           }
@@ -161,7 +169,7 @@ const getDatabase = () => {
     };
     const dataBase = {
         name: dbname,
-        version: 4,
+        version: 5,
         tables: [tblAddressbook, tblAddressTransaction, tblUser],
     };
     return dataBase;

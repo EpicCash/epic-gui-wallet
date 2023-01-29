@@ -20,6 +20,19 @@
           </div>
 
           <div class="field">
+            <label class="label">{{ $t("msg.settings.epicbox_domain") }}</label>
+            <div class="control">
+
+                <input
+                  class="input"
+                  type="epicbox"
+                  required
+                  v-model="epicboxDomain" />
+              <p class="help">{{ $t("msg.settings.epicbox_domain_hint") }}</p>
+            </div>
+          </div>
+
+          <div class="field">
             <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
             <div class="control">
                 <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
@@ -120,6 +133,7 @@ import { videoPlay } from "vue3-video-play";
       const nodeserverField = ref('');
       const store = useStore();
       const localeSelected = ref('en');
+      const epicboxDomain = ref('');
       const langs = ref([]);
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
@@ -143,6 +157,7 @@ import { videoPlay } from "vue3-video-play";
         nodeserverField,
         resetFormErrors,
         localeSelected,
+        epicboxDomain,
         langs,
         check_node_api_http_addr,
         walletlisten_on_startup,
@@ -159,6 +174,7 @@ import { videoPlay } from "vue3-video-play";
       this.nodeserverField.select = !this.store.state.user.nodeInternal ? 'external' : 'internal';
 
       this.localeSelected = this.configService.config['locale'];
+      this.epicboxDomain = this.configService.config['epicbox_domain'];
       this.langs = this.configService.langs;
       this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
       this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
@@ -185,16 +201,17 @@ import { videoPlay } from "vue3-video-play";
 
             check_node_api_http_addr: this.nodeserverField.defaultValue,
             locale: this.localeSelected,
-            walletlisten_on_startup: this.walletlisten_on_startup
+            walletlisten_on_startup: this.walletlisten_on_startup,
+            epicbox_domain: this.epicboxDomain,
 
           });
           this.configService.checkTomlFile();
 
           let updated = 0;
           if(this.nodeserverField.select == 'external'){
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, epicbox_domain: this.epicboxDomain});
           }else{
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, epicbox_domain: this.epicboxDomain});
           }
 
           /*todo simple node restart user update wallet restart here*/

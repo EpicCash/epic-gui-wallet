@@ -340,6 +340,38 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
 
+    /* start wallet epicbox */
+    async execEpicbox(cmd, args, platform, password){
+
+      return new Promise(function(resolve, reject) {
+
+          let listenProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+          listenProcess.stdout.setEncoding('utf8');
+          listenProcess.stdout.on('data', (data) => {
+
+              debug ? console.log('execEpicbox.stdout', data) : null;
+              if(data.includes('Password:')){
+                listenProcess.stdin.write(password+"\n");
+              }
+
+
+              if(data.includes('Epicbox listener started.')){
+
+                resolve({success: true, msg: listenProcess.pid});
+              }
+
+          });
+
+          listenProcess.stderr.setEncoding('utf8');
+          listenProcess.stderr.on('data', (data) => {
+              debug ? console.log('execEpicbox.stderr', data) : null;
+
+              resolve({success: false, msg: data});
+          })
+
+      });
+    },
+
     async execRecover(cmd, args, platform, seeds, password){
 
       return new Promise(function(resolve, reject) {

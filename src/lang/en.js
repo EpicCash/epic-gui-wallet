@@ -96,7 +96,7 @@ const messages = {
       <br/>
       If you are not sure which one to use, then leave the settings as they are.<br/>`,
       previous_step: 'Previous step',
-      receive_transactions: 'Receiving transactions',
+      receive_transactions: 'NEW Feature* Epic Address',
       receive_transactions_txt: `To receive transactions from other wallets, your wallet must be accessible over the Internet.<br/>
       <br/>
       If you are not familiar with router settings and port forwarding, we recommend using the ngrok service.<br/>
@@ -113,7 +113,22 @@ const messages = {
       language: 'Language',
       ngrok_authtoken: 'ngrok Auth-Token',
       db_fatal: 'DB Fatal: can not insert DB',
-      errors_save: 'Error saving user settings: {0}'
+      errors_save: 'Error saving user settings: {0}',
+      epicbox_domain: 'Epicbox Web Address',
+      epicbox_off: 'turned off',
+      epicbox_domain_hint: `Leave field blank if you don't want to use this service.`,
+      noninteractive_transactions: `*What's Epic Address?<br/>
+      <br/>
+      Epic address provides an easy way for parties to exchange transactions without both parties having to be online at the same time.<br/>
+      <br/>
+      For this purpose, there is an external service called "Epicbox" provided by our community at epicbox.epic.tech.<br/>
+      <br/>
+      Transactions are parked encrypted on this server and delivered to the recipient as soon as they are online with their wallet. <br/>
+      Transactions are fully encrypted and can only be exchanged between the sender and receiver.<br/>
+      <br/>
+      *Please note that this service does not allow anonymous transactions, as your IP address and your public wallet address are used for exchange.<br/>
+      <br/>
+      `,
     },
     transaction:{
       received: 'Received',
@@ -186,7 +201,9 @@ const messages = {
       listener_started: 'Wallet listener started',
       error_listener_started: 'Error starting wallet listener',
       tor_started: 'Tor started',
-      error_tor_started: 'Tor not started'
+      error_tor_started: 'Tor not started',
+      epicbox_started: 'Epicbox started',
+      error_epicbox_started: 'Error starting Epicbox',
     },
     seed:{
       errorGetMnemonic: 'Error getting Mnemonic. Is password correct?',
@@ -309,9 +326,12 @@ const messages = {
       session_end: 'You are using ngrok without an account. Your session will end in {0} hour, {1} minutes',
       tor_onion_address: 'Tor onion Address',
       proof_address: 'Proof Address',
+      epicbox_address: 'Your public Epic address',
       your_qrcode: 'Your QRcode for your "{0}" address',
       click_qrcode_icon: 'Click the qr code icon',
       tor_not_available: 'Tor not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
       check_port_open_done: 'Recheck done!',
       listener_stopped: 'Wallet listener stopped',
     },
@@ -337,7 +357,7 @@ const messages = {
       node_api_addr_hint: 'where the wallet should find a running node',
       network: 'Network',
       wallet_listener: 'Wallet listener',
-      auto_start: 'automatically start wallet listener after login',
+      auto_start: 'automatically start wallet listener and Epicbox after login',
       authtoken: 'Your ngrok Authtoken',
       ngrok_force_start: 'use ngrok without Authtoken',
       ngrok_hint: 'The ngrok address is active for 2 hours then gets renewed.',
@@ -345,12 +365,15 @@ const messages = {
       authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
       howto: 'How to get your Authtoken from ngrok',
       settings_saved: 'Settings saved',
-      error_save: 'Error saving settings'
+      error_save: 'Error saving settings',
+      epicbox_domain: 'Epicbox Domain',
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
     },
     validators:{
       empty: 'The {0} field is required',
       equal: 'The {0} must be equal',
       http_address: 'No valid HTTP(S) Address',
+      epicbox_address: 'No valid Epicbox Address',
       min_length: 'The {0} field must be at least {1} characters long',
       only_letters: 'The {0} can have only lower letters from a-z with no spaces',
       number: 'The {0} field must be a number',

@@ -4,7 +4,7 @@ import useValidators from '@/modules/Validators';
 const errors = reactive({});
 
 
-const { isEmpty, isEqual, minLength, accountExist, isNumber, isSpendable, onlyLetter, isDirEmpty, isHttpAddress } = useValidators();
+const { isEmpty, isEqual, minLength, accountExist, isNumber, isSpendable, onlyLetter, isDirEmpty, isHttpAddress, isEpicboxAddress } = useValidators();
 
 export default function useFormValidation() {
 
@@ -72,6 +72,8 @@ export default function useFormValidation() {
         let message = null;
         if(fieldValue.includes('http') || fieldValue.includes('https') || forceHttp){
           message = !fieldValue ? isEmpty(fieldName, fieldValue) : isHttpAddress(fieldName, fieldValue);
+        }else if(fieldValue.includes('@') || fieldValue.startsWith('es') || fieldValue.startsWith('epicbox')) { 
+          message = !fieldValue ? isEmpty(fieldName, fieldValue) : isEpicboxAddress(fieldName, fieldValue);
         }else{
           message = isEmpty(fieldName, fieldValue);
         }

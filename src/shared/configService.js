@@ -12,7 +12,7 @@ class ConfigService {
   constructor(emitter) {
       this.emitter = emitter;
       this.configAccount = '';
-      this.configVersion = "4.0.1";
+      this.configVersion = "5.0.0";
       this.debug = window.debug;
 
       //where to find accounts and wallet data
@@ -62,6 +62,8 @@ class ConfigService {
 
       this.ngrokApiAddress = 'http://127.0.0.1:4040';
       this.nodeFallBack = 'https://fastepic.eu:3413';
+      this.epicboxDomain = 'epicbox.epic.tech';
+
 
       //this should never fail or app is not working
       let epicDir = path.join(defaultAppConfigDir, '.epic');
@@ -154,6 +156,7 @@ class ConfigService {
         if(tomlContent.search(re5) != -1){
             tomlContent = tomlContent.replace(re5, 'run_tui = false');
         }
+
 
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -274,7 +277,6 @@ class ConfigService {
 
         const re3 = /^check_node_api_http_addr(\s)*=(\s).*/gm;
 
-
         let nodeApiHttp = '';
         if(!this.config.nodesynced){
           nodeApiHttp = this.nodeFallBack;
@@ -330,6 +332,31 @@ class ConfigService {
           }else{
             tomlContent = tomlContent.replace(re8, 'log_file_path = "' + walletTOMLLogfilePath + '"');
           }
+        }
+
+        const re9 = /^epicbox_domain(\s)*=(\s).*/gm;
+        let epicboxDomain = '';
+        if(!this.config.epicbox_domain){
+          epicboxDomain = this.epicboxDomain;
+        }else{
+          epicboxDomain = this.config.epicbox_domain;
+        }
+
+        if(tomlContent.search(re9) != -1){
+          tomlContent = tomlContent.replace(re9, 'epicbox_domain = "' + epicboxDomain + '"');
+        }else{
+//do not add space in this block!!!
+///this updates older toml file format to work with epicbox
+            tomlContent += `
+
+#########################################
+### EPICBOX CONFIGURATION ###
+#########################################
+[epicbox]
+epicbox_domain = "${epicboxDomain}"
+
+`;
+//do not add space in this block!!!
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -822,12 +849,8 @@ class ConfigService {
         }
         //await delay(sleepTime);
 
-        this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
-        if(!this.walletTOMLPath){
-          return 'toml';
-        }
-
         //make some settings
+        //load settings before change wallet toml
         this.config = this.loadConfig(this.configFile);
         if(!this.configVersionOk()){
           return 'settings'
@@ -836,6 +859,13 @@ class ConfigService {
           this.accountExist(account);
           return 'settings'
         }
+
+        this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
+        if(!this.walletTOMLPath){
+          return 'toml';
+        }
+
+
 
       }
 

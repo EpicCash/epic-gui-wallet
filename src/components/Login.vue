@@ -4,7 +4,7 @@
       <div class="container">
         <div class="columns is-centered">
           <div class="column is-two-fifths">
-            <div class="card has-card-header-background">
+            <div class="card has-card-header-background" style="min-width:380px;">
               <header class="card-header" style="justify-content: center;">
                 <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
               </header>
@@ -125,6 +125,18 @@ export default {
 
             const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
 
+            
+            if(this.configService.config['epicbox_domain'] != undefined && this.configService.config['epicbox_domain'] != '' ){
+              const isEpicbox = await this.$walletService.startEpicbox(this.passwordField.defaultValue);
+              if(isEpicbox && isEpicbox.success){
+                this.$toast.success(this.$t("msg.login.epicbox_started"));
+                this.store.commit('walletEpicboxService', true);
+              }else{
+                this.$toast.error(this.$t("msg.login.error_epicbox_started"));
+                this.store.commit('walletEpicboxService', false);
+              }
+            }
+
             if(isListen && isListen.success){
               this.$toast.success(this.$t("msg.login.listener_started"));
               this.store.commit('walletListenerService', true);
@@ -140,6 +152,11 @@ export default {
               this.$toast.error(this.$t("msg.login.error_tor_started"));
               this.store.commit('torService', false);
             }
+
+
+
+
+
           }
 
           //load account else wizard

@@ -22,6 +22,7 @@ class WalletService {
         this.configService = configService;
         this.walletProcess = false;
         this.walletIsListen = false;
+        this.walletIsEpicbox = false;
         this.shared_key;
         this.token;
         this.debug = window.debug;
@@ -32,6 +33,7 @@ class WalletService {
       this.shared_key = undefined;
       this.token = undefined;
       this.walletIsListen = false;
+      this.walletIsEpicbox = false;
     }
     async initSecure(url) {
 
@@ -280,6 +282,16 @@ class WalletService {
         }, false);
     }
 
+    async getEpicboxAddress(){
+
+      return this.jsonRPC(
+        'get_public_address',
+        {
+          "token": this.token,
+          "derivation_index": 0
+        }, false);
+    }
+
     async getProofAddressFromOnionV3(address_v3){
       return this.jsonRPC(
         'proof_address_from_onion_v3',
@@ -352,6 +364,50 @@ class WalletService {
         }
 
         return {success:false, msg:'wallet start unknown error'};
+    }
+
+    /* start a epic wallet in listen mode */
+    async startEpicbox(password){
+
+
+        let args = [];
+        let torBooted = false;
+        let walletIsEpicbox = [];
+        let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
+
+        for(let process of pWalletList) {
+          if(process.cmd.includes('epicbox')){
+            walletIsEpicbox.push(process);
+          }
+        }
+
+        if(!walletIsEpicbox.length){
+
+
+          let walletListenId = 0;
+
+          let args = [
+            ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
+            //'--pass', password,
+            '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            'listen',
+            '--method',
+            'epicbox',
+            '--no_tor'
+          ];
+
+          walletListenId = await window.nodeChildProcess.execEpicbox(this.configService.epicPath, args, this.configService.platform, password);
+
+          if(walletListenId && walletListenId.msg > 0){
+              this.walletIsEpicbox = true;
+
+          }else{
+            return {success:false};
+          }
+        }
+
+        return {success:true};
     }
 
     /* start a epic wallet in listen mode */

@@ -46,6 +46,7 @@ export const store = createStore({
 
     /* which service are running */
     walletListenerService: false,
+    walletEpicboxService: false,
     torService: false,
     ngrokService: false,
     ngrokTunnels: {},
@@ -79,7 +80,9 @@ export const store = createStore({
     basic (state, payload) {
       state[payload.key] = payload.value
     },
-
+    walletEpicboxService(state, payload){
+      state.walletEpicboxService = payload;
+    },
     walletListenerService(state, payload){
       state.walletListenerService = payload;
       state.torService = payload;

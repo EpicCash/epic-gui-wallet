@@ -11,11 +11,22 @@
             <div class="message-header"><p>{{ $t("msg.httpReceive.listening") }}</p></div>
             <div class="message-body">
 
+              <p v-if="store.state.walletEpicboxService">
+                {{ $t("msg.httpReceive.epicbox_address") }}:<br/>
+                <code>{{ epicboxAddress }}</code>&nbsp;<mdicon @click="copy(epicboxAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(epicboxAddress, 'epicbox')" name="qrcode-scan" size=16 />
+              </p>
+              <p v-else>
+                {{ $t("msg.httpReceive.epicbox_address") }}:<br/>
+
+                <code v-if="this.store.state.user.epicbox_domain != ''">{{ $t("msg.httpReceive.epicbox_not_available") }}</code>
+                <code v-else>{{ $t("msg.httpReceive.epicbox_off") }}</code>
+
+              </p>
+              <p>&nbsp;</p>
+
               <p v-if="store.state.ngrokService">
                 {{ $t("msg.httpReceive.current_ngrok_address") }}:<br/>
                 <code>{{ ngrokAddress }}</code>&nbsp;<mdicon class="is-clickable" @click="copy(ngrokAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(ngrokAddress, 'ngrok')" name="qrcode-scan" size=16 />
-
-
               </p>
               <p v-if="store.state.user.ngrok_force_start" class="help">{{ $t("msg.httpReceive.session_end", store.state.ngrokTunnelLifetime) }}</p>
 
@@ -49,6 +60,8 @@
               <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(proofAddress, 'proof')" name="qrcode-scan" size=16 />
             </div>
           </div>
+
+
 
         </div>
         <div class="column">
@@ -142,6 +155,7 @@ export default {
 
     const localAddress = ref('');
     const onionAddress = ref('');
+    const epicboxAddress = ref('');
     const ngrokAddress = ref('');
     const proofAddress = ref('');
     const passwordField = ref('');
@@ -157,6 +171,7 @@ export default {
       localAddress,
 
       onionAddress,
+      epicboxAddress,
       ngrokAddress,
       proofAddress,
       passwordField,
@@ -177,6 +192,9 @@ export default {
     this.portIsForwarded = await window.config.isPortReachable(this.publicIp.ip, this.configService.walletListenerPort);
 
     this.onionAddress = await this.getOnionAndProofAddress();
+    this.epicboxAddress = await this.getEpicboxAddress();
+
+
     if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
       this.ngrokAddress = await this.getNgrokAddress();
     }
@@ -204,11 +222,21 @@ export default {
 
       })
     },
+    async getEpicboxAddress(){
+      let epicboxAddress = await this.$walletService.getEpicboxAddress();
+      if(epicboxAddress && epicboxAddress.result && epicboxAddress.result.Ok){
+        return this.epicboxAddress = epicboxAddress.result.Ok.public_key + '@' + (this.configService.config['epicbox_domain'] != '' ? this.configService.config['epicbox_domain'] : this.configService.epicboxDomain);
+      }
+      return '';
+
+    },
     async getNgrokAddress(){
-      return this.$ngrokService.getAddress()
+      return this.$ngrokService.getAddress();
     },
     async getOnionAndProofAddress(){
       let addressRes = await this.$walletService.getPubliProofAddress();
+
+
 
       if(addressRes && addressRes.result && addressRes.result.Ok){
 
@@ -240,6 +268,7 @@ export default {
 
         this.isLoading = true;
         const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
+        const isEpicbox = await this.$walletService.startEpicbox(this.passwordField.defaultValue);
         this.isLoading = false;
         if(isListen && isListen.success){
 
@@ -260,6 +289,15 @@ export default {
         }else{
           this.$toast.error(this.$t("msg.login.error_tor_started"));
           this.store.commit('torService', false);
+        }
+
+        if(isEpicbox && isEpicbox.success){
+          this.epicboxAddress = await this.getEpicboxAddress();
+          this.$toast.success(this.$t("msg.login.epicbox_started"));
+          this.store.commit('walletEpicboxService', true);
+        }else{
+          this.$toast.error(this.$t("msg.login.error_epicbox_started"));
+          this.store.commit('walletEpicboxService', false);
         }
 
       }
