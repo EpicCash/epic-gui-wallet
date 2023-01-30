@@ -1,9 +1,9 @@
 {
   "name": "EpicWallet",
-  "version": "4.0.6-beta",
+  "version": "5.0.0-beta",
   "private": true,
   "description": "Epic Wallet, mind your Epic!",
-  "author": "v3,v4: Johannes Hahn <j.hahn@eccence.digital>, v1: xiaojay, simpleduck, aiwe",
+  "author": "Johannes Hahn <j.hahn@eccence.digital>, v1: xiaojay, simpleduck, aiwe",
   "license": "Apache-2.0",
   "homepage": "./",
   "scripts": {
