@@ -84,3 +84,6 @@ $aside-width: $size-base * 16;
     transform: translateX(-2.2rem);
   }
 }
+.aside ul.menu-list a{
+  display:flex;
+}

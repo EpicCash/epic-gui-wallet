@@ -24,20 +24,20 @@
                       <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
                     </div>
                   </div>
-                  <hr>
-                  <div class="field is-grouped" style="justify-content: center;">
-                    <div class="control">
+
+                  <div class="field is-grouped" style="justify-content: center;display: flex;flex-wrap: wrap;flex-direction: row;">
+                    <div class="control" style="margin-top:12px;">
                       <button type="submit" class="button is-primary" :class="{ 'button__loader': isLoading }" @click.prevent="login">
                         <span class="button__text">{{ $t("msg.login_") }}</span>
                       </button>
                     </div>
-                    <div class="control">
-                      <router-link class="button is-outlined is-primary" to="/create">
+                    <div class="control" style="margin-top:12px;">
+                      <router-link class="button is-outlined" to="/create">
                         {{ $t("msg.new.create") }}
                       </router-link>
                     </div>
-                    <div class="control">
-                      <router-link class="button is-outlined is-primary" to="/restore">
+                    <div class="control" style="margin-top:12px;">
+                      <router-link class="button is-outlined" to="/restore">
                         {{ $t("msg.restore.recover") }}
                       </router-link>
                     </div>
@@ -125,7 +125,7 @@ export default {
 
             const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
 
-            
+
             if(this.configService.config['epicbox_domain'] != undefined && this.configService.config['epicbox_domain'] != '' ){
               const isEpicbox = await this.$walletService.startEpicbox(this.passwordField.defaultValue);
               if(isEpicbox && isEpicbox.success){

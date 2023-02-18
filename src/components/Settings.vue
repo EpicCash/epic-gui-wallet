@@ -253,6 +253,9 @@ import { videoPlay } from "vue3-video-play";
             }else{
               this.emitter.emit('app.ngrokStop');
             }
+
+            this.emitter.emit('app.selectLocale', this.localeSelected);
+
           }else{
             this.$toast.error(this.$t("msg.settings.error_save"));
           }

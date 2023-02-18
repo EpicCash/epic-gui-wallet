@@ -56,6 +56,8 @@
     },
     async mounted(){
       this.version = await window.api.version();
+      
+    //  console.log(this.configService);
     },
     methods: {
       open (link) {

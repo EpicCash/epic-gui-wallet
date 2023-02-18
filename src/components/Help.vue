@@ -15,7 +15,7 @@
 
     <div class="columns is-multiline">
 
-      <template v-for="(topic, index) in help" :key="index"  >
+      <template v-for="(topic, index) in helpContent" :key="index"  >
 
         <div class="column is-half">
           <article class="message is-dark">
@@ -40,12 +40,12 @@
 </template>
 <script>
 
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useStore } from '@/store';
 import { useHelp } from '@/help/help';
 
 
-  export default {
+export default {
     name: "help",
     setup(){
 
@@ -54,47 +54,45 @@ import { useHelp } from '@/help/help';
       const searchableText = ref([]);
       const keyword =  ref("");
       const searched = ref(false);
-      const help = useHelp('en');
-      onMounted(() => {
-
-
-       let containerElements = document.querySelectorAll('.message-body');
-       for(let el of containerElements){
-         elements.value.push(el);
-       }
-
-       let textElements = document.querySelectorAll('.message-body-content, .message-header > p');
-       searchableText.value = [];
-       for(let el of textElements){
-
-         searchableText.value.push({el:el, text:el.textContent, origin: null});
-       }
-
-      });
-
+      const helpContent = ref([]);
 
       return{
-        help,
+        helpContent,
         store,
         elements,
         searchableText,
         keyword,
         searched,
-
-
       }
     },
-    async created(){
-
-      this.help = useHelp(await window.api.locale());
-      //console.log('help', this.help, await window.api.locale());
+    created(){
 
     },
+    async mounted(){
 
+      this.helpContent = this.configService.config && this.configService.config.locale ? useHelp(this.configService.config.locale) : useHelp('en');
+      await nextTick();
+
+      let containerElements = document.querySelectorAll('.message-body');
+
+      for(let el of containerElements){
+        this.elements.push(el);
+      }
+
+
+      let textElements = document.querySelectorAll('.message-body-content, .message-header > p');
+      this.searchableText.value = [];
+      for(let el of textElements){
+
+        this.searchableText.push({el:el, text:el.textContent, origin: null});
+      }
+
+    },
 
     methods: {
 
       search(){
+
         this.clearup(true);
         let keyword = this.keyword;
 

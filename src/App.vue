@@ -83,7 +83,9 @@
     },
 
 
-    created() {
+    async created() {
+
+      this.locale = await window.api.locale();
 
       window.nodeChildProcess.on('firstscan-stdout', (payload) => {
 
@@ -179,6 +181,11 @@
 
       this.emitter.on('app.accountLoggedIn', async () => {
 
+        //load user selected locale
+        this.locale = this.configService.config && this.configService.config.locale ? this.configService.config.locale : 'en';
+
+
+
         window.debug ? console.log('accountLoggedIn') : null;
 
         this.loggedIn = true;
@@ -187,6 +194,9 @@
         this.$router.push('/dashboard');
         this.emitter.emit('app.nodeStart');
         this.emitter.emit('app.ngrokStart');
+
+
+
 
         //always at the very end
         this.emitter.emit('app.update');
@@ -203,6 +213,7 @@
     },
 
     async mounted() {
+
 
       //App main window min size
       window.api.resize(1024, 768);

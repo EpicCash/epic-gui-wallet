@@ -1,9 +1,11 @@
 import en from './help_en';
-//import zh from './help/zh';
-//import ru from './help/ru';
+import de from './help_de';
+import fa from './help_fa';
 
 export const help = {
   en: en,
+  de: de,
+  fa: fa,
 };
 
 export function useHelp(language) {
