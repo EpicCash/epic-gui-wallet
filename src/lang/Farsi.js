@@ -95,7 +95,7 @@ const messages = {
       setup_assistant: 'دستیار_تنظیم',
       account_information: 'اطلاعات حساب',
       your_name:'نام شما',
-      name_only_internal: 'نام فقط در داخل کیف شمااستفاده می شود',
+      name_only_internal: 'نام فقط در داخل کیف شما استفاده می شود',
       keybase: 'Keybase',
       enter_keybase: 'اگر یک حساب اپلیکیشنِ چتِ کیبیس دارید، می توانید آن را در اینجا وارد کنید.',
       next_step: 'مرحله بعد',
