@@ -198,7 +198,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     /* start wallet api */
     async execNode(cmd, args, platform){
-
+      
       return new Promise(function(resolve, reject) {
 
 
@@ -355,7 +355,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               }
 
 
-              if(data.includes('Epicbox listener started.')){
+              if(data.includes('Starting epicbox listener') || data.includes('Epicbox listener started.')){
 
                 resolve({success: true, msg: listenProcess.pid});
               }
@@ -592,6 +592,20 @@ contextBridge.exposeInMainWorld('openlink', {
       shell.openExternal(url);
   }
 });
+
+contextBridge.exposeInMainWorld('openepichidden', {
+
+  open(user_homedir = ''){
+      let dir = path.join(homedir, ".epic");
+      if(user_homedir != ''){
+        dir = user_homedir;
+      }
+      shell.openPath(dir)
+  }
+});
+
+
+
 
 // Adds an object 'api' to the global window object:
 contextBridge.exposeInMainWorld('api', {

@@ -23,7 +23,7 @@
       const { validateDirField, errors } = useFormValidation();
 
       const validInput = (configService) => {
-        defaultValue.value = selectedDir.value == '' ? configService.defaultAccountWalletdir : selectedDir.value  ;
+        defaultValue.value = selectedDir.value == '' ? configService.defaultAccountWalletdir : selectedDir.value;
         return validateDirField("walletdir", defaultValue.value, configService);
       };
 

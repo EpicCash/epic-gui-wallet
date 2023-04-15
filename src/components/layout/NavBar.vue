@@ -46,7 +46,7 @@
 
               <router-link class="navbar-item" to="/account">
                 <span class="icon"><mdicon name="account" /></span>
-                <span>{{ $t("msg.menu.account") }}</span>
+                <span>{{ $t("msg.menu.account") }} ({{accountName}})</span>
               </router-link>
               <router-link class="navbar-item" to="/settings">
                 <span class="icon"><mdicon name="settings" /></span>
@@ -65,6 +65,12 @@
                 <span>{{ $t("msg.menu.run_setup") }}</span>
               </router-link>
 
+              <a  @click="openepichidden" class="navbar-item">
+                <span class="button__text">
+                  <span class="icon"><mdicon name="folder-question" /></span>
+                  <span>{{ $t("msg.menu.openepichidden") }}</span>
+                </span>
+              </a>
               <hr class="navbar-divider">
               <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">
                 <span class="button__text">
@@ -142,6 +148,7 @@ export default {
 
     const router = useRouter()
     const isLoading = ref(false);
+    const accountName = ref('default');
 
     router.afterEach(() => {
       isMenuNavBarActive.value = false
@@ -181,9 +188,15 @@ export default {
       isLoading,
     }
   },
+  async created() {
+
+    this.accountName = this.configService.configAccount;
+  },
 
   methods: {
-
+    async openepichidden(){
+     await window.openepichidden.open(this.configService.defaultAccountWalletdir);
+    },
     async logout(){
       this.isLoading = true;
       this.emitter.emit('app.logout')

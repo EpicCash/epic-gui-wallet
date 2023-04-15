@@ -17,7 +17,10 @@ const messages = {
     unconfirmed: 'Awaiting confirmation',
     locked: 'Locked',
     send: 'Send',
-    cancel:'Cancel',
+    cancel: 'Cancel',
+    ok: 'Ok',
+    confirm: 'Confirm',
+    confirm_action: 'Confirm action',
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
@@ -39,7 +42,9 @@ const messages = {
     page_of: 'Page {0} of {1}',
     only_letter: 'Only lower case letters from a-z,',
     custom_settings: 'Custom settings',
+    advanced_settings: 'Advanced Settings',
     step_of: 'Step {0}/{1}',
+    close_all_process: 'Terminate all processes',
 
     menu:{
       general: 'General',
@@ -53,12 +58,13 @@ const messages = {
       about: 'About',
       help: 'Help',
       logout: 'Log out',
-      account: 'Account',
+      account: 'Profile',
       settings: 'Settings',
       recheck: 'Recheck Balance',
       mnemonic: 'Mnemonic Words',
       run_setup: 'Run Setup Assistant',
-      updates: 'Updates'
+      updates: 'Updates',
+      openepichidden: 'Epic wallet location',
     },
     headerbar: {
       howdy: 'Howdy,',
@@ -67,7 +73,8 @@ const messages = {
       status: 'Status',
       node: 'Node',
       sync_height: 'Sync Height',
-      block_height: 'Blockchain Height'
+      block_height: 'Blockchain Height',
+      node_sync_status: 'Internal node sync status',
     },
     dashboard:{
       transactions: 'Transactions',
@@ -117,21 +124,20 @@ const messages = {
       epicbox_domain: 'Epicbox Web Address',
       epicbox_off: 'turned off',
       epicbox_domain_hint: `Leave field blank if you don't want to use this service.`,
-      noninteractive_transactions: `*What's Epic Address?<br/>
+      noninteractive_transactions: `Intro to EPIC Addresses<br/>
       <br/>
-      Your Epic address provides an easy way for your send  transactions to get to their destination wallet without that wallet needing to be online to receive.<br/>
+      EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
       <br/>
-      This is accomplished securely and privately using an external 'relay' server called "Epicbox" provided by our community at epicbox.epic.tech.<br/>
+      This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
+      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
       <br/>
       How it works:<br/>
-      Transactions are parked for 48 hours on the Epicbox server and delivered to the recipient as soon as they start their wallet.<br/>
-      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which the sender 'finalizes' as soon as they are online.<br/>
-      If both wallets are online when a transaction is created, the process takes place immediately.<br/>
+      Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
+      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which 'finalizes' the transaction if the sender is online.<br/>
+      <br/>If both wallets are online when a transaction is created, the process takes place immediately.<br/>
       <br/>
-      *Please note that the relay server does not allow anonymous transactions, as your IP address<br/>
-      and your Epic public key wallet address are used for exchange.<br/>
-      Transactions are fully encrypted and can only be exchanged between the sender and receiver.<br/>
-      This supports a private transaction only between sender and receiver.<br/>
+      This system does not anonymize your IP and a VPN is recommended for IP address privacy.<br/>
+      <br/>Transactions are fully encrypted which assures a private transaction exchanged between the sender and receiver.<br/>
       <br/>
       `,
     },
@@ -175,11 +181,11 @@ const messages = {
       copy: 'Commit copied'
     },
     account: {
-      account: 'Account',
+      account: 'Profile',
       keybase: 'Keybase',
       your_name: 'Your name',
-      settings_saved: 'Account settings saved',
-      error_save: 'Error saving account'
+      settings_saved: 'Profile settings saved',
+      error_save: 'Error saving profile settings'
     },
     addressbook:{
       naem: 'Name',
@@ -187,8 +193,8 @@ const messages = {
       city: 'City',
       tor_onion_address: 'Tor-Onion Address',
       keybase_account: 'Keybase Account',
-      external_one: 'External Address 1',
-      external_two: 'External Address 2',
+      external_one: 'Epicbox Address',
+      external_two: 'External Address',
       proof_address: 'Proof Address',
       notice: 'Notice',
       send_always: 'send always proof',
@@ -258,7 +264,8 @@ const messages = {
       node_offline: 'Node is offline',
       external_node_online: 'External Node is online',
       external_node_offline: 'External Node is offline',
-      background_process: 'We found some running wallet and node processes in the background. Please close them first before you run this App.',
+      background_process: 'Please close all processes before continuing.',
+
     },
     info: {
       spendable: 'Spendable',
@@ -373,6 +380,9 @@ const messages = {
       error_save: 'Error saving settings',
       epicbox_domain: 'Epicbox Domain',
       epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
+
+      node_background: 'sync in background',
+      node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.'
     },
     validators:{
       empty: 'The {0} field is required',

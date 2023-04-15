@@ -31,7 +31,7 @@
 
       const validInput = () => {
 
-        defaultValue.value = input.value;
+        defaultValue.value = input.value.trim();
         return validateAddressField("address", defaultValue.value);
       };
 

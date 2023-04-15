@@ -16,6 +16,8 @@
 
   />
 
+  <modal-kill-box/>
+
   <modal-firstsync-box
     :is-active="isFirstscanModalActive"
     @confirm="firstscanConfirm"
@@ -35,7 +37,7 @@
   import AsideRight from '@/components/layout/AsideRight.vue'
   import ModalNodeBox from '@/components/layout/NodesyncedModalBox.vue'
   import ModalFirstsyncBox from '@/components/layout/FirstsyncModalBox.vue'
-
+  import ModalKillBox from '@/components/layout/KillProcessModalBox.vue'
   //app components
   export default {
     name: 'Epic GUI Wallet',
@@ -43,7 +45,8 @@
     components: {
       AsideRight,
       ModalNodeBox,
-      ModalFirstsyncBox
+      ModalFirstsyncBox,
+      ModalKillBox
     },
 
     setup() {
@@ -135,8 +138,6 @@
          await this.ngrokStop();
       });
 
-
-
       this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
       })
@@ -163,12 +164,14 @@
           locked: 0,
         });
 
-
-
         await this.$walletService.stopListen();
         await this.$walletService.stopWallet();
         await this.$ngrokService.stopNgrok();
-        await this.$nodeService.stopNode();
+
+        if(this.configService.config && this.configService.config.node_background == false)
+          await this.$nodeService.stopNode();
+
+
         this.$walletService.logoutClient();
         this.loggedIn = false;
         this.configService.resetConfig();
@@ -184,8 +187,6 @@
         //load user selected locale
         this.locale = this.configService.config && this.configService.config.locale ? this.configService.config.locale : 'en';
 
-
-
         window.debug ? console.log('accountLoggedIn') : null;
 
         this.loggedIn = true;
@@ -195,20 +196,11 @@
         this.emitter.emit('app.nodeStart');
         this.emitter.emit('app.ngrokStart');
 
-
-
-
         //always at the very end
         this.emitter.emit('app.update');
 
       });
 
-      this.emitter.on('killEpicProcess', async (callback) => {
-        //todo replace with customized dialog/prompt
-        let msg = this.$t("msg.app.background_process");
-        const confirmed = await confirm(msg);
-        callback(confirmed);
-      });
 
     },
 
@@ -217,8 +209,7 @@
 
       //App main window min size
       window.api.resize(1024, 768);
-      //App has started - first close running wallet and node server process
-      await this.configService.killEpicProcess();
+
 
       if(this.configService.appHasAccounts()){
         //upgrade wallet 3.0 paths to 4.0 paths
@@ -227,6 +218,7 @@
           console.log('checking accounts folder structure has issues');
 
         }else{
+
           //continue to login page
           this.$router.push('/login');
         }
@@ -308,7 +300,12 @@
         //start internal server only if its setup else just check if external node is running
         if(this.store.state.user.nodeInternal){
 
+
           this.store.commit('nodeType', 'internal');
+
+
+
+
           if(!this.configService.startCheckNode()){
             this.$toast.error(this.$t("msg.app.error_setup_internal_node"));
           }else{

@@ -377,6 +377,7 @@
             locale: this.localeSelected,
             firstTime: false,
             walletlisten_on_startup: true,
+            node_background: true,
             nodesynced: false,
             epicbox_domain: this.epicboxDomain.defaultValue,
 

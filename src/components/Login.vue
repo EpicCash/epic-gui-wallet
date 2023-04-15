@@ -117,14 +117,20 @@ export default {
         //first check config and setup
         let action = await this.configService.startCheck(this.accountField.defaultValue);
 
-        let canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
+        //App has started - first close running wallet and node server process
 
+        await this.configService.killEpicProcess();
+
+
+
+        let canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
+        console.log('canLogin do login', canLogin);
         if(canLogin.success){
 
           if(this.configService.config['walletlisten_on_startup']){
 
             const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
-
+            console.log('startListen http');
 
             if(this.configService.config['epicbox_domain'] != undefined && this.configService.config['epicbox_domain'] != '' ){
               const isEpicbox = await this.$walletService.startEpicbox(this.passwordField.defaultValue);
@@ -135,7 +141,9 @@ export default {
                 this.$toast.error(this.$t("msg.login.error_epicbox_started"));
                 this.store.commit('walletEpicboxService', false);
               }
+              console.log('startListen epicbox');
             }
+
 
             if(isListen && isListen.success){
               this.$toast.success(this.$t("msg.login.listener_started"));
@@ -153,7 +161,7 @@ export default {
               this.store.commit('torService', false);
             }
 
-
+            console.log('all started');
 
 
 
@@ -175,7 +183,12 @@ export default {
 
         }else{
           console.log(canLogin);
+          this.isLoading = true;
+          this.$walletService.stopWallet();
           this.$toast.error(canLogin.msg.message);
+
+
+
         }
 
         this.isLoading = false;

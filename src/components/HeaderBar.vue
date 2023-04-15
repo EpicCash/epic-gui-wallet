@@ -40,7 +40,14 @@
             <div class="level-right">
               <div class="level-item is-hero-content-item">
                 <div class="is-size-7">
-                  <h3 class="subtitle"><span><mdicon size=20 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{ store.state.nodeType}})</span></h3>
+
+                  <h3 class="subtitle">
+                    <span v-if="!this.configService.config.nodesynced"><mdicon size=20 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
+                    <span v-if="this.configService.config.nodesynced"><mdicon size=20 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
+
+                  </h3>
+
+                  <div v-if="!this.configService.config.nodesynced">{{ $t('msg.headerbar.node_sync_status') }}</div>
                   <div>{{ $t('msg.headerbar.version') }}: {{store.state.nodeStatus.user_agent}}</div>
                   <div>{{ $t('msg.headerbar.peers') }}: {{store.state.nodeStatus.connections}}</div>
                   <div>{{ $t('msg.headerbar.status') }}: {{store.state.nodeStatus.sync_status}}</div>
@@ -97,6 +104,7 @@ export default {
     const loaded = computed(() => store.state.nodeStatus.sync_info.current_height > 0 && store.state.nodeStatus.sync_info.highest_height > 0 ? parseFloat(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100).toFixed(2) : 0);
     const usdPrice = ref(0);
     const locale = ref('en');
+    const nodeFallBack = ref('');
     return{
         store,
         route,
@@ -107,11 +115,13 @@ export default {
         height,
         loaded,
         usdPrice,
-        locale
+        locale,
+        nodeFallBack
     }
   },
   async created(){
     this.locale = await window.api.locale();
+    this.nodeFallBack = this.configService.getNodeFallBack();
 
   },
   methods:{

@@ -49,7 +49,7 @@
       const validInput = () => {
 
 
-        defaultValue.value = input.value;
+        defaultValue.value = input.value.trim();
         if(select.value == 'external'){
           nodeInternal.value = false;
           return validateAddressField("nodeaddress", defaultValue.value, true);

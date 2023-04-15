@@ -1,10 +1,11 @@
 {
-  "version": "5.0.0",
+  "version": "5.0.2",
   "firstTime": true,
   "locale": "en",
   "check_node_api_http_addr": "http://127.0.0.1:3413",
   "network": "mainnet",
   "walletlisten_on_startup": true,
+  "node_background": true,
   "nodesynced": false,
   "epicbox_domain": "epicbox.epic.tech"
 }

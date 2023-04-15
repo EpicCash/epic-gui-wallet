@@ -25,7 +25,7 @@
 
       const validInput = () => {
 
-        defaultValue.value = input.value;
+        defaultValue.value = input.value.trim();
 
         return validateProofAddressField("proof_address", defaultValue.value);
       };

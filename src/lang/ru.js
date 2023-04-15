@@ -11,6 +11,7 @@ const messages = {
     jump: 'Перейти',
 
     confirmed: 'Подтверждено',
+    confirm_action: 'Confirm action',
     unconfirmed: 'Не подтверждено',
     locked: 'Заблокировано',
 
@@ -26,6 +27,7 @@ const messages = {
     more: 'Больше',
 
     back: 'отступать',
+    close_all_process: 'Terminate all processes',
     remove: {
       warning: 'Warning',
       info: 'Info',
@@ -82,7 +84,17 @@ const messages = {
       updateMsg: 'Найдена новая версия Epic кошелка. Обновить прямо сейчас?',
       yes: 'Да',
       no: 'Нет',
-      hedwig: 'Получить через Hedwig'
+      ngrok_service_started: 'Ngrok service started',
+      ngrok_address_changed: 'Your ngrok address has changed',
+      ngrok_service_stopped: 'Ngrok service stopped',
+      ngrok_service_error: 'Error starting Ngrok service',
+      error_setup_internal_node: 'Can not setup internal node server',
+      node_started: 'Node started',
+      node_not_started: 'Node not started',
+      node_offline: 'Node is offline',
+      external_node_online: 'External Node is online',
+      external_node_offline: 'External Node is offline',
+      background_process: 'Please close all processes before continuing.',
     },
 
     info: {

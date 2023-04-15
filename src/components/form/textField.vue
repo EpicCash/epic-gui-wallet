@@ -28,8 +28,8 @@
 
       const validInput = (name) => {
 
-        defaultValue.value = input.value;
-        
+        defaultValue.value = input.value.trim();
+
         return validateTextField(name, defaultValue.value);
       };
 

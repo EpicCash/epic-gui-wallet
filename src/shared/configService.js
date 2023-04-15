@@ -12,7 +12,7 @@ class ConfigService {
   constructor(emitter) {
       this.emitter = emitter;
       this.configAccount = '';
-      this.configVersion = "5.0.0";
+      this.configVersion = "5.0.2";
       this.debug = window.debug;
 
       //where to find accounts and wallet data
@@ -46,7 +46,7 @@ class ConfigService {
       this.config = {};
       this.configFile = '';
       this.apiSecretPath = '';
-      this.defaultEpicNode = '';
+      this.defaultEpicNode = 'http://127.0.0.1:3413';
       this.apisecret = '';
       this.ownerApiSecretPath = '';
       this.ownerApisecret = '';
@@ -72,6 +72,10 @@ class ConfigService {
       }
 
 
+  }
+
+  getNodeFallBack(){
+    return this.nodeFallBack;
   }
 
   resetConfig(){
@@ -155,6 +159,11 @@ class ConfigService {
         const re5 = /^run_tui(\s)*=(\s).*/gm;
         if(tomlContent.search(re5) != -1){
             tomlContent = tomlContent.replace(re5, 'run_tui = false');
+        }
+
+        const re6 = /^bits(\s)*=(\s).*/gm;
+        if(tomlContent.search(re6) != -1){
+            tomlContent = tomlContent.replace(re6, 'bits = 31');
         }
 
 
@@ -415,13 +424,19 @@ epicbox_domain = "${epicboxDomain}"
    */
   async killEpicProcess(){
 
+
     let killPromise = [];
     let killProcess = false;
     let killPids = [];
 
     let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-    let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
-    let pWalletTorList = await window.nodeFindProcess('name', /tor/);
+
+    let pEpicnodeList = []
+    if(this.config && !this.config.node_background)
+      pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+
+
+    let pWalletTorList = await window.nodeFindProcess('name', 'tor', true);
 
     for(let process of pWalletList) {
       if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
@@ -433,6 +448,8 @@ epicbox_domain = "${epicboxDomain}"
         killPids.push(process);
       }
     }
+
+
     for(let process of pWalletTorList) {
 
       if(process.cmd.includes('tor/listener/torrc')){
@@ -441,23 +458,26 @@ epicbox_domain = "${epicboxDomain}"
     }
 
     if(killPids.length){
-      await this.emitter.emit('killEpicProcess', async function(confirmed){
-        if(!confirmed){
-          return false;
-        }
-        killProcess = true;
-      })
+
+      let close = false;
+      await new Promise((resolve) => {
+
+        this.emitter.emit('killEpicProcess', {pid: killPids, callback:async(confirmed)=>{
+
+
+          if(confirmed){
+            for(let process of killPids) {
+              this.debug ? console.log('configService.kill', process) : null;
+              killPromise.push(nodeChildProcess.kill(process.pid))
+            }
+            await Promise.all(killPromise);
+          }
+          resolve();
+        }});
+
+      });
     }
 
-    if(killProcess){
-      for(let process of killPids) {
-        this.debug ? console.log('configService.kill', process) : null;
-        killPromise.push(nodeChildProcess.kill(process.pid))
-      }
-      await Promise.all(killPromise);
-    }
-
-    this.debug ? console.log('configService.allkilled') : null;
 
   }
 

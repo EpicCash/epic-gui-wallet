@@ -15,6 +15,7 @@ const messages = {
     jump: 'jump',
     error: 'Bitte korrigieren Sie den (die) folgenden Fehler:',
     confirmed: 'Bestätigt',
+    confirm_action: 'Aktion erforderlich',
     unconfirmed: 'Warten auf Bestätigung',
     locked: 'Gesperrt',
 
@@ -47,7 +48,8 @@ const messages = {
     only_letter: 'Nur Kleinbuchstaben von a-z,',
     custom_settings: 'Benutzerdefinierte Einstellungen',
     step_of: 'Schritt {0}/{1}',
-
+    close_all_process: 'Alle Prozesse beenden',
+    advanced_settings: 'Advanced Settings',
     menu:{
       general: 'Allgemein',
       dashboard: 'Dashboard',
@@ -65,7 +67,8 @@ const messages = {
       recheck: 'Saldo erneut prüfen',
       mnemonic: 'Mnemonik Wortliste',
       run_setup: 'Einrichtungsassistent ausführen',
-      updates: 'Updates'
+      updates: 'Updates',
+      openepichidden: 'Epic-Wallet Speicherort',
     },
 
     headerbar: {
@@ -75,7 +78,8 @@ const messages = {
       status: 'Status',
       node: 'Netzwerkknoten',
       sync_height: 'Sync-Höhe',
-      block_height: 'Blockchain-Höhe'
+      block_height: 'Blockchain-Höhe',
+      node_sync_status: 'Interner Netzwerkknoten'
     },
     dashboard:{
       transactions: 'Transaktionen',
@@ -122,7 +126,26 @@ const messages = {
       language: 'Sprache',
       ngrok_authtoken: 'ngrok Authtoken',
       db_fatal: 'Schwerwiegender Fehler: DB kann nicht eingefügt werden',
-      errors_save: 'Fehler beim Speichern von Benutzereinstellungen: {0}'
+      errors_save: 'Fehler beim Speichern von Benutzereinstellungen: {0}',
+      epicbox_domain: 'Epicbox Web Address',
+      epicbox_off: 'turned off',
+      epicbox_domain_hint: `Leave field blank if you don't want to use this service.`,
+      noninteractive_transactions: `Intro to EPIC Addresses<br/>
+      <br/>
+      EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
+      <br/>
+      This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
+      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
+      <br/>
+      How it works:<br/>
+      Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
+      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which 'finalizes' the transaction if the sender is online.<br/>
+      <br/>If both wallets are online when a transaction is created, the process takes place immediately.<br/>
+      <br/>
+      This system does not anonymize your IP and a VPN is recommended for IP address privacy.<br/>
+      <br/>Transactions are fully encrypted which assures a private transaction exchanged between the sender and receiver.<br/>
+      <br/>
+      `,
     },
     transaction:{
 
@@ -200,7 +223,8 @@ const messages = {
       listener_started: 'Wallet-Empfänger gestartet',
       error_listener_started: 'Fehler beim Starten des Wallet-Empfängers',
       tor_started: 'Tor gestartet',
-      error_tor_started: 'Tor nicht gestartet'
+      error_tor_started: 'Tor nicht gestartet',
+      epicbox_started: 'Epicbox gestartet',
     },
     seed:{
       errorGetMnemonic: 'Fehler beim Anzeigen der Mnemonik Wortliste. Ist Passwort richtig?',
@@ -257,7 +281,7 @@ const messages = {
       node_offline: 'Netzwerkknoten ist offline',
       external_node_online: 'Externer Netzwerkknoten ist online',
       external_node_offline: 'Externer Netzwerkknoten ist offline',
-      background_process: 'Wir haben einige laufende Wallet- und Netzwerkknoten-Prozesse im Hintergrund gefunden. Bitte schließen Sie diese zuerst, bevor Sie diese App ausführen.',
+      background_process: 'Bitte schließen Sie alle Prozesse, bevor Sie fortfahren.',
 
     },
 
@@ -349,7 +373,10 @@ const messages = {
       proof_address: 'Zahlungsnachweis Adresse',
       your_qrcode: 'Ihr QRcode für Ihre "{0}" Adresse',
       click_qrcode_icon: 'Klicken Sie auf das qr-Code-Symbol',
-      tor_not_available: 'Tor nicht verfügbar. Versuchen Sie, den Wallet-Empfänger neu zu starten'
+      tor_not_available: 'Tor nicht verfügbar. Versuchen Sie, den Wallet-Empfänger neu zu starten',
+      epicbox_address: 'Your public Epic address',
+      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
     },
 
     check: {
@@ -388,7 +415,13 @@ const messages = {
       authtoken_hint: 'Mit einem ngrok Authtoken ist Ihre Adresse so lange aktiv, wie die Wallet auf Empfang gestellt ist',
       howto: 'Wie Sie Ihren Authtoken von ngrok erhalten',
       settings_saved: 'Einstellungen gespeichert',
-      error_save: 'Fehler beim Speichern der Einstellungen'
+      error_save: 'Fehler beim Speichern der Einstellungen',
+      epicbox_domain: 'Epicbox Domain',
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
+
+      node_background: 'sync in background',
+      node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.'
+
     },
 
     validators:{
