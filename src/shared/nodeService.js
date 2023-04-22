@@ -130,7 +130,7 @@ class NodeService {
       if (!res.ok) { throw Error(res) }
       return res.json();
     }).catch(function(error){
-      this.debug ? console.log('NodeService.fetch', error) : null;
+      window.log ? console.log('NodeService.fetch', error) : null;
       return false;
     });
 
