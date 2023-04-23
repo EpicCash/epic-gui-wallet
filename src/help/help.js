@@ -3,6 +3,7 @@ import de from './help_de';
 import fa from './help_fa';
 import bg from './help_bg';
 import cz from './help_cz';
+import hi from './help_hi';
 
 export const help = {
   en: en,
@@ -10,6 +11,7 @@ export const help = {
   fa: fa,
   bg: bg,
   cz: cz,
+  hi: hi,
 };
 
 export function useHelp(language) {

@@ -17,7 +17,7 @@ class ConfigService {
 
       //where to find accounts and wallet data
       this.userhomedir = '';
-      this.langs = {'en': 'English', 'de': 'Deutsch', 'fa': 'فارسی', 'bg': 'България', 'cz': 'Česko'};
+      this.langs = {'bg': 'България', 'cz': 'Česko', 'de': 'Deutsch', 'en': 'English',  'fa': 'فارسی', 'hi': 'हिन्दी'};
       this.locale = 'en';
       //the default wallet dir from current selected account
       //TODO: make it selectable in app, so user can
