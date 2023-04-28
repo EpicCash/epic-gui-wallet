@@ -12,7 +12,7 @@ module.exports = {
       preload: 'src/preload.js',
       builderOptions: {
         "productName": "EpicWallet",
-        //"afterSign": "./build/notarize.js",
+        "afterSign": "./build/notarize.js",
         "appId": "com.github.epiccash.epic-gui-wallet",
         directories: {
           output: "build",

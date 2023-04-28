@@ -52,7 +52,7 @@ const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
-const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
+const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed', 'nodeBackground'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     async kill(pid){
@@ -198,8 +198,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     /* start wallet api */
     async execNode(cmd, args, platform){
-      
+
       return new Promise(function(resolve, reject) {
+
 
 
           let node_server = spawn(cmd, args, {shell: platform == 'win' ? true : false});
@@ -627,5 +628,8 @@ contextBridge.exposeInMainWorld('api', {
     version: async() => {
       return await ipcRenderer.invoke('version');
     },
+    nodebackground:(nodebackground) => {
+      ipcRenderer.send('nodeBackground', nodebackground);
+    }
 
 });

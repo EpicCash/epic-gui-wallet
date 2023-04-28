@@ -38,6 +38,9 @@
   import ModalNodeBox from '@/components/layout/NodesyncedModalBox.vue'
   import ModalFirstsyncBox from '@/components/layout/FirstsyncModalBox.vue'
   import ModalKillBox from '@/components/layout/KillProcessModalBox.vue'
+
+  window.nodeSynced = null;
+
   //app components
   export default {
     name: 'Epic GUI Wallet',
@@ -107,6 +110,25 @@
 
       });
 
+      this.emitter.on('app.startEpicbox', async(res) => {
+
+        let confirmed = await this.waitForNodesynced('nodeSynced').then((res) => {
+          return res;
+        });
+
+        if(confirmed){
+          const isEpicbox = await this.$walletService.startEpicbox(res);
+          if(isEpicbox && isEpicbox.success){
+            this.$toast.success(this.$t("msg.login.epicbox_started"));
+            this.store.commit('walletEpicboxService', true);
+          }else{
+            this.$toast.error(this.$t("msg.login.error_epicbox_started"));
+            this.store.commit('walletEpicboxService', false);
+          }
+          console.log('startListen epicbox');
+        }
+      });
+
       this.emitter.on('app.startRefreshNodeStatus', () => {
         this.stopRefreshNode();
         this.startRefreshNode();
@@ -116,7 +138,7 @@
         this.stopRefreshNode();
       });
 
-      this.emitter.on('app.nodeStart', async () => {
+      this.emitter.on('app.nodeStart', async (tmppw) => {
         await this.nodeStart();
       });
 
@@ -193,7 +215,7 @@
         this.store.dispatch('toggleFullPage', false);
         this.store.commit('asideStateToggle');
         this.$router.push('/dashboard');
-        this.emitter.emit('app.nodeStart');
+
         this.emitter.emit('app.ngrokStart');
 
         //always at the very end
@@ -232,6 +254,19 @@
 
     },
     methods: {
+
+      waitForNodesynced (variable) {
+        function waitFor(result) {
+          if (result != null) {
+            return result;
+          }
+          return new Promise((resolve) => setTimeout(resolve, 100))
+            .then(() => Promise.resolve(window[variable]))
+            .then((res) => waitFor(res));
+        }
+        return waitFor();
+      },
+
       nodesyncedModalOpen(){
         this.isNodeModalActive = true
       },
@@ -300,11 +335,7 @@
         //start internal server only if its setup else just check if external node is running
         if(this.store.state.user.nodeInternal){
 
-
           this.store.commit('nodeType', 'internal');
-
-
-
 
           if(!this.configService.startCheckNode()){
             this.$toast.error(this.$t("msg.app.error_setup_internal_node"));
@@ -339,9 +370,12 @@
       },
 
       async nodeStatus(){
+        await window.api.nodebackground(this.configService.config.node_background);
 
         let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
         if(respNode){
+
+          window.nodeSynced = respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync';
 
           if(this.store.state.user.nodeInternal && this.configService.config.nodesynced == false){
             if(respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync'){
@@ -349,6 +383,7 @@
                 nodesynced: true,
                 check_node_api_http_addr: 'http://127.0.0.1:3413'
               });
+
               this.configService.checkTomlFile();
               this.nodesyncedModalOpen();
 

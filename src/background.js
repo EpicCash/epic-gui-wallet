@@ -17,6 +17,7 @@ const {autoUpdater} = require("electron-updater");
 autoUpdater.channel = "latest"
 
 let win;
+let noderuninbackground = false;
 
 
 contextMenu({
@@ -139,9 +140,17 @@ async function createWindow() {
                           let killPromise = [];
                           let killProcess = false;
                           let killPids = [];
+                          let pEpicnodeList = [];
 
                           let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-                          let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+
+
+                          if(noderuninbackground == false){
+                            pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                          }
+
+
+
                           let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
                           let pWalletTorList = await findProcess('name', /tor/);
                           for(let process of pWalletList) {
@@ -221,9 +230,15 @@ async function createWindow() {
                         let killPromise = [];
                         let killProcess = false;
                         let killPids = [];
+                        let pEpicnodeList = [];
 
                         let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-                        let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+
+
+                        if(noderuninbackground == false){
+                          pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                        }
+
                         let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
                         let pWalletTorList = await findProcess('name', /tor/);
                         for(let process of pWalletList) {
@@ -285,6 +300,8 @@ async function createWindow() {
     }
 
     Menu.setApplicationMenu(menu);
+  }else{
+    console.log(win);
   }
   return win;
 }
@@ -301,9 +318,14 @@ app.on('window-all-closed', async() => {
     let killPromise = [];
     let killProcess = false;
     let killPids = [];
+    let pEpicnodeList = [];
 
     let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-    let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+
+    if(noderuninbackground == false){
+      pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+    }
+
     let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
     for(let process of pWalletList) {
       if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
@@ -367,8 +389,8 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async (event) => {
-  console.log(event);
-
+  //console.log('app', noderuninbackground);
+  console.log('noderuninbackground', noderuninbackground);
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
@@ -456,6 +478,7 @@ ipcMain.handle('version', () => {
 
 
 ipcMain.handle('resize', (event, width, height) => {
+
   let browserWindow = BrowserWindow.fromWebContents(event.sender)
   browserWindow.setSize(width,height);
 });
@@ -485,4 +508,9 @@ ipcMain.on('walletExisted', (event, data) => {
 
 ipcMain.on('walletCreateFailed', (event, data) => {
   event.reply('walletCreateFailed', {  });
+});
+
+ipcMain.on('nodeBackground', (event, data) => {
+  noderuninbackground = data;
+
 });

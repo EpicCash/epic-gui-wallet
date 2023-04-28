@@ -124,26 +124,30 @@ export default {
 
 
         let canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
-        console.log('canLogin do login', canLogin);
+        //console.log('canLogin do login', canLogin);
         if(canLogin.success){
+
+          //load user account settings first
+          let user = await this.$userService.getUser(this.accountField.defaultValue);
+          window.debug ? console.log('LOGIN USER:', user) : null;
+          if(user.length && action != 'settings'){
+            this.store.commit('user', user[0]);
+          }else{
+            this.router.push('/setupwizard');
+            return;
+          }
+
+          console.log('start node before wallet listener');
+          await this.emitter.emit('app.nodeStart', this.passwordField.defaultValue);
 
           if(this.configService.config['walletlisten_on_startup']){
 
             const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
-            console.log('startListen http');
 
+            //start epicbox, will be executed when node has synced status
             if(this.configService.config['epicbox_domain'] != undefined && this.configService.config['epicbox_domain'] != '' ){
-              const isEpicbox = await this.$walletService.startEpicbox(this.passwordField.defaultValue);
-              if(isEpicbox && isEpicbox.success){
-                this.$toast.success(this.$t("msg.login.epicbox_started"));
-                this.store.commit('walletEpicboxService', true);
-              }else{
-                this.$toast.error(this.$t("msg.login.error_epicbox_started"));
-                this.store.commit('walletEpicboxService', false);
-              }
-              console.log('startListen epicbox');
+              await this.emitter.emit('app.startEpicbox', this.passwordField.defaultValue);
             }
-
 
             if(isListen && isListen.success){
               this.$toast.success(this.$t("msg.login.listener_started"));
@@ -167,22 +171,14 @@ export default {
 
           }
 
-          //load account else wizard
-          let user = await this.$userService.getUser(this.accountField.defaultValue);
-          window.debug ? console.log('LOGIN USER:', user) : null;
-          if(user.length && action != 'settings'){
-            this.store.commit('user', user[0]);
-          }else{
-            this.router.push('/setupwizard');
-            return;
-          }
+
 
 
           this.isLoading = false;
           this.emitter.emit('app.accountLoggedIn');
 
         }else{
-          console.log(canLogin);
+          //console.log(canLogin);
           this.isLoading = true;
           this.$walletService.stopWallet();
           this.$toast.error(canLogin.msg.message);
