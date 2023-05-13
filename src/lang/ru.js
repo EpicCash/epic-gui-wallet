@@ -28,6 +28,7 @@ const messages = {
 
     back: 'отступать',
     close_all_process: 'Terminate all processes',
+    waiting_for_nodesync: '... waiting for node to be synced.',
     remove: {
       warning: 'Warning',
       info: 'Info',

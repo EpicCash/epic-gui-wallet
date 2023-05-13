@@ -110,6 +110,7 @@
 
       });
 
+      /* start epicbox and refresh outputs/summary if node is snyced */
       this.emitter.on('app.startEpicbox', async(res) => {
 
         let confirmed = await this.waitForNodesynced('nodeSynced').then((res) => {
@@ -125,8 +126,13 @@
             this.$toast.error(this.$t("msg.login.error_epicbox_started"));
             this.store.commit('walletEpicboxService', false);
           }
-          console.log('startListen epicbox');
+
+
+
         }
+
+
+
       });
 
       this.emitter.on('app.startRefreshNodeStatus', () => {
@@ -218,7 +224,8 @@
 
         this.emitter.emit('app.ngrokStart');
 
-        //always at the very end
+
+        //start refresh outputs summary etc
         this.emitter.emit('app.update');
 
       });
@@ -409,10 +416,12 @@
 
           let refresh = _ => this.refreshId = setTimeout(this.startRefresh, 1000*60)
           try {
+            let refreshfromNode = this.store.state.nodeStatus.sync_status == 'synced' ?  true : false;
 
-            await this.getSummaryinfo();
-            await this.getTxs();
-            await this.getCommits();
+            await this.getSummaryinfo(refreshfromNode);
+            await this.getTxs(refreshfromNode);
+            await this.getCommits(refreshfromNode);
+
 
           }
           catch (e) {
@@ -500,9 +509,9 @@
         clearTimeout(this.startRefreshNgrokId);
       },
 
-      async getSummaryinfo() {
+      async getSummaryinfo(refreshfromNode) {
 
-          let summary = await this.$walletService.getSummaryInfo(10);
+          let summary = await this.$walletService.getSummaryInfo(10, refreshfromNode);
           if(summary && summary.result && summary.result.Ok){
             let data = summary.result.Ok
             this.store.commit('summary', {
@@ -523,9 +532,9 @@
           }
       },
 
-      async getTxs() {
+      async getTxs(refreshfromNode) {
 
-        let txs = await this.$walletService.getTransactions(true, null, null);
+        let txs = await this.$walletService.getTransactions(refreshfromNode, null, null);
 
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok[1].reverse()
@@ -542,9 +551,9 @@
 
       },
 
-      async getCommits() {
+      async getCommits(refreshfromNode) {
 
-          let commits = await this.$walletService.getCommits(false, true, null);
+          let commits = await this.$walletService.getCommits(false, refreshfromNode, null);
 
           if(commits && commits.result && commits.result.Ok){
             //this.total_commits =

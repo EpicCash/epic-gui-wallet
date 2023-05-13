@@ -17,13 +17,14 @@ class NodeService {
       this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
       this.sysnStatusStalltime = (60*3); //3 minutes
       this.restartSuccess = true;
-      this.debug = window.debug;
+      this.debug = true;//window.debug;
       //do not restart on this node states
       this.safeSyncStates = [
         'txhashset_download',
         'syncing',
         'txhashset_rangeproofs_validation',
         'txhashset_kernels_validation',
+
       ]
   }
 
@@ -136,6 +137,9 @@ class NodeService {
 
     /* check if node status is ok or need a restart because is stalled */
     if(internal){
+
+      //console.log('################ response ################', response);
+
       if(!response){
         this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
         await this.restartNode();

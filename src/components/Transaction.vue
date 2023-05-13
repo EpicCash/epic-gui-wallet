@@ -167,7 +167,11 @@
                 <section class="section">
                   <div class="content has-text-grey has-text-centered">
                     <p>
-                      <span class="icon is-large"><mdicon name="circle-off-outline" size="48" /></span>
+
+
+                      <span v-if="this.store.state.nodeStatus.sync_status == 'synced'" class="icon is-large"><mdicon name="circle-off-outline" size="48" /></span>
+                      <span v-else>{{ $t("msg.waiting_for_nodesync") }}</span>
+
                     </p>
 
                   </div>
@@ -293,9 +297,14 @@
         this.pages_count = parseInt(this.total_txs.length/this.count_per_page) + 1
       }
 
+
+
     },
     async created(){
       this.locale = await window.api.locale();
+
+
+
     },
     methods: {
       copy(text){

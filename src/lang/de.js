@@ -50,6 +50,7 @@ const messages = {
     step_of: 'Schritt {0}/{1}',
     close_all_process: 'Alle Prozesse beenden',
     advanced_settings: 'Advanced Settings',
+    waiting_for_nodesync: '... waiting for node to be synced.',
     menu:{
       general: 'Allgemein',
       dashboard: 'Dashboard',

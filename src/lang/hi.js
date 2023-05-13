@@ -46,6 +46,7 @@ const messages = {
     advanced_settings: 'Advanced Settings',
     step_of: 'कदम {0}/{1}',
     close_all_process: 'Terminate all processes',
+    waiting_for_nodesync: '... waiting for node to be synced.',
 
     menu:{
       general: 'सामान्य',

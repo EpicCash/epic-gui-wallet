@@ -25,6 +25,7 @@ const messages = {
     more: '更多',
     back: '返回',
     close_all_process: 'Terminate all processes',
+    waiting_for_nodesync: '... waiting for node to be synced.',
 
     login: {
       walletExist: '发现已有Grin钱包存在；请用原有的密码登陆吧 :-)',

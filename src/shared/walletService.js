@@ -189,12 +189,12 @@ class WalletService {
           }, false);
     }
 
-    async getSummaryInfo(minimum_confirmations){
+    async getSummaryInfo(minimum_confirmations, refreshfromNode = true){
         return await this.jsonRPC(
           'retrieve_summary_info',
           {
             token: this.token,
-            refresh_from_node: true,
+            refresh_from_node: refreshfromNode,
             minimum_confirmations: minimum_confirmations
           }, false);
     }
