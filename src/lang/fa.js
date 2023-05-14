@@ -80,6 +80,7 @@ const messages = {
       status: 'وضعیت',
       node: 'گِره Node',
       sync_height: 'همگام سازی ارتفاع',
+      progress: 'Progress',
       block_height: 'ارتفاع بلاک چین',
       node_sync_status: 'Internal node sync status',
     },
@@ -209,7 +210,7 @@ const messages = {
       error_save: 'خطا در ذخیره حساب'
     },
     addressbook:{
-      naem: 'نام',
+      name: 'نام',
       country: 'کشور',
       city: 'شهر',
       tor_onion_address: ' Tor آدرس شبکه پیازی',

@@ -75,6 +75,7 @@ const messages = {
       status: 'Status',
       node: 'Node',
       sync_height: 'Sync Height',
+      progress: 'Progress',
       block_height: 'Blockchain Height',
       node_sync_status: 'Internal node sync status',
     },
@@ -196,7 +197,7 @@ const messages = {
       error_save: 'Při ukládání účtu došlo k chybě'
     },
     addressbook:{
-      naem: 'Jméno',
+      name: 'Jméno',
       country: 'Země',
       city: 'Město',
       tor_onion_address: 'Tor-Onion adresa',

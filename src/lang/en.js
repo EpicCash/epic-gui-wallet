@@ -74,6 +74,7 @@ const messages = {
       status: 'Status',
       node: 'Node',
       sync_height: 'Sync Height',
+      progress: 'Progress',
       block_height: 'Blockchain Height',
       node_sync_status: 'Internal node sync status',
     },
@@ -189,7 +190,7 @@ const messages = {
       error_save: 'Error saving profile settings'
     },
     addressbook:{
-      naem: 'Name',
+      name: 'Name',
       country: 'Country',
       city: 'City',
       tor_onion_address: 'Tor-Onion Address',

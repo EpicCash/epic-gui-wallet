@@ -33,7 +33,7 @@
                     </a>
 
                     <a v-if="address.externalOne" @click="fillAddressField(address, 'externalOne')" class="dropdown-item" data-address-id="{{address.id}}">
-                      {{ address.name }} - HTTP <span class="paste-address">{{ address.externalOne }}</span>
+                      {{ address.name }} - EPICBOX <span class="paste-address">{{ address.externalOne }}</span>
                     </a>
 
                     <a v-if="address.externalTwo" @click="fillAddressField(address, 'externalTwo')" class="dropdown-item" data-address-id="{{address.id}}">
@@ -178,7 +178,7 @@ export default {
           this.method = 'keybase';
         }else if(type == 'externalOne'){
           this.addressField.setValue(address.externalOne.trim());
-          this.method = 'http';
+          this.method = 'epicbox';
         }else if(type == 'externalTwo'){
           this.addressField.setValue(address.externalTwo.trim());
           this.method = 'http';
@@ -332,7 +332,7 @@ export default {
         }
 
         let res = await this.$walletService.issueSendTransaction(tx_data)
-        
+
         if(res && res.result && res.result.Ok){
 
             let tx_id = res.result.Ok.id

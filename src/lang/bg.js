@@ -74,6 +74,7 @@ const messages = {
       status: 'Статус',
       node: 'Възел',
       sync_height: 'Синхронизирана височина',
+      progress: 'Progress',
       block_height: 'Блокчейн височина',
       node_sync_status: 'Internal node sync status',
     },

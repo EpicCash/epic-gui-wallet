@@ -79,6 +79,7 @@ const messages = {
       status: 'Status',
       node: 'Netzwerkknoten',
       sync_height: 'Sync-Höhe',
+      progress: 'Progress',
       block_height: 'Blockchain-Höhe',
       node_sync_status: 'Interner Netzwerkknoten'
     },
@@ -200,12 +201,12 @@ const messages = {
       error_save: 'Fehler beim Speichern des Kontos'
     },
     addressbook:{
-      naem: 'Name',
+      name: 'Name',
       country: 'Land',
       city: 'Stadt',
       tor_onion_address: 'Tor-Onion Adresse',
       keybase_account: 'Keybase Konto',
-      external_one: 'Externe Adresse 1',
+      external_one: 'Epicbox Adresse',
       external_two: 'Externe Adresse 2',
       proof_address: 'Adresse für Zahlungsnachweis',
       notice: 'Hinweis',

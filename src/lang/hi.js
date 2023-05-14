@@ -76,6 +76,7 @@ const messages = {
       status: 'दर्जा',
       node: 'नोड',
       sync_height: 'सिंक ऊंचाई',
+      progress: 'Progress',
       block_height: 'ब्लॉकचेन हाइट',
       node_sync_status: 'Internal node sync status',
     },
@@ -200,7 +201,7 @@ const messages = {
       error_save: 'त्रुटि बचत खाता'
     },
     addressbook:{
-      naem: 'नाम',
+      name: 'नाम',
       country: 'देश',
       city: 'शहर',
       tor_onion_address: 'Tor-Onion एड्रेस',
