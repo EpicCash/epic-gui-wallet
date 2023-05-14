@@ -1,6 +1,6 @@
 name: epicwallet # you probably want to 'snapcraft register <name>'
 base: core20 # the base snap is the execution environment for this snap
-version: '4.0.5-beta+git' # just for humans, typically '1.2+git' or '1.3.2'
+version: '5.0.3+git' # just for humans, typically '1.2+git' or '1.3.2'
 summary: P2P electronic cash wallet # 79 char long summary
 description: |
   EPIC is a novel software implementation of the original Bitcoin Standard,

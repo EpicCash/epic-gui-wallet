@@ -12,7 +12,7 @@ class ConfigService {
   constructor(emitter) {
       this.emitter = emitter;
       this.configAccount = '';
-      this.configVersion = "5.0.2";
+      this.configVersion = "5.0.3";
       this.debug = window.debug;
 
       //where to find accounts and wallet data

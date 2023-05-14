@@ -1,5 +1,5 @@
 {
-  "version": "5.0.2",
+  "version": "5.0.3",
   "firstTime": true,
   "locale": "en",
   "check_node_api_http_addr": "http://127.0.0.1:3413",
