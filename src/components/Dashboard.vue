@@ -2,7 +2,7 @@
 
   <section class="section is-main-section">
 
-    <summary-info></summary-info>
+
 
     <div id="tabs-with-content">
 
@@ -22,6 +22,7 @@
           <transaction></transaction>
         </section>
         <section v-bind:class="{'is-active':commitTab}" class="tab-content">
+          <summary-info></summary-info>
           <commit></commit>
         </section>
       </div>
