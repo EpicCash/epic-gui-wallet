@@ -52,7 +52,7 @@ const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
-const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed'];
+const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed', 'nodeBackground'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     async kill(pid){
@@ -202,6 +202,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       return new Promise(function(resolve, reject) {
 
 
+
           let node_server = spawn(cmd, args, {shell: platform == 'win' ? true : false});
 
           node_server.stdout.setEncoding('utf8');
@@ -340,6 +341,38 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       });
     },
 
+    /* start wallet epicbox */
+    async execEpicbox(cmd, args, platform, password){
+
+      return new Promise(function(resolve, reject) {
+
+          let listenProcess = spawn(cmd, args, {shell: platform == 'win' ? true : false});
+          listenProcess.stdout.setEncoding('utf8');
+          listenProcess.stdout.on('data', (data) => {
+
+              debug ? console.log('execEpicbox.stdout', data) : null;
+              if(data.includes('Password:')){
+                listenProcess.stdin.write(password+"\n");
+              }
+
+
+              if(data.includes('Starting epicbox listener') || data.includes('Epicbox listener started.')){
+
+                resolve({success: true, msg: listenProcess.pid});
+              }
+
+          });
+
+          listenProcess.stderr.setEncoding('utf8');
+          listenProcess.stderr.on('data', (data) => {
+              debug ? console.log('execEpicbox.stderr', data) : null;
+
+              resolve({success: false, msg: data});
+          })
+
+      });
+    },
+
     async execRecover(cmd, args, platform, seeds, password){
 
       return new Promise(function(resolve, reject) {
@@ -473,8 +506,8 @@ contextBridge.exposeInMainWorld('nodeQr', qr);
 contextBridge.exposeInMainWorld('nodePath', require('path'));
 contextBridge.exposeInMainWorld('config', {
 
-  async isPortReachable(){
-    return await isPortReachable(80, {host: 'google.com'});
+  async isPortReachable(host, port){
+    return await isPortReachable(port, {host: host});
   },
   async getPublicIp(){
     let response = await fetch('https://api.ipify.org?format=json', {
@@ -561,6 +594,20 @@ contextBridge.exposeInMainWorld('openlink', {
   }
 });
 
+contextBridge.exposeInMainWorld('openepichidden', {
+
+  open(user_homedir = ''){
+      let dir = path.join(homedir, ".epic");
+      if(user_homedir != ''){
+        dir = user_homedir;
+      }
+      shell.openPath(dir)
+  }
+});
+
+
+
+
 // Adds an object 'api' to the global window object:
 contextBridge.exposeInMainWorld('api', {
     showSaveDialog: async (title, message, defaultPath) => {
@@ -575,8 +622,14 @@ contextBridge.exposeInMainWorld('api', {
     resize: (width, height) => {
       ipcRenderer.invoke('resize', width, height);
     },
-    locale: async () => {
+    locale: async() => {
       return await ipcRenderer.invoke('locale');
     },
+    version: async() => {
+      return await ipcRenderer.invoke('version');
+    },
+    nodebackground:(nodebackground) => {
+      ipcRenderer.send('nodeBackground', nodebackground);
+    }
 
 });

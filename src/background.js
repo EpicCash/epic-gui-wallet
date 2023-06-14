@@ -1,11 +1,12 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell } from 'electron'
-
+import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell, remote } from 'electron'
+const contextMenu = require('electron-context-menu');
 import { exec } from 'child_process'
 
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
@@ -16,6 +17,12 @@ const {autoUpdater} = require("electron-updater");
 autoUpdater.channel = "latest"
 
 let win;
+let noderuninbackground = false;
+
+
+contextMenu({
+	showSaveImageAs: true
+});
 
 //-------------------------------------------------------------------
 // Logging
@@ -133,9 +140,17 @@ async function createWindow() {
                           let killPromise = [];
                           let killProcess = false;
                           let killPids = [];
+                          let pEpicnodeList = [];
 
                           let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-                          let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+
+
+                          if(noderuninbackground == false){
+                            pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                          }
+
+
+
                           let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
                           let pWalletTorList = await findProcess('name', /tor/);
                           for(let process of pWalletList) {
@@ -215,10 +230,17 @@ async function createWindow() {
                         let killPromise = [];
                         let killProcess = false;
                         let killPids = [];
+                        let pEpicnodeList = [];
 
                         let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-                        let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+
+
+                        if(noderuninbackground == false){
+                          pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                        }
+
                         let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                        let pWalletTorList = await findProcess('name', /tor/);
                         for(let process of pWalletList) {
                           if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
                             killPids.push(process);
@@ -231,6 +253,11 @@ async function createWindow() {
                         }
                         for(let process of pNgrokList) {
                           if(process.cmd.includes('ngrok')){
+                            killPids.push(process);
+                          }
+                        }
+                        for(let process of pWalletTorList) {
+                          if(process.cmd.includes('tor/listener/torrc')){
                             killPids.push(process);
                           }
                         }
@@ -273,6 +300,8 @@ async function createWindow() {
     }
 
     Menu.setApplicationMenu(menu);
+  }else{
+    console.log(win);
   }
   return win;
 }
@@ -289,9 +318,14 @@ app.on('window-all-closed', async() => {
     let killPromise = [];
     let killProcess = false;
     let killPids = [];
+    let pEpicnodeList = [];
 
     let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-    let pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+
+    if(noderuninbackground == false){
+      pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+    }
+
     let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
     for(let process of pWalletList) {
       if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
@@ -355,8 +389,8 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async (event) => {
-  console.log(event);
-
+  //console.log('app', noderuninbackground);
+  console.log('noderuninbackground', noderuninbackground);
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
@@ -430,8 +464,21 @@ ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) =>
 ipcMain.handle('locale', async() => {
   return await app.getLocale();
 });
+ipcMain.handle('version', () => {
+  let currentVersion = '';
+  if (process.env.NODE_ENV === 'development') {
+     currentVersion = require('../package.json').version;
+   } else {
+     currentVersion = remote.app.getVersion();
+   }
+   return currentVersion;
+
+});
+
+
 
 ipcMain.handle('resize', (event, width, height) => {
+
   let browserWindow = BrowserWindow.fromWebContents(event.sender)
   browserWindow.setSize(width,height);
 });
@@ -461,4 +508,9 @@ ipcMain.on('walletExisted', (event, data) => {
 
 ipcMain.on('walletCreateFailed', (event, data) => {
   event.reply('walletCreateFailed', {  });
+});
+
+ipcMain.on('nodeBackground', (event, data) => {
+  noderuninbackground = data;
+
 });

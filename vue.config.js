@@ -1,5 +1,5 @@
 // vue.config.js
-
+ 
 /**
  * @type {import('@vue/cli-service').ProjectOptions}
  */
@@ -132,10 +132,10 @@ module.exports = {
         "linux": {
           "category": "Utility",
           "executableName": "EpicWallet",
-          "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
+          "icon": "build/icon.icns",
           "packageCategory": "Utility",
           "maintainer": "Johannes Hahn <j.hahn@eccence.digital>",
-          "synopsis": "Epic Wallet, mind your Epic!",
+          "synopsis": "P2P electronic cash wallet",
           "target": [
             "AppImage"
           ],
@@ -177,11 +177,11 @@ module.exports = {
             }
           ],
           "desktop": {
-            "Name": "Epic-Wallet",
+            "Name": "EpicWallet",
             "Encoding": "UTF-8",
             "Type": "Application",
             "Comment": "Epic Wallet, mind your Epic!",
-            "StartupWMClass": "Epic-Wallet"
+            "StartupWMClass": "EpicWallet"
           }
         }
 

@@ -1,13 +1,13 @@
 <template>
   <section class="section is-main-section" id="aboutPage">
 
-      <h1 class="is-size-5">Epic Cash desktop wallet</h1>
+      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.1.0</h1>
       <p>
-        <i>This software is developed by <a @click="open('https://www.eccence.digital')" >eccence.digital - freiwald & Hahn GbR</a></i><br/>
+        
         <br/>
 
       </p>
-      <h1 class="is-size-5">GitHub:</h1>
+      <h1 class="is-size-5">GitHub source:</h1>
       <p>
       <a @click="open('https://github.com/EpicCash/epic-gui-wallet')" >https://github.com/EpicCash/epic-gui-wallet</a>
       <br/>
@@ -39,12 +39,31 @@
 
 <script>
 
+  import { useStore } from '@/store';
+
+  import { ref,onMounted } from 'vue';
+
   export default {
     name: 'about',
+    setup(){
+
+      const version = ref('');
+
+      return {
+        version,
+
+      }
+    },
+    async mounted(){
+      this.version = await window.api.version();
+
+    //  console.log(this.configService);
+    },
     methods: {
       open (link) {
         window.openlink.open(link);
       }
+
     }
 }
 

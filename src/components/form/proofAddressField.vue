@@ -2,7 +2,7 @@
   <input
     class="input"
     type="proof_address"
-    placeholder="$t('msg.recipient_proof_address')"
+    :placeholder="$t('msg.recipient_proof_address')"
     autocomplete="off"
     v-model="input"
 
@@ -25,7 +25,7 @@
 
       const validInput = () => {
 
-        defaultValue.value = input.value;
+        defaultValue.value = input.value.trim();
 
         return validateProofAddressField("proof_address", defaultValue.value);
       };

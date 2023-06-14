@@ -26,7 +26,7 @@
 
       const validInput = (configService, exist) => {
 
-        defaultValue.value = input.value == '' ? 'default' : input.value;
+        defaultValue.value = input.value == '' ? 'default' : input.value.trim();
 
         return validateAccountField("account", defaultValue.value, configService, exist);
       };

@@ -33,7 +33,7 @@
                     </a>
 
                     <a v-if="address.externalOne" @click="fillAddressField(address, 'externalOne')" class="dropdown-item" data-address-id="{{address.id}}">
-                      {{ address.name }} - HTTP <span class="paste-address">{{ address.externalOne }}</span>
+                      {{ address.name }} - EPICBOX <span class="paste-address">{{ address.externalOne }}</span>
                     </a>
 
                     <a v-if="address.externalTwo" @click="fillAddressField(address, 'externalTwo')" class="dropdown-item" data-address-id="{{address.id}}">
@@ -178,7 +178,7 @@ export default {
           this.method = 'keybase';
         }else if(type == 'externalOne'){
           this.addressField.setValue(address.externalOne.trim());
-          this.method = 'http';
+          this.method = 'epicbox';
         }else if(type == 'externalTwo'){
           this.addressField.setValue(address.externalTwo.trim());
           this.method = 'http';
@@ -300,6 +300,11 @@ export default {
       this.withproof ? isFormAllValid.push(this.proofAddressField.validInput()) : null;
       isFormAllValid.push(this.addressField.validInput());
 
+      let method = this.method;
+      if(this.addressField.defaultValue.includes('@') || this.addressField.defaultValue.startsWith('es') || this.addressField.defaultValue.startsWith('epicbox')){
+        method = 'epicbox';
+      }
+
 
       if(!isFormAllValid.includes(false)){
         this.isLoadingSend = true;
@@ -317,7 +322,7 @@ export default {
           "ttl_blocks": null,
           "payment_proof_recipient_address": this.withproof ? this.proofAddressField.defaultValue : null,
           "send_args": {
-            "method": this.method,
+            "method": method,
             "dest": this.addressField.defaultValue,
             "finalize": true,
             "post_tx": true,
@@ -327,6 +332,7 @@ export default {
         }
 
         let res = await this.$walletService.issueSendTransaction(tx_data)
+
         if(res && res.result && res.result.Ok){
 
             let tx_id = res.result.Ok.id

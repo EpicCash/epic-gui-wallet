@@ -1,8 +1,6 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 
-
-
 export const store = createStore({
   state: {
     /* AppStyle (needed for demo render() in main.js) */
@@ -48,6 +46,7 @@ export const store = createStore({
 
     /* which service are running */
     walletListenerService: false,
+    walletEpicboxService: false,
     torService: false,
     ngrokService: false,
     ngrokTunnels: {},
@@ -56,8 +55,14 @@ export const store = createStore({
     nodeStatus: {
 
       sync_info:{
-        current_height:0,
-        highest_height:0
+        current_height: 0,
+        highest_height: 0,
+        downloaded_size: 0,
+        total_size: 0,
+        rproofs: 0,
+        rproofs_total: 0,
+        kernels: 0,
+        kernels_total: 0,
       }
 
     },
@@ -81,7 +86,9 @@ export const store = createStore({
     basic (state, payload) {
       state[payload.key] = payload.value
     },
-
+    walletEpicboxService(state, payload){
+      state.walletEpicboxService = payload;
+    },
     walletListenerService(state, payload){
       state.walletListenerService = payload;
       state.torService = payload;
@@ -116,15 +123,38 @@ export const store = createStore({
             case 'awaiting_peers':
               payload.sync_status = 'Awaiting peers'
             break;
+
+            case 'txhashset_download':
+              payload.sync_status = 'Download Blocks'
+            break;
+            case 'syncing':
+                payload.sync_status = '... processing'
+            break;
+            case 'txhashset_rangeproofs_validation':
+              payload.sync_status = 'Validate rangeproofs'
+            break;
+            case 'txhashset_kernels_validation':
+              payload.sync_status = 'Validate block kernels'
+            break;
             default:
               payload.sync_status = 'synced'
             break;
           }
-
+/*
+sync_info:
+rproofs: 19000
+rproofs_total: 64579
+*/
         if(payload && !payload.sync_info){
           payload.sync_info = {
-            current_height:0,
-            highest_height:0
+            current_height: 0,
+            highest_height: 0,
+            downloaded_size: 0,
+            total_size: 0,
+            rproofs: 0,
+            rproofs_total: 0,
+            kernels: 0,
+            kernels_total: 0,
           }
         }
         state.nodeStatus = payload;

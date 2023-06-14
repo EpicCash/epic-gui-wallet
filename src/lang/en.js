@@ -3,7 +3,6 @@ const messages = {
 
     title: '',
     password: 'Password',
-
     passwordAgain: 'Enter password again',
     wrongPassword: 'Wrong password',
     login_: 'Login',
@@ -17,15 +16,14 @@ const messages = {
     confirmed: 'Confirmed',
     unconfirmed: 'Awaiting confirmation',
     locked: 'Locked',
-
     send: 'Send',
-
-
-    cancel:'Cancel',
+    cancel: 'Cancel',
+    ok: 'Ok',
+    confirm: 'Confirm',
+    confirm_action: 'Confirm action',
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
-
     welcome: 'Welcome to EPIC wallet',
     back: 'Back',
     reset: 'Reset',
@@ -33,21 +31,22 @@ const messages = {
     msg: 'Message',
     more: 'More',
     wrongAddressFormat: 'wrong address format',
-
     node_server: 'Node Server',
     node_server_builtin: 'Built-in node server',
     node_server_external: 'External node server',
     node_server_address: 'Node Server Address',
     recipient_proof_address: 'Recipient proof address',
-
     copy_to_clipboard: 'Copied to clipboard!',
     placeholder_search: 'Search...',
     refresh: 'Refresh',
     page_of: 'Page {0} of {1}',
     only_letter: 'Only lower case letters from a-z,',
     custom_settings: 'Custom settings',
+    advanced_settings: 'Advanced Settings',
     step_of: 'Step {0}/{1}',
+    close_all_process: 'Terminate all processes',
 
+    waiting_for_nodesync: '... waiting for node to be synced.',
     menu:{
       general: 'General',
       dashboard: 'Dashboard',
@@ -60,14 +59,14 @@ const messages = {
       about: 'About',
       help: 'Help',
       logout: 'Log out',
-      account: 'Account',
+      account: 'Profile',
       settings: 'Settings',
       recheck: 'Recheck Balance',
       mnemonic: 'Mnemonic Words',
       run_setup: 'Run Setup Assistant',
-      updates: 'Updates'
+      updates: 'Updates',
+      openepichidden: 'Epic wallet location',
     },
-
     headerbar: {
       howdy: 'Howdy,',
       version: 'Version',
@@ -75,7 +74,9 @@ const messages = {
       status: 'Status',
       node: 'Node',
       sync_height: 'Sync Height',
-      block_height: 'Blockchain Height'
+      progress: 'Progress',
+      block_height: 'Blockchain Height',
+      node_sync_status: 'Internal node sync status',
     },
     dashboard:{
       transactions: 'Transactions',
@@ -90,7 +91,6 @@ const messages = {
       fatal_create: 'Fatal: created fail on action "{0}"',
       fatal_update: 'Fatal: App config not updated.'
     },
-
     setupwizard:{
       setup_assistant: 'Setup Assistant',
       account_information: 'Account information',
@@ -105,7 +105,7 @@ const messages = {
       <br/>
       If you are not sure which one to use, then leave the settings as they are.<br/>`,
       previous_step: 'Previous step',
-      receive_transactions: 'Receiving transactions',
+      receive_transactions: 'NEW Feature* Epic Address',
       receive_transactions_txt: `To receive transactions from other wallets, your wallet must be accessible over the Internet.<br/>
       <br/>
       If you are not familiar with router settings and port forwarding, we recommend using the ngrok service.<br/>
@@ -122,10 +122,28 @@ const messages = {
       language: 'Language',
       ngrok_authtoken: 'ngrok Auth-Token',
       db_fatal: 'DB Fatal: can not insert DB',
-      errors_save: 'Error saving user settings: {0}'
+      errors_save: 'Error saving user settings: {0}',
+      epicbox_domain: 'Epicbox Web Address',
+      epicbox_off: 'turned off',
+      epicbox_domain_hint: `Leave field blank if you don't want to use this service.`,
+      noninteractive_transactions: `Intro to EPIC Addresses<br/>
+      <br/>
+      EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
+      <br/>
+      This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
+      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
+      <br/>
+      How it works:<br/>
+      Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
+      <br/>The receiver signs the transaction and responds with a confirmation back to the sender which 'finalizes' the transaction if the sender is online.<br/>
+      <br/>If both wallets are online when a transaction is created, the process takes place immediately.<br/>
+      <br/>
+      This system does not anonymize your IP and a VPN is recommended for IP address privacy.<br/>
+      <br/>Transactions are fully encrypted which assures a private transaction exchanged between the sender and receiver.<br/>
+      <br/>
+      `,
     },
     transaction:{
-
       received: 'Received',
       send: 'Send',
       transaction_id: 'Transaction ID',
@@ -148,9 +166,7 @@ const messages = {
       sender_address: 'Sender address',
       sender_signature: 'Sender signature',
       sender_address_path: 'Sender address path'
-
     },
-
     commit:{
       unspentCmt: 'Unspent outputs',
       heightCreated: 'Block height when Created',
@@ -165,24 +181,22 @@ const messages = {
       value: 'Value',
       status: 'Status',
       copy: 'Commit copied'
-
-
     },
     account: {
-      account: 'Account',
+      account: 'Profile',
       keybase: 'Keybase',
       your_name: 'Your name',
-      settings_saved: 'Account settings saved',
-      error_save: 'Error saving account'
+      settings_saved: 'Profile settings saved',
+      error_save: 'Error saving profile settings'
     },
     addressbook:{
-      naem: 'Name',
+      name: 'Name',
       country: 'Country',
       city: 'City',
       tor_onion_address: 'Tor-Onion Address',
       keybase_account: 'Keybase Account',
-      external_one: 'External Address 1',
-      external_two: 'External Address 2',
+      external_one: 'Epicbox Address',
+      external_two: 'External Address',
       proof_address: 'Proof Address',
       notice: 'Notice',
       send_always: 'send always proof',
@@ -200,14 +214,14 @@ const messages = {
       listener_started: 'Wallet listener started',
       error_listener_started: 'Error starting wallet listener',
       tor_started: 'Tor started',
-      error_tor_started: 'Tor not started'
+      error_tor_started: 'Tor not started',
+      epicbox_started: 'Epicbox started',
+      error_epicbox_started: 'Error starting Epicbox',
     },
     seed:{
       errorGetMnemonic: 'Error getting Mnemonic. Is password correct?',
       mnemonic: 'Mnemonic Words'
     },
-
-
     new:{
       create: 'Create new wallet',
       restore: 'Restore wallet',
@@ -216,9 +230,7 @@ const messages = {
       networkErr: 'Network type can not be determined.<br/>Please select one.',
       selectNetwork: 'continue',
     },
-
     restore:{
-
       title: 'Restore wallet via seed phrase',
       addSeedsInfo: 'Add seed phrase by clicking the word(s) please',
       yourSeedsInfo: 'Your seed phrase is',
@@ -229,12 +241,10 @@ const messages = {
       search_placeholder: 'type to search words / or paste seed phrase',
       create_new: 'Create new account',
       change_seed: 'Change seed words',
-      wallet_recovered: 'Your wallet is recoverd. Please login and finish the setup.',
+      wallet_recovered: 'Your wallet is recovered. Please login and finish the setup.',
       recover_fail: 'Fatal: recover failed on action "{0}"',
       fatal_app: 'Fatal: App config not updated.'
-
     },
-
     app:{
       create: 'Create transaction (File)',
       finalize: 'Finalize transaction (File)',
@@ -246,7 +256,6 @@ const messages = {
       updateMsg: 'Found new version of EPIC wallet. Please update Right NOW.',
       yes: 'yes',
       no: 'no',
-
       ngrok_service_started: 'Ngrok service started',
       ngrok_address_changed: 'Your ngrok address has changed',
       ngrok_service_stopped: 'Ngrok service stopped',
@@ -257,17 +266,15 @@ const messages = {
       node_offline: 'Node is offline',
       external_node_online: 'External Node is online',
       external_node_offline: 'External Node is offline',
-      background_process: 'We found some running wallet and node processes in the background. Please close them first before you run this App.',
+      background_process: 'Please close all processes before continuing.',
 
     },
-
     info: {
       spendable: 'Spendable',
       total: 'Balance',
       unfinalization: 'Unconfirmed',
       immature: 'Immature'
     },
-
     txs:{
       tx: 'Transactions',
       canceled:'Canceled',
@@ -275,9 +282,6 @@ const messages = {
       noTx:'No transactions',
       cancelSuccess:'This transaction canceled',
     },
-
-
-
     fileSend:{
       sendAmount: 'Amount to send',
       createTxFile: 'Create transaction',
@@ -287,7 +291,6 @@ const messages = {
       CreateFailed: 'Failed to create new transaction file',
       proof_address_recipient: 'Wrong proof address length',
     },
-
     httpSend:{
       sendAmount: 'Amount to send',
       address:'Recipient Address',
@@ -302,7 +305,6 @@ const messages = {
       salteVersion: 'Slate file version',
       salteVersionHelp: 'If you failed to send EPIC, try changing the Slate file version then resend'
     },
-
     receive: {
       dropMsg: 'Drop transaction file to receive or click to upload',
       WrongFileType: 'Wrong transaction file type',
@@ -313,7 +315,6 @@ const messages = {
       error_read: 'Error reading file content',
       success: 'Transaction success',
     },
-
     finalize: {
       finalize: 'Finalize',
       success: 'Transaction success',
@@ -325,33 +326,29 @@ const messages = {
       dragdrop: 'Drag & drop file',
       error_read: 'Error reading file content'
     },
-
     httpReceive: {
-      launchSucess: 'Started successfully',
       listening: "Your wallet can receive transactions through these addresses.",
       address: 'Wallet Address',
-      reachableMsg2: 'Ensure your IP Address is public and reachable by the internet.',
       close: 'Stop listener',
       attention: 'Attention',
       reachableMsg: 'To receive online transactions, your wallet must be started in listen mode.',
-      password: 'Wallet Password (used to start HTTP listen)',
       start: 'Start',
       error: 'No password.',
-      failed: 'Start Failed, Maybe wrong password',
-      failed2: 'HTTP listen failed, your public ip is not reachable by the internet user. Try transaction file',
-      failed3: 'Failed to get your public ip; try again later',
-      failed4: 'Listener is now running on localhost:3415. However your ip is not reachable by the internet user. Try transaction file',
       ip: 'your public ip',
       current_ngrok_address: 'Current Ngrok Address',
       local_address: 'Local address',
       session_end: 'You are using ngrok without an account. Your session will end in {0} hour, {1} minutes',
       tor_onion_address: 'Tor onion Address',
       proof_address: 'Proof Address',
+      epicbox_address: 'Your public Epic address',
       your_qrcode: 'Your QRcode for your "{0}" address',
       click_qrcode_icon: 'Click the qr code icon',
-      tor_not_available: 'Tor not available. Try to restart the wallet listener'
+      tor_not_available: 'Tor not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
+      check_port_open_done: 'Recheck done!',
+      listener_stopped: 'Wallet listener stopped',
     },
-
     check: {
       checking: 'Re-checking, be patient ...',
       stop: 'Stop Check',
@@ -362,25 +359,19 @@ const messages = {
       scan_finished: 'Wallet scan finished.',
       error_scan: 'Error start scan. Is password correct?',
       scan_stop: 'Wallet scan stopped.'
-
     },
-    firstruncheck: {
-      title: 'Scan blockchain for your wallet outputs, be patient ...',
-    },
-
     lang: {
       title: 'Select language',
       lang: 'Language',
       select: 'Select'
     },
-
     settings: {
       title: 'Settings',
       check_node_api_http_addr: 'Node api address',
       node_api_addr_hint: 'where the wallet should find a running node',
       network: 'Network',
       wallet_listener: 'Wallet listener',
-      auto_start: 'automatically start wallet listener after login',
+      auto_start: 'automatically start wallet listener and Epicbox after login',
       authtoken: 'Your ngrok Authtoken',
       ngrok_force_start: 'use ngrok without Authtoken',
       ngrok_hint: 'The ngrok address is active for 2 hours then gets renewed.',
@@ -388,13 +379,18 @@ const messages = {
       authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
       howto: 'How to get your Authtoken from ngrok',
       settings_saved: 'Settings saved',
-      error_save: 'Error saving settings'
-    },
+      error_save: 'Error saving settings',
+      epicbox_domain: 'Epicbox Domain',
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
 
+      node_background: 'sync in background',
+      node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.'
+    },
     validators:{
       empty: 'The {0} field is required',
       equal: 'The {0} must be equal',
       http_address: 'No valid HTTP(S) Address',
+      epicbox_address: 'No valid Epicbox Address',
       min_length: 'The {0} field must be at least {1} characters long',
       only_letters: 'The {0} can have only lower letters from a-z with no spaces',
       number: 'The {0} field must be a number',
@@ -402,7 +398,6 @@ const messages = {
       exist: 'The account "{0}" already exists',
       notexist: 'The account "{0}" does not exist'
     }
-
   }
 }
 export default messages

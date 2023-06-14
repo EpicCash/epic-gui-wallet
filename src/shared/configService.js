@@ -12,12 +12,12 @@ class ConfigService {
   constructor(emitter) {
       this.emitter = emitter;
       this.configAccount = '';
-      this.configVersion = "4.0.1";
+      this.configVersion = "5.0.3";
       this.debug = window.debug;
 
       //where to find accounts and wallet data
       this.userhomedir = '';
-      this.langs = {'en': 'English', 'ru': 'Russian', 'zh': 'Chinese'};
+      this.langs = {'bg': 'България', 'cz': 'Česko', 'de': 'Deutsch', 'en': 'English',  'fa': 'فارسی', 'hi': 'हिन्दी'};
       this.locale = 'en';
       //the default wallet dir from current selected account
       //TODO: make it selectable in app, so user can
@@ -38,6 +38,7 @@ class ConfigService {
       if(window.config.getPlatform() == 'win'){
         this.epicBinPath = '"' + path.resolve(this.epicBinPath) + '"';
         this.epicNodeBinPath = '"' + path.resolve(this.epicNodeBinPath) + '"';
+        this.ngrokBinPath = '"' + path.resolve(this.ngrokBinPath) + '"';
       }
 
       this.epicPath = this.epicBinPath;
@@ -45,14 +46,15 @@ class ConfigService {
       this.config = {};
       this.configFile = '';
       this.apiSecretPath = '';
-      this.defaultEpicNode = '';
+      this.defaultEpicNode = 'http://127.0.0.1:3413';
       this.apisecret = '';
       this.ownerApiSecretPath = '';
       this.ownerApisecret = '';
 
       this.walletTOMLPath = '';
       this.walletTOMLName = 'epic-wallet.toml';
-
+      this.walletTOMLLogfile = 'epic-wallet.log';
+      this.walletListenerPort = 3415;
       this.nodeTOMLPath = '';
       this.nodeTOMLName = 'epic-server.toml';
       this.nodeFoundationName = 'foundation.json';
@@ -60,6 +62,8 @@ class ConfigService {
 
       this.ngrokApiAddress = 'http://127.0.0.1:4040';
       this.nodeFallBack = 'https://fastepic.eu:3413';
+      this.epicboxDomain = 'epicbox.epic.tech';
+
 
       //this should never fail or app is not working
       let epicDir = path.join(defaultAppConfigDir, '.epic');
@@ -68,6 +72,10 @@ class ConfigService {
       }
 
 
+  }
+
+  getNodeFallBack(){
+    return this.nodeFallBack;
   }
 
   resetConfig(){
@@ -118,7 +126,7 @@ class ConfigService {
 
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
 
-        const re = /db_root(\s)*=(\s).*/;
+        const re = /^db_root(\s)*=(\s).*/gm;
         if(tomlContent.search(re) != -1){
           if(this.platform == 'win'){
                   //double escaped path
@@ -128,12 +136,12 @@ class ConfigService {
           }
         }
 
-        const re2 = /chain_type(\s)*=(\s).*/;
+        const re2 = /^chain_type(\s)*=(\s).*/gm;
         if(tomlContent.search(re2) != -1){
           tomlContent = tomlContent.replace(re2, 'chain_type = "' + this.tomlNetworkname + '"');
         }
 
-        const re3 = /foundation_path(\s)*=(\s).*/;
+        const re3 = /^foundation_path(\s)*=(\s).*/gm;
         if(tomlContent.search(re3) != -1){
           if(this.platform == 'win'){
                   //double escaped path
@@ -143,15 +151,21 @@ class ConfigService {
           }
         }
 
-        const re4 = /stdout_log_level(\s)*=(\s).*/;
+        const re4 = /^stdout_log_level(\s)*=(\s).*/gm;
         if(tomlContent.search(re4) != -1){
             tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
         }
 
-        const re5 = /run_tui(\s)*=(\s).*/;
+        const re5 = /^run_tui(\s)*=(\s).*/gm;
         if(tomlContent.search(re5) != -1){
             tomlContent = tomlContent.replace(re5, 'run_tui = false');
         }
+
+        const re6 = /^bits(\s)*=(\s).*/gm;
+        if(tomlContent.search(re6) != -1){
+            tomlContent = tomlContent.replace(re6, 'bits = 31');
+        }
+
 
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -233,7 +247,7 @@ class ConfigService {
       window.nodeFs.writeFileSync(this.appConfigFile, JSON.stringify(this.appConfig), {encoding: "utf8", flag: "w"});
       return true;
     }catch(e){
-
+      console.log('error write app config', e);
       return false;
     }
 
@@ -242,8 +256,10 @@ class ConfigService {
   checkTomlFile(defaultAccountWalletdir){
 
     let walletDir = defaultAccountWalletdir ? defaultAccountWalletdir : this.defaultAccountWalletdir;
+    let walletTOMLLogfilePath = path.join(walletDir, this.walletTOMLLogfile);
     //check if toml file exist
     let tomlFile = path.join(walletDir, this.walletTOMLName);
+
     if (window.nodeFs.existsSync(tomlFile) && window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'})) {
         this.emitter.emit('checkSuccess', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file exist and readable');
 
@@ -251,13 +267,13 @@ class ConfigService {
         //rewrite some toml properties to work with owner_api lifecycle and foreign receive
         let tomlContent = window.nodeFs.readFileSync(tomlFile, {encoding:'utf8', flag:'r'});
 
-        const re = /owner_api_include_foreign(\s)*=(\s)*false/;
+        const re = /^owner_api_include_foreign(\s)*=(\s)*false/gm;
         if(tomlContent.search(re) != -1){
 
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
         }
 
-        const re2 = /data_file_dir(\s)*=(\s).*/;
+        const re2 = /^data_file_dir(\s)*=(\s).*/gm;
         if(tomlContent.search(re2) != -1){
 
             if(this.platform == 'win'){
@@ -268,8 +284,7 @@ class ConfigService {
             }
         }
 
-        const re3 = /check_node_api_http_addr(\s)*=(\s).*/;
-
+        const re3 = /^check_node_api_http_addr(\s)*=(\s).*/gm;
 
         let nodeApiHttp = '';
         if(!this.config.nodesynced){
@@ -278,14 +293,78 @@ class ConfigService {
           nodeApiHttp = this.config.check_node_api_http_addr;
         }
 
-
         if(tomlContent.search(re3) != -1){
           tomlContent = tomlContent.replace(re3, 'check_node_api_http_addr = "' + nodeApiHttp + '"');
         }
 
-        const re4 = /stdout_log_level(\s)*=(\s).*/;
+        const re4 = /^stdout_log_level(\s)*=(\s).*/gm;
         if(tomlContent.search(re4) != -1){
             tomlContent = tomlContent.replace(re4, 'stdout_log_level = "Debug"');
+        }
+
+        const re5 = /^api_secret_path(\s)*=(\s).*/gm;
+        if(tomlContent.search(re5) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re5, 'api_secret_path = "' + this.ownerApiSecretPath.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re5, 'api_secret_path = "' + this.ownerApiSecretPath + '"');
+          }
+        }
+
+        const re6 = /^node_api_secret_path(\s)*=(\s).*/gm;
+        if(tomlContent.search(re6) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re6, 'node_api_secret_path = "' + this.apiSecretPath.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re6, 'node_api_secret_path = "' + this.apiSecretPath + '"');
+          }
+        }
+
+        const re7 = /^send_config_dir(\s)*=(\s).*/gm;
+        if(tomlContent.search(re7) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re7, 'send_config_dir = "' + walletDir.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re7, 'send_config_dir = "' + walletDir + '"');
+          }
+        }
+
+        const re8 = /^log_file_path(\s)*=(\s).*/gm;
+        if(tomlContent.search(re8) != -1){
+          if(this.platform == 'win'){
+            //double escaped path
+            tomlContent = tomlContent.replace(re8, 'log_file_path = "' + walletTOMLLogfilePath.replace(/\\/g, '\\\\') + '"');
+          }else{
+            tomlContent = tomlContent.replace(re8, 'log_file_path = "' + walletTOMLLogfilePath + '"');
+          }
+        }
+
+        const re9 = /^epicbox_domain(\s)*=(\s).*/gm;
+        let epicboxDomain = '';
+        if(!this.config.epicbox_domain){
+          epicboxDomain = this.epicboxDomain;
+        }else{
+          epicboxDomain = this.config.epicbox_domain;
+        }
+
+        if(tomlContent.search(re9) != -1){
+          tomlContent = tomlContent.replace(re9, 'epicbox_domain = "' + epicboxDomain + '"');
+        }else{
+//do not add space in this block!!!
+///this updates older toml file format to work with epicbox
+            tomlContent += `
+
+#########################################
+### EPICBOX CONFIGURATION ###
+#########################################
+[epicbox]
+epicbox_domain = "${epicboxDomain}"
+
+`;
+//do not add space in this block!!!
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
@@ -297,6 +376,7 @@ class ConfigService {
     } else {
 
         this.emitter.emit('checkFail', 'wallet toml "' + tomlFile.replace(walletDir, '~') + '" file does not exist or readable');
+        console.log('check fail toml does not exist', tomlFile);
         return false;
 
 
@@ -316,27 +396,25 @@ class ConfigService {
       if(appConfig[configKey]){
 
         if(appConfig[configKey].length >= 1){
-          appConfig[configKey].forEach(function(element, key){
 
-            if(appConfig[configKey][key].account == data.account){
-
-              appConfig[configKey][key].userhomedir = data.userhomedir;
-              appConfig[configKey][key].network     = data.network;
-              appConfig[configKey][key].isdefault   = data.isdefault;
+          for(let index in appConfig[configKey]){
+            if(appConfig[configKey][index].account == data.account){
+              appConfig[configKey][index].userhomedir = data.userhomedir;
+              appConfig[configKey][index].network     = data.network;
+              appConfig[configKey][index].isdefault   = data.isdefault;
               data = undefined;
-              return false;
-
+              break;
             }
-          });
-        }
-
-        if(data != undefined){
-          appConfig[configKey].push(data);
+          }
         }
       }
 
-      this.appConfig = appConfig;
+      if(data != undefined){
+        appConfig[configKey].push(data);
+      }
 
+      this.appConfig = appConfig;
+      console.log('account create updateAppConfig', this.appConfig);
       return this.saveAppConfig();
   }
 
@@ -346,13 +424,19 @@ class ConfigService {
    */
   async killEpicProcess(){
 
+
     let killPromise = [];
     let killProcess = false;
     let killPids = [];
 
     let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-    let pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
-    let pWalletTorList = await window.nodeFindProcess('name', /tor/);
+
+    let pEpicnodeList = []
+    if(this.config && !this.config.node_background)
+      pEpicnodeList = await window.nodeFindProcess('name', /.*?epic.*server.*run/);
+
+
+    let pWalletTorList = await window.nodeFindProcess('name', 'tor', true);
 
     for(let process of pWalletList) {
       if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
@@ -364,6 +448,8 @@ class ConfigService {
         killPids.push(process);
       }
     }
+
+
     for(let process of pWalletTorList) {
 
       if(process.cmd.includes('tor/listener/torrc')){
@@ -372,29 +458,32 @@ class ConfigService {
     }
 
     if(killPids.length){
-      await this.emitter.emit('killEpicProcess', async function(confirmed){
-        if(!confirmed){
-          return false;
-        }
-        killProcess = true;
-      })
+
+      let close = false;
+      await new Promise((resolve) => {
+
+        this.emitter.emit('killEpicProcess', {pid: killPids, callback:async(confirmed)=>{
+
+
+          if(confirmed){
+            for(let process of killPids) {
+              this.debug ? console.log('configService.kill', process) : null;
+              killPromise.push(nodeChildProcess.kill(process.pid))
+            }
+            await Promise.all(killPromise);
+          }
+          resolve();
+        }});
+
+      });
     }
 
-    if(killProcess){
-      for(let process of killPids) {
-        this.debug ? console.log('configService.kill', process) : null;
-        killPromise.push(nodeChildProcess.kill(process.pid))
-      }
-      await Promise.all(killPromise);
-    }
-
-    this.debug ? console.log('configService.allkilled') : null;
 
   }
 
 
   /* check if the select dir is a valid epic wallet dir */
-  async walletDirExist(selectedDir){
+  async walletDirExist(selectedDir, updateConfig){
 
       let walletDir = path.join(selectedDir, 'wallet_data');
       let tomlFile = path.join(selectedDir, this.walletTOMLName);
@@ -406,6 +495,7 @@ class ConfigService {
         return false;
       }
       let userdata;
+
       if(!window.nodeFs.existsSync(walletDir)){
         return false;
       }
@@ -508,15 +598,86 @@ class ConfigService {
 
       }
 
-      if(userdata){
+      if(userdata && updateConfig){
 
         this.updateAppConfig('account_dirs', userdata);
       }
 
       return true;
 
+  }
+
+  updateAccountsConfig(newAccountConfig){
+    let parent = this;
+    newAccountConfig.forEach(function(account){
+      parent.updateAppConfig('account_dirs', account);
+    });
+
+  }
+
+  /* check if the folder structure of all accounts is consistence with current app folder structure */
+  async checkAccountsFolderStructure(){
+      let appConfig = this.appConfig['account_dirs'];
+      let move = [];
+      let newAccountconfig = [];
+      for (let account of appConfig){
+
+        if(account.account !== 'default'){
+          //wallet 3.0 folder structure is [wallet dir]/[network type]/[account name]/
+          //wallet 4.0 folder structure is [wallet dir]/[account name]/[network type]/
+          let walletpathV3 = path.join(account.userhomedir, this.getNetworkfolderShortname(account.network), account.account);
+          let walletpathV4 = path.join(account.userhomedir, account.account, this.getNetworkfolderShortname(account.network));
+
+          let pathType = 4;
+          let src = '';
+          let dest = '';
+          if(!await this.walletDirExist(walletpathV4)){
+            if(await this.walletDirExist(walletpathV3)){
+              pathType = 3;
+              src = walletpathV3;
+              dest = walletpathV4
+            }else{
+              pathType = 0;
+            }
+          }
+
+          //if path type == 0 ... no folder exist for account -> prompt for it
+          //if path type == 3 ... update path type to 4 -> prompt for it
+          //if path type == 4 ... all fine, do nothing
+          if(src != '' && dest != '' ){
+
+             move.push(window.nodeFsExtra.move(src, dest));
+             let homedir = path.join(account.userhomedir, account.account);
+             let newAccount = {
+                 account: account.account,
+                 userhomedir: homedir,
+                 network: account.network,
+                 isdefault: false
+             };
+             newAccountconfig.push(newAccount);
+          }
 
 
+        }else{
+
+          console.log('check folder structure for default account');
+
+        }
+      }
+
+      await Promise.all(move).then(values => {
+        console.log('all renamed');
+        if(newAccountconfig.length){
+          this.updateAccountsConfig(newAccountconfig);
+        }
+
+      })
+      .catch(error => {
+        this.debug ? console.log('error move old folder structure', error) : null;
+        return false;
+      });
+      console.log('finish');
+      return true;
   }
 
   /* check if app has its config file */
@@ -543,6 +704,7 @@ class ConfigService {
     }
     return true;
   }
+
   getNetworkfolderShortname(network){
 
     let shortName = 'main';
@@ -588,7 +750,8 @@ class ConfigService {
   }
 
   async startCheck(account){
-
+      console.log('start check account', account);
+      console.log('start check this.appConfig', this.appConfig['account_dirs']);
       this.debug ? console.log('configService.startCheck', account) : null;
 
       let userHomedir = defaultUserdir;
@@ -598,7 +761,7 @@ class ConfigService {
       let network = '';
       let networkToml = '';
       //this fails if user create a wallet without default name
-      if(account){
+      if(account == 'default'){
 
             this.appConfig['account_dirs'].forEach(function(existingAccount){
                 if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
@@ -612,7 +775,7 @@ class ConfigService {
       }else{
 
           this.appConfig['account_dirs'].forEach(function(existingAccount){
-              if(existingAccount['isdefault'] && existingAccount['userhomedir'] != ''){
+              if(existingAccount['account'] == account && existingAccount['userhomedir'] != ''){
                 userHomedir = existingAccount['userhomedir'];
                 defaultAccountWalletdir = path.join(userHomedir, parent.getNetworkfolderShortname(existingAccount['network']));
                 networkToml = parent.getNetworkTomlName(existingAccount['network']);
@@ -640,6 +803,8 @@ class ConfigService {
       this.tomlNetworkname = networkToml;
       this.defaultAccountNetwork = network;
 
+      console.log('start check userhomedir', this.userhomedir);
+      console.log('start check defaultAccountWalletdir', this.defaultAccountWalletdir);
 
       //await delay(sleepTime);
 
@@ -703,13 +868,15 @@ class ConfigService {
         }
         //await delay(sleepTime);
 
+        //make some settings
+        //load settings before change wallet toml
+        this.config = this.loadConfig(this.configFile);
+
         this.walletTOMLPath = this.checkTomlFile(defaultAccountWalletdir);
         if(!this.walletTOMLPath){
           return 'toml';
         }
 
-        //make some settings
-        this.config = this.loadConfig(this.configFile);
         if(!this.configVersionOk()){
           return 'settings'
         }
@@ -717,6 +884,8 @@ class ConfigService {
           this.accountExist(account);
           return 'settings'
         }
+
+
 
       }
 

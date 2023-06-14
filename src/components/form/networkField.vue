@@ -27,7 +27,7 @@
 
       const validInput = (configService) => {
 
-        defaultValue.value = input.value == '' ? 'mainnet' : input.value;
+        defaultValue.value = input.value == '' ? 'mainnet' : input.value.trim();
 
         if(input.value == 'floonet'){
           shortName.value = 'floo';

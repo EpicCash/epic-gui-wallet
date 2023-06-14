@@ -16,6 +16,8 @@
 
   />
 
+  <modal-kill-box/>
+
   <modal-firstsync-box
     :is-active="isFirstscanModalActive"
     @confirm="firstscanConfirm"
@@ -35,6 +37,9 @@
   import AsideRight from '@/components/layout/AsideRight.vue'
   import ModalNodeBox from '@/components/layout/NodesyncedModalBox.vue'
   import ModalFirstsyncBox from '@/components/layout/FirstsyncModalBox.vue'
+  import ModalKillBox from '@/components/layout/KillProcessModalBox.vue'
+
+  window.nodeSynced = null;
 
   //app components
   export default {
@@ -43,7 +48,8 @@
     components: {
       AsideRight,
       ModalNodeBox,
-      ModalFirstsyncBox
+      ModalFirstsyncBox,
+      ModalKillBox
     },
 
     setup() {
@@ -83,7 +89,9 @@
     },
 
 
-    created() {
+    async created() {
+
+      this.locale = await window.api.locale();
 
       window.nodeChildProcess.on('firstscan-stdout', (payload) => {
 
@@ -102,6 +110,31 @@
 
       });
 
+      /* start epicbox and refresh outputs/summary if node is snyced */
+      this.emitter.on('app.startEpicbox', async(res) => {
+
+        let confirmed = await this.waitForNodesynced('nodeSynced').then((res) => {
+          return res;
+        });
+
+        if(confirmed){
+          const isEpicbox = await this.$walletService.startEpicbox(res);
+          if(isEpicbox && isEpicbox.success){
+            this.$toast.success(this.$t("msg.login.epicbox_started"));
+            this.store.commit('walletEpicboxService', true);
+          }else{
+            this.$toast.error(this.$t("msg.login.error_epicbox_started"));
+            this.store.commit('walletEpicboxService', false);
+          }
+
+
+
+        }
+
+
+
+      });
+
       this.emitter.on('app.startRefreshNodeStatus', () => {
         this.stopRefreshNode();
         this.startRefreshNode();
@@ -111,7 +144,7 @@
         this.stopRefreshNode();
       });
 
-      this.emitter.on('app.nodeStart', async () => {
+      this.emitter.on('app.nodeStart', async (tmppw) => {
         await this.nodeStart();
       });
 
@@ -132,8 +165,6 @@
       this.emitter.on('app.ngrokStop', async () => {
          await this.ngrokStop();
       });
-
-
 
       this.emitter.on('app.selectLocale', (locale) => {
         this.locale = locale;
@@ -161,12 +192,14 @@
           locked: 0,
         });
 
-
-
         await this.$walletService.stopListen();
         await this.$walletService.stopWallet();
         await this.$ngrokService.stopNgrok();
-        await this.$nodeService.stopNode();
+
+        if(this.configService.config && this.configService.config.node_background == false)
+          await this.$nodeService.stopNode();
+
+
         this.$walletService.logoutClient();
         this.loggedIn = false;
         this.configService.resetConfig();
@@ -179,40 +212,46 @@
 
       this.emitter.on('app.accountLoggedIn', async () => {
 
+        //load user selected locale
+        this.locale = this.configService.config && this.configService.config.locale ? this.configService.config.locale : 'en';
+
         window.debug ? console.log('accountLoggedIn') : null;
 
         this.loggedIn = true;
         this.store.dispatch('toggleFullPage', false);
         this.store.commit('asideStateToggle');
         this.$router.push('/dashboard');
-        this.emitter.emit('app.nodeStart');
+
         this.emitter.emit('app.ngrokStart');
 
-        //always at the very end
+
+        //start refresh outputs summary etc
         this.emitter.emit('app.update');
 
       });
 
-      this.emitter.on('killEpicProcess', async (callback) => {
-        //todo replace with customized dialog/prompt
-        let msg = this.$t("msg.app.background_process");
-        const confirmed = await confirm(msg);
-        callback(confirmed);
-      });
 
     },
 
     async mounted() {
 
+
       //App main window min size
-      window.api.resize(1400, 1000);
-      //App has started - first close running wallet and node server process
-      await this.configService.killEpicProcess();
+      window.api.resize(1024, 768);
+
 
       if(this.configService.appHasAccounts()){
-        //continue to login
+        //upgrade wallet 3.0 paths to 4.0 paths
+        if(await !this.configService.checkAccountsFolderStructure()){
 
-        this.$router.push('/login');
+          console.log('checking accounts folder structure has issues');
+
+        }else{
+
+          //continue to login page
+          this.$router.push('/login');
+        }
+
 
       } else {
 
@@ -222,6 +261,19 @@
 
     },
     methods: {
+
+      waitForNodesynced (variable) {
+        function waitFor(result) {
+          if (result != null) {
+            return result;
+          }
+          return new Promise((resolve) => setTimeout(resolve, 100))
+            .then(() => Promise.resolve(window[variable]))
+            .then((res) => waitFor(res));
+        }
+        return waitFor();
+      },
+
       nodesyncedModalOpen(){
         this.isNodeModalActive = true
       },
@@ -246,7 +298,7 @@
         this.stopRefreshNgrok();
         let respNgrok = await this.$ngrokService.stopNgrok();
         if(respNgrok){
-          this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
+          //this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
           this.store.commit('ngrokService', false);
           this.store.commit('ngrokTunnels', {});
         }
@@ -291,6 +343,7 @@
         if(this.store.state.user.nodeInternal){
 
           this.store.commit('nodeType', 'internal');
+
           if(!this.configService.startCheckNode()){
             this.$toast.error(this.$t("msg.app.error_setup_internal_node"));
           }else{
@@ -324,9 +377,12 @@
       },
 
       async nodeStatus(){
+        await window.api.nodebackground(this.configService.config.node_background);
 
         let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
         if(respNode){
+
+          window.nodeSynced = respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync';
 
           if(this.store.state.user.nodeInternal && this.configService.config.nodesynced == false){
             if(respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync'){
@@ -334,6 +390,7 @@
                 nodesynced: true,
                 check_node_api_http_addr: 'http://127.0.0.1:3413'
               });
+
               this.configService.checkTomlFile();
               this.nodesyncedModalOpen();
 
@@ -359,10 +416,12 @@
 
           let refresh = _ => this.refreshId = setTimeout(this.startRefresh, 1000*60)
           try {
+            let refreshfromNode = this.store.state.nodeStatus.sync_status == 'synced' ?  true : false;
 
-            await this.getSummaryinfo();
-            await this.getTxs();
-            await this.getCommits();
+            await this.getSummaryinfo(refreshfromNode);
+            await this.getTxs(refreshfromNode);
+            await this.getCommits(refreshfromNode);
+
 
           }
           catch (e) {
@@ -450,9 +509,9 @@
         clearTimeout(this.startRefreshNgrokId);
       },
 
-      async getSummaryinfo() {
+      async getSummaryinfo(refreshfromNode) {
 
-          let summary = await this.$walletService.getSummaryInfo(10);
+          let summary = await this.$walletService.getSummaryInfo(10, refreshfromNode);
           if(summary && summary.result && summary.result.Ok){
             let data = summary.result.Ok
             this.store.commit('summary', {
@@ -473,9 +532,9 @@
           }
       },
 
-      async getTxs() {
+      async getTxs(refreshfromNode) {
 
-        let txs = await this.$walletService.getTransactions(true, null, null);
+        let txs = await this.$walletService.getTransactions(refreshfromNode, null, null);
 
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok[1].reverse()
@@ -492,9 +551,9 @@
 
       },
 
-      async getCommits() {
+      async getCommits(refreshfromNode) {
 
-          let commits = await this.$walletService.getCommits(false, true, null);
+          let commits = await this.$walletService.getCommits(false, refreshfromNode, null);
 
           if(commits && commits.result && commits.result.Ok){
             //this.total_commits =

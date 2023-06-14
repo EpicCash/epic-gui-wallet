@@ -32,7 +32,7 @@
       const isCapslock = ref(false);
       const validInput = () => {
 
-        defaultValue.value = input.value;
+        defaultValue.value = input.value.trim();
 
         return validatePasswordField(props.name, defaultValue.value, (props.repeat != undefined ? props.repeat : false));
 
@@ -42,7 +42,7 @@
     },
     methods:{
 
-      loadcaps(event) {  
+      loadcaps(event) {
         this.isCapslock = event.getModifierState("CapsLock");
       },
     }

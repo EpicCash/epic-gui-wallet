@@ -17,6 +17,13 @@ export default function useValidators() {
     return null;
   }
 
+  const isEpicboxAddress = (fieldName, fieldValue) => {
+
+
+    return !/^(epicbox:\/\/)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{52})(@([a-zA-Z0-9.]+)(:([0-9]*))?)?$/.test(fieldValue) ? i18n.global.t("msg.validators.epicbox_address") : null;
+
+  }
+
   const isHttpAddress = (fieldName, fieldValue) => {
 
 
@@ -60,6 +67,7 @@ export default function useValidators() {
     isSpendable,
     onlyLetter,
     isDirEmpty,
-    isHttpAddress
+    isHttpAddress,
+    isEpicboxAddress
   }
 }

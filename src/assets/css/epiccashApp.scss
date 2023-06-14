@@ -72,6 +72,37 @@ $aside-width: $size-base * 16;
         animation: barberpole 2s linear infinite;
     }
 }
+html.is-dark-mode-active .button__loader_success.button.is-success span {
+  color: #ffffff !important;
+  z-index:1;
+}
+.button__loader_success {
+
+    position: relative;
+    overflow: hidden;
+    cursor:wait;
+    z-index:0;
+
+    &:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 150%;
+        height: 100%;
+      //  background: repeating-linear-gradient(60deg, darken($epicCashGold, 100%), $epicCashGold 10%);
+        background: repeating-linear-gradient(
+            60deg,
+            $green,
+            $green 4px,
+            $black-ter 4px,
+            $black-ter 8px
+          );
+
+        /*animation:load 1s infinite linear;*/
+        animation: barberpole 2s linear infinite;
+    }
+}
 
 .button__text {
     position:relative
@@ -83,4 +114,7 @@ $aside-width: $size-base * 16;
   100% {
     transform: translateX(-2.2rem);
   }
+}
+.aside ul.menu-list a{
+  display:flex;
 }

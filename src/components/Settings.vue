@@ -7,7 +7,14 @@
 
 
           <NodeserverField ref="nodeserverField" class="is-fullwidth" />
+          <div class="field">
 
+            <div class="control">
+                <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="node_background">
+                <label for="walletListenSwitch">{{ $t("msg.settings.node_background") }}</label>
+                <p class="help">{{ $t("msg.settings.node_background_hint") }}</p>
+            </div>
+          </div>
           <div class="field">
             <label class="label">{{ $t("msg.lang.lang") }}</label>
             <div class="control">
@@ -20,54 +27,88 @@
           </div>
 
           <div class="field">
-            <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
+            <label class="label">{{ $t("msg.settings.epicbox_domain") }}</label>
             <div class="control">
-                <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="walletlisten_on_startup">
-                <label for="walletListenSwitch">{{ $t("msg.settings.auto_start") }}</label>
+
+                <input
+                  class="input"
+                  type="epicbox"
+                  required
+                  v-model="epicboxDomain" />
+              <p class="help">{{ $t("msg.settings.epicbox_domain_hint") }}</p>
             </div>
           </div>
 
           <div class="field">
-            <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
-              <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
-              <mdicon size="18" v-else name="menu-down" />
-              {{ $t("msg.settings.howto") }}
-            </a></label>
+            <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
+            <div class="control">
+                <input class="switch is-success" id="nodeBackgroundSync" type="checkbox" v-model="walletlisten_on_startup">
+                <label for="nodeBackgroundSync">{{ $t("msg.settings.auto_start") }}</label>
+            </div>
+          </div>
 
-            <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
-              <div class="card-content">
-                <div class="content">
+
+
+          <div class="field">
+            <div class="control">
+              <input class="switch is-success" id="advancedSettings" type="checkbox" @click="toggleAdvancedSettings" v-model="advancedSettings" >
+              <label for="advancedSettings">{{ $t("msg.advanced_settings") }}</label>
+
+
+              </div>
+          </div>
+
+          <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
+
+            <div class="card-content">
+               <div class="content">
+
                   <div class="field">
-                     <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
-                     <div class="control">
-                       <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-                     </div>
+                    <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedNgrokSettings" >
+                      <mdicon size="18" v-if="!advancedNgrokSettings" name="menu-right" />
+                      <mdicon size="18" v-else name="menu-down" />
+                      {{ $t("msg.settings.howto") }}
+                    </a></label>
+
+                    <div class="card" v-bind:class="{'is-hidden':!advancedNgrokSettings}" >
+                      <div class="card-content">
+                        <div class="content">
+                          <div class="field">
+                             <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
+                             <div class="control">
+                               <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
+                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="control">
+                      <input
+                        class="input"
+                        type="ngrok"
+                        required
+                        v-model="ngrok" />
+                        <p class="help">
+                          {{ $t("msg.settings.authtoken_hint") }}
+                        </p>
+                    </div>
+
                   </div>
+
+                  <div class="field">
+                    <div class="control">
+                        <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
+                        <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
+                        <p class="help">
+                          {{ $t("msg.settings.ngrok_hint") }}
+                        </p>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
-            <div class="control">
-              <input
-                class="input"
-                type="ngrok"
-                required
-                v-model="ngrok" />
-                <p class="help">
-                  {{ $t("msg.settings.authtoken_hint") }}
-                </p>
-            </div>
 
-          </div>
-
-          <div class="field">
-            <div class="control">
-                <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
-                <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
-                <p class="help">
-                  {{ $t("msg.settings.ngrok_hint") }}
-                </p>
-            </div>
-          </div>
 
 
 
@@ -120,12 +161,15 @@ import { videoPlay } from "vue3-video-play";
       const nodeserverField = ref('');
       const store = useStore();
       const localeSelected = ref('en');
+      const epicboxDomain = ref('');
       const langs = ref([]);
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
+      const node_background = ref(false);
       const ngrok_force_start = ref(false);
       const ngrok = ref('');
       const advancedSettings = ref(false);
+      const advancedNgrokSettings = ref(false);
       const playerOptions = reactive({
           // videojs options
           autoPlay: true,
@@ -143,13 +187,16 @@ import { videoPlay } from "vue3-video-play";
         nodeserverField,
         resetFormErrors,
         localeSelected,
+        epicboxDomain,
         langs,
         check_node_api_http_addr,
         walletlisten_on_startup,
+        node_background,
         ngrok,
         ngrok_force_start,
         playerOptions,
         advancedSettings,
+        advancedNgrokSettings,
         onPlay
       }
     },
@@ -159,11 +206,14 @@ import { videoPlay } from "vue3-video-play";
       this.nodeserverField.select = !this.store.state.user.nodeInternal ? 'external' : 'internal';
 
       this.localeSelected = this.configService.config['locale'];
+      this.epicboxDomain = this.configService.config['epicbox_domain'];
       this.langs = this.configService.langs;
       this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
+      this.node_background = this.configService.config['node_background'];
       this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
       this.ngrok = this.store.state.user.ngrok;
       this.ngrok_force_start = this.store.state.user.ngrok_force_start;
+      this.advancedSettings = this.store.state.user.advanced_settings;
     },
 
     methods: {
@@ -171,6 +221,13 @@ import { videoPlay } from "vue3-video-play";
 
         this.advancedSettings = !this.advancedSettings;
       },
+      toggleAdvancedNgrokSettings(){
+
+        this.advancedNgrokSettings = !this.advancedNgrokSettings;
+      },
+
+
+
       async save(){
 
         this.resetFormErrors();
@@ -183,18 +240,20 @@ import { videoPlay } from "vue3-video-play";
 
           this.configService.updateConfig({
 
-            check_node_api_http_addr: this.nodeserverField.defaultValue,
+            check_node_api_http_addr: this.nodeserverField.defaultValue.trim(),
             locale: this.localeSelected,
-            walletlisten_on_startup: this.walletlisten_on_startup
+            walletlisten_on_startup: this.walletlisten_on_startup,
+            node_background: this.node_background,
+            epicbox_domain: this.epicboxDomain.trim(),
 
           });
           this.configService.checkTomlFile();
 
           let updated = 0;
           if(this.nodeserverField.select == 'external'){
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, advanced_settings: this.advancedSettings, epicbox_domain: this.epicboxDomain.trim()});
           }else{
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start});
+            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, advanced_settings: this.advancedSettings, epicbox_domain: this.epicboxDomain.trim()});
           }
 
           /*todo simple node restart user update wallet restart here*/
@@ -207,6 +266,9 @@ import { videoPlay } from "vue3-video-play";
             }else{
               this.emitter.emit('app.ngrokStop');
             }
+
+            this.emitter.emit('app.selectLocale', this.localeSelected);
+
           }else{
             this.$toast.error(this.$t("msg.settings.error_save"));
           }

@@ -40,12 +40,19 @@
             <div class="level-right">
               <div class="level-item is-hero-content-item">
                 <div class="is-size-7">
-                  <h3 class="subtitle"><span><mdicon size=20 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{ store.state.nodeType}})</span></h3>
+
+                  <h3 class="subtitle">
+                    <span v-if="!this.configService.config.nodesynced"><mdicon size=20 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
+                    <span v-if="this.configService.config.nodesynced"><mdicon size=20 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
+
+                  </h3>
+
+                  <div v-if="!this.configService.config.nodesynced">{{ $t('msg.headerbar.node_sync_status') }}</div>
                   <div>{{ $t('msg.headerbar.version') }}: {{store.state.nodeStatus.user_agent}}</div>
                   <div>{{ $t('msg.headerbar.peers') }}: {{store.state.nodeStatus.connections}}</div>
                   <div>{{ $t('msg.headerbar.status') }}: {{store.state.nodeStatus.sync_status}}</div>
 
-                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">{{ $t('msg.headerbar.sync_height') }}: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
+                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">{{ $t('msg.headerbar.progress') }}: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
                     <div v-else >{{ $t('msg.headerbar.block_height') }}: {{height}}</div>
                   <div>
                     <progress v-if="store.state.nodeStatus.sync_status != 'synced'" style="margin-top:5px;" class="progress is-success is-small" :value="currentHeight" :max="highestHeight">0%</progress>
@@ -91,12 +98,75 @@ export default {
     const route = useRoute();
     const userName = computed(() => store.state.user.name)
     const newAvatar = computed(() => store.state.userAvatar)
-    const currentHeight = computed(() => store.state.nodeStatus.sync_info.current_height ? store.state.nodeStatus.sync_info.current_height : 0);
-    const highestHeight = computed(() => store.state.nodeStatus.sync_info.highest_height ? store.state.nodeStatus.sync_info.highest_height : 0);
+    const currentHeight = computed(
+      () => {
+        let size = 0;
+        if(store.state.nodeStatus.sync_info.current_height > 0){
+          size = store.state.nodeStatus.sync_info.current_height;
+        }
+        if(store.state.nodeStatus.sync_info.downloaded_size > 0){
+          size = store.state.nodeStatus.sync_info.downloaded_size;
+        }
+        if(store.state.nodeStatus.sync_info.rproofs > 0){
+          size = store.state.nodeStatus.sync_info.rproofs;
+        }
+        if(store.state.nodeStatus.sync_info.kernels > 0){
+          size = store.state.nodeStatus.sync_info.kernels;
+        }
+        return size;
+      }
+    );
+    const highestHeight = computed(
+      () => {
+
+        let size = 0;
+        if(store.state.nodeStatus.sync_info.highest_height > 0){
+          size = store.state.nodeStatus.sync_info.highest_height;
+        }
+        if(store.state.nodeStatus.sync_info.total_size > 0){
+          size = store.state.nodeStatus.sync_info.total_size;
+        }
+        if(store.state.nodeStatus.sync_info.rproofs_total > 0){
+          size = store.state.nodeStatus.sync_info.rproofs_total;
+        }
+        if(store.state.nodeStatus.sync_info.kernels_total > 0){
+          size = store.state.nodeStatus.sync_info.kernels_total;
+        }
+        return size;
+      }
+    );
+
+
+
+
     const height = computed(() =>   store.state.nodeStatus.tip.height ? store.state.nodeStatus.tip.height : 0);
-    const loaded = computed(() => store.state.nodeStatus.sync_info.current_height > 0 && store.state.nodeStatus.sync_info.highest_height > 0 ? parseFloat(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100).toFixed(2) : 0);
+    const loaded = computed(
+      () => {
+        let size = 0;
+        if(store.state.nodeStatus.sync_info.current_height > 0 && store.state.nodeStatus.sync_info.highest_height > 0){
+          size = parseFloat(store.state.nodeStatus.sync_info.current_height/store.state.nodeStatus.sync_info.highest_height*100).toFixed(2);
+        }
+
+        if(store.state.nodeStatus.sync_info.downloaded_size > 0 && store.state.nodeStatus.sync_info.total_size > 0){
+          size = parseFloat(store.state.nodeStatus.sync_info.downloaded_size/store.state.nodeStatus.sync_info.total_size*100).toFixed(2);
+        }
+
+        if(store.state.nodeStatus.sync_info.rproofs > 0 && store.state.nodeStatus.sync_info.rproofs_total > 0){
+          size = parseFloat(store.state.nodeStatus.sync_info.rproofs/store.state.nodeStatus.sync_info.rproofs_total*100).toFixed(2);
+        }
+
+        if(store.state.nodeStatus.sync_info.kernels > 0 && store.state.nodeStatus.sync_info.kernels_total > 0){
+          size = parseFloat(store.state.nodeStatus.sync_info.kernels/store.state.nodeStatus.sync_info.kernels_total*100).toFixed(2);
+        }
+
+
+        return size;
+
+      }
+    );
     const usdPrice = ref(0);
     const locale = ref('en');
+    const nodeFallBack = ref('');
     return{
         store,
         route,
@@ -104,14 +174,17 @@ export default {
         newAvatar,
         currentHeight,
         highestHeight,
+
         height,
         loaded,
         usdPrice,
-        locale
+        locale,
+        nodeFallBack
     }
   },
   async created(){
     this.locale = await window.api.locale();
+    this.nodeFallBack = this.configService.getNodeFallBack();
 
   },
   methods:{

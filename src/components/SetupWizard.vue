@@ -130,48 +130,15 @@
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.receive_transactions") }}</h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          <span v-html="$t('msg.setupwizard.receive_transactions_txt')" ></span>
+                          <span v-html="$t('msg.setupwizard.noninteractive_transactions')" ></span>
                         </div>
                       </article>
                       <div class="field">
-                        <label class="label">{{ $t("msg.setupwizard.authtoken") }}
-                          <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
-                            <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
-                            <mdicon size="18" v-else name="menu-down" />
-                            {{ $t("msg.setupwizard.howto") }}
-                          </a>
+                        <label class="label">{{ $t("msg.setupwizard.epicbox_domain") }}</label>
 
-                        </label>
-                        <div class="card" v-bind:class="{'is-hidden':!advancedSettings}" >
-                          <div class="card-content">
-                           <div class="content">
-                             <div class="field">
-                               <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
-                               <div class="control">
-                                 <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-                               </div>
-                             </div>
-                          </div>
-                        </div>
+                        <TextField ref="epicboxDomain" fieldname="domain" />
+                        <p class="help">{{ $t("msg.setupwizard.epicbox_domain_hint") }}</p>
                       </div>
-                          <div class="control">
-                            <input class="input" type="ngrok" required v-model="ngrok" />
-                            <p class="help">
-                              {{ $t("msg.settings.authtoken_hint") }}
-                            </p>
-                          </div>
-                      </div>
-                      <div class="field">
-                        <div class="control">
-                            <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
-                            <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
-                            <p class="help">
-                              {{ $t("msg.settings.ngrok_hint") }}
-                            </p>
-                        </div>
-                      </div>
-
-
 
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
@@ -187,10 +154,13 @@
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.values_correct") }}</h2>
                       <p>
                         {{ $t("msg.setupwizard.name") }}: {{this.textField.defaultValue}}<br/>
-                        {{ $t("msg.setupwizard.keybase_account") }}: {{keybase}}<span v-if="!keybase">-</span><br/>
+                        <span v-if="keybase">{{ $t("msg.setupwizard.keybase_account") }}: {{keybase}}<br/></span>
                         {{ $t("msg.setupwizard.language") }}: {{localeSelected}}<br/>
-                        {{ $t("msg.setupwizard.ngrok_authtoken") }}: {{ngrok}}<span v-if="!ngrok">-</span><br/>
-                        {{ $t("msg.setupwizard.network_node") }}: {{nodeserverField.nodeInternal ? 'built-in' : this.nodeserverField.defaultValue}}<br/>
+                        {{ $t("msg.setupwizard.network_node") }}: {{this.nodeserverField.nodeInternal ? 'internal' : this.nodeserverField.defaultValue}}<br/>
+
+                        {{ $t("msg.setupwizard.epicbox_domain") }}: {{this.epicboxDomain.defaultValue ? this.epicboxDomain.defaultValue :  $t("msg.setupwizard.epicbox_off")}}<br/>
+
+
                       </p>
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
@@ -221,15 +191,15 @@
   import { useRouter } from '@/router';
   import { useRoute } from 'vue-router';
   import { useStore } from '@/store';
-  import "vue3-video-play/dist/style.css";
-  import { videoPlay } from "vue3-video-play";
+  //import "vue3-video-play/dist/style.css";
+  //import { videoPlay } from "vue3-video-play";
 
   export default {
     name: "setup-wizard",
     components: {
       NodeserverField,
       TextField,
-      videoPlay,
+      //videoPlay,
     },
     watch: {
         'ngrok': function (newVal) {
@@ -262,6 +232,8 @@
       const moveback = ref(false);
       const name = ref('');
       const keybase = ref('');
+      const domain = ref('');
+      const epicboxDomain = ref('');
 
       const { resetFormErrors } = useFormValidation();
       const nodeserverField = ref('');
@@ -269,18 +241,6 @@
       const advancedSettings = ref(false);
       const fromRoute = route.params.from ? route.params.from : 'login';
 
-      const playerOptions = reactive({
-          // videojs options
-          autoPlay: true,
-          loop: true,
-          src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
-          control: false,
-
-
-      });
-
-      //dont remove or videoplay throws errors
-      const onPlay = (ev) => {};
 
       return{
         store,
@@ -299,21 +259,32 @@
         ngrok,
         ngrok_force_start,
         advancedSettings,
-        playerOptions,
         textField,
         moveback,
-        onPlay,
-        fromRoute
+        fromRoute,
+        domain,
+        epicboxDomain
 
       }
     },
 
-    mounted(){
+    async mounted(){
+
+      let user = await this.$userService.getUser(this.configService.configAccount);
+
       this.store.dispatch('toggleFullPage', true);
       this.store.commit('asideStateToggle', false);
       this.locale = this.configService.config['locale'];
       this.localeSelected = this.configService.config['locale'];
       this.langs = this.configService.langs;
+      this.epicboxDomain.input = this.configService.epicboxDomain;
+
+
+      if(user && user[0]){
+        this.textField.input = user[0].name ? user[0].name : '';
+        this.keybase = user[0].keybase ? user[0].keybase : '';
+      }
+
     },
     methods: {
       toggleAdvancedSettings(){
@@ -326,18 +297,20 @@
         let isValid = true;
         switch(step){
 
-
           case 'step2':
-
             isFormAllValid.push(this.textField.validInput('name'));
             isValid = !isFormAllValid.includes(false);
-
-
           break;
           case 'step3':
             isFormAllValid.push(this.nodeserverField.validInput());
             isValid = !isFormAllValid.includes(false);
           break;
+          case 'step4':
+            //set value for input field but do not error if its blank
+            isFormAllValid.push(this.epicboxDomain.validInput());
+            //isValid = !isFormAllValid.includes(false);
+          break;
+
 
         }
         return isValid;
@@ -369,11 +342,9 @@
               account: this.configService.configAccount,
               name: this.textField.defaultValue,
               keybase: this.keybase,
-              ngrok: this.ngrok,
-              ngrok_force_start: this.ngrok_force_start,
               language: this.localeSelected,
               nodeInternal: this.nodeserverField.nodeInternal,
-              email: ''
+              epicbox_domain: this.epicboxDomain.defaultValue,
             });
 
           }else{
@@ -382,11 +353,12 @@
               account: this.configService.configAccount,
               name: this.textField.defaultValue,
               keybase: this.keybase,
-              ngrok: this.ngrok,
-              ngrok_force_start: this.ngrok_force_start,
+              ngrok: '', //this.ngrok,
+              ngrok_force_start: false,//this.ngrok_force_start,
               language: this.localeSelected,
               nodeInternal: this.nodeserverField.nodeInternal,
-              email: ''
+              email: '',
+              epicbox_domain: this.epicboxDomain.defaultValue,
             });
             if(inserted.length){
               user = inserted;
@@ -405,7 +377,9 @@
             locale: this.localeSelected,
             firstTime: false,
             walletlisten_on_startup: true,
-            nodesynced: false
+            node_background: true,
+            nodesynced: false,
+            epicbox_domain: this.epicboxDomain.defaultValue,
 
           });
 
