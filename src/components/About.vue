@@ -1,9 +1,9 @@
 <template>
   <section class="section is-main-section" id="aboutPage">
 
-      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.0.3</h1>
+      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.1.0</h1>
       <p>
-        <i>This software is developed by <a @click="open('https://www.eccence.digital')" >eccence.digital - freiwald & Hahn GbR</a></i><br/>
+        
         <br/>
 
       </p>
