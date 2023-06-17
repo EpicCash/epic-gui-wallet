@@ -108,6 +108,8 @@ export default {
     ProofAddressField,
     AddressField,
   },
+
+
   watch: {
       'addressField.input': function (newVal) {
         if(newVal == ''){
@@ -223,7 +225,7 @@ export default {
         let tx_data = {
           "src_acct_name": null,
           "amount": this.amountField.defaultValue * 100000000,
-          "minimum_confirmations": 10,
+          "minimum_confirmations": 3,
           "max_outputs": 500,
           "num_change_outputs": 1,
           "selection_strategy_is_use_all": false,
@@ -291,6 +293,8 @@ export default {
 
     },
 
+    
+
     async send(){
 
       this.resetFormErrors();
@@ -314,7 +318,7 @@ export default {
           "src_acct_name": null,
           "amount": this.amountField.defaultValue * 100000000,
           "message": this.message,
-          "minimum_confirmations": 10,
+          "minimum_confirmations": 3,
           "max_outputs": 500,
           "num_change_outputs": 1,
           "selection_strategy_is_use_all": false,

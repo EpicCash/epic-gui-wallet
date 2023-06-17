@@ -166,6 +166,7 @@ const messages = {
       amount_credited: 'Gutgeschriebener Betrag',
       amount_debited: 'Belasteter Betrag',
       fee: 'Gebühr',
+      transaction_fee: 'Transaktions Gebühr',
       message: 'Nachricht',
       type: 'Art',
       receiver_address: 'Adresse des Empfängers',

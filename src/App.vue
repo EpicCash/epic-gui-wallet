@@ -511,7 +511,7 @@
 
       async getSummaryinfo(refreshfromNode) {
 
-          let summary = await this.$walletService.getSummaryInfo(10, refreshfromNode);
+          let summary = await this.$walletService.getSummaryInfo(3, refreshfromNode);
           if(summary && summary.result && summary.result.Ok){
             let data = summary.result.Ok
             this.store.commit('summary', {

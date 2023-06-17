@@ -119,7 +119,7 @@
                 <td colspan="8">
                   <table>
                     <tr>
-                      <td class="tx-details">
+                      <td class="tx-details user-selectable">
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.id") }}:</span> {{tx.id}}<br/>
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.slate_id") }}:</span> {{tx.tx_slate_id}}<br/>
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.creation_date") }}:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>

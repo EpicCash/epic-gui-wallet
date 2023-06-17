@@ -159,6 +159,7 @@ const messages = {
       amount_credited: 'Amount credited',
       amount_debited: 'Amount debited',
       fee: 'Fee',
+      transaction_fee: 'Transaction fee',
       message: 'Message',
       type: 'Type',
       receiver_address: 'Receiver address',

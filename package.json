@@ -37,7 +37,7 @@
     "electron-context-menu": "^3.3.0",
     "electron-log": "^4.4.6",
     "electron-osx-sign": "^0.6.0",
-    "electron-updater": "^5.0.5",
+    "electron-updater": "^6.1.1",
     "find-process": "^1.4.7",
     "fs-extra": "^10.0.0",
     "is-port-reachable": "^4.0.0",
