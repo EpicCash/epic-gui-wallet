@@ -9,23 +9,21 @@ const messages = {
     search: 'Поиск',
     clearup: 'Очистить',
     jump: 'Перейти',
-
     confirmed: 'Подтверждено',
     confirm_action: 'Confirm action',
     unconfirmed: 'Не подтверждено',
     locked: 'Заблокировано',
-
     send: 'Отправить',
+    send_proof: 'send proof',
+    dandelion: 'Dandelion++',
+    dandelion_hint: 'Broadcasting transactions via Dandelion++',
+    createofflinetx: 'Create offline transaction',
     receive: 'Получить',
-
     cancel:'Отменить',
     save: 'Сохранить',
-
     welcome: 'Добро пожаловать в Epic кошелек',
-
     msg: 'Сообщение',
     more: 'Больше',
-
     back: 'отступать',
     close_all_process: 'Terminate all processes',
     waiting_for_nodesync: '... waiting for node to be synced.',
@@ -91,6 +89,7 @@ const messages = {
       ngrok_service_error: 'Error starting Ngrok service',
       error_setup_internal_node: 'Can not setup internal node server',
       node_started: 'Node started',
+      node_restarting: 'Node is restarting',
       node_not_started: 'Node not started',
       node_offline: 'Node is offline',
       external_node_online: 'External Node is online',

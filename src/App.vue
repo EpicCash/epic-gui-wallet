@@ -148,6 +148,31 @@
         await this.nodeStart();
       });
 
+      this.emitter.on('app.restartNode', async() => {
+        if(this.store.state.user.nodeInternal){
+          this.$toast.success(this.$t("msg.app.node_restarting"));
+          this.stopRefreshNode();
+          this.stopRefresh();
+          await this.$nodeService.stopNode();
+          setTimeout(async() => {
+            await this.nodeStart();
+
+
+          }, 3000);
+
+          setTimeout(async() => {
+
+            this.startRefresh();
+
+          }, 30000);
+
+
+        }
+        //await this.$nodeService.restartNode();
+        //this.$toast.success(this.$t("msg.app.node_started"));
+
+      });
+
 
       this.emitter.on('app.startRefreshNgrokStatus', () => {
         this.stopRefreshNgrok();
@@ -353,7 +378,7 @@
               this.$toast.success(this.$t("msg.app.node_started"));
               //start the status check for the node
               //give the node some time before api status is called
-              setTimeout(this.startRefreshNode, 10000);
+              setTimeout(this.startRefreshNode, 30000);
             }else{
               this.$toast.error(this.$t("msg.app.node_not_started"));
             }

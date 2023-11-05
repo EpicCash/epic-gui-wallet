@@ -3,7 +3,6 @@ const messages = {
 
     title: '',
     password: 'पासवर्ड',
-
     passwordAgain: 'पासवर्ड फिर से दर्ज करें',
     wrongPassword: 'गलत पासवर्ड',
     login_: 'लॉग इन करें',
@@ -21,6 +20,10 @@ const messages = {
     unconfirmed: 'पुष्टिकरण की प्रतीक्षा',
     locked: 'बंद',
     send: 'भेजें',
+    send_proof: 'send proof',
+    dandelion: 'Dandelion++',
+    dandelion_hint: 'Broadcasting transactions via Dandelion++',
+    createofflinetx: 'Create offline transaction',
     cancel:'रद्द करें',
     save: 'सहेजें',
     delete: 'डिलीट',
@@ -277,6 +280,7 @@ const messages = {
       ngrok_service_error: 'Error starting Ngrok service',
       error_setup_internal_node: 'Can not setup internal node server',
       node_started: 'Node started',
+      node_restarting: 'Node is restarting',
       node_not_started: 'Node not started',
       node_offline: 'Node is offline',
       external_node_online: 'External Node is online',

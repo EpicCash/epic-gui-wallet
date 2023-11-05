@@ -53,6 +53,9 @@ chain_validation_mode = "Disabled"
 #run the node in "full archive" mode (default is fast-sync, pruned node)
 archive_mode = false
 
+skip_pow_validation = true
+disable_checkpoints = false
+
 #skip waiting for sync on startup, (optional param, mostly for testing)
 skip_sync_wait = false
 
@@ -92,7 +95,8 @@ port = 3414
 seeding_type = "List"
 seeds = ["95.217.197.180:3517"]
 
-
+peer_min_major = 3
+peer_min_minor = 4
 #If the seeding type is List, the list of peers to connect to can
 #be specified as follows:
 #seeds = ["192.168.0.1:3414","192.168.0.2:3414"]

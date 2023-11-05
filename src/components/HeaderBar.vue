@@ -39,11 +39,16 @@
             </div>
             <div class="level-right">
               <div class="level-item is-hero-content-item">
+
                 <div class="is-size-7">
 
+
+
                   <h3 class="subtitle">
-                    <span v-if="!this.configService.config.nodesynced"><mdicon size=20 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
-                    <span v-if="this.configService.config.nodesynced"><mdicon size=20 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
+                    <mdicon v-if="store.state.nodeType == 'internal' && !nodeRestarting" size=20 name="restart" @click.prevent="restartNode" />
+                    <mdicon v-if="store.state.nodeType == 'internal' && nodeRestarting" size=20 />
+                    <span v-if="!this.configService.config.nodesynced"><mdicon size=18 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
+                    <span v-if="this.configService.config.nodesynced"><mdicon size=18 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
 
                   </h3>
 
@@ -167,6 +172,8 @@ export default {
     const usdPrice = ref(0);
     const locale = ref('en');
     const nodeFallBack = ref('');
+    const nodeRestarting = ref(false);
+
     return{
         store,
         route,
@@ -174,12 +181,12 @@ export default {
         newAvatar,
         currentHeight,
         highestHeight,
-
         height,
         loaded,
         usdPrice,
         locale,
-        nodeFallBack
+        nodeFallBack,
+        nodeRestarting
     }
   },
   async created(){
@@ -191,6 +198,11 @@ export default {
     async hideValues(){
       this.store.commit('hideValues');
     },
+    async restartNode(){
+      this.nodeRestarting = true;
+      await this.emitter.emit('app.restartNode');
+      this.nodeRestarting = false;
+    }
   }
 
 }

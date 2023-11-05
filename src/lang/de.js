@@ -3,7 +3,6 @@ const messages = {
 
     title: '',
     password: 'Passwort',
-
     passwordAgain: 'Passwort erneut eingeben',
     wrongPassword: 'Falsches Passwort',
     login_: 'Anmelden',
@@ -18,15 +17,15 @@ const messages = {
     confirm_action: 'Aktion erforderlich',
     unconfirmed: 'Warten auf Bestätigung',
     locked: 'Gesperrt',
-
     send: 'Senden',
-
-
+    send_proof: 'send proof',
+    dandelion: 'Dandelion++',
+    dandelion_hint: 'Broadcasting transactions via Dandelion++',
+    createofflinetx: 'Create offline transaction',
     cancel:'Abbrechen',
     save: 'Speichern',
     delete: 'Löschen',
     edit: 'Bearbeiten',
-
     welcome: 'Willkommen bei EPIC Wallet',
     back: 'Zurück',
     reset: 'Zurücksetzen',
@@ -34,13 +33,11 @@ const messages = {
     msg: 'Nachricht',
     more: 'Mehr',
     wrongAddressFormat: 'falsches Adressformat',
-
     node_server: 'Netzwerkknoten',
     node_server_builtin: 'Eingebauter Netzwerkknoten',
     node_server_external: 'Externer Netzwerkknoten',
     node_server_address: 'Netzwerkknoten Adresse',
     recipient_proof_address: 'Empfängeradresse für Zahlungsnachweis',
-
     copy_to_clipboard: 'In Zwischenablage kopiert!',
     placeholder_search: 'Suche...',
     refresh: 'Aktualisieren',
@@ -280,6 +277,7 @@ const messages = {
       ngrok_service_error: 'Fehler beim Starten des ngrok-Dienstes',
       error_setup_internal_node: 'Interner Netzwerkknoten kann nicht eingerichtet werden',
       node_started: 'Netzwerkknoten gestartet',
+      node_restarting: 'Netzwerkknoten wird neu gestarted',
       node_not_started: 'Netzwerkknoten nicht gestartet',
       node_offline: 'Netzwerkknoten ist offline',
       external_node_online: 'Externer Netzwerkknoten ist online',

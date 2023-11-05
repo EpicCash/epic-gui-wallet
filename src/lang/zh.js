@@ -9,15 +9,16 @@ const messages = {
     search: '搜索',
     clearup: '清除',
     jump: '跳转',
-
     confirmed: '已确认',
     confirm_action: 'Confirm action',
     unconfirmed: '等待确认',
     locked: '已锁定',
-
     send: '发送',
+    send_proof: 'send proof',
+    dandelion: 'Dandelion++',
+    dandelion_hint: 'Broadcasting transactions via Dandelion++',
+    createofflinetx: 'Create offline transaction',
     receive: '接收',
-
     cancel:'撤销',
     save: '保存',
     welcome: '欢迎使用Epic钱包',
@@ -26,11 +27,9 @@ const messages = {
     back: '返回',
     close_all_process: 'Terminate all processes',
     waiting_for_nodesync: '... waiting for node to be synced.',
-
     login: {
       walletExist: '发现已有Grin钱包存在；请用原有的密码登陆吧 :-)',
     },
-
     remove:{
       title: '移除当前钱包',
       warning: '警告 !',
@@ -85,7 +84,7 @@ const messages = {
       updateMsg: '发现Niffer钱包的新版本, 请立刻更新! (下载并覆盖原有程序即可).',
       yes: '好的',
       no: '暂时不更新',
-
+      node_restarting: 'Node is restarting',
       hedwig: '用Hedwig收币'
     },
 

@@ -3,7 +3,6 @@ const messages = {
 
     title: '',
     password: 'رمز Password',
-
     passwordAgain: 'رمز را دوباره تکرار کنید',
     wrongPassword: 'رمز اشتباه است',
     login_: 'ورود',
@@ -18,15 +17,15 @@ const messages = {
     confirm_action: 'Confirm action',
     unconfirmed: 'در انتظار تائیدیه',
     locked: 'قفل شده',
-
     send: 'فرستادن',
-
-
+    send_proof: 'send proof',
+    dandelion: 'Dandelion++',
+    dandelion_hint: 'Broadcasting transactions via Dandelion++',
+    createofflinetx: 'Create offline transaction',
     cancel:'لغو کردن',
     save: 'ذخیره',
     delete: 'پاک کردن',
     edit: 'ادیت',
-
     welcome: 'به کیف اپیک خوش آمدید',
     back: 'برگشتن',
     reset: 'شروع مجدد',
@@ -34,13 +33,11 @@ const messages = {
     msg: 'پیغام',
     more: 'بیشتر',
     wrongAddressFormat: 'فرم آدرس اشتباه',
-
     node_server: 'سرور گِره یا نود Node Server',
     node_server_builtin: 'سرور نود داخلیِ کیف Built-in node server',
     node_server_external: 'سرور نود خارجی External node server',
     node_server_address: 'آدرس سرور گِره یا نود Node Server Address',
     recipient_proof_address: 'آدرس گواهی دریافت کننده Recipient proof address',
-
     copy_to_clipboard: 'در کلیپ بورد کپی شد',
     placeholder_search: 'جستجو...',
     refresh: 'تازه کردن',
@@ -289,6 +286,7 @@ const messages = {
       ngrok_service_error: 'Ngrok خطا در راه اندازی سرویس اِنگِروک',
       error_setup_internal_node: 'نمی توان سرور نود داخلی را راه اندازی کرد',
       node_started: 'نود شبکه شروع شد',
+      node_restarting: 'Node is restarting',
       node_not_started: 'نود یا گِره شبکه شروع نشده است',
       node_offline: 'نود آفلاین است',
       external_node_online: 'نود خارجی آنلاین است',

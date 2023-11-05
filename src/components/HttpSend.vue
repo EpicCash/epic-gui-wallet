@@ -48,10 +48,10 @@
             <div class="field">
               <div class="control">
                   <input class="switch is-success" id="sendProofSwitch" type="checkbox" v-model="withproof" @click="addProof">
-                  <label for="sendProofSwitch">send proof</label>
-                <div v-show="withproof">
-                  <ProofAddressField ref="proofAddressField" />
-                </div>
+                  <label for="sendProofSwitch">{{ $t("msg.send_proof") }}</label>
+                  <div v-show="withproof">
+                    <ProofAddressField ref="proofAddressField" />
+                  </div>
               </div>
             </div>
 
@@ -64,6 +64,9 @@
             <div class="field">
               <div class="control">
                 <AmountField ref="amountField" />
+                <input class="switch is-success" id="dandelion" type="checkbox" checked="true" ref="dandelion">
+                <label for="dandelion">{{ $t("msg.dandelion") }}</label>
+                <p class="help">{{ $t("msg.dandelion_hint") }}</p>
               </div>
             </div>
 
@@ -76,7 +79,7 @@
               </div>
               <div class="control">
                 <button class="button is-primary" :class="{ 'button__loader': isLoadingSendFile }" @click="sendFile">
-                  <span class="button__text">Create offline transaction</span>
+                  <span class="button__text">{{ $t("msg.createofflinetx") }}</span>
                 </button>
               </div>
             </div>
@@ -136,6 +139,8 @@ export default {
     const isLoadingSend = ref(false);
     const isLoadingSendFile = ref(false);
     const address = ref({});
+    const dandelion = ref('');
+
 
 
     const { resetFormErrors } = useFormValidation();
@@ -153,7 +158,8 @@ export default {
       resetFormErrors,
       isLoadingSend,
       isLoadingSendFile,
-      address
+      address,
+      dandelion
     }
 
   },
@@ -293,7 +299,7 @@ export default {
 
     },
 
-    
+
 
     async send(){
 
@@ -330,7 +336,7 @@ export default {
             "dest": this.addressField.defaultValue,
             "finalize": true,
             "post_tx": true,
-            "fluff": true
+            "fluff": this.dandelion.checked ? false : true
           }
 
         }
