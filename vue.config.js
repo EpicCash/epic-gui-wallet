@@ -1,5 +1,5 @@
 // vue.config.js
- 
+
 /**
  * @type {import('@vue/cli-service').ProjectOptions}
  */
@@ -37,7 +37,7 @@ module.exports = {
         "mac": {
           "icon": "public/favicon_io/EpicCash_logo_gold_border1024x1024.png",
           "category": "public.app-category.finance",
-          "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile.provisionprofile",
+          "provisioningProfile": "build/Epiccash_Wallet_Provisioning_Profile_2023.provisionprofile",
           "target": "default",
           "publish": {
             "provider": "github",
