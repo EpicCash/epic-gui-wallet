@@ -54,7 +54,7 @@ chain_validation_mode = "Disabled"
 archive_mode = false
 
 skip_pow_validation = true
-disable_checkpoints = false
+disable_checkpoints = true
 
 #skip waiting for sync on startup, (optional param, mostly for testing)
 skip_sync_wait = false
