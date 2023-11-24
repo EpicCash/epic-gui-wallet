@@ -40,10 +40,11 @@ log.info('App starting...');
 
 autoUpdater.channel = "latest"
 
-function sendStatusToWindow(text) {
+/*function sendStatusToWindow(text) {
+  console.log(text);
   log.info(text);
   win.webContents.send('message', text);
-}
+}*/
 
 
 async function kill(pid){
@@ -115,7 +116,7 @@ async function createWindow() {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdates();
 
   }
 
@@ -379,27 +380,53 @@ app.on('window-all-closed', async() => {
 
 });
 
-autoUpdater.on('checking-for-update', () => {
+/*autoUpdater.on('checking-for-update', () => {
+
   sendStatusToWindow('Checking for update...');
+})*/
+autoUpdater.on('update-available', (info, releaseNotes, releaseName) => {
+
+  const dialogOpts = {
+        type: 'info',
+        buttons: ['Ok'],
+        title: 'Update available.',
+        message: process.platform === 'win32' ? releaseNotes : releaseName,
+        detail: 'A New Version is available for download.\nhttps://github.com/EpicCash/epic-gui-wallet/releases/latest'
+  }
+
+  dialog.showMessageBox(dialogOpts);
+
+  //sendStatusToWindow('Update available.');
 })
-autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow('Update available.');
-})
-autoUpdater.on('update-not-available', (info) => {
+/*autoUpdater.on('update-not-available', (info) => {
+
   sendStatusToWindow('Update not available.');
-})
-autoUpdater.on('error', (err) => {
+})*/
+/*autoUpdater.on('error', (err) => {
   sendStatusToWindow('Error in auto-updater. ' + err);
-})
-autoUpdater.on('download-progress', (progressObj) => {
+})*/
+/*autoUpdater.on('download-progress', (progressObj) => {
   let log_message = "Download speed: " + progressObj.bytesPerSecond;
   log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
   log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
   sendStatusToWindow(log_message);
-})
-autoUpdater.on('update-downloaded', (info) => {
-  sendStatusToWindow('Update downloaded');
-});
+})*/
+/*autoUpdater.on('update-downloaded', (info) => {
+
+  const dialogOpts = {
+        type: 'info',
+        buttons: ['Restart', 'Not Now. On next Restart'],
+        title: 'Update',
+        message: process.platform === 'win32' ? releaseNotes : releaseName,
+        detail: 'A New Version has been Downloaded. Restart Now to Complete the Update.'
+    }
+
+    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+        if (returnValue.response === 0) autoUpdater.quitAndInstall()
+    })
+
+  //sendStatusToWindow('Update downloaded');
+});*/
 
 
 app.on('activate', () => {

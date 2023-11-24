@@ -633,6 +633,7 @@ contextBridge.exposeInMainWorld('api', {
     },
     epicboxbackground:(epicboxbackground) => {
       ipcRenderer.send('epicboxBackground', epicboxbackground);
-    }
+    },
+    
 
 });

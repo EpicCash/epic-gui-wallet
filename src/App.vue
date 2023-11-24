@@ -261,6 +261,7 @@
 
     async mounted() {
 
+      
 
       //App main window min size
       window.api.resize(1024, 768);
