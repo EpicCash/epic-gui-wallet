@@ -43,7 +43,7 @@ log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 
 //add debug mode for production
 //user must create a file "debug" in ./epic folder
 let debug = false;//process.env.NODE_ENV !== 'production';
-if(fs.existsSync(path.join(ewalletPath, 'debug'))){
+if(fs.existsSync(path.join(ewalletPath, 'debug.log'))){
   debug = true;
   console.log = log.log;
 }
@@ -52,7 +52,7 @@ const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
-const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed', 'nodeBackground'];
+const validChannels = ['firstscan-stdout', 'scan-stdout', 'scan-finish', 'scan-error', 'walletExisted', 'walletCreated', 'walletCreateFailed', 'nodeBackground', 'epicboxBackground'];
 contextBridge.exposeInMainWorld('nodeChildProcess', {
 
     async kill(pid){
@@ -630,6 +630,9 @@ contextBridge.exposeInMainWorld('api', {
     },
     nodebackground:(nodebackground) => {
       ipcRenderer.send('nodeBackground', nodebackground);
+    },
+    epicboxbackground:(epicboxbackground) => {
+      ipcRenderer.send('epicboxBackground', epicboxbackground);
     }
 
 });

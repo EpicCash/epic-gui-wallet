@@ -10,7 +10,7 @@
           <div class="field">
 
             <div class="control">
-                <input class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="node_background">
+                <input :disabled="!nodeInternal" @change="changeNodeBackgroundSetting" class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="node_background">
                 <label for="walletListenSwitch">{{ $t("msg.settings.node_background") }}</label>
                 <p class="help">{{ $t("msg.settings.node_background_hint") }}</p>
             </div>
@@ -25,7 +25,7 @@
               </div>
             </div>
           </div>
-
+          <div class="field"></div>
           <div class="field">
             <label class="label">{{ $t("msg.settings.epicbox_domain") }}</label>
             <div class="control">
@@ -44,6 +44,14 @@
             <div class="control">
                 <input class="switch is-success" id="nodeBackgroundSync" type="checkbox" v-model="walletlisten_on_startup">
                 <label for="nodeBackgroundSync">{{ $t("msg.settings.auto_start") }}</label>
+            </div>
+          </div>
+          <div class="field">
+
+            <div class="control">
+                <input :disabled="(nodeInternal && !node_background)" class="switch is-success" id="walletListenEpicbox" type="checkbox" v-model="epicbox_background">
+                <label for="walletListenEpicbox">{{ $t("msg.settings.epicbox_background") }}</label>
+                <p class="help">{{ $t("msg.settings.epicbox_background_hint") }}</p>
             </div>
           </div>
 
@@ -128,7 +136,7 @@
 </template>
 <script>
 
-import { ref, reactive } from 'vue';
+import { ref, reactive, onUnmounted } from 'vue';
 import { useStore } from '@/store';
 import NodeserverField from "@/components/form/nodeserverField";
 import useFormValidation from "@/modules/useFormValidation";
@@ -166,10 +174,12 @@ import { videoPlay } from "vue3-video-play";
       const check_node_api_http_addr = ref('');
       const walletlisten_on_startup = ref(false);
       const node_background = ref(false);
+      const epicbox_background = ref(false);
       const ngrok_force_start = ref(false);
       const ngrok = ref('');
       const advancedSettings = ref(false);
       const advancedNgrokSettings = ref(false);
+      const nodeInternal = ref(false);
       const playerOptions = reactive({
           // videojs options
           autoPlay: true,
@@ -182,6 +192,8 @@ import { videoPlay } from "vue3-video-play";
       //dont remove or videoplay throws errors
       const onPlay = (ev) => {};
 
+
+
       return{
         store,
         nodeserverField,
@@ -192,17 +204,27 @@ import { videoPlay } from "vue3-video-play";
         check_node_api_http_addr,
         walletlisten_on_startup,
         node_background,
+        epicbox_background,
         ngrok,
         ngrok_force_start,
         playerOptions,
         advancedSettings,
         advancedNgrokSettings,
-        onPlay
+        onPlay,
+        nodeInternal
       }
     },
+    async created() {
 
+      this.emitter.on('settings.nodeserverFieldChanged', () => {
+        this.changeNodeBackgroundSetting();
+      });
+    },
+    beforeUnmount(){
+      this.emitter.off('settings.nodeserverFieldChanged');
+    },
     mounted(){
-
+      this.nodeInternal = this.store.state.user.nodeInternal;
       this.nodeserverField.select = !this.store.state.user.nodeInternal ? 'external' : 'internal';
 
       this.localeSelected = this.configService.config['locale'];
@@ -210,6 +232,10 @@ import { videoPlay } from "vue3-video-play";
       this.langs = this.configService.langs;
       this.walletlisten_on_startup = this.configService.config['walletlisten_on_startup'];
       this.node_background = this.configService.config['node_background'];
+
+
+      this.epicbox_background = (this.node_background && this.nodeInternal) ? this.configService.config['epicbox_background'] : false;
+
       this.nodeserverField.input = this.configService.config['check_node_api_http_addr'];
       this.ngrok = this.store.state.user.ngrok;
       this.ngrok_force_start = this.store.state.user.ngrok_force_start;
@@ -224,6 +250,20 @@ import { videoPlay } from "vue3-video-play";
       toggleAdvancedNgrokSettings(){
 
         this.advancedNgrokSettings = !this.advancedNgrokSettings;
+      },
+
+      changeNodeBackgroundSetting(){
+        console.log('changeNodeBackgroundSetting', this.nodeserverField.select);
+        if(this.nodeserverField.select == 'external'){
+          this.nodeInternal = false;
+          this.node_background = false;
+        }else{
+          this.nodeInternal = true;
+        }
+
+        if(!this.node_background && this.nodeserverField.select == 'internal')
+          this.epicbox_background = false;
+
       },
 
 
@@ -244,6 +284,7 @@ import { videoPlay } from "vue3-video-play";
             locale: this.localeSelected,
             walletlisten_on_startup: this.walletlisten_on_startup,
             node_background: this.node_background,
+            epicbox_background: this.epicbox_background,
             epicbox_domain: this.epicboxDomain.trim(),
 
           });

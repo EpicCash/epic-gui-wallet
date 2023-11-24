@@ -166,7 +166,19 @@ class ConfigService {
             tomlContent = tomlContent.replace(re6, 'bits = 31');
         }
 
+        const re7 = /^skip_pow_validation(\s)*=(\s).*/gm;
+        if(tomlContent.search(re7) != -1){
 
+          tomlContent = tomlContent.replace(re7, 'skip_pow_validation = true');
+        }else{
+          const subre7 = /^archive_mode(\s)*=(\s).*/gm;
+
+          if(tomlContent.search(subre7) != -1){
+
+            tomlContent = tomlContent.replace(subre7,  'archive_mode = false' +"\n\n"+ 'skip_pow_validation = true' + "\n");
+          }
+
+        }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
           encoding: "utf8",
@@ -438,11 +450,26 @@ epicbox_domain = "${epicboxDomain}"
 
     let pWalletTorList = await window.nodeFindProcess('name', 'tor', true);
 
-    for(let process of pWalletList) {
-      if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
-        killPids.push(process);
+    //this.config.epicbox_background === false
+    console.log('this.config.epicbox_background configSerive', this.config.epicbox_background);
+    if(this.config && this.config.epicbox_background){
+      for(let process of pWalletList) {
+        if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+            console.log('process kill without epicbox configService', process);
+            killPids.push(process);
+        }
+      }
+
+    }else{
+      for(let process of pWalletList) {
+        if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+          console.log('process kill all configService', process);
+          killPids.push(process);
+        }
       }
     }
+
+
     for(let process of pEpicnodeList) {
       if(process.cmd.includes('server')){
         killPids.push(process);

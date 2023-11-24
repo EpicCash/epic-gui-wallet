@@ -474,21 +474,34 @@ class WalletService {
       }
     }
 
-    async stopListen(){
+    async stopListen(epicbox_background){
 
 
       let killPids = [];
       let killPromise = [];
       let killProcess = false;
 
+
       let pWalletList = await window.nodeFindProcess('name', /.*?epic-wallet.*(listen)/);
       let pWalletTorList = await window.nodeFindProcess('name', /tor/);
 
-      for(let process of pWalletList) {
-        if(process.cmd.includes('listen')){
-          killPids.push(process);
+
+      if(epicbox_background){
+        for(let process of pWalletList) {
+          if(process.cmd.includes('listen') && !process.cmd.includes('epicbox')){
+            console.log('process kill without epicbox walletService', process);
+            killPids.push(process);
+          }
+        }
+      }else{
+        for(let process of pWalletList) {
+          if(process.cmd.includes('listen')){
+            console.log('process kill all walletService', process);
+            killPids.push(process);
+          }
         }
       }
+
 
       for(let process of pWalletTorList) {
         if(process.cmd.includes('tor/listener/torrc')){

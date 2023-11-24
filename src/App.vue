@@ -217,7 +217,8 @@
           locked: 0,
         });
 
-        await this.$walletService.stopListen();
+        await this.$walletService.stopListen(this.configService.config.epicbox_background);
+
         await this.$walletService.stopWallet();
         await this.$ngrokService.stopNgrok();
 
@@ -403,6 +404,7 @@
 
       async nodeStatus(){
         await window.api.nodebackground(this.configService.config.node_background);
+        await window.api.epicboxbackground(this.configService.config.epicbox_background);
 
         let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
         if(respNode){

@@ -4,7 +4,7 @@
     <div class="control">
 
       <div class="select is-fullwidth" >
-        <select v-model="select" required>
+        <select @change="nodeserverFieldChanged" v-model="select" required>
           <option value="internal">{{ $t("msg.node_server_builtin") }}</option>
           <option value="external">{{ $t("msg.node_server_external") }}</option>
         </select>
@@ -64,6 +64,14 @@
 
       return { input, select, nodeInternal, errors, defaultValue, validInput };
     },
+    methods: {
+
+      async nodeserverFieldChanged(){
+        await this.emitter.emit('settings.nodeserverFieldChanged', "");
+      }
+    }
+
+    //
 
   };
 </script>

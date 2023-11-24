@@ -18,6 +18,7 @@ autoUpdater.channel = "latest"
 
 let win;
 let noderuninbackground = false;
+let epicboxruninbackground = false;
 
 
 contextMenu({
@@ -92,7 +93,7 @@ async function createWindow() {
     height: 768,
     minWidth: 1024,
     maxWidth: 1600,
-    title: "Epiccash Wallet",
+    title: "Epiccash Wallet",//fix in index.html
     webPreferences: {
       icon: path.join(__dirname, '../public/favicon.ico'),
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -142,6 +143,8 @@ async function createWindow() {
                           let killPids = [];
                           let pEpicnodeList = [];
 
+
+
                           let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
 
 
@@ -153,11 +156,31 @@ async function createWindow() {
 
                           let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
                           let pWalletTorList = await findProcess('name', /tor/);
-                          for(let process of pWalletList) {
-                            if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
-                              killPids.push(process);
+
+                          if(epicboxruninbackground){
+
+                            for(let process of pWalletList) {
+
+                              if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+                                console.log('process kill without epicbox background', process);
+                                killPids.push(process);
+                              }
                             }
+
+                          }else{
+                            for(let process of pWalletList) {
+
+                              if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+                                console.log('process kill all background', process);
+                                killPids.push(process);
+                              }
+                            }
+
                           }
+
+
+
+
                           for(let process of pEpicnodeList) {
                             if(process.cmd.includes('server')){
                               killPids.push(process);
@@ -391,6 +414,7 @@ app.on('activate', () => {
 app.on('ready', async (event) => {
   //console.log('app', noderuninbackground);
   console.log('noderuninbackground', noderuninbackground);
+  console.log('epicboxruninbackground', epicboxruninbackground);
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
@@ -512,5 +536,8 @@ ipcMain.on('walletCreateFailed', (event, data) => {
 
 ipcMain.on('nodeBackground', (event, data) => {
   noderuninbackground = data;
+});
 
+ipcMain.on('epicboxBackground', (event, data) => {
+  epicboxruninbackground = data;
 });
