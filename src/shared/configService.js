@@ -374,9 +374,19 @@ class ConfigService {
 #########################################
 [epicbox]
 epicbox_domain = "${epicboxDomain}"
+epicbox_port = 443
 
 `;
 //do not add space in this block!!!
+        }
+
+        const re10 = /^epicbox_port(\s)*=(\s).*/gm;
+        if(tomlContent.search(re10) == -1){
+          const subre10 = /^\[epicbox\]/gm;
+          if(tomlContent.search(subre10) != -1){
+
+            tomlContent = tomlContent.replace(subre10,  '[epicbox]' +"\n"+ 'epicbox_port = 443');
+          }
         }
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
