@@ -90,9 +90,9 @@ async function createWindow() {
   // Create the browser window.
 
   win = new BrowserWindow({
-    width: 1024,
+    width: 1044,
     height: 768,
-    minWidth: 1024,
+    minWidth: 1044,
     maxWidth: 1600,
     title: "Epiccash Wallet",//fix in index.html
     webPreferences: {
@@ -144,20 +144,7 @@ async function createWindow() {
                           let killPids = [];
                           let pEpicnodeList = [];
 
-
-
                           let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
-
-
-                          if(noderuninbackground == false){
-                            pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
-                          }
-
-
-
-                          let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
-                          let pWalletTorList = await findProcess('name', /tor/);
-
                           if(epicboxruninbackground){
 
                             for(let process of pWalletList) {
@@ -179,7 +166,13 @@ async function createWindow() {
 
                           }
 
+                          if(noderuninbackground == false){
+                            pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                          }
 
+
+                          let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                          let pWalletTorList = await findProcess('name', /tor/);
 
 
                           for(let process of pEpicnodeList) {
@@ -257,7 +250,26 @@ async function createWindow() {
                         let pEpicnodeList = [];
 
                         let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+                        if(epicboxruninbackground){
 
+                          for(let process of pWalletList) {
+
+                            if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+                              console.log('process kill without epicbox background', process);
+                              killPids.push(process);
+                            }
+                          }
+
+                        }else{
+                          for(let process of pWalletList) {
+
+                            if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+                              console.log('process kill all background', process);
+                              killPids.push(process);
+                            }
+                          }
+
+                        }
 
                         if(noderuninbackground == false){
                           pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
@@ -265,11 +277,7 @@ async function createWindow() {
 
                         let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
                         let pWalletTorList = await findProcess('name', /tor/);
-                        for(let process of pWalletList) {
-                          if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
-                            killPids.push(process);
-                          }
-                        }
+
                         for(let process of pEpicnodeList) {
                           if(process.cmd.includes('server')){
                             killPids.push(process);
@@ -346,16 +354,33 @@ app.on('window-all-closed', async() => {
 
     let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
 
+    if(epicboxruninbackground){
+
+      for(let process of pWalletList) {
+
+        if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+          console.log('process kill without epicbox background', process);
+          killPids.push(process);
+        }
+      }
+
+    }else{
+      for(let process of pWalletList) {
+
+        if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+          console.log('process kill all background', process);
+          killPids.push(process);
+        }
+      }
+
+    }
+
     if(noderuninbackground == false){
       pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
     }
 
     let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
-    for(let process of pWalletList) {
-      if(process.cmd.includes('owner_api') || process.cmd.includes('listen') || process.cmd.includes('scan')){
-        killPids.push(process);
-      }
-    }
+
     for(let process of pEpicnodeList) {
       if(process.cmd.includes('server')){
         killPids.push(process);
