@@ -180,6 +180,11 @@ class ConfigService {
 
         }
 
+        const re8 = /^seeds(\s)*=(\s)*\["95\.217\.197\.180:3417"\]/gm;
+        if(tomlContent.search(re8) != -1){
+            tomlContent = tomlContent.replace(re8, 'seeds = ["95.217.197.180:3414"]');
+        }
+
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
           encoding: "utf8",
           flag: "w"

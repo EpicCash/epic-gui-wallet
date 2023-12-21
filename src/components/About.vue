@@ -1,7 +1,7 @@
 <template>
   <section class="section is-main-section" id="aboutPage">
 
-      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.2.0</h1>
+      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.2.1</h1>
       <p>
 
         <br/>

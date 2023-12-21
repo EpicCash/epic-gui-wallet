@@ -386,6 +386,11 @@
 
           this.configService.checkTomlFile();
           this.store.commit('user', user[0]);
+
+
+          console.log('start node before wallet listener');
+          await this.emitter.emit('app.nodeStart');
+
           this.emitter.emit('app.accountLoggedIn');
 
 

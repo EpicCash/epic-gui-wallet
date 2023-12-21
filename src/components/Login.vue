@@ -138,7 +138,7 @@ export default {
           }
 
           console.log('start node before wallet listener');
-          await this.emitter.emit('app.nodeStart', this.passwordField.defaultValue);
+          await this.emitter.emit('app.nodeStart');
 
           if(this.configService.config['walletlisten_on_startup']){
 
