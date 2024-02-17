@@ -144,7 +144,7 @@
         this.stopRefreshNode();
       });
 
-      this.emitter.on('app.nodeStart', async (tmppw) => {
+      this.emitter.on('app.nodeStart', async() => {
         await this.nodeStart();
       });
 
@@ -261,7 +261,7 @@
 
     async mounted() {
 
-      
+
 
       //App main window min size
       window.api.resize(1024, 768);

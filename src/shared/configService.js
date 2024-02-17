@@ -180,6 +180,11 @@ class ConfigService {
 
         }
 
+        const re8 = /^seeds(\s)*=(\s)*\["95\.217\.197\.180:3517"\]/gm;
+        if(tomlContent.search(re8) != -1){
+            tomlContent = tomlContent.replace(re8, 'seeds = ["95.217.197.180:3414"]');
+        }
+
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
           encoding: "utf8",
           flag: "w"
@@ -299,7 +304,7 @@ class ConfigService {
         const re3 = /^check_node_api_http_addr(\s)*=(\s).*/gm;
 
         let nodeApiHttp = '';
-        if(!this.config.nodesynced){
+        if(this.config.nodesynced == false && this.config.check_node_api_http_addr == 'http://127.0.0.1:3413'){
           nodeApiHttp = this.nodeFallBack;
         }else{
           nodeApiHttp = this.config.check_node_api_http_addr;

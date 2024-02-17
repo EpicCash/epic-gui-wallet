@@ -93,7 +93,7 @@ port = 3414
 #how to seed this server, can be None, List or DNSSeed
 #seeding_type = "DNSSeed"
 seeding_type = "List"
-seeds = ["95.217.197.180:3517"]
+seeds = ["95.217.197.180:3414"]
 
 peer_min_major = 3
 peer_min_minor = 4
