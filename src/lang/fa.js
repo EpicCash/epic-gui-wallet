@@ -161,7 +161,7 @@ const messages = {
       send: 'فرستادن',
       transaction_id: 'شناسه تراکنش',
       creation_date: 'تاریخ ایجاد',
-      receiver: 'گیرنده',
+      receiver: 'From/To',
       payment_proof: 'سند پرداخت',
       amount: 'مبلغ (کارمزد)',
       status: 'وضعیت',
@@ -383,7 +383,7 @@ const messages = {
       click_qrcode_icon: 'روی نماد کد کیوآر کلیک کنید',
       tor_not_available: 'تور در دسترس نیست. سعی کنید شنونده کیف پول را مجددا راه اندازی کنید',
       epicbox_address: 'Your public Epic address',
-      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Wait for the Node to be synced or try to restart the wallet listener',
       epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
     },
 

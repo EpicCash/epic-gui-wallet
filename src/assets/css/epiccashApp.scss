@@ -127,7 +127,10 @@ code{
 }
 span.externalnode{
 
-overflow-wrap: break-word;
-max-width: 300px;
-display:block;
+  overflow-wrap: break-word;
+  max-width: 300px;
+  display:block;
+}
+.show-pointer:hover{
+  cursor: pointer;
 }

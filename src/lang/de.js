@@ -152,7 +152,7 @@ const messages = {
       send: 'Senden',
       transaction_id: 'Transaktions ID',
       creation_date: 'Erstellungsdatum',
-      receiver: 'Empfänger',
+      receiver: 'Sender/Empfänger',
       payment_proof: 'Zahlungsnachweis',
       amount: 'Betrag (Gebühr)',
       status: 'Status',
@@ -376,7 +376,7 @@ const messages = {
       click_qrcode_icon: 'Klicken Sie auf das qr-Code-Symbol',
       tor_not_available: 'Tor nicht verfügbar. Versuchen Sie, den Wallet-Empfänger neu zu starten',
       epicbox_address: 'Your public Epic address',
-      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Wait for the Node to be synced or try to restart the wallet listener',
       epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
     },
 
