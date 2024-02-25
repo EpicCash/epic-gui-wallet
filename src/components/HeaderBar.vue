@@ -44,11 +44,11 @@
 
 
 
-                  <h3 class="subtitle">
+                  <h3 class="subtitle" >
                     <mdicon v-if="store.state.nodeType == 'internal' && !nodeRestarting" size=20 name="restart" @click.prevent="restartNode" />
                     <mdicon v-if="store.state.nodeType == 'internal' && nodeRestarting" size=20 />
-                    <span v-if="!this.configService.config.nodesynced"><mdicon size=18 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
-                    <span v-if="this.configService.config.nodesynced"><mdicon size=18 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
+                    <span class="externalnode" v-if="!this.configService.config.nodesynced"><mdicon size=18 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
+                    <span class="externalnode" v-if="this.configService.config.nodesynced"><mdicon size=18 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
 
                   </h3>
 

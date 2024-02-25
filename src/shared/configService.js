@@ -61,8 +61,8 @@ class ConfigService {
       this.tomlNetworkname = '';
 
       this.ngrokApiAddress = 'http://127.0.0.1:4040';
-      this.nodeFallBack = 'https://fastepic.eu:3413';
-      this.epicboxDomain = 'epicbox.epic.tech';
+      this.nodeFallBack = 'https://node.epiccash.com:3413';
+      this.epicboxDomain = 'epicbox.epiccash.com';
 
 
       //this should never fail or app is not working

@@ -14,7 +14,7 @@
           :status="item.status"
           :icon="item.icon"
         >
-          <p style="word-break:break-all">{{ item.text }}</p>
+          <p class="user-selectable" style="word-break:break-all">{{ item.text }}</p>
         </aside-updates-item>
       </div>
     </div>

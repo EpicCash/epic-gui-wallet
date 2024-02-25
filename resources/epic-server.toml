@@ -204,13 +204,13 @@ timeout = 10
 log_to_stdout = true
 
 #log level for stdout: Error, Warning, Info, Debug, Trace
-stdout_log_level = "Debug"
+stdout_log_level = "Info"
 
 #whether to log to a file
 log_to_file = false
 
 #log level for file: Error, Warning, Info, Debug, Trace
-file_log_level = "Debug"
+file_log_level = "Info"
 
 #log file path
 log_file_path = ""
