@@ -125,7 +125,7 @@ export const store = createStore({
             break;
 
             case 'txhashset_download':
-              payload.sync_status = 'Download Blocks'
+              payload.sync_status = 'Download Txhashset'
             break;
             case 'syncing':
                 payload.sync_status = '... processing'
