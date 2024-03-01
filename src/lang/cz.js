@@ -16,6 +16,10 @@ const messages = {
     error: 'Prosím opravte následující chybu(y):',
     confirmed: 'Potvrzeno',
     unconfirmed: 'Čekám na potvrzení',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'Uzamčeno',
     send: 'Posláno',
     send_proof: 'send proof',
@@ -172,7 +176,8 @@ const messages = {
       receiver_signature: 'Podpis příjemce',
       sender_address: 'Adresa odesílatele',
       sender_signature: 'Podpis odesílatele',
-      sender_address_path: 'Cesta adresy odesílatele'
+      sender_address_path: 'Cesta adresy odesílatele',
+      sendall: 'All'
 
     },
 

@@ -55,7 +55,7 @@
                 <th>{{ $t("msg.transaction.transaction_id") }}</th>
 
 
-                <th>{{ $t("msg.transaction.status") }}</th>
+                <th style="min-width:140px;">{{ $t("msg.transaction.status") }}</th>
 
                 <th>&nbsp;</th>
               </tr>
@@ -86,9 +86,17 @@
 
 
                 <td>
-                  <span v-if="tx.status=='confirmed'" class="tag is-success is-normal">{{ $t("msg.confirmed") }}</span>
-                  <span v-if="tx.status=='unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.unconfirmed") }}</span>
-                  <span v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ $t("msg.txs.canceled") }}</span>
+
+                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxSent'" class="tag is-danger is-normal">{{ $t("msg.sent_confirmed") }}</span>
+                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxReceived'" class="tag is-success is-normal">{{ $t("msg.received_confirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxSent'" class="tag is-warning is-normal is-size-7">{{ $t("msg.sent_unconfirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxReceived'" class="tag is-warning is-normal is-size-7">{{ $t("msg.received_unconfirmed") }}</span>
+
+
+
+                  <span style="width:100%;" v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ $t("msg.txs.canceled") }}</span>
+
+
                 </td>
 
 

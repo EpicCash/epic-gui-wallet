@@ -18,6 +18,10 @@ const messages = {
     confirm: 'Confirm',
     confirm_action: 'Confirm action',
     unconfirmed: 'पुष्टिकरण की प्रतीक्षा',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'बंद',
     send: 'भेजें',
     send_proof: 'send proof',
@@ -175,7 +179,8 @@ const messages = {
       receiver_signature: 'प्राप्तकर्ता हस्ताक्षर',
       sender_address: 'भेजने वाले का एड्रेस',
       sender_signature: 'प्रेषक हस्ताक्षर',
-      sender_address_path: 'प्रेषक एड्रेस पथ'
+      sender_address_path: 'प्रेषक एड्रेस पथ',
+      sendall: 'All'
 
     },
 

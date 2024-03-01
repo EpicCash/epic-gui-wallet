@@ -15,6 +15,10 @@ const messages = {
     error: 'Моля поправете следните грешки:',
     confirmed: 'Потвърдено',
     unconfirmed: 'Изчаква потвърждение',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'Заключено',
     send: 'Изпрати ',
     send_proof: 'send proof',
@@ -171,8 +175,8 @@ const messages = {
       receiver_signature: 'Подпис на получател',
       sender_address: 'Адрес на подател',
       sender_signature: 'Подпис на подател',
-      sender_address_path: 'Път към адреса на подателя'
-
+      sender_address_path: 'Път към адреса на подателя',
+      sendall: 'All'
     },
 
     commit:{

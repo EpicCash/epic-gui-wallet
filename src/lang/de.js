@@ -16,6 +16,10 @@ const messages = {
     confirmed: 'Bestätigt',
     confirm_action: 'Aktion erforderlich',
     unconfirmed: 'Warten auf Bestätigung',
+    sent_confirmed: 'Gesendet',
+    received_confirmed: 'Empfangen',
+    sent_unconfirmed: '... warte auf die Unterschrift des Empfängers',
+    received_unconfirmed: '... warte auf den Absender, um den Vorgang abzuschließen',
     locked: 'Gesperrt',
     send: 'Senden',
     send_proof: 'send proof',
@@ -170,7 +174,8 @@ const messages = {
       receiver_signature: 'Signatur des Empfangers',
       sender_address: 'Adresse des Absenders',
       sender_signature: 'Signatur des Absenders',
-      sender_address_path: 'Pfad der Absenderadresse'
+      sender_address_path: 'Pfad der Absenderadresse',
+      sendall: 'Alles'
 
     },
 

@@ -16,6 +16,10 @@ const messages = {
     confirmed: 'تائید شد',
     confirm_action: 'Confirm action',
     unconfirmed: 'در انتظار تائیدیه',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'قفل شده',
     send: 'فرستادن',
     send_proof: 'send proof',
@@ -178,7 +182,8 @@ const messages = {
       receiver_signature: 'امضای گیرنده',
       sender_address: 'آدرس فرستنده',
       sender_signature: 'امضای فرستنده',
-      sender_address_path: 'مسیر آدرس فرستنده'
+      sender_address_path: 'مسیر آدرس فرستنده',
+      sendall: 'All'
 
     },
 

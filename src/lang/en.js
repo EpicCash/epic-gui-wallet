@@ -15,6 +15,12 @@ const messages = {
     error: 'Please correct the following error(s):',
     confirmed: 'Confirmed',
     unconfirmed: 'Awaiting confirmation',
+
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
+
     locked: 'Locked',
     send: 'Send',
     send_proof: 'send proof',
@@ -170,7 +176,8 @@ const messages = {
       receiver_signature: 'Receiver signature',
       sender_address: 'Sender address',
       sender_signature: 'Sender signature',
-      sender_address_path: 'Sender address path'
+      sender_address_path: 'Sender address path',
+      sendall: 'All'
     },
     commit:{
       unspentCmt: 'Unspent outputs',
