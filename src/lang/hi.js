@@ -144,7 +144,7 @@ const messages = {
       EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
       <br/>
       This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
-      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
+      Relay servers such as epicbox.epiccash.com and others to come later are provided by our community.<br/>
       <br/>
       How it works:<br/>
       Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
@@ -429,7 +429,7 @@ const messages = {
       ngrok_account_hint: 'To receive your ngrok authentication token, please create a new account at https://ngrok.com',
       authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
       epicbox_domain: 'Epicbox Domain',
-      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epiccash.com`,
       node_background: 'sync in background',
       node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.',
       epicbox_background: 'Run Epicbox listener in background',
