@@ -96,7 +96,7 @@
                 <section class="section">
                   <div class="content has-text-grey has-text-centered">
                     <p>
-                      
+
                       <span v-if="this.store.state.nodeStatus.sync_status == 'synced'" class="icon is-large"><mdicon name="circle-off-outline" size="48" /></span>
                       <span v-else>{{ $t("msg.waiting_for_nodesync") }}</span>
                     </p>
@@ -364,7 +364,7 @@
         this.current_commits = this.currentFilter == '' ? this.total_commits.slice(s, s+this.count_per_page) : this.filter(this.currentFilter, s, false);
       },
       open (link) {
-        window.explorer.open(link);
+        //window.explorer.open(link);
       }
     }
   }
