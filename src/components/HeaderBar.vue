@@ -38,12 +38,9 @@
               </div>
             </div>
             <div class="level-right">
-              <div class="level-item is-hero-content-item">
+              <div class="level-item is-hero-content-item" style="position:relative;">
 
-                <div class="is-size-7">
-
-
-
+                <div class="is-size-7" :style="store.state.nodeStatus.user_agent ? '' : 'opacity:0.2'">
                   <h3 class="subtitle" >
                     <span class="externalnode">
                     <mdicon class="show-pointer" v-if="store.state.nodeType == 'internal' && !nodeRestarting" size=20 name="restart" @click.prevent="restartNode" />
@@ -65,9 +62,8 @@
                     <progress v-else style="margin-top:5px;" class="progress is-success is-small" :value="100" :max="100"></progress>
                   </div>
 
-
-
                 </div>
+                <div v-if="store.state.nodeStatus.user_agent == undefined" style="opacity:0.8;" class="is-overlay is-align-items-center is-flex is-justify-content-center " ><span style="opacity:0.8;" class="has-background-light has-text-black-bis tag">... loading</span></div>
               </div>
             </div>
           </div>
