@@ -1,7 +1,7 @@
 <template>
   <section class="section is-main-section" id="aboutPage">
 
-      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.2.3</h1>
+      <h1 class="is-size-5">Epic Cash desktop wallet  &#8212; v5.3.0</h1>
       <p>
 
         <br/>
@@ -30,7 +30,7 @@
     <h1 class="is-size-5">Epic Cash Community:</h1>
     <p>
       Learn more about Epic Cash, ask questions and connect with fellow enthusiasts on our social media.<br/>
-      <a @click="open('https://epic.tech/community/')" >https://epic.tech/community/</a>
+      <a @click="open('https://epiccash.com/')" >https://epiccash.com/</a>
     </p>
 
   </section>

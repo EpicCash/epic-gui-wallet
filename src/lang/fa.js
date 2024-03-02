@@ -16,6 +16,10 @@ const messages = {
     confirmed: 'تائید شد',
     confirm_action: 'Confirm action',
     unconfirmed: 'در انتظار تائیدیه',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'قفل شده',
     send: 'فرستادن',
     send_proof: 'send proof',
@@ -143,7 +147,7 @@ const messages = {
       EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
       <br/>
       This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
-      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
+      Relay servers such as epicbox.epiccash.com and others to come later are provided by our community.<br/>
       <br/>
       How it works:<br/>
       Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
@@ -161,7 +165,7 @@ const messages = {
       send: 'فرستادن',
       transaction_id: 'شناسه تراکنش',
       creation_date: 'تاریخ ایجاد',
-      receiver: 'گیرنده',
+      receiver: 'From/To',
       payment_proof: 'سند پرداخت',
       amount: 'مبلغ (کارمزد)',
       status: 'وضعیت',
@@ -178,7 +182,8 @@ const messages = {
       receiver_signature: 'امضای گیرنده',
       sender_address: 'آدرس فرستنده',
       sender_signature: 'امضای فرستنده',
-      sender_address_path: 'مسیر آدرس فرستنده'
+      sender_address_path: 'مسیر آدرس فرستنده',
+      sendall: 'All'
 
     },
 
@@ -383,7 +388,7 @@ const messages = {
       click_qrcode_icon: 'روی نماد کد کیوآر کلیک کنید',
       tor_not_available: 'تور در دسترس نیست. سعی کنید شنونده کیف پول را مجددا راه اندازی کنید',
       epicbox_address: 'Your public Epic address',
-      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Wait for the Node to be synced or try to restart the wallet listener',
       epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
     },
 
@@ -425,7 +430,7 @@ const messages = {
       settings_saved: 'تنظیمات ذخیره شدند',
       error_save: 'خطا در ذخیره کردن تنظیمات',
       epicbox_domain: 'Epicbox Domain',
-      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epiccash.com`,
 
       node_background: 'sync in background',
       node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.',

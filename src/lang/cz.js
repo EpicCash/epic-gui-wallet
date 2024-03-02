@@ -16,6 +16,10 @@ const messages = {
     error: 'Prosím opravte následující chybu(y):',
     confirmed: 'Potvrzeno',
     unconfirmed: 'Čekám na potvrzení',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'Uzamčeno',
     send: 'Posláno',
     send_proof: 'send proof',
@@ -137,7 +141,7 @@ const messages = {
       EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
       <br/>
       This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
-      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
+      Relay servers such as epicbox.epiccash.com and others to come later are provided by our community.<br/>
       <br/>
       How it works:<br/>
       Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
@@ -155,7 +159,7 @@ const messages = {
       send: 'Posláno',
       transaction_id: 'ID transakce',
       creation_date: 'Datum vzniku',
-      receiver: 'Příjemce',
+      receiver: 'From/To',
       payment_proof: 'Doklad o platbě',
       amount: 'Množství (poplatek)',
       status: 'Status',
@@ -172,7 +176,8 @@ const messages = {
       receiver_signature: 'Podpis příjemce',
       sender_address: 'Adresa odesílatele',
       sender_signature: 'Podpis odesílatele',
-      sender_address_path: 'Cesta adresy odesílatele'
+      sender_address_path: 'Cesta adresy odesílatele',
+      sendall: 'All'
 
     },
 
@@ -376,7 +381,7 @@ const messages = {
       your_qrcode: 'Váš QR kód pro Vaši "{0}" adresu',
       click_qrcode_icon: 'Klikněte na ikonu QR kódu',
       tor_not_available: 'Tor není k dispozici. Zkuste restartovat listener peněženky',
-      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Wait for the Node to be synced or try to restart the wallet listener',
       epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
       check_port_open_done: 'Recheck done!',
       listener_stopped: 'Wallet listener stopped',
@@ -420,7 +425,7 @@ const messages = {
       settings_saved: 'Nastavení uloženo',
       error_save: 'Při ukládání nastavení došlo k chybě',
       epicbox_domain: 'Epicbox Domain',
-      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epiccash.com`,
 
       node_background: 'sync in background',
       node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.',

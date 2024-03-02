@@ -48,13 +48,15 @@
             <thead>
               <tr class="th">
                 <th>#</th>
-                <th>{{ $t("msg.transaction.transaction_id") }}</th>
-                <th style="min-width:180px;">{{ $t("msg.transaction.creation_date") }}</th>
+                <th style="min-width:100px;">{{ $t("msg.transaction.amount") }}</th>
                 <th>{{ $t("msg.transaction.receiver") }}</th>
-                <th>{{ $t("msg.transaction.payment_proof") }}</th>
-                <th>{{ $t("msg.transaction.amount") }}</th>
-                <th>{{ $t("msg.transaction.status") }}</th>
-                <th>{{ $t("msg.transaction.transfer_type") }}</th>
+
+                <th style="min-width:90px;">{{ $t("msg.transaction.creation_date") }}</th>
+                <th>{{ $t("msg.transaction.transaction_id") }}</th>
+
+
+                <th style="min-width:140px;">{{ $t("msg.transaction.status") }}</th>
+
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -69,10 +71,6 @@
 
 
                 </td>
-                <td><span :title="tx.tx_slate_id ? tx.tx_slate_id: ''">{{ $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</span></td>
-                <td>{{ $filters.datetimeFormat(tx.creation_ts, locale) }}</td>
-                <td><span v-bind:class="{'is-hidden': store.state.hideValues }">{{ tx.address ? tx.address.name : null }}</span></td>
-                <td>{{ $filters.truncateMid($filters.paymentProof(tx.payment_proof, 'receiver_address'), 19) }}</td>
                 <td>
 
 
@@ -81,12 +79,26 @@
                     </span>
                     <span v-bind:class="{'amount-hidden': store.state.hideValues }" v-else>+{{ tx.amount_credited/100000000 }}</span>
                 </td>
+                <td><span style="display:block;min-width:100px;word-break: break-all;" v-bind:class="{'is-hidden': store.state.hideValues }">{{ tx.public_addr ? $filters.truncateMid(tx.public_addr ? tx.public_addr: '', 60) : null }}</span></td>
+
+                <td>{{ $filters.datetimeFormat(tx.creation_ts, locale) }}</td>
+                <td><span :title="tx.tx_slate_id ? tx.tx_slate_id: ''">{{ $filters.truncateMid(tx.tx_slate_id ? tx.tx_slate_id: '', 19) }}</span></td>
+
+
                 <td>
-                  <span v-if="tx.status=='confirmed'" class="tag is-success is-normal">{{ $t("msg.confirmed") }}</span>
-                  <span v-if="tx.status=='unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.unconfirmed") }}</span>
-                  <span v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ $t("msg.txs.canceled") }}</span>
+
+                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxSent'" class="tag is-danger is-normal">{{ $t("msg.sent_confirmed") }}</span>
+                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxReceived'" class="tag is-success is-normal">{{ $t("msg.received_confirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxSent'" class="tag is-warning is-normal is-size-7">{{ $t("msg.sent_unconfirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxReceived'" class="tag is-warning is-normal is-size-7">{{ $t("msg.received_unconfirmed") }}</span>
+
+
+
+                  <span style="width:100%;" v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ $t("msg.txs.canceled") }}</span>
+
+
                 </td>
-                <td>{{ tx.address ? tx.address.type : null }}</td>
+
 
                 <td class="is-actions-cell">
 
@@ -122,6 +134,7 @@
                       <td class="tx-details user-selectable">
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.id") }}:</span> {{tx.id}}<br/>
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.slate_id") }}:</span> {{tx.tx_slate_id}}<br/>
+                        <span class="has-text-weight-bold">{{ $t("msg.transaction.receiver") }}:</span> <span class="user-selectable" v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.public_addr}}</span><br/>
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.creation_date") }}:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.confirmation_date") }}:</span> {{$filters.datetimeFormat(tx.confirmation_ts, locale)}}<br/>
                         <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_credited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
@@ -330,7 +343,7 @@
 
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok[1].reverse()
-
+          console.log("reload txs ",data);
           this.store.dispatch('processTxs', {data: data, table:this.$addressTransactionsService})
 
           if(this.currentFilter == ''){
@@ -412,18 +425,22 @@
           if(this.currentFilter != ''){
             let filtered_txs = this.filter(this.currentFilter, 0, false);
             this.current_txs = filtered_txs.filter(function(tx){
-              if(tx.tx_slate_id&&tx.tx_slate_id.search(keyword) != -1){
+              if( (tx.tx_slate_id && tx.tx_slate_id.search(keyword) != -1)
+                || (tx.public_addr && tx.public_addr.search(keyword) != -1)
+              ){
                 return tx
               }
             });
           }else{
             this.current_txs = this.total_txs.filter(function(tx){
-              if(tx.tx_slate_id&&tx.tx_slate_id.search(keyword) != -1){
+              if( (tx.tx_slate_id && tx.tx_slate_id.search(keyword) != -1)
+                || (tx.public_addr && tx.public_addr.search(keyword) != -1)
+              ){
                 return tx
               }
             });
           }
-
+          this.current_page_index = 1;
           this.searched = true
 
         }

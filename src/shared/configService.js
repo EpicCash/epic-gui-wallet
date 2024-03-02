@@ -12,7 +12,7 @@ class ConfigService {
   constructor(emitter) {
       this.emitter = emitter;
       this.configAccount = '';
-      this.configVersion = "5.0.3";
+      this.configVersion = "5.0.4";
       this.debug = window.debug;
 
       //where to find accounts and wallet data
@@ -61,8 +61,8 @@ class ConfigService {
       this.tomlNetworkname = '';
 
       this.ngrokApiAddress = 'http://127.0.0.1:4040';
-      this.nodeFallBack = 'https://fastepic.eu:3413';
-      this.epicboxDomain = 'epicbox.epic.tech';
+      this.nodeFallBack = 'https://node.epiccash.com:3413';
+      this.epicboxDomain = 'epicbox.epiccash.com';
 
 
       //this should never fail or app is not working
@@ -393,6 +393,15 @@ epicbox_port = 443
             tomlContent = tomlContent.replace(subre10,  '[epicbox]' +"\n"+ 'epicbox_port = 443');
           }
         }
+
+        //replace old epicbox domain
+        const re11 = /^epicbox_domain(\s)*=(\s)*"epicbox.epic.tech"/gm;
+        if(tomlContent.search(re11) != -1){
+            tomlContent = tomlContent.replace(re11, 'epicbox_domain = "epicbox.epiccash.com"');
+        }
+
+
+
 
         window.nodeFs.writeFileSync(tomlFile, tomlContent, {
             encoding: "utf8",

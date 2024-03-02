@@ -18,6 +18,10 @@ const messages = {
     confirm: 'Confirm',
     confirm_action: 'Confirm action',
     unconfirmed: 'पुष्टिकरण की प्रतीक्षा',
+    sent_confirmed: 'Sent',
+    received_confirmed: 'Received',
+    sent_unconfirmed: '... waiting for receiver to sign',
+    received_unconfirmed: '... waiting for sender to finalize',
     locked: 'बंद',
     send: 'भेजें',
     send_proof: 'send proof',
@@ -140,7 +144,7 @@ const messages = {
       EPIC addresses provide an easy way to send EPIC when the receiving wallet is offline.<br/>
       <br/>
       This is accomplished securely and privately by using an external relay server called "Epicbox"<br/>
-      Relay servers such as epicbox.epic.tech and others to come later are provided by our community.<br/>
+      Relay servers such as epicbox.epiccash.com and others to come later are provided by our community.<br/>
       <br/>
       How it works:<br/>
       Transactions are sent to the Epicbox server and delivered to the recipient as soon as the receiver's wallet is online.<br/>
@@ -158,7 +162,7 @@ const messages = {
       send: 'भेजें',
       transaction_id: 'लेनदेन ID',
       creation_date: 'निर्माण तिथि',
-      receiver: 'रिसीवर',
+      receiver: 'From/To',
       payment_proof: 'भुगतान का प्रमाण',
       amount: 'राशि (शुल्क)',
       status: 'Status',
@@ -175,7 +179,8 @@ const messages = {
       receiver_signature: 'प्राप्तकर्ता हस्ताक्षर',
       sender_address: 'भेजने वाले का एड्रेस',
       sender_signature: 'प्रेषक हस्ताक्षर',
-      sender_address_path: 'प्रेषक एड्रेस पथ'
+      sender_address_path: 'प्रेषक एड्रेस पथ',
+      sendall: 'All'
 
     },
 
@@ -380,7 +385,7 @@ const messages = {
       your_qrcode: 'Your QRcode for your "{0}" address',
       click_qrcode_icon: 'Click the qr code icon',
       tor_not_available: 'Tor not available. Try to restart the wallet listener',
-      epicbox_not_available: 'Epicbox not available. Try to restart the wallet listener',
+      epicbox_not_available: 'Epicbox not available. Wait for the Node to be synced or try to restart the wallet listener',
       epicbox_off: 'Your epicbox is not configured. Update your settings and define a epicbox domain',
       check_port_open_done: 'Recheck done!',
       listener_stopped: 'Wallet listener stopped',
@@ -424,7 +429,7 @@ const messages = {
       ngrok_account_hint: 'To receive your ngrok authentication token, please create a new account at https://ngrok.com',
       authtoken_hint: 'With a ngrok Authtoken, your address is active as long as the wallet is in listening mode',
       epicbox_domain: 'Epicbox Domain',
-      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epic.tech`,
+      epicbox_domain_hint: `The domain of the relay server, where your epicbox is connected to. Leave field blank if you don't want to use this service. Default: epicbox.epiccash.com`,
       node_background: 'sync in background',
       node_background_hint: 'the built-in node server continues to sync in the background even when the app is closed. The next time you run the wallet, you do not have to wait for the synchronization with the blockchain.',
       epicbox_background: 'Run Epicbox listener in background',

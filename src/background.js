@@ -14,8 +14,8 @@ const ps = require('ps-node');
 const findProcess = require('find-process');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
-autoUpdater.channel = "latest"
-
+autoUpdater.channel = "latest";
+autoUpdater.autoDownload = false;
 let win;
 let noderuninbackground = false;
 let epicboxruninbackground = false;
@@ -36,15 +36,6 @@ contextMenu({
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'debug';
 log.info('App starting...');
-
-
-autoUpdater.channel = "latest"
-
-/*function sendStatusToWindow(text) {
-  console.log(text);
-  log.info(text);
-  win.webContents.send('message', text);
-}*/
 
 
 async function kill(pid){
@@ -423,10 +414,10 @@ autoUpdater.on('update-available', (info, releaseNotes, releaseName) => {
 
   //sendStatusToWindow('Update available.');
 })
-/*autoUpdater.on('update-not-available', (info) => {
-
-  sendStatusToWindow('Update not available.');
-})*/
+autoUpdater.on('update-not-available', (info) => {
+  console.log("no update available");
+  //sendStatusToWindow('Update not available.');
+})
 /*autoUpdater.on('error', (err) => {
   sendStatusToWindow('Error in auto-updater. ' + err);
 })*/
