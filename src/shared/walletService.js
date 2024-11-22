@@ -250,7 +250,8 @@ class WalletService {
         {
           token: this.token,
           slate: params,
-          participant_id: 0
+          participant_id: 0,
+          addr_to: "",
         }, false);
     }
 
