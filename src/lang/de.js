@@ -289,6 +289,8 @@ const messages = {
       external_node_offline: 'Externer Netzwerkknoten ist offline',
       background_process: 'Bitte schließen Sie alle Prozesse, bevor Sie fortfahren.',
 
+      walletonline: 'Dein Wallet ist online',
+      walletoffline: 'Dein Wallet ist offline.',
     },
 
     info: {

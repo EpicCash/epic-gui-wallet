@@ -287,7 +287,8 @@ const messages = {
       external_node_online: 'Външният Сървър е онлайн',
       external_node_offline: 'Външният Сървър е офлайн',
       background_process: 'Открихме работещ портфейл или сървър на заден план. Моля затворете ги преди да пуснете портфейла.',
-
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
     },
 
     info: {

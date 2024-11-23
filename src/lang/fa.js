@@ -297,6 +297,9 @@ const messages = {
       external_node_online: 'نود خارجی آنلاین است',
       external_node_offline: 'نود خارجی آفلاین است',
       background_process: 'ما برخی از پردازش های کیف پول و نودِ در حال اجرا را در پس زمینه پیدا کردیم. لطفاً قبل از اجرای این برنامه ابتدا آنها را ببندید',
+    
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
     },
     info: {
       spendable: 'قابل مصرف',

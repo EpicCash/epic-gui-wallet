@@ -98,7 +98,17 @@ export default {
   },
 
   methods: {
-
+    waitForNodesynced (variable) {
+        function waitFor(result) {
+          if (result != null) {
+            return result;
+          }
+          return new Promise((resolve) => setTimeout(resolve, 100))
+            .then(() => Promise.resolve(window[variable]))
+            .then((res) => waitFor(res));
+        }
+        return waitFor();
+    },
     async login(){
 
 
@@ -122,9 +132,8 @@ export default {
         await this.configService.killEpicProcess();
 
 
-
         let canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
-        //console.log('canLogin do login', canLogin);
+        
         if(canLogin.success){
 
           //load user account settings first
@@ -141,21 +150,21 @@ export default {
           await this.emitter.emit('app.nodeStart');
 
           if(this.configService.config['walletlisten_on_startup']){
-
             const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
-
             //start epicbox, will be executed when node has synced status
             if(this.configService.config['epicbox_domain'] != undefined && this.configService.config['epicbox_domain'] != '' ){
+              
               await this.emitter.emit('app.startEpicbox', this.passwordField.defaultValue);
+             
             }
 
-            if(isListen && isListen.success){
+            //the wallet listener started
+            /*if(isListen && isListen.success){
               this.$toast.success(this.$t("msg.login.listener_started"));
-              this.store.commit('walletListenerService', true);
             }else{
               this.$toast.error(this.$t("msg.login.error_listener_started"));
               this.store.commit('walletListenerService', false);
-            }
+            }*/
 
             if(isListen && isListen.tor){
               this.$toast.success(this.$t("msg.login.tor_started"));
@@ -164,10 +173,6 @@ export default {
               this.$toast.error(this.$t("msg.login.error_tor_started"));
               this.store.commit('torService', false);
             }
-
-            console.log('all started');
-
-
 
           }
 

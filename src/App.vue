@@ -122,9 +122,11 @@
           if(isEpicbox && isEpicbox.success){
             this.$toast.success(this.$t("msg.login.epicbox_started"));
             this.store.commit('walletEpicboxService', true);
+            this.store.commit('walletListenerService', true);
           }else{
             this.$toast.error(this.$t("msg.login.error_epicbox_started"));
             this.store.commit('walletEpicboxService', false);
+            this.store.commit('walletListenerService', false);
           }
 
 

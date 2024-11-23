@@ -89,7 +89,10 @@ const messages = {
       yes: '好的',
       no: '暂时不更新',
       node_restarting: 'Node is restarting',
-      hedwig: '用Hedwig收币'
+      hedwig: '用Hedwig收币',
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
+
     },
 
     info:{

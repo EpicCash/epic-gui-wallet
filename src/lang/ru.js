@@ -99,6 +99,9 @@ const messages = {
       external_node_online: 'External Node is online',
       external_node_offline: 'External Node is offline',
       background_process: 'Please close all processes before continuing.',
+
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
     },
 
     info: {
