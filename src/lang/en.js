@@ -20,6 +20,7 @@ const messages = {
     received_confirmed: 'Received',
     sent_unconfirmed: '... waiting for receiver to sign',
     received_unconfirmed: '... waiting for sender to finalize',
+    received_mempool: '... waiting for confirmation',
 
     locked: 'Locked',
     send: 'Send',

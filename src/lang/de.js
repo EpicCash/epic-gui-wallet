@@ -20,6 +20,7 @@ const messages = {
     received_confirmed: 'Empfangen',
     sent_unconfirmed: '... warte auf die Unterschrift des Empfängers',
     received_unconfirmed: '... warte auf den Absender, um den Vorgang abzuschließen',
+    received_mempool: '... warte auf Bestätigung',
     locked: 'Gesperrt',
     send: 'Senden',
     send_proof: 'send proof',

@@ -16,6 +16,7 @@ const messages = {
     received_confirmed: 'Received',
     sent_unconfirmed: '... waiting for receiver to sign',
     received_unconfirmed: '... waiting for sender to finalize',
+    received_mempool: '... waiting for confirmation',
     locked: '已锁定',
     send: '发送',
     send_proof: 'send proof',

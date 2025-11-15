@@ -3,17 +3,16 @@ import { contextBridge, ipcRenderer, clipboard, shell} from 'electron'
 import os from 'os'
 import { join } from 'path'
 import path from 'path';
+import * as secp256k1 from "@noble/secp256k1";
+import isPortReachable from 'is-port-reachable';
+
 const moment = require('moment');
 const base32 = require('rfc-3548-b32');
 const crypto = require('crypto-browserify');
 const qr = require("qrcode");
-import * as secp256k1 from "@noble/secp256k1";
-import isPortReachable from 'is-port-reachable';
-
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
 const fs = require('fs');
-const util = require('util');
 const log = require('electron-log');
 
 const homedir = os.homedir();
@@ -196,7 +195,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
       }
     },
 
-    /* start wallet api */
+    /* start node api */
     async execNode(cmd, args, platform){
 
       return new Promise(function(resolve, reject) {
@@ -210,7 +209,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               debug ? console.log('execNode.stdout', data) : null;
 
             //Epic server started.
-            if(data.includes('Epic server started')){
+            if(data.includes('Epic node server started.')){
               resolve(node_server.pid);
             }
 
@@ -221,7 +220,7 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
           node_server.stderr.on('data', (data) => {
             debug ? console.log('execNode.stderr', data) : null;
 
-            resolve(false);
+            reject(false);
 
           });
 
@@ -275,9 +274,13 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
             if(emitOutput){
               ipcRenderer.send('firstscan-stdout', data);
             }
-            if(data.includes('HTTP Owner listener started')){
+            if(data.includes('HTTP Owner listener started') || data.includes('Owner API started')){
 
               resolve(ownerAPI.pid);
+            }
+            
+            if(data.includes('Error opening wallet')){
+              resolve(0);
             }
 
           });
@@ -328,6 +331,12 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
                 resolve({success: true, msg: listenProcess.pid, tor: isTorBooted});
               }
+              if(data.includes('Failed to check node sync status')){
+
+                resolve({success: false, msg: 'node not synced', tor: isTorBooted});
+              }
+
+              
 
           });
 
@@ -359,6 +368,10 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               if(data.includes('Starting epicbox listener') || data.includes('Epicbox listener started.')){
 
                 resolve({success: true, msg: listenProcess.pid});
+              }
+
+              if(data.includes('Failed to check node sync status')){
+                resolve({success: false, msg: 'node not synced', tor: isTorBooted});
               }
 
           });
@@ -565,6 +578,9 @@ contextBridge.exposeInMainWorld('config', {
       case 'win32':
         return 'win';
     }
+  },
+  getArch(){
+    return os.arch();
   },
   getOnionV3(address){
 

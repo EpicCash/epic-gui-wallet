@@ -27,15 +27,21 @@ class ConfigService {
 
       this.defaultAccountNetwork = 'mainnet';
       this.platform = window.config.getPlatform();
-      this.binariesPath = path.join(window.config.getResourcePath(), 'bin', window.config.getPlatform());
-      this.epicWalletBinary = window.config.getPlatform() === 'win' ? 'epic-wallet.exe' : 'epic-wallet';
-      this.epicNodeBinary = window.config.getPlatform() === 'win' ? 'epic.exe' : 'epic';
-      this.ngrokBinary = window.config.getPlatform() === 'win' ? 'ngrok.exe' : 'ngrok';
+      this.arch = window.config.getArch();
+      
+      if(this.platform == 'mac' && this.arch == 'arm64'){
+        this.platform = 'macsilicon';
+      }
+      
+      this.binariesPath = path.join(window.config.getResourcePath(), 'bin', this.platform);   
+      this.epicWalletBinary = this.platform === 'win' ? 'epic-wallet.exe' : 'epic-wallet';
+      this.epicNodeBinary = this.platform === 'win' ? 'epic.exe' : 'epic';
+      this.ngrokBinary = this.platform === 'win' ? 'ngrok.exe' : 'ngrok';
       this.epicBinPath = path.join(this.binariesPath, this.epicWalletBinary);
       this.epicNodeBinPath = path.join(this.binariesPath, this.epicNodeBinary);
       this.ngrokBinPath = path.join(this.binariesPath, this.ngrokBinary);
 
-      if(window.config.getPlatform() == 'win'){
+      if(this.platform === 'win'){
         this.epicBinPath = '"' + path.resolve(this.epicBinPath) + '"';
         this.epicNodeBinPath = '"' + path.resolve(this.epicNodeBinPath) + '"';
         this.ngrokBinPath = '"' + path.resolve(this.ngrokBinPath) + '"';
@@ -163,12 +169,16 @@ class ConfigService {
 
         const re6 = /^bits(\s)*=(\s).*/gm;
         if(tomlContent.search(re6) != -1){
-            tomlContent = tomlContent.replace(re6, 'bits = 31');
+            tomlContent = tomlContent.replace(re6, 'capabilities = "HEADER_HIST | TXHASHSET_HIST | PEER_LIST | TX_KERNEL_HASH | HEADER_FASTSYNC"');
+        }
+
+        const re66 = /^\[server\.p2p_config\.capabilities\].*/gm;
+        if(tomlContent.search(re66) != -1){
+            tomlContent = tomlContent.replace(re66, '');
         }
 
         const re7 = /^skip_pow_validation(\s)*=(\s).*/gm;
         if(tomlContent.search(re7) != -1){
-
           tomlContent = tomlContent.replace(re7, 'skip_pow_validation = true');
         }else{
           const subre7 = /^archive_mode(\s)*=(\s).*/gm;
@@ -290,14 +300,14 @@ class ConfigService {
             tomlContent = tomlContent.replace(re, 'owner_api_include_foreign = true')
         }
 
-        const re2 = /^data_file_dir(\s)*=(\s).*/gm;
+        const re2 = /^data_file_dir(\s)*=(\s).*/gm; 
         if(tomlContent.search(re2) != -1){
-
+            let wallet_data_dir = path.join(walletDir, 'wallet_data');
             if(this.platform == 'win'){
               //double escaped path
-              tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir.replace(/\\/g, '\\\\') + '"');
+              tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + wallet_data_dir.replace(/\\/g, '\\\\') + '"');
             }else{
-              tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + this.userhomedir + '"');
+              tomlContent = tomlContent.replace(re2, 'data_file_dir = "' + wallet_data_dir + '"');
             }
         }
 
@@ -475,7 +485,7 @@ epicbox_port = 443
     let pWalletTorList = await window.nodeFindProcess('name', 'tor', true);
 
     //this.config.epicbox_background === false
-    console.log('this.config.epicbox_background configSerive', this.config.epicbox_background);
+    console.log('this.config.epicbox_background', this.config.epicbox_background);
     if(this.config && this.config.epicbox_background){
       for(let process of pWalletList) {
         if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
@@ -509,24 +519,26 @@ epicbox_port = 443
     }
 
     if(killPids.length){
-
       let close = false;
-      await new Promise((resolve) => {
+      let confirmed = await new Promise((resolve) => {
 
         this.emitter.emit('killEpicProcess', {pid: killPids, callback:async(confirmed)=>{
-
-
           if(confirmed){
             for(let process of killPids) {
               this.debug ? console.log('configService.kill', process) : null;
               killPromise.push(nodeChildProcess.kill(process.pid))
             }
             await Promise.all(killPromise);
+            resolve(true);
+          }else{
+            resolve(false);
           }
-          resolve();
         }});
 
       });
+      return confirmed;
+    }else{
+      return null;
     }
 
 

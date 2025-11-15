@@ -64,18 +64,19 @@
               <template v-for="tx in current_txs" :key="tx.id"  >
               <tr>
                 <td >
-
+                  <mdicon size="18" v-if="tx.tx_type=='TxSentCreated'" name="arrow-up-circle-outline" class="has-text-warning" />
+                  <mdicon size="18" v-if="tx.tx_type=='TxSentMempool'" name="arrow-up-circle-outline" class="has-text-warning" />
                   <mdicon size="18" v-if="tx.tx_type=='TxSent'" name="arrow-left-circle-outline" class="has-text-danger" />
                   <mdicon size="18" v-if="tx.tx_type=='TxReceived'" name="arrow-right-circle-outline" class="has-text-success" />
-                  <mdicon size="18" v-if="tx.tx_type!='TxSent' && tx.tx_type!='TxReceived'" name="cancel" class="has-text-warning" />
+                  <mdicon size="18" v-if="tx.tx_type!='TxSent' && tx.tx_type!='TxReceived' && tx.tx_type!='TxSentCreated' && tx.tx_type!='TxSentMempool'" name="cancel" class="has-text-warning" />
 
 
                 </td>
                 <td>
 
 
-                    <span v-bind:class="{'amount-hidden': store.state.hideValues }" v-if="tx.tx_type=='TxSent' || tx.tx_type=='TxSentCancelled'">-{{(tx.amount_debited-tx.amount_credited-tx.fee)/100000000}}
-                      ({{tx.fee/100000000}})
+                    <span v-bind:class="{'amount-hidden': store.state.hideValues }" v-if="tx.tx_type=='TxSent' || tx.tx_type=='TxSentCancelled' || tx.tx_type=='TxSentCreated' || tx.tx_type=='TxSentMempool' ">-{{(tx.amount_debited-tx.amount_credited-tx.fee)/100000000}}
+                     ({{tx.fee/100000000}})
                     </span>
                     <span v-bind:class="{'amount-hidden': store.state.hideValues }" v-else>+{{ tx.amount_credited/100000000 }}</span>
                 </td>
@@ -89,8 +90,8 @@
 
                   <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxSent'" class="tag is-danger is-normal">{{ $t("msg.sent_confirmed") }}</span>
                   <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxReceived'" class="tag is-success is-normal">{{ $t("msg.received_confirmed") }}</span>
-                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxSent'" class="tag is-warning is-normal is-size-7">{{ $t("msg.sent_unconfirmed") }}</span>
-                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxReceived'" class="tag is-warning is-normal is-size-7">{{ $t("msg.received_unconfirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && (tx.tx_type=='TxSent' || tx.tx_type=='TxSentCreated')" class="tag is-warning is-normal is-size-7">{{ $t("msg.sent_unconfirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxSentMempool'" class="tag is-warning is-normal is-size-7">{{ $t("msg.received_mempool") }}</span>
 
 
 
@@ -130,43 +131,45 @@
                 <td></td>
                 <td colspan="8">
                   <table>
-                    <tr>
-                      <td class="tx-details user-selectable">
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.id") }}:</span> {{tx.id}}<br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.slate_id") }}:</span> {{tx.tx_slate_id}}<br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.receiver") }}:</span> <span class="user-selectable" v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.public_addr}}</span><br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.creation_date") }}:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.confirmation_date") }}:</span> {{$filters.datetimeFormat(tx.confirmation_ts, locale)}}<br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_credited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_debited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_debited/100000000}}</span><br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.fee") }}:</span> {{tx.fee/100000000}}<br/>
-                        <template v-if="tx.messages && tx.messages.messages">
-                          <p  v-for="message in tx.messages.messages" :key="message.id" >
-                            <span class="has-text-weight-bold">{{ $t("msg.transaction.message") }} {{message.id}}:</span> {{message.message}}<br/>
-                          </p>
-                        </template>
-                      </td>
-                      <td>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.status") }}:</span> {{tx.status}}<br/>
-                        <span class="has-text-weight-bold">{{ $t("msg.transaction.type") }}:</span> {{tx.tx_type}}<br/>
+                    <tbody>
+                      <tr>
+                        <td class="tx-details user-selectable">
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.id") }}:</span> {{tx.id}}<br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.slate_id") }}:</span> {{tx.tx_slate_id}}<br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.receiver") }}:</span> <span class="user-selectable" v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.public_addr}}</span><br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.creation_date") }}:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.confirmation_date") }}:</span> {{$filters.datetimeFormat(tx.confirmation_ts, locale)}}<br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_credited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_debited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_debited/100000000}}</span><br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.fee") }}:</span> {{tx.fee/100000000}}<br/>
+                          <template v-if="tx.messages && tx.messages.messages">
+                            <p  v-for="message in tx.messages.messages" :key="message.id" >
+                              <span class="has-text-weight-bold">{{ $t("msg.transaction.message") }} {{message.id}}:</span> {{message.message}}<br/>
+                            </p>
+                          </template>
+                        </td>
+                        <td>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.status") }}:</span> {{tx.status}}<br/>
+                          <span class="has-text-weight-bold">{{ $t("msg.transaction.type") }}:</span> {{tx.tx_type}}<br/>
 
 
-                          <template v-if="tx.payment_proof">
-                              <span v-if="tx.payment_proof" class="has-text-weight-bold">{{ $t("msg.transaction.payment_proof") }}:</span><br/>
-                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.receiver_address") }}:</span> <span :title="tx.payment_proof.receiver_address">{{ $filters.truncateMid(tx.payment_proof.receiver_address ? tx.payment_proof.receiver_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_address)" name="content-copy" size=16 /></span><br/>
-                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.receiver_signature") }}:</span> <span :title="tx.payment_proof.receiver_signature">{{ $filters.truncateMid(tx.payment_proof.receiver_signature ? tx.payment_proof.receiver_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_signature)" name="content-copy" size=16 /></span><br/>
-                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_address") }}:</span> <span :title="tx.payment_proof.sender_address">{{ $filters.truncateMid(tx.payment_proof.sender_address ? tx.payment_proof.sender_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_address)" name="content-copy" size=16 /></span><br/>
-                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_signature") }}:</span> <span :title="tx.payment_proof.sender_signature">{{ $filters.truncateMid(tx.payment_proof.sender_signature ? tx.payment_proof.sender_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_signature)" name="content-copy" size=16 /></span><br/>
-                              &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_address_path") }}:</span> {{tx.payment_proof.sender_address_path}}<br/>
+                            <template v-if="tx.payment_proof">
+                                <span v-if="tx.payment_proof" class="has-text-weight-bold">{{ $t("msg.transaction.payment_proof") }}:</span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.receiver_address") }}:</span> <span :title="tx.payment_proof.receiver_address">{{ $filters.truncateMid(tx.payment_proof.receiver_address ? tx.payment_proof.receiver_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_address)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.receiver_signature") }}:</span> <span :title="tx.payment_proof.receiver_signature">{{ $filters.truncateMid(tx.payment_proof.receiver_signature ? tx.payment_proof.receiver_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_signature)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_address") }}:</span> <span :title="tx.payment_proof.sender_address">{{ $filters.truncateMid(tx.payment_proof.sender_address ? tx.payment_proof.sender_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_address)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_signature") }}:</span> <span :title="tx.payment_proof.sender_signature">{{ $filters.truncateMid(tx.payment_proof.sender_signature ? tx.payment_proof.sender_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_signature)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_address_path") }}:</span> {{tx.payment_proof.sender_address_path}}<br/>
 
                           </template>
 
-                          <template v-else>
-                            <span class="has-text-weight-bold">{{ $t("msg.transaction.payment_proof") }}: </span>-<br/>
-                          </template>
+                            <template v-else>
+                              <span class="has-text-weight-bold">{{ $t("msg.transaction.payment_proof") }}: </span>-<br/>
+                            </template>
 
-                      </td>
-                   </tr>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </td>
               </tr>
@@ -342,7 +345,7 @@
         this.isRefresh = false;
 
         if(txs && txs.result && txs.result.Ok){
-          let data = txs.result.Ok[1].reverse()
+          let data = txs.result.Ok.txs.reverse()
           console.log("reload txs ",data);
           this.store.dispatch('processTxs', {data: data, table:this.$addressTransactionsService})
 
@@ -400,7 +403,7 @@
           }
         }else if(type == 'send'){
           for(let tx of this.total_txs){
-            if(tx.tx_type == 'TxSent' || tx.tx_type == 'TxSentCancelled'){
+            if(tx.tx_type == 'TxSent' || tx.tx_type == 'TxSentCancelled' ||  tx.tx_type == 'TxSentCreated'){
               filterTx.push(tx);
             }
           }

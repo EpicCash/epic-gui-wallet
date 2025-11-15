@@ -55,7 +55,7 @@ class NodeService {
 
       }
       this.restartSuccess = await this.internalNodeStart();
-
+      return this.restartSuccess;
     }
 
   }
@@ -137,8 +137,6 @@ class NodeService {
 
     /* check if node status is ok or need a restart because is stalled */
     if(internal){
-
-      //console.log('################ response ################', response);
 
       if(!response){
         this.syncStatusCheckedTime = Math.floor(Date.now() / 1000);
