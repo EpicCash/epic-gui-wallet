@@ -20,6 +20,7 @@ const messages = {
     received_confirmed: 'Empfangen',
     sent_unconfirmed: '... warte auf die Unterschrift des Empfängers',
     received_unconfirmed: '... warte auf den Absender, um den Vorgang abzuschließen',
+    received_mempool: '... warte auf Bestätigung',
     locked: 'Gesperrt',
     send: 'Senden',
     send_proof: 'send proof',
@@ -289,6 +290,8 @@ const messages = {
       external_node_offline: 'Externer Netzwerkknoten ist offline',
       background_process: 'Bitte schließen Sie alle Prozesse, bevor Sie fortfahren.',
 
+      walletonline: 'Dein Wallet ist online',
+      walletoffline: 'Dein Wallet ist offline.',
     },
 
     info: {

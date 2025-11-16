@@ -91,12 +91,8 @@ host = "0.0.0.0"
 port = 3414
 
 #how to seed this server, can be None, List or DNSSeed
-#seeding_type = "DNSSeed"
-seeding_type = "List"
-seeds = ["95.217.197.180:3414"]
+seeding_type = "DNSSeed"
 
-peer_min_major = 3
-peer_min_minor = 4
 #If the seeding type is List, the list of peers to connect to can
 #be specified as follows:
 #seeds = ["192.168.0.1:3414","192.168.0.2:3414"]
@@ -119,15 +115,10 @@ peer_min_minor = 4
 #until we get to at least this number
 #peer_min_preferred_count = 8
 
-# 15 = Bit flags for FULL_NODE
-#This structure needs to be changed internally, to make it more configurable
-
 # A preferred dandelion_peer, mainly used for testing dandelion
 # dandelion_peer = "10.0.0.1:13144"
 
-[server.p2p_config.capabilities]
-bits = 31
-
+capabilities = "HEADER_HIST | TXHASHSET_HIST | PEER_LIST | TX_KERNEL_HASH | HEADER_FASTSYNC"
 
 #########################################
 ### MEMPOOL CONFIGURATION             ###

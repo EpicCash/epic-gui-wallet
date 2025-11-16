@@ -52,7 +52,13 @@ module.exports = {
                 "**/*"
               ]
             },
-
+            {
+              "from": "resources/bin/macsilicon",
+              "to": "Resources/bin/macsilicon",
+              "filter": [
+                "**/*"
+              ]
+            },
             {
               "from": "resources/default.app.json",
               "to": "Resources/default.app.json",

@@ -33,14 +33,27 @@
       class="navbar-menu fadeIn animated faster"
       :class="{'is-active':isMenuNavBarActive, 'no-negative-margin-right':isLayoutBoxed}"
     >
-
+    <div class="navbar-item " v-if="store.state.walletListenerService"><span class="dotGreen mr-1"></span>{{$t('msg.app.walletonline')}}</div>
+            <div class="navbar-item" v-else><span class="dotRed mr-1"></span>{{$t('msg.app.walletoffline')}}</div>
+ 
       <div class="navbar-end">
+
+        
+
+
         <nav-bar-menu class="has-divider ">
+          
+         
+
 
           <div class="is-user-name">
+
+            
+
             <span style="padding-right:120px;"></span><mdicon name="cog-outline" />
           </div>
-
+            
+            
 
             <div class="navbar-dropdown">
 
@@ -97,10 +110,10 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
-import { useStore } from '@/store'
-import { useRouter } from '@/router'
-import NavBarMenu from '@/components/layout/NavBarMenu.vue'
+import { computed, ref } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from '@/router';
+import NavBarMenu from '@/components/layout/NavBarMenu.vue';
 
 export default {
   name: 'NavBar',
@@ -131,7 +144,7 @@ export default {
       return base
     })
 
-    const store = useStore()
+    const store = useStore();
 
 
     const isLayoutAsideHidden = computed(() => store.state.isLayoutAsideHidden)
@@ -167,7 +180,10 @@ export default {
       store.dispatch('asideRightToggle')
     }
 
+
+
     return {
+      store,
       isMenuNavBarActive,
       menuNavBarToggleIcon,
       toggleTooltip,
@@ -186,8 +202,10 @@ export default {
       menuNavBarToggle,
       updatesToggle,
       isLoading,
+      
     }
   },
+  
   async created() {
 
     this.accountName = this.configService.configAccount;
@@ -200,7 +218,34 @@ export default {
     async logout(){
       this.isLoading = true;
       this.emitter.emit('app.logout')
-    }
+    },
+    
   }
 }
 </script>
+<styles>
+  .dotred {
+        height: 14px;
+        width: 14px;
+        background-color: #d9534f;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align:middle;
+      }
+      .dotgreen {
+        height: 14px;
+        width: 14px;
+        background-color: #5cb85c;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align:middle;
+      }
+      .dotyellow {
+        height: 14px;
+        width: 14px;
+        background-color: #ca9f5b;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align:middle;
+      }
+</styles>

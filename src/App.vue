@@ -54,7 +54,7 @@
 
     setup() {
 
-      const { locale } = useI18n();
+      const { locale, t } = useI18n();
       const loggedIn = ref(false);
       const store = useStore();
       const router = useRouter();
@@ -84,7 +84,8 @@
         store,
         isNodeModalActive,
         isFirstscanModalActive,
-        scanoutput
+        scanoutput,
+        t
       }
     },
 
@@ -120,11 +121,13 @@
         if(confirmed){
           const isEpicbox = await this.$walletService.startEpicbox(res);
           if(isEpicbox && isEpicbox.success){
-            this.$toast.success(this.$t("msg.login.epicbox_started"));
+            this.$toast.success(this.t("msg.login.epicbox_started"));
             this.store.commit('walletEpicboxService', true);
+            this.store.commit('walletListenerService', true);
           }else{
-            this.$toast.error(this.$t("msg.login.error_epicbox_started"));
+            this.$toast.error(this.t("msg.login.error_epicbox_started"));
             this.store.commit('walletEpicboxService', false);
+            this.store.commit('walletListenerService', false);
           }
 
 
@@ -150,7 +153,7 @@
 
       this.emitter.on('app.restartNode', async() => {
         if(this.store.state.user.nodeInternal){
-          this.$toast.success(this.$t("msg.app.node_restarting"));
+          this.$toast.success(this.t("msg.app.node_restarting"));
           this.stopRefreshNode();
           this.stopRefresh();
           await this.$nodeService.stopNode();
@@ -169,7 +172,7 @@
 
         }
         //await this.$nodeService.restartNode();
-        //this.$toast.success(this.$t("msg.app.node_started"));
+        //this.$toast.success(this.t("msg.app.node_started"));
 
       });
 
@@ -325,7 +328,7 @@
         this.stopRefreshNgrok();
         let respNgrok = await this.$ngrokService.stopNgrok();
         if(respNgrok){
-          //this.$toast.success(this.$t("msg.app.ngrok_service_stopped"));
+          //this.$toast.success(this.t("msg.app.ngrok_service_stopped"));
           this.store.commit('ngrokService', false);
           this.store.commit('ngrokTunnels', {});
         }
@@ -341,17 +344,17 @@
           if(ngrokService.success){
             let respNgrok = await this.$ngrokService.openTunnel();
             if(respNgrok){
-              this.$toast.success(this.$t("msg.app.ngrok_service_started"));
+              this.$toast.success(this.t("msg.app.ngrok_service_started"));
               this.store.commit('ngrokService', true);
               this.store.commit('ngrokTunnels', respNgrok);
               this.emitter.emit('app.startRefreshNgrokStatus');
             }else{
-              this.$toast.error(this.$t("msg.app.ngrok_service_error"));
+              this.$toast.error(this.t("msg.app.ngrok_service_error"));
               this.store.commit('ngrokService', false);
               this.store.commit('ngrokTunnels', {});
             }
           }else{
-            this.$toast.error(this.$t("msg.app.ngrok_service_error"));
+            this.$toast.error(this.t("msg.app.ngrok_service_error"));
             this.store.commit('updates', {
                   "status": "is-danger",
                   "text":   "Ngrok: " + ngrokService.msg,
@@ -372,17 +375,17 @@
           this.store.commit('nodeType', 'internal');
 
           if(!this.configService.startCheckNode()){
-            this.$toast.error(this.$t("msg.app.error_setup_internal_node"));
+            this.$toast.error(this.t("msg.app.error_setup_internal_node"));
           }else{
             let started  = await this.$nodeService.internalNodeStart();
 
             if(started){
-              this.$toast.success(this.$t("msg.app.node_started"));
+              this.$toast.success(this.t("msg.app.node_started"));
               //start the status check for the node
               //give the node some time before api status is called
-              setTimeout(this.startRefreshNode, 30000);
+              setTimeout(this.startRefreshNode, 10000);
             }else{
-              this.$toast.error(this.$t("msg.app.node_not_started"));
+              this.$toast.error(this.t("msg.app.node_not_started"));
             }
           }
 
@@ -391,13 +394,13 @@
           this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
           let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
           if(respNode){
-            this.$toast.success(this.$t("msg.app.external_node_online"));
+            this.$toast.success(this.t("msg.app.external_node_online"));
             this.store.commit('nodeStatus', respNode);
             //start the status check for the node
             //give the node some time before api status is called
             setTimeout(this.startRefreshNode, 10000);
           }else{
-            this.$toast.error(this.$t("msg.app.external_node_offline"));
+            this.$toast.error(this.t("msg.app.external_node_offline"));
           }
 
         }
@@ -427,9 +430,9 @@
           this.store.commit('nodeStatus', respNode);
         }else{
           if(this.store.state.user.nodeInternal){
-            this.$toast.error(this.$t("msg.app.node_offline"));
+            this.$toast.error(this.t("msg.app.node_offline"));
           }else{
-            this.$toast.error(this.$t("msg.app.external_node_offline"));
+            this.$toast.error(this.t("msg.app.external_node_offline"));
           }
           this.stopRefreshNode();
         }
@@ -504,7 +507,7 @@
 
                   let restart = await this.$ngrokService.ngrokRestart();
                   if(restart){
-                    this.$toast.warning(this.$t("msg.app.ngrok_address_changed"), {duration:false});
+                    this.$toast.warning(this.t("msg.app.ngrok_address_changed"), {duration:false});
                     this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
                     timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
                     this.store.commit('ngrokTunnelLifetime', timeFormat);
@@ -565,7 +568,7 @@
         let txs = await this.$walletService.getTransactions(refreshfromNode, null, null);
 
         if(txs && txs.result && txs.result.Ok){
-          let data = txs.result.Ok[1].reverse()
+          let data = txs.result.Ok.txs.reverse()
           this.store.dispatch('processTxs', {data: data, table: this.$addressTransactionsService})
 
         }else{
@@ -585,7 +588,7 @@
 
           if(commits && commits.result && commits.result.Ok){
             //this.total_commits =
-            let data = commits.result.Ok[1].reverse();
+            let data = commits.result.Ok.outputs.reverse();
             this.store.dispatch('processCommits', data)
 
           }else{

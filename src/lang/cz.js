@@ -20,6 +20,7 @@ const messages = {
     received_confirmed: 'Received',
     sent_unconfirmed: '... waiting for receiver to sign',
     received_unconfirmed: '... waiting for sender to finalize',
+    received_mempool: '... waiting for confirmation',
     locked: 'Uzamčeno',
     send: 'Posláno',
     send_proof: 'send proof',
@@ -288,7 +289,8 @@ const messages = {
       external_node_online: 'External node je online',
       external_node_offline: 'External node je offline',
       background_process: 'Našli jsme nějaké běžící procesy peněženky a uzlů na pozadí. Před spuštěním této aplikace je nejprve zavřete.',
-
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
     },
 
     info: {

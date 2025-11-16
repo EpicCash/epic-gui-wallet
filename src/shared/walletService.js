@@ -205,7 +205,10 @@ class WalletService {
             token: this.token,
             refresh_from_node: toRefresh,
             tx_id: tx_id,
-            tx_slate_id: tx_salte_id
+            tx_slate_id: tx_salte_id,
+            limit: null,
+            offset: null,
+            sort_order: null,
           }, false);
     }
 
@@ -216,7 +219,10 @@ class WalletService {
             token: this.token,
             include_spent: include_spent,
             refresh_from_node: toRefresh,
-            tx_id: tx_id
+            tx_id: tx_id,
+            limit: null,
+            offset: null,
+            sort_order: null,
           }, false);
     }
 
@@ -231,7 +237,7 @@ class WalletService {
     }
 
     async receiveTransaction(slate, account, message){
-      return this.jsonRPC('receive_tx', [slate, account, message], true)
+      return this.jsonRPC('receive_tx', [slate, account, message, null], true)
     }
 
     async issueSendTransaction(tx_data){
@@ -333,7 +339,9 @@ class WalletService {
 
           let args = [
             ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
+            '--offline_mode',
             '-c',this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
+            '--pass', password,
             'owner_api'
           ];
 
@@ -342,7 +350,7 @@ class WalletService {
           if(walletOpenId > 0){
             this.walletProcess = true;
           }else{
-            return {success:false, msg:'cannot start wallet process'};
+            return {success:false, msg:'Error opening wallet (is password correct?)'};
           }
         }
 
@@ -389,7 +397,7 @@ class WalletService {
 
           let args = [
             ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
-            //'--pass', password,
+            '--pass', password,
             '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'listen',
@@ -433,7 +441,7 @@ class WalletService {
 
           let args = [
             ...(this.configService.defaultAccountNetwork != 'mainnet' ? ['--' + this.configService.defaultAccountNetwork] : []),
-            //'--pass', password,
+            '--pass', password,
             '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
             'listen',
@@ -575,9 +583,9 @@ class WalletService {
     async check(password, delete_unconfirmed){
 
         let args = [
-          //'--pass', password,
+          '--pass', password,
           '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
-          'scan', '-h', 0,
+          'scan', '-s', 0,
           ...(delete_unconfirmed ? ['--delete_unconfirmed'] : []),
         ];
         await window.nodeChildProcess.execScan(this.configService.epicPath, args, this.configService.platform, password);

@@ -20,6 +20,7 @@ const messages = {
     received_confirmed: 'Received',
     sent_unconfirmed: '... waiting for receiver to sign',
     received_unconfirmed: '... waiting for sender to finalize',
+    received_mempool: '... waiting for confirmation',
     locked: 'قفل شده',
     send: 'فرستادن',
     send_proof: 'send proof',
@@ -297,6 +298,9 @@ const messages = {
       external_node_online: 'نود خارجی آنلاین است',
       external_node_offline: 'نود خارجی آفلاین است',
       background_process: 'ما برخی از پردازش های کیف پول و نودِ در حال اجرا را در پس زمینه پیدا کردیم. لطفاً قبل از اجرای این برنامه ابتدا آنها را ببندید',
+    
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
     },
     info: {
       spendable: 'قابل مصرف',

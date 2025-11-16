@@ -160,7 +160,8 @@
             <p class="block" v-if="proofaddr"><label class="label">{{ $t("msg.addressbook.proof_address") }}</label> {{proofaddr}}&nbsp;<mdicon @click="copy(proofaddr)" name="content-copy" size=16 /></p>
             <p class="block" v-if="proofaddr"><label class="label">{{ $t("msg.addressbook.send_always") }}</label> {{alwaysproof == true ? 'yes' : 'no'}}</p>
 
-            <p class="block" v-if="notice"><label class="label">{{ $t("msg.addressbook.notice") }}</label> <pre>{{notice}}</pre></p>
+            <p class="block" v-if="notice"><label class="label">{{ $t("msg.addressbook.notice") }}</label></p> 
+            <pre>{{notice}}</pre>
 
 
           </div>

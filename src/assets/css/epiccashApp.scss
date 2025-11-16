@@ -134,3 +134,27 @@ span.externalnode{
 .show-pointer:hover{
   cursor: pointer;
 }
+.dotRed {
+  height: 14px;
+  width: 14px;
+  background-color: #d9534f;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align:middle;
+}
+.dotGreen {
+  height: 14px;
+  width: 14px;
+  background-color: #5cb85c;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align:middle;
+}
+.dotYellow {
+  height: 14px;
+  width: 14px;
+  background-color: #ca9f5b;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align:middle;
+}

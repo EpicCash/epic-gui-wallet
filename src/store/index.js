@@ -317,7 +317,7 @@ rproofs_total: 64579
         if( x.tx_type.search('Cancelled') != -1){
           x.status = 'cancelled'
         }
-        if(x.status === 'unconfirmed'){
+        if(x.status === 'unconfirmed' && x.tx_type != 'TxSentMempool'){
           x.cancelable = true
         }
         let hasAddress = transactionsWithAddress.find(function(transaction, index) {

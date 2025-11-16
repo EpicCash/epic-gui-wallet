@@ -16,6 +16,7 @@ const messages = {
     received_confirmed: 'Received',
     sent_unconfirmed: '... waiting for receiver to sign',
     received_unconfirmed: '... waiting for sender to finalize',
+    received_mempool: '... waiting for confirmation',
     locked: 'Заблокировано',
     send: 'Отправить',
     send_proof: 'send proof',
@@ -99,6 +100,9 @@ const messages = {
       external_node_online: 'External Node is online',
       external_node_offline: 'External Node is offline',
       background_process: 'Please close all processes before continuing.',
+
+      walletonline: 'Your wallet is online',
+      walletoffline: 'Your wallet is offline.',
     },
 
     info: {
