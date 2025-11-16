@@ -237,7 +237,7 @@ class WalletService {
     }
 
     async receiveTransaction(slate, account, message){
-      return this.jsonRPC('receive_tx', [slate, account, message], true)
+      return this.jsonRPC('receive_tx', [slate, account, message, null], true)
     }
 
     async issueSendTransaction(tx_data){
