@@ -104,6 +104,7 @@ import AmountField from "./form/amountField.vue";
 import ProofAddressField from "./form/proofAddressField.vue";
 import AddressField from "./form/addressField.vue";
 import useFormValidation from "../modules/useFormValidation";
+import { inject } from 'vue'
 
 export default {
   name: "http-send",
@@ -142,8 +143,9 @@ export default {
     const isLoadingSendFile = ref(false);
     const address = ref({});
     const dandelion = ref('');
-
-
+    const walletService = inject('walletService');
+    const addressBookService = inject('addressBookService');
+    const addressTransactionsService = inject('addressTransactionsService');
 
     const { resetFormErrors } = useFormValidation();
 
@@ -162,7 +164,10 @@ export default {
       isLoadingSendFile,
       address,
       dandelion,
-      t
+      t,
+      walletService,
+      addressBookService,
+      addressTransactionsService
     }
 
   },
@@ -211,7 +216,7 @@ export default {
 
         if(value != ''){
 
-          this.foundAddress = await this.$addressBookService.findAddress(value);
+          this.foundAddress = await this.addressBookService.findAddress(value);
         }else{
           this.foundAddress = [];
         }
@@ -245,7 +250,7 @@ export default {
           "send_args": null
         }
 
-        let res = await this.$walletService.issueSendTransaction(tx_data);
+        let res = await this.walletService.issueSendTransaction(tx_data);
 
         if(res && res.result.Ok){
           let result = res.result.Ok;
@@ -253,7 +258,7 @@ export default {
           let fn_output = await window.api.showSaveDialog(this.t('msg.save'), this.t('msg.fileSend.saveMsg'), result.id + '.tx');
           if (fn_output.filePath){
 
-            let lock = await this.$walletService.lock_outputs(result);
+            let lock = await this.walletService.lock_outputs(result);
 
             if(lock && lock.result.Ok == null){
               try {
@@ -266,7 +271,7 @@ export default {
                 return;
               }
 
-              await this.$addressTransactionsService.addAddress({
+              await this.addressTransactionsService.addAddress({
 
                 user_id: this.store.state.user.id,
                 slateid: result.id,
@@ -344,7 +349,7 @@ export default {
 
         }
 
-        let res = await this.$walletService.issueSendTransaction(tx_data)
+        let res = await this.walletService.issueSendTransaction(tx_data)
 
         if(res && res.result && res.result.Ok){
 
@@ -352,7 +357,7 @@ export default {
 
 
 
-            await this.$addressTransactionsService.addAddress({
+            await this.addressTransactionsService.addAddress({
 
               user_id: this.store.state.user.id,
               slateid: tx_id,

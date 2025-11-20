@@ -13,22 +13,22 @@
   import { ref, computed } from "vue";
   import { useI18n } from 'vue-i18n';
   import useFormValidation from "../../modules/useFormValidation";
-
+  import { inject } from 'vue'
   export default {
 
     setup() {
       const { t } = useI18n();
       const defaultValue = ref('');
       const selectedDir = ref('');
-
+      const configService = inject('configService');
       const { validateDirField, errors } = useFormValidation();
 
-      const validInput = (configService) => {
+      const validInput = (_configService) => {
         defaultValue.value = selectedDir.value == '' ? configService.defaultAccountWalletdir : selectedDir.value;
         return validateDirField("walletdir", defaultValue.value, configService);
       };
 
-      return { errors, defaultValue, validInput, selectedDir,t };
+      return { errors, defaultValue, validInput, selectedDir,t, configService };
     },
     methods:{
 

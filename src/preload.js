@@ -41,10 +41,10 @@ let processes = {};
 
 //add debug mode for production
 //user must create a file "debug" in ./epic folder
-//let debug = false;//process.env.NODE_ENV !== 'production';
+let debug = false;//process.env.NODE_ENV !== 'production';
 //if(fs.existsSync(path.join(ewalletPath, 'debug.log'))){
 //  debug = true;
- // console.log = log.log;
+//  console.log = log.log;
 //}
 
 const spawn = require('child_process').spawn;
@@ -559,7 +559,6 @@ contextBridge.exposeInMainWorld('config', {
     return response;
   },
   getResourcePath(){
-    console.log("######## resourcePath", resourcePath);
     return resourcePath;
   },
   getUserHomedir () {

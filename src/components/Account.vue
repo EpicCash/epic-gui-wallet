@@ -35,6 +35,7 @@ import { useStore } from '../store';
 import { useI18n } from 'vue-i18n';
 import useFormValidation from "../modules/useFormValidation";
 import TextField from "./form/textField.vue";
+import { inject } from 'vue'
 
   export default {
     name: "settings",
@@ -48,6 +49,7 @@ import TextField from "./form/textField.vue";
       const store = useStore();
       const textField = ref('');
       const keybase = ref('');
+      const userService = inject('userService');
 
       return{
         store,
@@ -76,7 +78,7 @@ import TextField from "./form/textField.vue";
 
         if(!isFormAllValid.includes(false)){
 
-          let updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {name:this.textField.defaultValue, keybase: this.keybase});
+          let updated = await this.userService.updateUserByAccount(this.configService.configAccount, {name:this.textField.defaultValue, keybase: this.keybase});
           if(updated){
             this.$toast.success(this.t("msg.account.settings_saved"));
           }else{

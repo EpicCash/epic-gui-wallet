@@ -130,7 +130,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from '../store';
 import NodeserverField from "./form/nodeserverField.vue";
 import useFormValidation from "../modules/useFormValidation";
-
+import { inject } from 'vue'
 
 
   export default {
@@ -170,7 +170,7 @@ import useFormValidation from "../modules/useFormValidation";
       const advancedSettings = ref(false);
       const advancedNgrokSettings = ref(false);
       const nodeInternal = ref(false);
-
+      const userService = inject('userService');
 
       return{
         store,
@@ -190,7 +190,8 @@ import useFormValidation from "../modules/useFormValidation";
         advancedNgrokSettings,
         onPlay,
         nodeInternal,
-        t
+        t,
+        userService
       }
     },
     async created() {
@@ -271,9 +272,9 @@ import useFormValidation from "../modules/useFormValidation";
 
           let updated = 0;
           if(this.nodeserverField.select == 'external'){
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, advanced_settings: this.advancedSettings, epicbox_domain: this.epicboxDomain.trim()});
+            updated = await this.userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:false, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, advanced_settings: this.advancedSettings, epicbox_domain: this.epicboxDomain.trim()});
           }else{
-            updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, advanced_settings: this.advancedSettings, epicbox_domain: this.epicboxDomain.trim()});
+            updated = await this.userService.updateUserByAccount(this.configService.configAccount, {nodeInternal:true, ngrok: this.ngrok, ngrok_force_start: this.ngrok_force_start, advanced_settings: this.advancedSettings, epicbox_domain: this.epicboxDomain.trim()});
           }
 
           /*todo simple node restart user update wallet restart here*/

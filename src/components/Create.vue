@@ -129,6 +129,7 @@ import PasswordField from "./form/passwordField.vue";
 import WalletdirField from "./form/walletdirField.vue";
 import NetworkField from "./form/networkField.vue";
 import useFormValidation from "../modules/useFormValidation";
+import { inject } from 'vue'
 
 export default {
   name: "create",
@@ -162,8 +163,8 @@ export default {
     const qrText = ref('');
     const fromRoute = route.params.from ? route.params.from : 'login';
     const vueCanvas = ref(null);
-
-
+    const walletService = inject('walletService');
+    const configService = inject('configService');
 
     return{
       router,
@@ -179,7 +180,9 @@ export default {
       isLoading,
       qrText,
       newseeds,
-      t
+      t,
+      walletService,
+      configService
 
 
     }
@@ -225,7 +228,7 @@ export default {
         }
 
         let walletRecoverDir = window.nodePath.join(userhomedir, this.networkField.shortName);
-        let created = await this.$walletService.new(this.passwordField.defaultValue, this.networkField.defaultValue, walletRecoverDir);
+        let created = await this.walletService.new(this.passwordField.defaultValue, this.networkField.defaultValue, walletRecoverDir);
         if(created && !created.success){
           this.$toast.error(created.msg, {duration:false});
         }else{

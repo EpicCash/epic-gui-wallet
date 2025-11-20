@@ -132,7 +132,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from '../store';
 import PasswordField from "./form/passwordField.vue";
 import useFormValidation from "../modules/useFormValidation";
-
+import { inject } from 'vue'
 
 const clipboard = window.clipboard;
 
@@ -166,6 +166,8 @@ export default {
     const addressTypeHeader = ref('');
     const publicIp = ref('');
     const portIsForwarded = ref(false);
+    const walletService = inject('walletService');
+    const ngrokService = inject('ngrokService');
 
     return {
       store,
@@ -181,7 +183,8 @@ export default {
       addressTypeHeader,
       publicIp,
       portIsForwarded,
-      t
+      t,
+      walletService
 
     }
   },
@@ -225,7 +228,7 @@ export default {
       })
     },
     async getEpicboxAddress(){
-      let epicboxAddress = await this.$walletService.getEpicboxAddress();
+      let epicboxAddress = await this.walletService.getEpicboxAddress();
       if(epicboxAddress && epicboxAddress.result && epicboxAddress.result.Ok){
         return this.epicboxAddress = epicboxAddress.result.Ok.public_key + '@' + (this.configService.config['epicbox_domain'] != '' ? this.configService.config['epicbox_domain'] : this.configService.epicboxDomain);
       }
@@ -233,10 +236,10 @@ export default {
 
     },
     async getNgrokAddress(){
-      return this.$ngrokService.getAddress();
+      return this.ngrokService.getAddress();
     },
     async getOnionAndProofAddress(){
-      let addressRes = await this.$walletService.getPubliProofAddress();
+      let addressRes = await this.walletService.getPubliProofAddress();
 
 
 
@@ -269,8 +272,8 @@ export default {
       if(!isFormAllValid.includes(false)){
 
         this.isLoading = true;
-        const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
-        const isEpicbox = await this.$walletService.startEpicbox(this.passwordField.defaultValue);
+        const isListen = await this.walletService.startListen(this.passwordField.defaultValue, true, 'http');
+        const isEpicbox = await this.walletService.startEpicbox(this.passwordField.defaultValue);
         this.isLoading = false;
         if(isListen && isListen.success){
 
@@ -310,7 +313,7 @@ export default {
     async stop(){
 
       this.isLoading = true;
-      let killed = await this.$walletService.stopListen();
+      let killed = await this.walletService.stopListen();
       this.isLoading = false;
       if(killed){
         this.emitter.emit('app.ngrokStop');

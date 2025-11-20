@@ -241,7 +241,7 @@
   import { ref, computed, onUnmounted } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { useStore } from '../store'
-
+  import { inject } from 'vue'
 
 
   export default {
@@ -268,6 +268,8 @@
       const isRefresh = ref(false);
       const locale = ref('en');
       const isLoading = ref(false);
+      const walletService = inject('walletService');
+      const addressTransactionsService = inject('addressTransactionsService');
 
       return{
         store,
@@ -285,7 +287,9 @@
         count_per_page,
         locale,
         isLoading,
-        t
+        t,
+        walletService,
+        addressTransactionsService
       }
     },
     watch: {
@@ -343,13 +347,13 @@
       async getTxs() {
 
         this.isRefresh = true;
-        let txs = await this.$walletService.getTransactions(true, null, null);
+        let txs = await this.walletService.getTransactions(true, null, null);
         this.isRefresh = false;
 
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok.txs.reverse()
           console.log("reload txs ",data);
-          this.store.dispatch('processTxs', {data: data, table:this.$addressTransactionsService})
+          this.store.dispatch('processTxs', {data: data, table:this.addressTransactionsService})
 
           if(this.currentFilter == ''){
             this.current_txs = this.total_txs.slice(0, this.count_per_page)
@@ -462,7 +466,7 @@
 
       async cancel(tx_slate_id){
         this.isLoading = true;
-        let res = await this.$walletService.cancelTransactions(null, tx_slate_id);
+        let res = await this.walletService.cancelTransactions(null, tx_slate_id);
         this.isLoading = false;
         if(res && res.result && res.result.Ok == null){
 

@@ -60,6 +60,7 @@ const path = window.nodePath;
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from '../store';
+import { inject } from 'vue'
 
 export default {
   name: "receive",
@@ -70,12 +71,14 @@ export default {
     const isDragOver =ref(false);
     const isSent =ref(false);
     const { t } = useI18n();
+    const walletService = inject('walletService');
 
     return {
       store,
       isDragOver,
       isSent,
-      t
+      t,
+      walletService
 
     }
 
@@ -130,7 +133,7 @@ export default {
 
         if(fn_output){
 
-          this.$walletService.receiveTransaction(JSON.parse(content), null, null)
+          this.walletService.receiveTransaction(JSON.parse(content), null, null)
               .then( (res) => {
                 let data = res.data.result;
 

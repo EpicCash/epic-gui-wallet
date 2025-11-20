@@ -190,6 +190,7 @@
   import WalletdirField from "./form/walletdirField.vue";
   import NetworkField from "./form/networkField.vue";
   import useFormValidation from "../modules/useFormValidation";
+  import { inject } from 'vue'
 
   export default {
     name: "restore",
@@ -219,8 +220,9 @@
       const advancedSettings = ref(false);
       const newseeds = ref([]);
       const fromRoute = route.params.from ? route.params.from : 'login';
-
-
+      const walletService = inject('walletService');
+      const mnemonicWords = inject('mnemonicWords');
+      
       return{
         router,
         wordList,
@@ -237,7 +239,9 @@
         advancedSettings,
         networkField,
         fromRoute,
-        t
+        t,
+        walletService,
+        mnemonicWords
       }
     },
     watch: {
@@ -316,7 +320,7 @@
 
           let walletRecoverDir = window.nodePath.join(userhomedir, this.networkField.shortName);
 
-          let recovered = await this.$walletService.recover(this.seeds.join(' '), this.passwordField.defaultValue, this.networkField.defaultValue, walletRecoverDir)
+          let recovered = await this.walletService.recover(this.seeds.join(' '), this.passwordField.defaultValue, this.networkField.defaultValue, walletRecoverDir)
           if(recovered && !recovered.success){
             this.$toast.error(recovered.msg, {duration:false});
           }else{

@@ -189,6 +189,7 @@ import { ref } from 'vue';
 import { useStore } from '../store';
 import ModalBox from './layout/ModalBox.vue'
 import { useI18n } from 'vue-i18n';
+import { inject } from 'vue'
 
 export default {
   name: "addressBook",
@@ -225,7 +226,7 @@ export default {
     const searched = ref(false);
 
     const store = useStore();
-
+    const addressBookService = inject('addressBookService');
 
 
     return {
@@ -250,7 +251,8 @@ export default {
       selectedAddress,
       keyword,
       searched,
-      t
+      t,
+      addressBookService
 
 
     }
@@ -258,7 +260,7 @@ export default {
   },
   async created(){
 
-    this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
+    this.addressList = await this.addressBookService.getAddress(this.store.state.user.id);
   },
 
 
@@ -268,7 +270,7 @@ export default {
       let keyword = this.keyword;
       if(keyword != ''){
 
-        this.addressList = await this.$addressBookService.findAddress(this.keyword);
+        this.addressList = await this.addressBookService.findAddress(this.keyword);
         this.searched = true;
       }
     },
@@ -348,10 +350,10 @@ export default {
     async deleteAddress(id){
 
       if(id){
-        let deleted = await this.$addressBookService.removeAddress(id);
+        let deleted = await this.addressBookService.removeAddress(id);
         if(deleted){
           this.$toast.error(this.t("msg.addressbook.deleted"), {duration:1000});
-          this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
+          this.addressList = await this.addressBookService.getAddress(this.store.state.user.id);
           this.isEditAddress = false;
           this.selectedAddress = {};
           this.isNewAddress = false;
@@ -366,7 +368,7 @@ export default {
     async updateAddressById(){
 
 
-      let updated = await this.$addressBookService.updateAddressById( this.id, {
+      let updated = await this.addressBookService.updateAddressById( this.id, {
         name: this.name,
         country: this.country,
         city: this.city,
@@ -380,7 +382,7 @@ export default {
 
       });
       if(updated){
-        this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
+        this.addressList = await this.addressBookService.getAddress(this.store.state.user.id);
         this.isEditAddress = false;
       }
 
@@ -388,7 +390,7 @@ export default {
     async addAddress(){
 
 
-      let inserted = await this.$addressBookService.addAddress({
+      let inserted = await this.addressBookService.addAddress({
         name: this.name,
         user_id: this.store.state.user.id,
         country: this.country,
@@ -404,7 +406,7 @@ export default {
       });
       if(inserted){
 
-        this.addressList = await this.$addressBookService.getAddress(this.store.state.user.id);
+        this.addressList = await this.addressBookService.getAddress(this.store.state.user.id);
         this.isNewAddress = false;
         this.isEditAddress = false;
       }

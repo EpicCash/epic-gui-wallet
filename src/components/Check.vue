@@ -86,6 +86,8 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PasswordField from "./form/passwordField.vue";
 import useFormValidation from "../modules/useFormValidation";
+import { inject } from 'vue'
+
 export default {
   name: "check",
   components: {
@@ -100,6 +102,7 @@ export default {
     const checkOutputs = ref([]);
     const delete_unconfirmed = ref();
     const { resetFormErrors } = useFormValidation();
+    const walletService = inject('walletService');
 
     return {
       passwordField,
@@ -107,14 +110,15 @@ export default {
       checking,
       checkOutputs,
       delete_unconfirmed,
-      t
+      t,
+      walletService
 
 
     }
 
   },
   created() {
-      /*window.nodeChildProcess.on('scan-finish', () => {
+      window.nodeChildProcess.on('scan-finish', () => {
         if(this.checking){
           log.debug('Got walletCheckFinished message.')
           this.checking = false;
@@ -131,12 +135,12 @@ export default {
           this.$toast.error(this.t("msg.check.error_scan"));
         }
 
-      })*/
+      })
 
   },
   mounted() {
     // handle reply from the backend
-    /*window.nodeChildProcess.on('scan-stdout', (payload) => {
+    window.nodeChildProcess.on('scan-stdout', (payload) => {
 
       let lines = payload.data.split("\n");
       for(var i = 0;i<lines.length;i++){
@@ -147,7 +151,7 @@ export default {
       }
 
     });
-    */
+    
 
   },
   methods: {
@@ -163,12 +167,12 @@ export default {
       if(!isFormAllValid.includes(false)){
         this.checking = true;
 
-        this.$walletService.check(this.passwordField.defaultValue, this.delete_unconfirmed);
+        this.walletService.check(this.passwordField.defaultValue, this.delete_unconfirmed);
       }
     },
 
     stop(){
-      this.$walletService.stopCheck()
+      this.walletService.stopCheck()
       this.checking = false;
       this.$toast.success(this.t("msg.check.scan_stop"));
 

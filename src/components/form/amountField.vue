@@ -27,13 +27,14 @@
   import { ref, computed } from "vue";
   import { useI18n } from 'vue-i18n';
   import useFormValidation from "../../modules/useFormValidation";
+  import { inject } from 'vue'
 
   export default {
     setup() {
       let input = ref('');
       let defaultValue = ref(null);
       let fee = ref(0);
-
+      const walletService = inject('walletService');
       const { validateAmountField, errors } = useFormValidation();
       const { t } = useI18n();
       const validInput = (configService) => {
@@ -43,13 +44,21 @@
         return validateAmountField("amount", defaultValue.value, configService);
       };
 
-      return { input, errors, defaultValue, validInput, fee, t };
+      return { 
+        input, 
+        errors, 
+        defaultValue, 
+        validInput, 
+        fee, 
+        t, 
+        walletService 
+      };
     },
 
     methods: {
       async sendAll(){
 
-        let summary = await this.$walletService.getSummaryInfo(3, true);
+        let summary = await this.walletService.getSummaryInfo(3, true);
         if(summary && summary.result && summary.result.Ok){
           let data = summary.result.Ok;
           let spendable = data[1]['amount_currently_spendable'];
@@ -69,7 +78,7 @@
             "payment_proof_recipient_address": null,
           }
 
-          let res = await this.$walletService.issueSendTransaction(tx_data);
+          let res = await this.walletService.issueSendTransaction(tx_data);
           //use this error to calc max amount to send
           if(res && res.error){
             try{
@@ -103,7 +112,7 @@
 
         }
 
-        let res = await this.$walletService.issueSendTransaction(tx_data)
+        let res = await this.walletService.issueSendTransaction(tx_data)
 
         if(res && res.result && res.result.Ok){
 

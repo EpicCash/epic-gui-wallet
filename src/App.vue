@@ -57,6 +57,11 @@
 
       const emitter = inject('emitter');
       const configService = inject('configService');
+      const walletService = inject('walletService');
+      const nodeService = inject('nodeService');
+      const ngrokService = inject('ngrokService');
+      const addressTransactionsService = inject('addressTransactionsService');
+      
       const { locale, t } = useI18n();
       const loggedIn = ref(false);
       const store = useStore();
@@ -90,7 +95,8 @@
         scanoutput,
         t,
         emitter,
-        configService
+        configService,
+        walletService
       }
     },
 
@@ -124,7 +130,7 @@
         });
 
         if(confirmed){
-          const isEpicbox = await this.$walletService.startEpicbox(res);
+          const isEpicbox = await this.walletService.startEpicbox(res);
           if(isEpicbox && isEpicbox.success){
             this.$toast.success(this.t("msg.login.epicbox_started"));
             this.store.commit('walletEpicboxService', true);
@@ -161,7 +167,7 @@
           this.$toast.success(this.t("msg.app.node_restarting"));
           this.stopRefreshNode();
           this.stopRefresh();
-          await this.$nodeService.stopNode();
+          await this.nodeService.stopNode();
           setTimeout(async() => {
             await this.nodeStart();
 
@@ -176,7 +182,7 @@
 
 
         }
-        //await this.$nodeService.restartNode();
+        //await this.nodeService.restartNode();
         //this.$toast.success(this.t("msg.app.node_started"));
 
       });
@@ -225,16 +231,16 @@
           locked: 0,
         });
 
-        await this.$walletService.stopListen(this.configService.config.epicbox_background);
+        await this.walletService.stopListen(this.configService.config.epicbox_background);
 
-        await this.$walletService.stopWallet();
-        await this.$ngrokService.stopNgrok();
+        await this.walletService.stopWallet();
+        await this.ngrokService.stopNgrok();
 
         if(this.configService.config && this.configService.config.node_background == false)
-          await this.$nodeService.stopNode();
+          await this.nodeService.stopNode();
 
 
-        this.$walletService.logoutClient();
+        this.walletService.logoutClient();
         this.loggedIn = false;
         this.configService.resetConfig();
 
@@ -273,7 +279,7 @@
 
       //App main window min size
     //  window.api.resize(1024, 768);
-
+      
       
       if(this.configService.appHasAccounts()){
         //upgrade wallet 3.0 paths to 4.0 paths
@@ -331,7 +337,7 @@
 
       async ngrokStop(){
         this.stopRefreshNgrok();
-        let respNgrok = await this.$ngrokService.stopNgrok();
+        let respNgrok = await this.ngrokService.stopNgrok();
         if(respNgrok){
           //this.$toast.success(this.t("msg.app.ngrok_service_stopped"));
           this.store.commit('ngrokService', false);
@@ -343,11 +349,11 @@
 
         if(this.store.state.user.ngrok != '' || this.store.state.user.ngrok_force_start){
 
-          let ngrokService = await this.$ngrokService.internalStart(this.store.state.user.ngrok == '' ? '' : this.store.state.user.ngrok);
+          let ngrokService = await this.ngrokService.internalStart(this.store.state.user.ngrok == '' ? '' : this.store.state.user.ngrok);
 
 
           if(ngrokService.success){
-            let respNgrok = await this.$ngrokService.openTunnel();
+            let respNgrok = await this.ngrokService.openTunnel();
             if(respNgrok){
               this.$toast.success(this.t("msg.app.ngrok_service_started"));
               this.store.commit('ngrokService', true);
@@ -382,7 +388,7 @@
           if(!this.configService.startCheckNode()){
             this.$toast.error(this.t("msg.app.error_setup_internal_node"));
           }else{
-            let started  = await this.$nodeService.internalNodeStart();
+            let started  = await this.nodeService.internalNodeStart();
 
             if(started){
               this.$toast.success(this.t("msg.app.node_started"));
@@ -397,7 +403,7 @@
         }else{
 
           this.store.commit('nodeType', this.configService.config['check_node_api_http_addr']);
-          let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
+          let respNode = await this.nodeService.getNodeStatus(this.store.state.user.nodeInternal);
           if(respNode){
             this.$toast.success(this.t("msg.app.external_node_online"));
             this.store.commit('nodeStatus', respNode);
@@ -415,7 +421,7 @@
         await window.api.nodebackground(this.configService.config.node_background);
         await window.api.epicboxbackground(this.configService.config.epicbox_background);
 
-        let respNode = await this.$nodeService.getNodeStatus(this.store.state.user.nodeInternal);
+        let respNode = await this.nodeService.getNodeStatus(this.store.state.user.nodeInternal);
         if(respNode){
 
           window.nodeSynced = respNode.tip && respNode.tip.height > 0 && respNode.sync_status === 'no_sync';
@@ -496,25 +502,25 @@
           let refresh = _ => this.startRefreshNgrokId = setTimeout(this.startRefreshNgrok, 1000*30)
 
           try {
-            let ngrokStatus = await this.$ngrokService.checkStatus();
+            let ngrokStatus = await this.ngrokService.checkStatus();
 
             if(ngrokStatus){
 
-              this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
+              this.store.commit('ngrokTunnels', await this.ngrokService.openTunnel());
               this.store.commit('ngrokService', true);
 
               if(this.store.state.user.ngrok_force_start){
 
-                let timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
+                let timeFormat = this.$filters.timeFormat(this.ngrokService.getTunnelLifetime());
 
 
                 if(timeFormat.length && timeFormat[0] <= 0 && timeFormat[1] <= 0){
 
-                  let restart = await this.$ngrokService.ngrokRestart();
+                  let restart = await this.ngrokService.ngrokRestart();
                   if(restart){
                     this.$toast.warning(this.t("msg.app.ngrok_address_changed"), {duration:false});
-                    this.store.commit('ngrokTunnels', await this.$ngrokService.openTunnel());
-                    timeFormat = this.$filters.timeFormat(this.$ngrokService.getTunnelLifetime());
+                    this.store.commit('ngrokTunnels', await this.ngrokService.openTunnel());
+                    timeFormat = this.$filters.timeFormat(this.ngrokService.getTunnelLifetime());
                     this.store.commit('ngrokTunnelLifetime', timeFormat);
 
                   }else{
@@ -547,7 +553,7 @@
 
       async getSummaryinfo(refreshfromNode) {
 
-          let summary = await this.$walletService.getSummaryInfo(3, refreshfromNode);
+          let summary = await this.walletService.getSummaryInfo(3, refreshfromNode);
           if(summary && summary.result && summary.result.Ok){
             let data = summary.result.Ok
             this.store.commit('summary', {
@@ -570,11 +576,11 @@
 
       async getTxs(refreshfromNode) {
 
-        let txs = await this.$walletService.getTransactions(refreshfromNode, null, null);
+        let txs = await this.walletService.getTransactions(refreshfromNode, null, null);
 
         if(txs && txs.result && txs.result.Ok){
           let data = txs.result.Ok.txs.reverse()
-          this.store.dispatch('processTxs', {data: data, table: this.$addressTransactionsService})
+          this.store.dispatch('processTxs', {data: data, table: this.addressTransactionsService})
 
         }else{
           this.store.commit('updates', {
@@ -589,7 +595,7 @@
 
       async getCommits(refreshfromNode) {
 
-          let commits = await this.$walletService.getCommits(false, refreshfromNode, null);
+          let commits = await this.walletService.getCommits(false, refreshfromNode, null);
 
           if(commits && commits.result && commits.result.Ok){
             //this.total_commits =

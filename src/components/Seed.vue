@@ -47,6 +47,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PasswordField from "./form/passwordField.vue";
 import useFormValidation from "../modules/useFormValidation";
+import { inject } from 'vue'
 
 export default {
   name: "seed",
@@ -66,13 +67,16 @@ export default {
     const seeds = ref([]);
     const vueCanvas = ref(null);
     const qrText = ref('');
+    const walletService = inject('walletService');
+
 
     return {
       passwordField,
       resetFormErrors,
       seeds,
       qrText,
-      t
+      t,
+      walletService
     }
 
   },
@@ -95,7 +99,7 @@ export default {
       isFormAllValid.push(this.passwordField.validInput());
 
       if(!isFormAllValid.includes(false)){
-        let res = await this.$walletService.getMnemonic(this.passwordField.defaultValue);
+        let res = await this.walletService.getMnemonic(this.passwordField.defaultValue);
         if(res && res.result && res.result.Ok){
           this.qrText = res.result.Ok;
           let valueChunks = res.result.Ok.split(" ").map(item => item.trim());

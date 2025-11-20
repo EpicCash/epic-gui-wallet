@@ -1,5 +1,5 @@
 import { reactive } from "@vue/reactivity";
-import useValidators from './Validators';
+import useValidators from './Validators.js';
 
 const errors = reactive({});
 

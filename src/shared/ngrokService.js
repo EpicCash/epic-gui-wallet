@@ -1,6 +1,5 @@
 
 const nodeChildProcess = window.nodeChildProcess;
-console.log(nodeChildProcess);
 const log = window.log;
 //console.log = log.log;
 

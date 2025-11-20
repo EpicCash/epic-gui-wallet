@@ -70,6 +70,7 @@ const fs = window.nodeFs;
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from '../store';
+import { inject } from 'vue'
 
 export default {
   name: "finalize",
@@ -80,13 +81,15 @@ export default {
     const isDragOver =ref(false);
     const isSent =ref(false);
     const isSending =ref(false);
+    const walletService = inject('walletService');
 
     return {
       store,
       isDragOver,
       isSent,
       isSending,
-      t
+      t,
+      walletService
 
     }
 
@@ -145,12 +148,12 @@ export default {
         this.isSending = true
         let send = async function(){
 
-          let res = await this.$walletService.finalizeTransaction(JSON.parse(content));
+          let res = await this.walletService.finalizeTransaction(JSON.parse(content));
 
           if(res && res.result && res.result.Ok){
             //TODO: implement fluff true/false (Dandelion)
             let tx = res.result.Ok.tx;
-            let res2 = await this.$walletService.postTransaction(tx);
+            let res2 = await this.walletService.postTransaction(tx);
             if(res2 && res2.result && res2.result.Ok == null ){
               this.isSent = true
               tx_id = res.result.Ok;

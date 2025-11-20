@@ -66,6 +66,7 @@ import AccountField from "./form/accountField.vue";
 import useFormValidation from "../modules/useFormValidation";
 import { useRouter } from '../router';
 import { useStore } from '../store';
+import { inject } from 'vue'
 
 export default {
   name: "login",
@@ -82,6 +83,8 @@ export default {
     const accountField = ref();
     const isLoading = ref(false);
     const { resetFormErrors } = useFormValidation();
+    const walletService = inject('walletService');
+    const userService = inject('userService');
 
     return {
       store,
@@ -90,7 +93,9 @@ export default {
       accountField,
       isLoading,
       resetFormErrors,
-      t
+      t,
+      walletService,
+      userService
     }
   },
   methods: {
@@ -133,7 +138,7 @@ export default {
 
         //App has started - first close running wallet and node server process
         let processKilled = await this.configService.killEpicProcess();
-        let user = await this.$userService.getUser(this.accountField.defaultValue);
+        let user = await this.userService.getUser(this.accountField.defaultValue);
         
         if(user.length && action != 'settings'){
           this.store.commit('user', user[0]);
@@ -147,7 +152,7 @@ export default {
        }
        await this.emitter.emit('app.nodeStart');
        
-        let canLogin = await this.$walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
+        let canLogin = await this.walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
         
         if(canLogin.success){
 
@@ -155,7 +160,7 @@ export default {
           
           window.debug ? console.log('LOGIN USER:', user) : null;
           if(this.configService.config['walletlisten_on_startup']){
-            const isListen = await this.$walletService.startListen(this.passwordField.defaultValue, true, 'http');
+            const isListen = await this.walletService.startListen(this.passwordField.defaultValue, true, 'http');
             //start epicbox, will be executed when node has synced status
             if(this.configService.config['epicbox_domain'] != undefined && this.configService.config['epicbox_domain'] != '' ){
               
@@ -190,7 +195,7 @@ export default {
         }else{
           //console.log(canLogin);
           this.isLoading = true;
-          this.$walletService.stopWallet();
+          this.walletService.stopWallet();
           this.$toast.error(canLogin.msg.message ? canLogin.msg.message : canLogin.msg);
 
         }

@@ -192,7 +192,7 @@
   import { useRouter } from '../router';
   import { useRoute } from 'vue-router';
   import { useStore } from '../store';
-
+  import { inject } from 'vue'
 
   export default {
     name: "setup-wizard",
@@ -241,7 +241,7 @@
       const textField = ref('');
       const advancedSettings = ref(false);
       const fromRoute = route.params.from ? route.params.from : 'login';
-
+      const userService = inject('userService');
 
       return{
         store,
@@ -265,14 +265,15 @@
         fromRoute,
         domain,
         epicboxDomain,
-        t
+        t,
+        userService
 
       }
     },
 
     async mounted(){
 
-      let user = await this.$userService.getUser(this.configService.configAccount);
+      let user = await this.userService.getUser(this.configService.configAccount);
 
       this.store.dispatch('toggleFullPage', true);
       this.store.commit('asideStateToggle', false);
@@ -336,11 +337,11 @@
       async save(){
         try{
 
-          let user = await this.$userService.getUser(this.configService.configAccount);
+          let user = await this.userService.getUser(this.configService.configAccount);
 
 
           if(user.length){
-            await this.$userService.updateUserByAccount(this.configService.configAccount, {
+            await this.userService.updateUserByAccount(this.configService.configAccount, {
               account: this.configService.configAccount,
               name: this.textField.defaultValue,
               keybase: this.keybase,
@@ -351,7 +352,7 @@
 
           }else{
 
-            let inserted = await this.$userService.addUser({
+            let inserted = await this.userService.addUser({
               account: this.configService.configAccount,
               name: this.textField.defaultValue,
               keybase: this.keybase,

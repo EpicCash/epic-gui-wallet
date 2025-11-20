@@ -919,7 +919,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
     const child = await spawn(cmd, args);
     child.stdout.setEncoding("utf8");
     child.stdout.on("data", function(data2) {
-      debug ? console.log("spawn.stdout", data2) : null;
     });
     return child;
   },
@@ -931,7 +930,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let recordData = false;
       createProcess.stdout.setEncoding("utf8");
       createProcess.stdout.on("data", (data2) => {
-        debug ? console.log("execNew.stdout", data2) : null;
         if (data2.includes("Password:")) {
           createProcess.stdin.write(password + "\n");
         }
@@ -942,7 +940,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       createProcess.stderr.setEncoding("utf8");
       createProcess.stderr.on("data", (data2) => {
-        debug ? console.log("execNew.stderr", data2) : null;
         errorData += data2;
       });
       createProcess.stdout.on("end", function() {
@@ -971,7 +968,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let scanProcess = spawn(cmd, args, { shell: platform == "win" ? true : false });
       scanProcess.stdout.setEncoding("utf8");
       scanProcess.stdout.on("data", function(data2) {
-        debug ? console.log("execScan.stdout", data2) : null;
         if (data2.includes("Password:")) {
           scanProcess.stdin.write(password + "\n");
         }
@@ -979,11 +975,9 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       scanProcess.stderr.setEncoding("utf8");
       scanProcess.stderr.on("data", function(data2) {
-        debug ? console.log("execScan.stderr", data2) : null;
         electron.ipcRenderer.send("scan-stdout", data2);
       });
       scanProcess.on("close", function(code) {
-        debug ? console.log("execScan.close", code) : null;
         if (code == 0) {
           electron.ipcRenderer.send("scan-finish");
         }
@@ -1004,14 +998,12 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let node_server = spawn(cmd, args, { shell: platform == "win" ? true : false });
       node_server.stdout.setEncoding("utf8");
       node_server.stdout.on("data", (data2) => {
-        debug ? console.log("execNode.stdout", data2) : null;
         if (data2.includes("Epic node server started.")) {
           resolve(node_server.pid);
         }
       });
       node_server.stderr.setEncoding("utf8");
       node_server.stderr.on("data", (data2) => {
-        debug ? console.log("execNode.stderr", data2) : null;
         reject(false);
       });
     });
@@ -1022,7 +1014,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let ngrok = spawn(cmd, args, { shell: platform == "win" ? true : false });
       ngrok.stdout.setEncoding("utf8");
       ngrok.stdout.on("data", (data2) => {
-        debug ? console.log("execNgrok.stdout", data2) : null;
         if (data2.includes("client session established")) {
           resolve({ success: true, msg: ngrok.pid });
         }
@@ -1032,7 +1023,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       ngrok.stderr.setEncoding("utf8");
       ngrok.stderr.on("data", (data2) => {
-        debug ? console.log("execNgrok.stderr", data2) : null;
         resolve({ success: false, msg: data2 });
       });
     });
@@ -1043,7 +1033,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let ownerAPI = spawn(cmd, args, { shell: platform == "win" ? true : false });
       ownerAPI.stdout.setEncoding("utf8");
       ownerAPI.stdout.on("data", (data2) => {
-        debug ? console.log("execStart.stdout", data2) : null;
         if (emitOutput) {
           electron.ipcRenderer.send("firstscan-stdout", data2);
         }
@@ -1056,7 +1045,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       ownerAPI.stderr.setEncoding("utf8");
       ownerAPI.stderr.on("data", (data2) => {
-        debug ? console.log("execStart.stderr", data2) : null;
         if (emitOutput) {
           electron.ipcRenderer.send("firstscan-stdout", data2);
         }
@@ -1075,7 +1063,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let isTorBooted2 = false;
       listenProcess.stdout.setEncoding("utf8");
       listenProcess.stdout.on("data", (data2) => {
-        debug ? console.log("execListen.stdout", data2) : null;
         if (data2.includes("Password:")) {
           listenProcess.stdin.write(password + "\n");
         }
@@ -1094,7 +1081,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       listenProcess.stderr.setEncoding("utf8");
       listenProcess.stderr.on("data", (data2) => {
-        debug ? console.log("execListen.stderr", data2) : null;
         resolve({ success: false, msg: data2, tor: isTorBooted2 });
       });
     });
@@ -1105,7 +1091,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let listenProcess = spawn(cmd, args, { shell: platform == "win" ? true : false });
       listenProcess.stdout.setEncoding("utf8");
       listenProcess.stdout.on("data", (data2) => {
-        debug ? console.log("execEpicbox.stdout", data2) : null;
         if (data2.includes("Password:")) {
           listenProcess.stdin.write(password + "\n");
         }
@@ -1118,7 +1103,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       listenProcess.stderr.setEncoding("utf8");
       listenProcess.stderr.on("data", (data2) => {
-        debug ? console.log("execEpicbox.stderr", data2) : null;
         resolve({ success: false, msg: data2 });
       });
     });
@@ -1131,7 +1115,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       let recordData = false;
       recover.stdout.setEncoding("utf8");
       recover.stdout.on("data", (data2) => {
-        debug ? console.log("execRecover.stdout", data2) : null;
         if (data2.includes("Password:")) {
           recover.stdin.write(password + "\n");
         }
@@ -1146,7 +1129,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
       });
       recover.stderr.setEncoding("utf8");
       recover.stderr.on("data", (data2) => {
-        debug ? console.log("execRecover.stderr", data2) : null;
         errorData += data2;
         if (data2.includes("Recovery word phrase is invalid.")) {
           recover.stdin.pause();
@@ -1155,7 +1137,6 @@ electron.contextBridge.exposeInMainWorld("nodeChildProcess", {
         }
       });
       recover.stdout.on("end", function() {
-        debug ? console.log("execRecover.stdout.end", data) : null;
         if (errorData != "") {
           resolve({ success: false, msg: errorData });
         } else if (newSeedData != "") {
@@ -1255,7 +1236,6 @@ electron.contextBridge.exposeInMainWorld("config", {
     return response;
   },
   getResourcePath() {
-    console.log("######## resourcePath", resourcePath);
     return resourcePath;
   },
   getUserHomedir() {

@@ -148,6 +148,7 @@
   import { ref, computed } from 'vue';
   import { useStore } from '../store'
   import { useI18n } from 'vue-i18n';
+  import { inject } from 'vue'
 
   const clipboard = window.clipboard
 
@@ -181,6 +182,7 @@
       const searched = ref(false);
       const keyword =  ref("");
       const locale = ref('en');
+      const walletService = inject('walletService');
 
 
       return{
@@ -195,7 +197,8 @@
         searched,
         keyword,
         locale,
-        t
+        t,
+        walletService
       }
     },
     watch: {
@@ -251,7 +254,7 @@
 
       async getCommits() {
           this.isRefresh = true;
-          let commits = await this.$walletService.getCommits(false, true, null);
+          let commits = await this.walletService.getCommits(false, true, null);
           this.isRefresh = false;
 
           if(commits && commits.result && commits.result.Ok){
