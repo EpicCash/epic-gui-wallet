@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import { useStore } from '@/store'
+import { useStore } from '../../store'
 import { computed } from 'vue'
-import AsideUpdatesItem from '@/components/layout/AsideUpdatesItem.vue'
+import AsideUpdatesItem from './AsideUpdatesItem.vue'
 
 export default {
   name: 'AsideRight',

@@ -1,3 +1,5 @@
+@use "theme-light-dark";
+
 $borderColor: #ffffff;
 $borderColorFilled: #d19944;
 
@@ -10,7 +12,7 @@ html{
       width: 85px;
       height: 85px;
       margin: 20px auto;
-      background-color: $dark-mode-background-color;
+      background-color: theme-light-dark.$dark-mode-background-color;
     }
     .circle svg {
       position: absolute;

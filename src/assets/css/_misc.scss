@@ -1,6 +1,9 @@
+//@use "~bulma/bulma";
+@use "theme-light-dark";
+
 .is-user-avatar {
   &.has-max-width {
-    max-width: $size-base * 7;
+    max-width: theme-light-dark.$size-base * 7;
   }
 
   &.is-aligned-center {
@@ -10,7 +13,7 @@
 
   img {
     margin: 0 auto;
-    border-radius: $radius-rounded;
+    border-radius: theme-light-dark.$radius-rounded;
   }
 }
 
@@ -19,18 +22,18 @@
 
   &:after {
     content: '';
-    width: $icon-update-mark-size;
-    height: $icon-update-mark-size;
+    width: theme-light-dark.$icon-update-mark-size;
+    height: theme-light-dark.$icon-update-mark-size;
     position: absolute;
     top: 1px;
     right: 1px;
-    background-color: $icon-update-mark-color;
-    border-radius: $radius-rounded;
+    background-color: theme-light-dark.$icon-update-mark-color;
+    border-radius: theme-light-dark.$radius-rounded;
   }
 }
 
 
-@each $state-class, $state-color, $state-text in $state-colors {
+@each $state-class, $state-color, $state-text in theme-light-dark.$state-colors {
   .is-state-#{$state-class} {
     background-color: $state-color!important;
     border-color: $state-color!important;

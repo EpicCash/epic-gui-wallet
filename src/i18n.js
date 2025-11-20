@@ -1,5 +1,5 @@
 
-import { createI18n } from 'vue-i18n/index'
+import { createI18n } from 'vue-i18n';
 import en from './lang/en';
 import zh from './lang/zh';
 import ru from './lang/ru';
@@ -16,9 +16,12 @@ const messages = {
   en,
   fa,
   hi,
+  zh,
+  ru
 }
 
 export const i18n = createI18n({
+  legacy: false,  
   locale: 'en',
   messages
 });

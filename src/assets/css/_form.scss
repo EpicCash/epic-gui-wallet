@@ -1,8 +1,10 @@
+@use "theme-light-dark";
+
 .field {
   &.has-check.is-horizontal {
     align-items: center;
     .field-body {
-      margin-top: $default-padding * .125;
+      margin-top: theme-light-dark.$default-padding * .125;
     }
   }
   .control {
@@ -28,7 +30,7 @@
 
 .upload-file-list {
   .notification:not(:last-child) {
-    margin-bottom: $default-padding * .5;
+    margin-bottom: theme-light-dark.$default-padding * .5;
   }
 }
 
@@ -46,6 +48,6 @@
 
 .b-checkbox.checkbox input[type=checkbox], .b-radio.radio input[type=radio] {
   &+.check {
-    border: $checkbox-border;
+    border: theme-light-dark.$checkbox-border;
   }
 }

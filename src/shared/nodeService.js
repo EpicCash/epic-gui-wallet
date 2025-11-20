@@ -1,7 +1,7 @@
-require('promise.prototype.finally').shim();
+
 
 const log = window.log;
-console.log = log.log;
+//console.log = log.log;
 
 function addQuotations(s){
     return '"' + s +'"'

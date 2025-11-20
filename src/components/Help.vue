@@ -3,7 +3,7 @@
     <form v-on:submit.prevent="search" >
       <div class="field has-addons">
         <div class="control is-expanded">
-          <input class="input" type="text" :placeholder="$t('msg.placeholder_search')" v-model="keyword" >
+          <input class="input" type="text" :placeholder="t('msg.placeholder_search')" v-model="keyword" >
         </div>
         <div class="control">
           <button v-show="!searched" class="button is-primary"><span class="icon"><mdicon name="dots-horizontal" /></span></button>
@@ -41,14 +41,16 @@
 <script>
 
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-import { useStore } from '@/store';
-import { useHelp } from '@/help/help';
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
+import { useHelp } from '../help/help';
 
 
 export default {
     name: "help",
     setup(){
 
+      const { t } = useI18n();
       const store = useStore();
       const elements = ref([]);
       const searchableText = ref([]);
@@ -63,6 +65,7 @@ export default {
         searchableText,
         keyword,
         searched,
+        t
       }
     },
     created(){

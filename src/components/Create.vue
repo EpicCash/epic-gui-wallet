@@ -12,9 +12,9 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.create.seedPhrase') }}</h2>
+                    <h2 class="title" style="text-align: center;">{{ t('msg.create.seedPhrase') }}</h2>
                     <p class="has-text-weight-semibold has-text-warning" style="color: #d19944!important;margin-bottom: 24px;">
-                      {{ $t('msg.create.backupNote') }}
+                      {{ t('msg.create.backupNote') }}
                     </p>
                     <div class="tags" style="justify-content: center;">
                       <span style="color:#000000" class="mnemonic-word tag is-light is-medium is-rounded is-link" v-for="seed in newseeds" :key="seed">{{seed}}<span class="space"> </span></span>
@@ -26,7 +26,7 @@
                     <p>&nbsp;</p>
                     <div class="buttons is-centered">
                       <router-link class="button is-outlined is-primary" to="/login">
-                        {{ $t("msg.login_") }}
+                        {{ t("msg.login_") }}
                       </router-link>
                     </div>
                   </div>
@@ -44,26 +44,26 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.create.toNewMsg') }}</h2>
+                    <h2 class="title" style="text-align: center;">{{ t('msg.create.toNewMsg') }}</h2>
 
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.account.account') }}<span class="required">*</span></label>
+                        <label class="label">{{ t('msg.account.account') }}<span class="required">*</span></label>
                         <div class="control">
                           <AccountField ref="accountField" required="true" placeholder="default" />
-                          <p class="help">{{ $t('msg.only_letter') }} <!----></p>
+                          <p class="help">{{ t('msg.only_letter') }} <!----></p>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.restore.newPassword') }}<span class="required">*</span></label>
+                        <label class="label">{{ t('msg.restore.newPassword') }}<span class="required">*</span></label>
                         <div class="control has-icons-right">
                           <PasswordField ref="passwordField" required="true" name="password"  />
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.passwordAgain') }}<span class="required">*</span></label>
+                        <label class="label">{{ t('msg.passwordAgain') }}<span class="required">*</span></label>
                         <div class="control has-icons-right">
                           <PasswordField ref="passwordField2" required="true" :repeat="passwordField ? passwordField.input : null" name="password2"  />
                         </div>
@@ -74,7 +74,7 @@
                           <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
                             <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
                             <mdicon size="18" v-else name="menu-down" />
-                            {{ $t('msg.custom_settings') }}
+                            {{ t('msg.custom_settings') }}
                           </a>
                         </div>
                     </div>
@@ -84,11 +84,11 @@
                       <div class="card-content">
                          <div class="content">
                            <div class="field">
-                              <label class="label">{{ $t('msg.restore.walletLocation') }}</label>
+                              <label class="label">{{ t('msg.restore.walletLocation') }}</label>
                               <WalletdirField ref="walletdirField" />
                           </div>
                           <div class="field">
-                              <label class="label">{{ $t("msg.settings.network") }}</label>
+                              <label class="label">{{ t("msg.settings.network") }}</label>
                               <div class="control">
                                 <NetworkField ref="networkField" />
                               </div>
@@ -100,10 +100,10 @@
                     <div class="buttons is-centered">
                       <router-link class="button is-primary" :to="{name: fromRoute}">
                         <mdicon name="arrow-left-bold-hexagon-outline" />
-                        {{ $t("msg.back") }}
+                        {{ t("msg.back") }}
                       </router-link>
                       <button class="button is-primary" :class="{ 'button__loader': isLoading }" @click="create" >
-                        <span class="button__text">{{ $t('msg.create.newWallet') }}</span>
+                        <span class="button__text">{{ t('msg.create.newWallet') }}</span>
                       </button>
                     </div>
 
@@ -121,13 +121,14 @@
 <script>
 
 import { ref } from 'vue';
-import { useRouter } from '@/router';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from '../router';
 import { useRoute } from 'vue-router';
-import AccountField from "@/components/form/accountField";
-import PasswordField from "@/components/form/passwordField";
-import WalletdirField from "@/components/form/walletdirField";
-import NetworkField from "@/components/form/networkField";
-import useFormValidation from "@/modules/useFormValidation";
+import AccountField from "./form/accountField.vue";
+import PasswordField from "./form/passwordField.vue";
+import WalletdirField from "./form/walletdirField.vue";
+import NetworkField from "./form/networkField.vue";
+import useFormValidation from "../modules/useFormValidation";
 
 export default {
   name: "create",
@@ -144,6 +145,8 @@ export default {
     }
   },
   setup(){
+
+    const { t } = useI18n();
     const router = useRouter();
     const route = useRoute();
     const page = ref('create');//ref('addSeeds');//
@@ -175,7 +178,8 @@ export default {
       fromRoute,
       isLoading,
       qrText,
-      newseeds
+      newseeds,
+      t
 
 
     }
@@ -239,11 +243,11 @@ export default {
               this.page = 'created'
 
             }else{
-              this.$toast.error(this.$t('msg.create.fatal_create', [action]), {duration:false});
+              this.$toast.error(this.t('msg.create.fatal_create', [action]), {duration:false});
             }
 
           }else{
-            this.$toast.error(this.$t('msg.create.fatal_update'), {duration:false});
+            this.$toast.error(this.t('msg.create.fatal_update'), {duration:false});
           }
         }
 

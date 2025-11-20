@@ -8,16 +8,16 @@
 
       <div v-if="!checking">
         <div class="message is-info">
-          <div class="message-header"><p>{{ $t("msg.check.introTitle") }}</p></div>
+          <div class="message-header"><p>{{ t("msg.check.introTitle") }}</p></div>
           <div class="message-body">
-            <p>{{ $t("msg.check.intro1") }}</p>
+            <p>{{ t("msg.check.intro1") }}</p>
           </div>
         </div>
 
         <div class="columns">
           <div class="column is-half">
             <div class="field">
-              <label class="label">{{ $t("msg.password") }}</label>
+              <label class="label">{{ t("msg.password") }}</label>
               <div class="control has-icons-right">
                 <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
               </div>
@@ -25,7 +25,7 @@
             <div class="field">
               <div class="control">
                   <input class="switch is-success" id="unconfirmedSwitch" type="checkbox" v-model="delete_unconfirmed">
-                  <label for="unconfirmedSwitch">{{ $t("msg.check.delete_unconfirmed") }}</label>
+                  <label for="unconfirmedSwitch">{{ t("msg.check.delete_unconfirmed") }}</label>
               </div>
 
             </div>
@@ -33,7 +33,7 @@
                 <div class="control">
 
                   <button type="submit" class="button is-primary" @click.prevent="start">
-                    <span class="button__text">{{ $t("msg.check.start") }}</span>
+                    <span class="button__text">{{ t("msg.check.start") }}</span>
                   </button>
                 </div>
 
@@ -45,7 +45,7 @@
       <div v-else>
         <div class="message is-info" style="height:300px;max-height:300px;overflow-y:scroll;">
 
-          <div class="message-header" v-if="checking"><p>{{ $t("msg.check.checking") }}</p></div>
+          <div class="message-header" v-if="checking"><p>{{ t("msg.check.checking") }}</p></div>
           <div class="message-body">
             <div class="control">
 
@@ -57,7 +57,7 @@
         <div class="field">
           <div class="control">
             <button type="submit" class="button is-primary" @click.prevent="stop">
-              <span class="button__text">{{ $t("msg.check.stop") }}</span>
+              <span class="button__text">{{ t("msg.check.stop") }}</span>
             </button>
           </div>
         </div>
@@ -83,8 +83,9 @@
 const log = window.log
 
 import { ref } from 'vue';
-import PasswordField from "@/components/form/passwordField";
-import useFormValidation from "@/modules/useFormValidation";
+import { useI18n } from 'vue-i18n';
+import PasswordField from "./form/passwordField.vue";
+import useFormValidation from "../modules/useFormValidation";
 export default {
   name: "check",
   components: {
@@ -93,6 +94,7 @@ export default {
   },
   setup() {
 
+    const { t } = useI18n();
     const passwordField = ref('');
     const checking = ref(false);
     const checkOutputs = ref([]);
@@ -104,20 +106,21 @@ export default {
       resetFormErrors,
       checking,
       checkOutputs,
-      delete_unconfirmed
+      delete_unconfirmed,
+      t
 
 
     }
 
   },
   created() {
-      window.nodeChildProcess.on('scan-finish', () => {
+      /*window.nodeChildProcess.on('scan-finish', () => {
         if(this.checking){
           log.debug('Got walletCheckFinished message.')
           this.checking = false;
           this.checkOutputs = [];
           this.emitter.emit('app.update');
-          this.$toast.success(this.$t("msg.check.scan_finished"));
+          this.$toast.success(this.t("msg.check.scan_finished"));
         }
 
       });
@@ -125,15 +128,15 @@ export default {
       window.nodeChildProcess.on('scan-error', () => {
         if(this.checking){
 
-          this.$toast.error(this.$t("msg.check.error_scan"));
+          this.$toast.error(this.t("msg.check.error_scan"));
         }
 
-      })
+      })*/
 
   },
   mounted() {
     // handle reply from the backend
-    window.nodeChildProcess.on('scan-stdout', (payload) => {
+    /*window.nodeChildProcess.on('scan-stdout', (payload) => {
 
       let lines = payload.data.split("\n");
       for(var i = 0;i<lines.length;i++){
@@ -144,6 +147,7 @@ export default {
       }
 
     });
+    */
 
   },
   methods: {
@@ -166,7 +170,7 @@ export default {
     stop(){
       this.$walletService.stopCheck()
       this.checking = false;
-      this.$toast.success(this.$t("msg.check.scan_stop"));
+      this.$toast.success(this.t("msg.check.scan_stop"));
 
     },
 

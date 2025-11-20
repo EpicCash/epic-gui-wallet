@@ -1,3 +1,5 @@
+@use "theme-light-dark";
+
 .is-tiles-wrapper {
-  margin-bottom: $default-padding;
+  margin-bottom: theme-light-dark.$default-padding;
 }

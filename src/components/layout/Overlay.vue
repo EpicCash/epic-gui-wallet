@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { useStore } from '@/store'
+import { useStore } from '/store'
 import { computed } from 'vue'
 
 export default {

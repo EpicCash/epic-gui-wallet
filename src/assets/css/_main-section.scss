@@ -1,3 +1,5 @@
+@use "theme-light-dark";
+
 section.section.is-main-section {
-  padding: $default-padding;
+  padding: theme-light-dark.$default-padding;
 }

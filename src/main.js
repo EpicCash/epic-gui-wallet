@@ -1,144 +1,608 @@
-
-import { createApp } from 'vue'
-import { store } from './store/index'
-import router from './router'
-import { i18n } from './i18n';
-import walletService from './shared/walletService.js';
-import nodeService from './shared/nodeService.js';
-import ngrokService from './shared/ngrokService.js';
-import configService from './shared/configService.js';
-import userService from './shared/userService.js';
-import addressbookService from './shared/addressbookService.js';
-import addressTransactionsService from './shared/addressTransactionService.js';
-import {words} from './shared/words.js';
-import App from './App.vue'
-import mitt from 'mitt';
-import moment from 'moment';
-import Toaster from "@meforma/vue-toaster";
-
-
-
-import './assets/css/epiccashApp.scss';
-import './assets/css/animate.css';
-
-import mdiVue from 'mdi-vue/v3';
-import * as mdijs from '@mdi/js';
-
-
-
-moment.updateLocale('en', {
-    longDateFormat : {
-        L: "YYYY-MM-DD, HH:mm:ss",
-    }
-});
-moment.updateLocale('de', {
-    longDateFormat : {
-        L: "DD.MM.YYYY, HH:mm:ss",
-    }
-});
-
-
-
-const emitter = mitt();
-const app = createApp(App);
-
-
-app.use(i18n);
-app.use(mdiVue, {
-  icons: mdijs
-});
-app.use(store);
-app.use(router);
-app.use(Toaster);
-
-
-
-let config = new configService(emitter);
-
-app.config.globalProperties.emitter = emitter;
-app.config.globalProperties.$walletService = new walletService(emitter, config);
-app.config.globalProperties.$nodeService = new nodeService(emitter, config);
-app.config.globalProperties.$ngrokService = new ngrokService(emitter, config);
-app.config.globalProperties.$userService =  new userService();
-app.config.globalProperties.$addressBookService =  new addressbookService();
-app.config.globalProperties.$addressTransactionsService =  new addressTransactionsService();
-app.config.globalProperties.configService = config;
-app.config.globalProperties.mnemonicWords = words;
-
-app.config.globalProperties.$filters = {
-
-  currencyFormat(number, locale){
-
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'USD',
-      currencyDisplay: "code"
-    })
-    .format(number)
-    .replace("USD", "")
-    .trim()
-  },
-  datetimeFormat(date, locale) {
-
-     if(date != undefined){
-       moment.locale(locale ? locale : 'en');
-       let formatDatetime = moment(date).format('L');
-       return formatDatetime
-     }else{
-       return '-'
-     }
-  },
-
-  /* used for ngrok tunnle lifetime only */
-  timeFormat(endtime){
-    if(endtime != undefined){
-      //return moment().format("HH:mm");
-
-      let a = moment();
-      let b = moment(endtime);
-      let duration = moment.duration(b.diff(a));
-      let hours = parseInt(duration.asHours());
-      let minutes = parseInt(duration.asMinutes()) % 60;
-
-      hours = hours < 0 ? 0 : hours;
-      minutes = minutes < 0 ? 0 : minutes;
-
-
-      return [hours, minutes];
-    }else{
-      return [0, 0];
-    }
-  },
-
-  truncate(text, length) {
-    if (text.length > length) {
-        return text.substring(0, length);
-    } else {
-        return text;
-    }
-  },
-  truncateMid(fullStr, strLen){
-    if (fullStr.length <= strLen) return fullStr;
-
-    let separator = '...';
-
-    var sepLen = separator.length,
-        charsToShow = strLen - sepLen,
-        frontChars = Math.ceil(charsToShow/2),
-        backChars = Math.floor(charsToShow/2);
-
-    return fullStr.substr(0, frontChars) +
-           separator +
-           fullStr.substr(fullStr.length - backChars);
-  },
-  paymentProof(data, field){
-    if(data && data[field]){
-      return data[field];
-    }else{
-      return ''
-    }
-  }
-
+import { app, protocol, BrowserWindow, ipcMain, dialog, Menu, shell, remote } from 'electron';
+import { exec } from 'child_process';
+import started from 'electron-squirrel-startup';
+//import path from 'node:path';
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (started) {
+  app.quit();
 }
 
-app.mount('#app');
+
+//const contextMenu = require('electron-context-menu');
+const isDevelopment = process.env.NODE_ENV !== 'production'
+const path = require('path')
+const ps = require('ps-node');
+const findProcess = require('find-process');
+//const log = require('electron-log');
+//const {autoUpdater} = require("electron-updater");
+//autoUpdater.channel = "latest";
+//autoUpdater.autoDownload = false;
+let win;
+let noderuninbackground = false;
+let epicboxruninbackground = false;
+
+
+/*contextMenu({
+	showSaveImageAs: true
+});*/
+
+//-------------------------------------------------------------------
+// Logging
+//
+// THIS SECTION IS NOT REQUIRED
+//
+// This logging setup is not required for auto-updates to work,
+// but it sure makes debugging easier :)
+//-------------------------------------------------------------------
+//autoUpdater.logger = log;
+//autoUpdater.logger.transports.file.level = 'debug';
+//log.info('App starting...');
+
+
+async function kill(pid){
+  return new Promise(function(resolve, reject) {
+    let iskilled;
+    if (process.platform === 'win32') {
+        exec(`taskkill /pid ${pid} /f /t`, function( err ) {
+           if (err) {
+             resolve(false);
+           }
+           else {
+
+             resolve(true);
+           }
+       });
+
+    }else{
+      //check if 3 seconds for node server is to short and makes problems
+      ps.kill(pid, {timeout: 3},function( err ) {
+          if (err) {
+            resolve(false);
+          }
+          else {
+
+            resolve(true);
+          }
+      });
+    }
+  });
+}
+
+
+//[13088:0215/073859.040:ERROR:gpu_init.cc(454)] Passthrough is not supported, GL is disabled, ANGLE is
+app.disableHardwareAcceleration();
+
+// Scheme must be registered before the app is ready
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'app', privileges: { secure: true, standard: true } }
+])
+
+
+const createWindow = () => {
+  // Create the browser window.
+  
+  win = new BrowserWindow({
+    width: 1044,
+    height: 768,
+    minWidth: 1044,
+    maxWidth: 1600,
+    title: "Epiccash Wallet",//fix in index.html
+    webPreferences: {
+      //icon: path.join(__dirname, '../public/favicon.ico'),
+      // Use pluginOptions.nodeIntegration, leave this alone
+      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+     // nodeIntegration: false,
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js')
+      
+    }
+  });
+    // and load the index.html of the app.
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  } else {
+    win.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+  }
+
+  // Open the DevTools.
+  win.webContents.openDevTools();
+  /*
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // Load the url of the dev server if in development mode
+    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    if (!process.env.IS_TEST) win.webContents.openDevTools()
+  } else {
+    createProtocol('app')
+    // Load the index.html when not in development
+    win.loadURL('app://./index.html')
+    autoUpdater.checkForUpdates();
+
+  }*/
+
+
+
+  if (!isDevelopment) {
+    if(process.platform == 'darwin'){
+      var menu = Menu.buildFromTemplate([
+          {
+              label: 'Menu',
+              submenu: [
+                  { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+                  { label: "Source on GitHub", click ()
+                    {
+                      shell.openExternal('https://github.com/EpicCash/epic-gui-wallet');
+                    }
+                   },
+                  { type: "separator" },
+                  {
+                      label:'Quit',
+                      accelerator: "CmdOrCtrl+Q",
+                      async click() {
+                          let killPromise = [];
+                          let killProcess = false;
+                          let killPids = [];
+                          let pEpicnodeList = [];
+
+                          let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+                          if(epicboxruninbackground){
+
+                            for(let process of pWalletList) {
+
+                              if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+                                console.log('process kill without epicbox background', process);
+                                killPids.push(process);
+                              }
+                            }
+
+                          }else{
+                            for(let process of pWalletList) {
+
+                              if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+                                console.log('process kill all background', process);
+                                killPids.push(process);
+                              }
+                            }
+
+                          }
+
+                          if(noderuninbackground == false){
+                            pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                          }
+
+
+                          let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                          let pWalletTorList = await findProcess('name', /tor/);
+
+
+                          for(let process of pEpicnodeList) {
+                            if(process.cmd.includes('server')){
+                              killPids.push(process);
+                            }
+                          }
+                          for(let process of pNgrokList) {
+                            if(process.cmd.includes('ngrok')){
+                              killPids.push(process);
+                            }
+                          }
+                          for(let process of pWalletTorList) {
+                            if(process.cmd.includes('tor/listener/torrc')){
+                              killPids.push(process);
+                            }
+                          }
+                          if(killPids.length){
+                            for(let process of killPids) {
+
+                              killPromise.push(kill(process.pid))
+                            }
+                            await Promise.all(killPromise);
+                          }
+
+
+                          app.quit()
+                      }
+                  },
+
+              ],
+
+          },
+          {
+            label: "Application",
+            submenu: [
+
+              {
+                label: "Edit",
+                submenu: [
+                    { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+                    { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                    { type: "separator" },
+                    { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                    { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+                    { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+                    { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+                ]
+              }
+            ]
+
+
+          }
+
+      ]);
+    }else{
+      var menu = Menu.buildFromTemplate([
+          {
+              label: 'Menu',
+              submenu: [
+
+                  { label: "Source on GitHub", click ()
+                    {
+                      shell.openExternal('https://github.com/EpicCash/epic-gui-wallet');
+                    }
+                   },
+                  { type: "separator" },
+                  {
+                      label:'Quit',
+                      accelerator: "CmdOrCtrl+Q",
+                      async click() {
+                        let killPromise = [];
+                        let killProcess = false;
+                        let killPids = [];
+                        let pEpicnodeList = [];
+
+                        let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+                        if(epicboxruninbackground){
+
+                          for(let process of pWalletList) {
+
+                            if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+                              console.log('process kill without epicbox background', process);
+                              killPids.push(process);
+                            }
+                          }
+
+                        }else{
+                          for(let process of pWalletList) {
+
+                            if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+                              console.log('process kill all background', process);
+                              killPids.push(process);
+                            }
+                          }
+
+                        }
+
+                        if(noderuninbackground == false){
+                          pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+                        }
+
+                        let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+                        let pWalletTorList = await findProcess('name', /tor/);
+
+                        for(let process of pEpicnodeList) {
+                          if(process.cmd.includes('server')){
+                            killPids.push(process);
+                          }
+                        }
+                        for(let process of pNgrokList) {
+                          if(process.cmd.includes('ngrok')){
+                            killPids.push(process);
+                          }
+                        }
+                        for(let process of pWalletTorList) {
+                          if(process.cmd.includes('tor/listener/torrc')){
+                            killPids.push(process);
+                          }
+                        }
+                        if(killPids.length){
+                          for(let process of killPids) {
+
+                            killPromise.push(kill(process.pid))
+                          }
+                          await Promise.all(killPromise);
+                        }
+                        app.quit()
+                      }
+                  },
+
+              ],
+
+          },
+          {
+            label: "Application",
+            submenu: [
+
+              {
+                label: "Edit",
+                submenu: [
+                    { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+                    { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+                    { type: "separator" },
+                    { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                    { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+                    { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+                    { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+                ]
+              }
+            ]
+
+
+          }
+
+      ]);
+    }
+
+    Menu.setApplicationMenu(menu);
+  }else{
+    console.log(win);
+  }
+  //return win;
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(() => {
+  createWindow();
+ 
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+// Quit when all windows are closed.
+app.on('window-all-closed', async() => {
+
+  // On macOS it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+
+    let killPromise = [];
+    let killProcess = false;
+    let killPids = [];
+    let pEpicnodeList = [];
+
+    let pWalletList = await findProcess('name', /.*?epic-wallet.*(owner_api|listen|scan)/);
+
+    if(epicboxruninbackground){
+
+      for(let process of pWalletList) {
+
+        if((process.cmd.includes('owner_api') || process.cmd.includes("listen") || process.cmd.includes('scan')) && !process.cmd.includes("epicbox")){
+          console.log('process kill without epicbox background', process);
+          killPids.push(process);
+        }
+      }
+
+    }else{
+      for(let process of pWalletList) {
+
+        if(process.cmd.includes('owner_api') || process.cmd.includes("listen")  || process.cmd.includes('scan')){
+          console.log('process kill all background', process);
+          killPids.push(process);
+        }
+      }
+
+    }
+
+    if(noderuninbackground == false){
+      pEpicnodeList = await findProcess('name', /.*?epic.*server.*run/);
+    }
+
+    let pNgrokList = await findProcess('name', /.*?ngrok.*(start)/);
+
+    for(let process of pEpicnodeList) {
+      if(process.cmd.includes('server')){
+        killPids.push(process);
+      }
+    }
+    for(let process of pNgrokList) {
+      if(process.cmd.includes('ngrok')){
+        killPids.push(process);
+      }
+    }
+    if(killPids.length){
+      for(let process of killPids) {
+
+        killPromise.push(kill(process.pid))
+      }
+      await Promise.all(killPromise);
+    }
+
+
+    app.quit()
+  }
+
+});
+
+/*autoUpdater.on('checking-for-update', () => {
+
+  sendStatusToWindow('Checking for update...');
+})*/
+/*autoUpdater.on('update-available', (info, releaseNotes, releaseName) => {
+
+  const dialogOpts = {
+        type: 'info',
+        buttons: ['Ok'],
+        title: 'Update available.',
+        message: process.platform === 'win32' ? releaseNotes : releaseName,
+        detail: 'A New Version is available for download.\nhttps://github.com/EpicCash/epic-gui-wallet/releases/latest'
+  }
+
+  dialog.showMessageBox(dialogOpts);
+
+  //sendStatusToWindow('Update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  console.log("no update available");
+  //sendStatusToWindow('Update not available.');
+})
+  */
+/*autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error in auto-updater. ' + err);
+})*/
+/*autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  sendStatusToWindow(log_message);
+})*/
+/*autoUpdater.on('update-downloaded', (info) => {
+
+  const dialogOpts = {
+        type: 'info',
+        buttons: ['Restart', 'Not Now. On next Restart'],
+        title: 'Update',
+        message: process.platform === 'win32' ? releaseNotes : releaseName,
+        detail: 'A New Version has been Downloaded. Restart Now to Complete the Update.'
+    }
+
+    dialog.showMessageBox(dialogOpts).then((returnValue) => {
+        if (returnValue.response === 0) autoUpdater.quitAndInstall()
+    })
+
+  //sendStatusToWindow('Update downloaded');
+});*/
+
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+})
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+//app.on('ready', async (event) => {
+  //console.log('app', noderuninbackground);
+  //console.log('noderuninbackground', noderuninbackground);
+  //console.log('epicboxruninbackground', epicboxruninbackground);
+
+  /*if (isDevelopment && !process.env.IS_TEST) {
+    // Install Vue Devtools
+    setTimeout(() => {
+      try {
+
+        installExtension(VUEJS3_DEVTOOLS) .then(name => {
+          console.log(`Added Extension: ${name}`)
+          // get main window
+          const win = BrowserWindow.getFocusedWindow()
+          if (win) {
+            win.webContents.on('did-frame-finish-load', () => {
+              win.webContents.once('devtools-opened', () => {
+                win.webContents.focus()
+              })
+              // open electron debug
+              console.log('Opening dev tools')
+              win.webContents.openDevTools()
+            })
+          }
+        })
+        .catch(err => {
+          console.log('An error occurred: ', err)
+        })
+
+      } catch (e) {
+        console.error('Vue Devtools failed to install:', e.toString())
+      }
+    }, 250)
+  }*/
+
+  //createWindow()
+//})
+
+
+// Exit cleanly on request from parent process in development mode.
+if (isDevelopment) {
+  if (process.platform === 'win32') {
+    process.on('message', (data) => {
+      if (data === 'graceful-exit') {
+        app.quit()
+      }
+    })
+  } else {
+    process.on('SIGTERM', () => {
+
+      app.quit()
+    })
+  }
+}
+
+
+ipcMain.handle('show-save-dialog', async (event, title, message, defaultPath) => {
+    // do stuff
+    let responce = await dialog.showSaveDialog({
+      title: title,
+      message: message,
+      defaultPath: defaultPath
+    });
+    return responce;
+});
+
+ipcMain.handle('show-open-dialog', async (event, title, message, defaultPath) => {
+    // do stuff
+    let responce = await dialog.showOpenDialog({
+      properties:["openDirectory", "showHiddenFiles", "createDirectory"]
+    });
+    return responce;
+});
+
+ipcMain.handle('locale', async() => {
+  return await app.getLocale();
+});
+ipcMain.handle('version', () => {
+  let currentVersion = '';
+  if (process.env.NODE_ENV === 'development') {
+     currentVersion = require('../package.json').version;
+   } else {
+     currentVersion = remote.app.getVersion();
+   }
+   return currentVersion;
+
+});
+
+
+
+ipcMain.handle('resize', (event, width, height) => {
+
+  let browserWindow = BrowserWindow.fromWebContents(event.sender)
+  browserWindow.setSize(width,height);
+});
+
+ipcMain.on('scan-stdout', (event, data) => {
+  event.reply('scan-stdout', { data });
+});
+
+ipcMain.on('firstscan-stdout', (event, data) => {
+  event.reply('firstscan-stdout', { data });
+});
+
+ipcMain.on('scan-finish', (event, data) => {
+  event.reply('scan-finish', { data });
+});
+ipcMain.on('scan-error', (event, data) => {
+  event.reply('scan-error', { data });
+});
+
+ipcMain.on('walletCreated', (event, data) => {
+  event.reply('walletCreated', { data });
+});
+
+ipcMain.on('walletExisted', (event, data) => {
+  event.reply('walletExisted', {  });
+});
+
+ipcMain.on('walletCreateFailed', (event, data) => {
+  event.reply('walletCreateFailed', {  });
+});
+
+ipcMain.on('nodeBackground', (event, data) => {
+  noderuninbackground = data;
+});
+
+ipcMain.on('epicboxBackground', (event, data) => {
+  epicboxruninbackground = data;
+});

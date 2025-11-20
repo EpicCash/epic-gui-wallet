@@ -1,18 +1,18 @@
 <template>
   <div class="field">
-    <label class="label">{{ $t("msg.node_server") }}<span class="required">*</span></label>
+    <label class="label">{{ t("msg.node_server") }}<span class="required">*</span></label>
     <div class="control">
 
       <div class="select is-fullwidth" >
         <select @change="nodeserverFieldChanged" v-model="select" required>
-          <option value="internal">{{ $t("msg.node_server_builtin") }}</option>
-          <option value="external">{{ $t("msg.node_server_external") }}</option>
+          <option value="internal">{{ t("msg.node_server_builtin") }}</option>
+          <option value="external">{{ t("msg.node_server_external") }}</option>
         </select>
       </div>
     </div>
   </div>
   <div class="field" v-if="select == 'external'">
-    <label class="label">{{ $t("msg.node_server_address") }}<span class="required">*</span></label>
+    <label class="label">{{ t("msg.node_server_address") }}<span class="required">*</span></label>
     <div class="control">
       <input
         class="input"
@@ -34,7 +34,8 @@
 <script>
 
   import { ref, computed } from "vue";
-  import useFormValidation from "@/modules/useFormValidation";
+  import { useI18n } from 'vue-i18n';
+  import useFormValidation from "../../modules/useFormValidation";
 
   export default {
     setup() {
@@ -43,7 +44,7 @@
       let select = ref('internal');
       let defaultValue = ref(null);
       let nodeInternal = ref(false);
-
+      const { t } = useI18n();
       const { validateAddressField, errors } = useFormValidation();
 
       const validInput = () => {
@@ -62,7 +63,7 @@
 
       };
 
-      return { input, select, nodeInternal, errors, defaultValue, validInput };
+      return { input, select, nodeInternal, errors, defaultValue, validInput, t };
     },
     methods: {
 

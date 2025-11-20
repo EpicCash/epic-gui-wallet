@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { useStore } from '@/store'
+import { useStore } from '/store'
 import { computed, ref } from 'vue'
 
 export default {

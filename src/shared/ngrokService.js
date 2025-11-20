@@ -1,9 +1,8 @@
 
-require('promise.prototype.finally').shim();
 const nodeChildProcess = window.nodeChildProcess;
-
+console.log(nodeChildProcess);
 const log = window.log;
-console.log = log.log;
+//console.log = log.log;
 
 class NgrokService {
 

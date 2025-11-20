@@ -1,26 +1,29 @@
+//@use "~bulma/bulma";
+@use "theme-light-dark";
+
 .error-page-icon {
-  margin-bottom: $default-padding;
+  margin-bottom: theme-light-dark.$default-padding;
 
   .icon {
-    background-color: $error-page-icon-background-color;
-    border-radius: $radius-rounded;
-    width: $error-page-icon-size;
-    height: $error-page-icon-size;
+    background-color: theme-light-dark.$error-page-icon-background-color;
+    border-radius: theme-light-dark.$radius-rounded;
+    width: theme-light-dark.$error-page-icon-size;
+    height: theme-light-dark.$error-page-icon-size;
   }
   .mdi.mdi-set, .mdi.mdi:before {
-    font-size: $error-page-icon-size * .75;
+    font-size: theme-light-dark.$error-page-icon-size * .75;
   }
 }
 
 .error-page-caption {
   h1 {
     text-transform: uppercase;
-    font-size: $size-base * 2;
-    color: $error-page-caption-color;
+    font-size: theme-light-dark.$size-base * 2;
+    color: theme-light-dark.$error-page-caption-color;
   }
 
   &+.error-page-action {
-    margin-top: $default-padding;
+    margin-top: theme-light-dark.$default-padding;
   }
 }
 

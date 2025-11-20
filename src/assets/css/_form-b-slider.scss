@@ -1,10 +1,12 @@
+@use "theme-light-dark";
+
 .b-slider {
   .b-slider-track {
     background: transparent;
-    border: 1px solid $base-color;
+    border: 1px solid theme-light-dark.$base-color;
   }
 
-  @each $state-class, $state-color, $state-text in $state-colors {
+  @each $state-class, $state-color, $state-text in theme-light-dark.$state-colors {
     &.is-#{$state-class} {
       .b-slider-track {
         border: 1px solid $state-color;

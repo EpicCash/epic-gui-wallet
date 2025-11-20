@@ -9,7 +9,7 @@
             <span class="icon">
               <mdicon name="cloud-upload" />
             </span>
-            &nbsp;<span>{{ $t("msg.finalize.dragdrop") }}</span>
+            &nbsp;<span>{{ t("msg.finalize.dragdrop") }}</span>
           </p><!---->
         </header>
         <div class="card-content">
@@ -26,7 +26,7 @@
                           <mdicon name="upload" size="48" />
                         </span>
                       </p>
-                      <p>{{ $t("msg.finalize.dropMsg") }}</p>
+                      <p>{{ t("msg.finalize.dropMsg") }}</p>
                     </div>
                   </section>
                 </div>
@@ -39,12 +39,12 @@
           <div v-show="isSent">
 
             <div class="notification is-primary" >
-              {{ $t("msg.finalize.success") }}
+              {{ t("msg.finalize.success") }}
             </div>
 
 
             <div v-show="isSending">
-              <p class="is-size-5">{{ $t("msg.finalize.sending") }}</p>
+              <p class="is-size-5">{{ t("msg.finalize.sending") }}</p>
               <br/>
               <progress class="progress is-link" max="100"></progress>
             </div>
@@ -68,12 +68,14 @@
 const fs = window.nodeFs;
 
 import { ref } from 'vue';
-import { useStore } from '@/store';
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
 
 export default {
   name: "finalize",
   setup(){
 
+    const { t } = useI18n();
     const store = useStore();
     const isDragOver =ref(false);
     const isSent =ref(false);
@@ -83,7 +85,8 @@ export default {
       store,
       isDragOver,
       isSent,
-      isSending
+      isSending,
+      t
 
     }
 
@@ -122,7 +125,7 @@ export default {
               "text": e,
               "icon": "information"
             });
-            this.$toast.error(this.$t('msg.finalize.error_read'));
+            this.$toast.error(this.t('msg.finalize.error_read'));
             return;
           }
 
@@ -135,7 +138,7 @@ export default {
             "text": e,
             "icon": "information"
           });
-          this.$toast.error(this.$t('msg.finalize.WrongFileType'));
+          this.$toast.error(this.t('msg.finalize.WrongFileType'));
           return
         }
 
@@ -169,7 +172,7 @@ export default {
         send.call(this)
 
       }else{
-        this.$toast.error(this.$t('msg.finalize.WrongFileType'));
+        this.$toast.error(this.t('msg.finalize.WrongFileType'));
 
       }
 

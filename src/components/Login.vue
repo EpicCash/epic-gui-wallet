@@ -13,13 +13,13 @@
 
                 <form @submit.prevent novalidate>
                   <div class="field">
-                    <label class="label">{{ $t("msg.account.account") }}</label>
+                    <label class="label">{{ t("msg.account.account") }}</label>
                     <div class="control">
                       <AccountField ref="accountField" placeholder="default" required="true" />
                     </div>
                   </div>
                   <div class="field">
-                    <label class="label">{{ $t("msg.password") }}</label>
+                    <label class="label">{{ t("msg.password") }}</label>
                     <div class="control has-icons-right">
                       <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
                     </div>
@@ -28,17 +28,17 @@
                   <div class="field is-grouped" style="justify-content: center;display: flex;flex-wrap: wrap;flex-direction: row;">
                     <div class="control" style="margin-top:12px;">
                       <button type="submit" class="button is-primary" :class="{ 'button__loader': isLoading }" @click.prevent="login">
-                        <span class="button__text">{{ $t("msg.login_") }}</span>
+                        <span class="button__text">{{ t("msg.login_") }}</span>
                       </button>
                     </div>
                     <div class="control" style="margin-top:12px;">
                       <router-link class="button is-outlined" to="/create">
-                        {{ $t("msg.new.create") }}
+                        {{ t("msg.new.create") }}
                       </router-link>
                     </div>
                     <div class="control" style="margin-top:12px;">
                       <router-link class="button is-outlined" to="/restore">
-                        {{ $t("msg.restore.recover") }}
+                        {{ t("msg.restore.recover") }}
                       </router-link>
                     </div>
                   </div>
@@ -60,11 +60,12 @@
 
 
 import { ref } from 'vue';
-import PasswordField from "@/components/form/passwordField";
-import AccountField from "@/components/form/accountField";
-import useFormValidation from "@/modules/useFormValidation";
-import { useRouter } from '@/router';
-import { useStore } from '@/store';
+import { useI18n } from 'vue-i18n';
+import PasswordField from "./form/passwordField.vue";
+import AccountField from "./form/accountField.vue";
+import useFormValidation from "../modules/useFormValidation";
+import { useRouter } from '../router';
+import { useStore } from '../store';
 
 export default {
   name: "login",
@@ -74,6 +75,7 @@ export default {
   },
   setup() {
 
+    const { t } = useI18n();
     const store = useStore();
     const router = useRouter();
     const passwordField = ref('');
@@ -88,6 +90,7 @@ export default {
       accountField,
       isLoading,
       resetFormErrors,
+      t
     }
   },
   methods: {
@@ -162,17 +165,17 @@ export default {
 
             //the wallet listener started
             /*if(isListen && isListen.success){
-              this.$toast.success(this.$t("msg.login.listener_started"));
+              this.$toast.success(this.t("msg.login.listener_started"));
             }else{
-              this.$toast.error(this.$t("msg.login.error_listener_started"));
+              this.$toast.error(this.t("msg.login.error_listener_started"));
               this.store.commit('walletListenerService', false);
             }*/
 
             if(isListen && isListen.tor){
-              this.$toast.success(this.$t("msg.login.tor_started"));
+              this.$toast.success(this.t("msg.login.tor_started"));
               this.store.commit('torService', true);
             }else{
-              this.$toast.error(this.$t("msg.login.error_tor_started"));
+              this.$toast.error(this.t("msg.login.error_tor_started"));
               this.store.commit('torService', false);
             }
 

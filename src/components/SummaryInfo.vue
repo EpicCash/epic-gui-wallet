@@ -8,7 +8,7 @@
               <div class="level is-mobile">
                 <div class="level-item">
                   <div class="is-widget-label">
-                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.info.spendable") }}:</h3>
+                    <h3 class="subtitle is-spaced is-6">{{ t("msg.info.spendable") }}:</h3>
                     <h2 class="title is-4">
                       <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.spendable}}</span>
                     </h2>
@@ -24,7 +24,7 @@
               <div class="level is-mobile">
                 <div class="level-item">
                   <div class="is-widget-label">
-                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.unconfirmed") }}:</h3>
+                    <h3 class="subtitle is-spaced is-6">{{ t("msg.unconfirmed") }}:</h3>
                     <h2 class="title is-4">
                       <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.unconfirmed}}</span>
                     </h2>
@@ -40,7 +40,7 @@
               <div class="level is-mobile">
                 <div class="level-item">
                   <div class="is-widget-label">
-                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.info.unfinalization") }}:</h3>
+                    <h3 class="subtitle is-spaced is-6">{{ t("msg.info.unfinalization") }}:</h3>
                     <h2 class="title is-4">
                       <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.unfinalization}}</span>
                     </h2>
@@ -56,7 +56,7 @@
               <div class="level is-mobile">
                 <div class="level-item">
                   <div class="is-widget-label">
-                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.info.immature") }}:</h3>
+                    <h3 class="subtitle is-spaced is-6">{{ t("msg.info.immature") }}:</h3>
                     <h2 class="title is-4">
                       <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.immature}}</span>
                     </h2>
@@ -72,7 +72,7 @@
               <div class="level is-mobile">
                 <div class="level-item">
                   <div class="is-widget-label">
-                    <h3 class="subtitle is-spaced is-6">{{ $t("msg.locked") }}:</h3>
+                    <h3 class="subtitle is-spaced is-6">{{ t("msg.locked") }}:</h3>
                     <h2 class="title is-4">
                       <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{summary.locked}}</span>
                     </h2>
@@ -89,7 +89,8 @@
 <script>
 
   import { ref, computed } from 'vue';
-  import { useStore } from '@/store'
+  import { useI18n } from 'vue-i18n';
+  import { useStore } from '../store'
 
   export default {
     name: 'summary-info',
@@ -98,10 +99,11 @@
 
       const store = useStore();
       const summary = computed(() => store.state.summary)
-
+      const { t } = useI18n();
       return {
         store,
         summary,
+        t
       }
 
     },

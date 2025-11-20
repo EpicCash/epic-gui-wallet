@@ -6,7 +6,7 @@
 
       <div v-show="seeds.length > 0">
         <p class="has-text-weight-semibold has-text-warning">
-          {{ $t('msg.create.backupNote') }}
+          {{ t('msg.create.backupNote') }}
         </p>
         <p>&nbsp;</p>
         <div class="tags" style="justify-content: center;">
@@ -21,7 +21,7 @@
       <div v-show="seeds.length == 0">
 
         <div class="field">
-          <label class="label">{{ $t("msg.password") }}</label>
+          <label class="label">{{ t("msg.password") }}</label>
           <div class="control has-icons-right">
             <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
           </div>
@@ -30,7 +30,7 @@
         <div class="field" >
           <div class="control">
             <button class="button is-primary" @click="start">
-              {{ $t("msg.check.start") }}
+              {{ t("msg.check.start") }}
             </button>
           </div>
 
@@ -44,8 +44,9 @@
 <script>
 
 import { ref } from 'vue';
-import PasswordField from "@/components/form/passwordField";
-import useFormValidation from "@/modules/useFormValidation";
+import { useI18n } from 'vue-i18n';
+import PasswordField from "./form/passwordField.vue";
+import useFormValidation from "../modules/useFormValidation";
 
 export default {
   name: "seed",
@@ -59,6 +60,7 @@ export default {
   },
   setup() {
 
+    const { t } = useI18n();
     const passwordField = ref('');
     const { resetFormErrors } = useFormValidation();
     const seeds = ref([]);
@@ -69,7 +71,8 @@ export default {
       passwordField,
       resetFormErrors,
       seeds,
-      qrText
+      qrText,
+      t
     }
 
   },

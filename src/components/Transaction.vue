@@ -3,17 +3,17 @@
   <div class="card has-table has-mobile-sort-spaced">
     <header class="card-header">
       <p class="card-header-title">
-        <mdicon name="monitor-cellphone" size="18" />&nbsp;{{ $t("msg.txs.tx") }}
+        <mdicon name="monitor-cellphone" size="18" />&nbsp;{{ t("msg.txs.tx") }}
       </p>
-      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getTxs()"><span class="icon"><mdicon name="refresh" /></span><span>{{ $t("msg.refresh") }}</span></button>
+      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getTxs()"><span class="icon"><mdicon name="refresh" /></span><span>{{ t("msg.refresh") }}</span></button>
     </header>
     <div class="notification is-card-toolbar is-upper">
       <div class="level">
         <div class="level-left">
           <div class="level-item">
             <div class="buttons has-addons">
-              <button v-bind:class="{'is-active': currentFilter == 'received'}" @click="filter('received', 0, true)" class="button">{{ $t("msg.transaction.received") }}</button>
-              <button v-bind:class="{'is-active': currentFilter == 'send'}" @click="filter('send', 0, true)" class="button">{{ $t("msg.transaction.send") }}</button>
+              <button v-bind:class="{'is-active': currentFilter == 'received'}" @click="filter('received', 0, true)" class="button">{{ t("msg.transaction.received") }}</button>
+              <button v-bind:class="{'is-active': currentFilter == 'send'}" @click="filter('send', 0, true)" class="button">{{ t("msg.transaction.send") }}</button>
             </div>
           </div>
         </div>
@@ -23,7 +23,7 @@
               <div class="field has-addons">
                 <div class="control">
 
-                  <input class="input" type="text" :placeholder="$t('msg.placeholder_search')" v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
+                  <input class="input" type="text" :placeholder="t('msg.placeholder_search')" v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
                 </div>
                 <div class="control">
 
@@ -48,14 +48,14 @@
             <thead>
               <tr class="th">
                 <th>#</th>
-                <th style="min-width:100px;">{{ $t("msg.transaction.amount") }}</th>
-                <th>{{ $t("msg.transaction.receiver") }}</th>
+                <th style="min-width:100px;">{{ t("msg.transaction.amount") }}</th>
+                <th>{{ t("msg.transaction.receiver") }}</th>
 
-                <th style="min-width:90px;">{{ $t("msg.transaction.creation_date") }}</th>
-                <th>{{ $t("msg.transaction.transaction_id") }}</th>
+                <th style="min-width:90px;">{{ t("msg.transaction.creation_date") }}</th>
+                <th>{{ t("msg.transaction.transaction_id") }}</th>
 
 
-                <th style="min-width:140px;">{{ $t("msg.transaction.status") }}</th>
+                <th style="min-width:140px;">{{ t("msg.transaction.status") }}</th>
 
                 <th>&nbsp;</th>
               </tr>
@@ -88,14 +88,14 @@
 
                 <td>
 
-                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxSent'" class="tag is-danger is-normal">{{ $t("msg.sent_confirmed") }}</span>
-                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxReceived'" class="tag is-success is-normal">{{ $t("msg.received_confirmed") }}</span>
-                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && (tx.tx_type=='TxSent' || tx.tx_type=='TxSentCreated')" class="tag is-warning is-normal is-size-7">{{ $t("msg.sent_unconfirmed") }}</span>
-                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxSentMempool'" class="tag is-warning is-normal is-size-7">{{ $t("msg.received_mempool") }}</span>
+                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxSent'" class="tag is-danger is-normal">{{ t("msg.sent_confirmed") }}</span>
+                  <span style="width:100%;" v-if="tx.status=='confirmed' && tx.tx_type=='TxReceived'" class="tag is-success is-normal">{{ t("msg.received_confirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && (tx.tx_type=='TxSent' || tx.tx_type=='TxSentCreated')" class="tag is-warning is-normal is-size-7">{{ t("msg.sent_unconfirmed") }}</span>
+                  <span style="width:100%;white-space: break-spaces;height: auto;text-align: center;" v-if="tx.status=='unconfirmed' && tx.tx_type=='TxSentMempool'" class="tag is-warning is-normal is-size-7">{{ t("msg.received_mempool") }}</span>
 
 
 
-                  <span style="width:100%;" v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ $t("msg.txs.canceled") }}</span>
+                  <span style="width:100%;" v-if="tx.status=='cancelled'" class="tag is-warning is-normal">{{ t("msg.txs.canceled") }}</span>
 
 
                 </td>
@@ -134,37 +134,37 @@
                     <tbody>
                       <tr>
                         <td class="tx-details user-selectable">
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.id") }}:</span> {{tx.id}}<br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.slate_id") }}:</span> {{tx.tx_slate_id}}<br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.receiver") }}:</span> <span class="user-selectable" v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.public_addr}}</span><br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.creation_date") }}:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.confirmation_date") }}:</span> {{$filters.datetimeFormat(tx.confirmation_ts, locale)}}<br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_credited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.amount_debited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_debited/100000000}}</span><br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.fee") }}:</span> {{tx.fee/100000000}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.id") }}:</span> {{tx.id}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.slate_id") }}:</span> {{tx.tx_slate_id}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.receiver") }}:</span> <span class="user-selectable" v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.public_addr}}</span><br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.creation_date") }}:</span> {{$filters.datetimeFormat(tx.creation_ts, locale)}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.confirmation_date") }}:</span> {{$filters.datetimeFormat(tx.confirmation_ts, locale)}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.amount_credited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_credited/100000000}}</span><br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.amount_debited") }}:</span> <span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{tx.amount_debited/100000000}}</span><br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.fee") }}:</span> {{tx.fee/100000000}}<br/>
                           <template v-if="tx.messages && tx.messages.messages">
                             <p  v-for="message in tx.messages.messages" :key="message.id" >
-                              <span class="has-text-weight-bold">{{ $t("msg.transaction.message") }} {{message.id}}:</span> {{message.message}}<br/>
+                              <span class="has-text-weight-bold">{{ t("msg.transaction.message") }} {{message.id}}:</span> {{message.message}}<br/>
                             </p>
                           </template>
                         </td>
                         <td>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.status") }}:</span> {{tx.status}}<br/>
-                          <span class="has-text-weight-bold">{{ $t("msg.transaction.type") }}:</span> {{tx.tx_type}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.status") }}:</span> {{tx.status}}<br/>
+                          <span class="has-text-weight-bold">{{ t("msg.transaction.type") }}:</span> {{tx.tx_type}}<br/>
 
 
                             <template v-if="tx.payment_proof">
-                                <span v-if="tx.payment_proof" class="has-text-weight-bold">{{ $t("msg.transaction.payment_proof") }}:</span><br/>
-                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.receiver_address") }}:</span> <span :title="tx.payment_proof.receiver_address">{{ $filters.truncateMid(tx.payment_proof.receiver_address ? tx.payment_proof.receiver_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_address)" name="content-copy" size=16 /></span><br/>
-                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.receiver_signature") }}:</span> <span :title="tx.payment_proof.receiver_signature">{{ $filters.truncateMid(tx.payment_proof.receiver_signature ? tx.payment_proof.receiver_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_signature)" name="content-copy" size=16 /></span><br/>
-                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_address") }}:</span> <span :title="tx.payment_proof.sender_address">{{ $filters.truncateMid(tx.payment_proof.sender_address ? tx.payment_proof.sender_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_address)" name="content-copy" size=16 /></span><br/>
-                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_signature") }}:</span> <span :title="tx.payment_proof.sender_signature">{{ $filters.truncateMid(tx.payment_proof.sender_signature ? tx.payment_proof.sender_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_signature)" name="content-copy" size=16 /></span><br/>
-                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ $t("msg.transaction.sender_address_path") }}:</span> {{tx.payment_proof.sender_address_path}}<br/>
+                                <span v-if="tx.payment_proof" class="has-text-weight-bold">{{ t("msg.transaction.payment_proof") }}:</span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ t("msg.transaction.receiver_address") }}:</span> <span :title="tx.payment_proof.receiver_address">{{ $filters.truncateMid(tx.payment_proof.receiver_address ? tx.payment_proof.receiver_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_address)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ t("msg.transaction.receiver_signature") }}:</span> <span :title="tx.payment_proof.receiver_signature">{{ $filters.truncateMid(tx.payment_proof.receiver_signature ? tx.payment_proof.receiver_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.receiver_signature)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ t("msg.transaction.sender_address") }}:</span> <span :title="tx.payment_proof.sender_address">{{ $filters.truncateMid(tx.payment_proof.sender_address ? tx.payment_proof.sender_address: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_address)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ t("msg.transaction.sender_signature") }}:</span> <span :title="tx.payment_proof.sender_signature">{{ $filters.truncateMid(tx.payment_proof.sender_signature ? tx.payment_proof.sender_signature: '', 30) }}&nbsp;<mdicon @click="copy(tx.payment_proof.sender_signature)" name="content-copy" size=16 /></span><br/>
+                                &nbsp;&nbsp;&nbsp;<span class="has-text-weight-bold">{{ t("msg.transaction.sender_address_path") }}:</span> {{tx.payment_proof.sender_address_path}}<br/>
 
                           </template>
 
                             <template v-else>
-                              <span class="has-text-weight-bold">{{ $t("msg.transaction.payment_proof") }}: </span>-<br/>
+                              <span class="has-text-weight-bold">{{ t("msg.transaction.payment_proof") }}: </span>-<br/>
                             </template>
 
                         </td>
@@ -186,7 +186,7 @@
 
 
                       <span v-if="this.store.state.nodeStatus.sync_status == 'synced'" class="icon is-large"><mdicon name="circle-off-outline" size="48" /></span>
-                      <span v-else>{{ $t("msg.waiting_for_nodesync") }}</span>
+                      <span v-else>{{ t("msg.waiting_for_nodesync") }}</span>
 
                     </p>
 
@@ -224,7 +224,7 @@
           </div>
           <div class="level-right">
             <div class="level-item">
-              <small>{{ $t("msg.page_of", [current_page_index, pages_count]) }}</small>
+              <small>{{ t("msg.page_of", [current_page_index, pages_count]) }}</small>
 
             </div>
           </div>
@@ -239,7 +239,8 @@
 <script>
 
   import { ref, computed, onUnmounted } from 'vue';
-  import { useStore } from '@/store'
+  import { useI18n } from 'vue-i18n';
+  import { useStore } from '../store'
 
 
 
@@ -247,7 +248,7 @@
     name: 'transaction',
     setup(){
 
-
+      const { t } = useI18n();
       const store = useStore();
       const maxButtons = ref(6);
       const currentFilter = ref('');
@@ -283,7 +284,8 @@
         isRefresh,
         count_per_page,
         locale,
-        isLoading
+        isLoading,
+        t
       }
     },
     watch: {
@@ -317,7 +319,7 @@
 
     },
     async created(){
-      this.locale = await window.api.locale();
+     //this.locale = await window.api.locale();
 
 
 
@@ -325,7 +327,7 @@
     methods: {
       copy(text){
         window.clipboard.writeText(text);
-        this.$toast.show(this.$t('msg.copy_to_clipboard'), {duration:1000});
+        this.$toast.show(this.t('msg.copy_to_clipboard'), {duration:1000});
 
       },
       detail(tx){
@@ -464,7 +466,7 @@
         this.isLoading = false;
         if(res && res.result && res.result.Ok == null){
 
-          this.$toast.success(this.$t("msg.txs.cancelSuccess"));
+          this.$toast.success(this.t("msg.txs.cancelSuccess"));
           this.emitter.emit('app.update');
         }else if(res && res.error){
           this.$toast.error(res.error.message);

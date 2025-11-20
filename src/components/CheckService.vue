@@ -8,8 +8,16 @@
 
 <script>
 
+  import { inject } from 'vue'
+
   export default {
     name: 'checkService',
+    setup(){
+      const emitter = inject('emitter');
+      return {
+        emitter
+      }
+    },
     created(){
 
       this.emitter.on('checkSuccess', (msg) => {

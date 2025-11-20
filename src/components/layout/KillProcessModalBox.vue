@@ -7,7 +7,7 @@
       <header class="modal-card-head">
         <p class="modal-card-title">
 
-          {{ $t("msg.confirm_action") }}
+          {{ t("msg.confirm_action") }}
 
         </p>
 
@@ -18,14 +18,14 @@
             ID: {{process.pid}} / Process name: {{process.name}}
         </div>
         <p v-if="processList.length">&nbsp;</p>
-        {{ $t("msg.app.background_process") }}
+        {{ t("msg.app.background_process") }}
       </section>
       <footer class="modal-card-foot">
         <button class="button is-danger" @click="cancel">
-          {{ $t("msg.cancel") }}
+          {{ t("msg.cancel") }}
         </button>
         <button :class="{ 'button__loader_success': isLoading }" class="button is-success" @click="confirm">
-          <span>{{ $t("msg.close_all_process") }}</span>
+          <span>{{ t("msg.close_all_process") }}</span>
         </button>
       </footer>
     </div>
@@ -34,10 +34,15 @@
 
 <script>
 import {ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n';
+import { inject } from 'vue'
+
 window.killRunningEpicPids = null;
 export default {
   name: 'KillProcessModalBox',
   setup (props, { emit }) {
+    const emitter = inject('emitter');
+    const { t } = useI18n();
     const processList = ref([]);
     const isModalActive = ref(false);
     const isLoading = ref(false);
@@ -45,6 +50,8 @@ export default {
       isModalActive,
       processList,
       isLoading,
+      t,
+      emitter
     }
   },
   methods:{

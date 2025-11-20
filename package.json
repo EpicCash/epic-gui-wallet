@@ -5,47 +5,41 @@
   "description": "Epic Wallet, mind your Epic!",
   "author": "Johannes Hahn <mail@johanneshahn.online>, v1: xiaojay, simpleduck, aiwe",
   "license": "Apache-2.0",
-  "homepage": "./",
+  "main": ".vite/build/main.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:publish": "vue-cli-service electron:build --publish=always",
-    "electron:serve": "vue-cli-service electron:serve",
-    "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
   },
-  "main": "index.js",
   "dependencies": {
     "@mdi/js": "^6.7.96",
     "@meforma/vue-toaster": "^1.3.0",
-    "@noble/secp256k1": "^1.5.5",
+    "@noble/secp256k1": "^3.0.0",
     "app-root-dir": "^1.0.2",
-    "axios": "^0.25.0",
-    "bulma": "^0.9.3",
+    "axios": "^1.13.2",
+    "bulma": "^1.0.4",
     "bulma-checkbox": "^1.2.1",
     "bulma-radio": "^1.2.0",
     "bulma-responsive-tables": "^1.2.5",
     "bulma-switch": "^2.0.4",
     "bulma-switch-control": "^1.2.2",
     "bulma-upload-control": "^1.2.0",
-    "coingecko-api-v3": "^0.0.13",
-    "core-js": "^3.6.5",
-    "cross-spawn": "^7.0.3",
-    "crypto-browserify": "^3.12.0",
-    "electron-context-menu": "^3.3.0",
-    "electron-log": "^4.4.6",
-    "electron-osx-sign": "^0.6.0",
-    "electron-updater": "^6.1.1",
+    "coingecko-api-v3": "^0.0.31",
+    "core-js": "^3.47.0",
+    "cross-spawn": "^7.0.6",
+    "crypto-browserify": "^3.12.1",
+    "electron-log": "^5.4.3",
+    "electron-squirrel-startup": "^1.0.1",
     "find-process": "^1.4.7",
     "fs-extra": "^10.0.0",
     "is-port-reachable": "^4.0.0",
     "js-sha3": "^0.8.0",
     "jsstore": "^4.3.8",
     "mdi-vue": "^3.0.13",
-    "mitt": "^3.0.0",
-    "moment": "^2.29.1",
+    "mitt": "^3.0.1",
+    "moment": "^2.30.1",
     "numeral": "^2.0.6",
     "perfect-scrollbar": "^1.5.5",
     "promise.prototype.finally": "^3.1.3",
@@ -55,57 +49,30 @@
     "sass": "^1.49.9",
     "sass-loader": "^12.6.0",
     "spinkit": "^2.0.1",
-    "update-electron-app": "^2.0.1",
-    "url-join": "^4.0.1",
-    "urllib": "^2.38.0",
-    "vue": "^3.0.0",
+    "url-join": "^5.0.0",
+    "urllib": "^4.8.2",
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vue": "^3.5.24",
     "vue-chartjs": "^3.5.1",
-    "vue-i18n": "9.1.9",
-    "vue-router": "^4.0.13",
-    "vue3-video-play": "^1.3.1-beta.6",
-    "vuex": "^4.0.2"
+    "vue-i18n": "^11.1.12",
+    "vue-router": "^4.6.3",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.5.4",
-    "@electron-forge/publisher-github": "^6.0.0-beta.65",
-    "@vue/cli-plugin-babel": "~5.0.1",
-    "@vue/cli-plugin-eslint": "~5.0.1 ",
-    "@vue/cli-service": "~5.0.1",
-    "@vue/compiler-sfc": "^3.0.0",
-    "electron": "^17.0.0",
-    "electron-devtools-installer": "^3.1.0",
-    "electron-installer-dmg": "^4.0.0",
-    "electron-notarize": "^1.2.2",
-    "eslint-plugin-vue": "^7.0.0",
-    "file-loader": "^6.2.0",
-    "vue-cli-plugin-electron-builder": "^3.0.0-alpha.4"
+    "@electron-forge/cli": "^7.10.2",
+    "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-rpm": "^7.10.2",
+    "@electron-forge/maker-squirrel": "^7.10.2",
+    "@electron-forge/maker-zip": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@electron-forge/plugin-vite": "^7.10.2",
+    "@electron/fuses": "^1.8.0",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "electron": "39.2.3",
+    "electron-vite": "^4.0.1",
+    "vite": "^5.4.21"
   },
-  "overrides": {
-    "vue-cli-plugin-electron-builder": {
-      "electron-builder": "^23.0.6"
-    }
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {
-      "no-unused-vars": "off"
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/EpicCash/epic-gui-wallet.git"

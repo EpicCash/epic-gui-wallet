@@ -133,3 +133,4 @@ pnpm-debug.log*
 !/build/icon.icns
 /resources/app.json
 electron-builder.yml
+out/

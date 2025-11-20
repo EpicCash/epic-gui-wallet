@@ -13,7 +13,7 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div class="card-content">
-                    <h2 class="title" style="color: #d19944; text-transform: uppercase; text-align: center;">{{ $t("msg.setupwizard.setup_assistant") }}</h2>
+                    <h2 class="title" style="color: #d19944; text-transform: uppercase; text-align: center;">{{ t("msg.setupwizard.setup_assistant") }}</h2>
 
                     <div id="stepContainerWrap">
 
@@ -63,26 +63,26 @@
                     </div><!-- end stepContainerWrap -->
 
                     <div v-show="step==='step1'" >
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.account_information") }}</h2>
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ t("msg.setupwizard.account_information") }}</h2>
 
                         <div class="field">
-                          <label class="label">{{ $t("msg.setupwizard.your_name") }}<span class="required">*</span></label>
+                          <label class="label">{{ t("msg.setupwizard.your_name") }}<span class="required">*</span></label>
                           <TextField ref="textField" fieldname="name" />
-                          <p class="help">{{ $t("msg.setupwizard.name_only_internal") }}</p>
+                          <p class="help">{{ t("msg.setupwizard.name_only_internal") }}</p>
                         </div>
 
                         <div class="field">
-                          <label class="label">{{ $t("msg.setupwizard.keybase") }}</label>
+                          <label class="label">{{ t("msg.setupwizard.keybase") }}</label>
                           <div class="control">
                             <input class="input" type="keybase" required v-model="keybase" />
                             <p class="help">
-                               {{ $t("msg.setupwizard.enter_keybase") }}
+                               {{ t("msg.setupwizard.enter_keybase") }}
                              </p>
                           </div>
                         </div>
 
                         <div class="field">
-                          <label class="label">{{ $t("msg.lang.lang") }}</label>
+                          <label class="label">{{ t("msg.lang.lang") }}</label>
                           <div class="control">
                             <div class="select is-fullwidth">
                               <select v-model="localeSelected">
@@ -95,8 +95,8 @@
                         <p>&nbsp;</p>
                         <div class="buttons is-centered">
 
-                          <button v-if="fromRoute == 'navbar'" class="button is-primary" @click="backToDashbaord()"><mdicon name="arrow-left-bold-hexagon-outline" />{{ $t("msg.back") }}</button>
-                          <button class="button is-primary" @click="nextStep('step2')" >{{ $t("msg.setupwizard.next_step") }}&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
+                          <button v-if="fromRoute == 'navbar'" class="button is-primary" @click="backToDashbaord()"><mdicon name="arrow-left-bold-hexagon-outline" />{{ t("msg.back") }}</button>
+                          <button class="button is-primary" @click="nextStep('step2')" >{{ t("msg.setupwizard.next_step") }}&nbsp;<mdicon size=22 name="arrow-right-circle-outline" /></button>
 
                         </div>
 
@@ -106,11 +106,11 @@
                     <div v-show="step==='step2'">
 
                       <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">
-                        {{ $t("msg.setupwizard.network_node") }}
+                        {{ t("msg.setupwizard.network_node") }}
                       </h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          <span v-html="$t('msg.setupwizard.network_node_txt')" ></span>
+                          <span v-html="t('msg.setupwizard.network_node_txt')" ></span>
 
                         </div>
                       </article>
@@ -118,8 +118,8 @@
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ $t("msg.setupwizard.previous_step") }}</button>
-                          <button class="button is-primary" @click="nextStep('step3')" >{{ $t("msg.setupwizard.next_step") }}&nbsp;<mdicon name="arrow-right-circle-outline" /></button>
+                          <button class="button is-primary" @click="prevStep('step1')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ t("msg.setupwizard.previous_step") }}</button>
+                          <button class="button is-primary" @click="nextStep('step3')" >{{ t("msg.setupwizard.next_step") }}&nbsp;<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
 
                     </div><!-- end step 2 -->
@@ -127,46 +127,46 @@
 
                     <div v-show="step==='step3'">
 
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.receive_transactions") }}</h2>
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ t("msg.setupwizard.receive_transactions") }}</h2>
                       <article class="message is-info">
                         <div class="message-body">
-                          <span v-html="$t('msg.setupwizard.noninteractive_transactions')" ></span>
+                          <span v-html="t('msg.setupwizard.noninteractive_transactions')" ></span>
                         </div>
                       </article>
                       <div class="field">
-                        <label class="label">{{ $t("msg.setupwizard.epicbox_domain") }}</label>
+                        <label class="label">{{ t("msg.setupwizard.epicbox_domain") }}</label>
 
                         <TextField ref="epicboxDomain" fieldname="domain" />
-                        <p class="help">{{ $t("msg.setupwizard.epicbox_domain_hint") }}</p>
+                        <p class="help">{{ t("msg.setupwizard.epicbox_domain_hint") }}</p>
                       </div>
 
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ $t("msg.setupwizard.previous_step") }}</button>
-                        <button class="button is-primary" @click="nextStep('step4')" >&nbsp;{{ $t("msg.setupwizard.next_step") }}<mdicon name="arrow-right-circle-outline" /></button>
+                        <button class="button is-primary" @click="prevStep('step2')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ t("msg.setupwizard.previous_step") }}</button>
+                        <button class="button is-primary" @click="nextStep('step4')" >&nbsp;{{ t("msg.setupwizard.next_step") }}<mdicon name="arrow-right-circle-outline" /></button>
                       </div>
 
                     </div><!-- end step 3 -->
 
                     <div v-show="step==='step4'">
 
-                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ $t("msg.setupwizard.values_correct") }}</h2>
+                      <h2 class="title is-4" style="color: #d19944!important;margin-bottom: 24px;">{{ t("msg.setupwizard.values_correct") }}</h2>
                       <p>
-                        {{ $t("msg.setupwizard.name") }}: {{this.textField.defaultValue}}<br/>
-                        <span v-if="keybase">{{ $t("msg.setupwizard.keybase_account") }}: {{keybase}}<br/></span>
-                        {{ $t("msg.setupwizard.language") }}: {{localeSelected}}<br/>
-                        {{ $t("msg.setupwizard.network_node") }}: {{this.nodeserverField.nodeInternal ? 'internal' : this.nodeserverField.defaultValue}}<br/>
+                        {{ t("msg.setupwizard.name") }}: {{this.textField.defaultValue}}<br/>
+                        <span v-if="keybase">{{ t("msg.setupwizard.keybase_account") }}: {{keybase}}<br/></span>
+                        {{ t("msg.setupwizard.language") }}: {{localeSelected}}<br/>
+                        {{ t("msg.setupwizard.network_node") }}: {{this.nodeserverField.nodeInternal ? 'internal' : this.nodeserverField.defaultValue}}<br/>
 
-                        {{ $t("msg.setupwizard.epicbox_domain") }}: {{this.epicboxDomain.defaultValue ? this.epicboxDomain.defaultValue :  $t("msg.setupwizard.epicbox_off")}}<br/>
+                        {{ t("msg.setupwizard.epicbox_domain") }}: {{this.epicboxDomain.defaultValue ? this.epicboxDomain.defaultValue :  t("msg.setupwizard.epicbox_off")}}<br/>
 
 
                       </p>
                       <p>&nbsp;</p>
                       <p>&nbsp;</p>
                       <div class="buttons is-centered">
-                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ $t("msg.setupwizard.previous_step") }}</button>
-                        <button class="button is-primary" @click="save" >{{ $t("msg.setupwizard.save_and_finish") }}</button>
+                        <button class="button is-primary" @click="prevStep('step3')" ><mdicon name="arrow-left-circle-outline" />&nbsp;{{ t("msg.setupwizard.previous_step") }}</button>
+                        <button class="button is-primary" @click="save" >{{ t("msg.setupwizard.save_and_finish") }}</button>
                       </div>
 
 
@@ -185,14 +185,14 @@
 <script>
 
   import { ref, reactive, onUnmounted } from 'vue';
-  import NodeserverField from "@/components/form/nodeserverField";
-  import TextField from "@/components/form/textField";
-  import useFormValidation from "@/modules/useFormValidation";
-  import { useRouter } from '@/router';
+  import { useI18n } from 'vue-i18n';
+  import NodeserverField from "./form/nodeserverField.vue";
+  import TextField from "./form/textField.vue";
+  import useFormValidation from "../modules/useFormValidation";
+  import { useRouter } from '../router';
   import { useRoute } from 'vue-router';
-  import { useStore } from '@/store';
-  //import "vue3-video-play/dist/style.css";
-  //import { videoPlay } from "vue3-video-play";
+  import { useStore } from '../store';
+
 
   export default {
     name: "setup-wizard",
@@ -216,6 +216,7 @@
         },
     },
     setup(){
+      const { t } = useI18n();
       const store = useStore();
       const router = useRouter();
       const route = useRoute();
@@ -263,7 +264,8 @@
         moveback,
         fromRoute,
         domain,
-        epicboxDomain
+        epicboxDomain,
+        t
 
       }
     },
@@ -363,7 +365,7 @@
             if(inserted.length){
               user = inserted;
             }else{
-              this.$toast.error(this.$t("msg.setupwizard.db_fatal"));
+              this.$toast.error(this.t("msg.setupwizard.db_fatal"));
               return;
             }
 
@@ -395,7 +397,7 @@
 
 
         }catch(e){
-          this.$toast.error(this.$t("msg.setupwizard.errors_save", [e.message]));
+          this.$toast.error(this.t("msg.setupwizard.errors_save", [e.message]));
           return
         }
 

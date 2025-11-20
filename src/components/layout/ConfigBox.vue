@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { useStore } from '@/store'
+import { useStore } from '/store'
 import { computed, ref, watch } from 'vue'
 import CheckboxRadioPicker from '@/components/layout/CheckboxRadioPicker.vue'
 

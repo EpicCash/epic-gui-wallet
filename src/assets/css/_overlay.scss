@@ -1,17 +1,20 @@
+//@use "~bulma/bulma";
+@use "theme-light-dark";
+
 .ui-overlay {
   display: block;
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: $overlay-background-color;
+  background-color: theme-light-dark.$overlay-background-color;
   top: 0;
   z-index: 35;
 }
 
 .has-aside-hidden-layout {
   .ui-overlay {
-    height: calc(100vh - #{$navbar-height} - 1px);
-    top: calc(#{$navbar-height} + 1px);
+    height: calc(100vh - #{theme-light-dark.$navbar-height} - 1px);
+    top: calc(#{theme-light-dark.$navbar-height} + 1px);
   }
 }
 

@@ -1,23 +1,20 @@
+//@use "~bulma/bulma";
+@use "theme-light-dark";
+
 .modal-card {
-  width: $modal-card-width;
+  width: theme-light-dark.$modal-card-width;
 }
 
 .modal-card-head, .modal-card-foot {
-  border: $modal-border;
+  border: theme-light-dark.$modal-border;
 }
 
 .modal-card-body {
-  border-left: $modal-border;
-  border-right: $modal-border;
+  border-left: theme-light-dark.$modal-border;
+  border-right: theme-light-dark.$modal-border;
 }
 
 .modal-card-foot {
-  background-color: $modal-card-foot-background-color;
+  background-color: theme-light-dark.$modal-card-foot-background-color;
 }
 
-@include mobile {
-  .modal .modal-card {
-    width: $modal-card-width-mobile;
-    margin: 0 auto;
-  }
-}

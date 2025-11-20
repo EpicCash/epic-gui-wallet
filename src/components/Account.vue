@@ -5,12 +5,12 @@
       <div class="column is-half">
 
         <div class="field">
-          <label class="label">{{ $t("msg.account.your_name") }}<span class="required">*</span></label>
+          <label class="label">{{ t("msg.account.your_name") }}<span class="required">*</span></label>
           <TextField ref="textField" fieldname="name" />
         </div>
 
         <div class="field">
-          <label class="label">{{ $t("msg.account.keybase") }}</label>
+          <label class="label">{{ t("msg.account.keybase") }}</label>
           <div class="control">
             <input class="input" type="keybase" required v-model="keybase" />
           </div>
@@ -18,7 +18,7 @@
 
         <div class="field">
           <div class="control">
-            <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
+            <button class="button is-primary" @click="save" >{{ t("msg.save") }}</button>
           </div>
         </div>
 
@@ -31,10 +31,10 @@
 <script>
 
 import { ref, reactive } from 'vue';
-import { useStore } from '@/store';
-
-import useFormValidation from "@/modules/useFormValidation";
-import TextField from "@/components/form/textField";
+import { useStore } from '../store';
+import { useI18n } from 'vue-i18n';
+import useFormValidation from "../modules/useFormValidation";
+import TextField from "./form/textField.vue";
 
   export default {
     name: "settings",
@@ -44,7 +44,7 @@ import TextField from "@/components/form/textField";
     setup(){
 
       const { resetFormErrors } = useFormValidation();
-
+      const { t } = useI18n();
       const store = useStore();
       const textField = ref('');
       const keybase = ref('');
@@ -53,7 +53,8 @@ import TextField from "@/components/form/textField";
         store,
         textField,
         resetFormErrors,
-        keybase
+        keybase,
+        t
       }
     },
 
@@ -77,9 +78,9 @@ import TextField from "@/components/form/textField";
 
           let updated = await this.$userService.updateUserByAccount(this.configService.configAccount, {name:this.textField.defaultValue, keybase: this.keybase});
           if(updated){
-            this.$toast.success(this.$t("msg.account.settings_saved"));
+            this.$toast.success(this.t("msg.account.settings_saved"));
           }else{
-            this.$toast.error(this.$t("msg.account.error_save"));
+            this.$toast.error(this.t("msg.account.error_save"));
           }
 
 

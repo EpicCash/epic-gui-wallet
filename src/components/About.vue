@@ -31,8 +31,6 @@
 
 <script>
 
-  import { useStore } from '@/store';
-
   import { ref,onMounted } from 'vue';
 
   export default {

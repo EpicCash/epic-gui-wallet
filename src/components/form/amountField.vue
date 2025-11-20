@@ -4,7 +4,7 @@
       <input
         class="input"
         type="amount"
-        :placeholder="$t('msg.httpSend.sendAmount')"
+        :placeholder="t('msg.httpSend.sendAmount')"
         required
         autocomplete="off"
         v-model="input"
@@ -13,11 +13,11 @@
     </div>
     <div class="control">
       <a style="line-height:40px;padding-left:12px;text-decoration: underline;" class="is-flex is-vcentered" @click="sendAll">
-      {{$t("msg.transaction.sendall")}}
+      {{t("msg.transaction.sendall")}}
       </a>
     </div>
   </div>
-  <div v-if="fee > 0">{{$t("msg.transaction.transaction_fee")}}: {{fee}} EPIC</div>
+  <div v-if="fee > 0">{{t("msg.transaction.transaction_fee")}}: {{fee}} EPIC</div>
   <div style="color:red;" v-if="errors.amount">
      {{ errors.amount }}
   </div>
@@ -25,7 +25,8 @@
 
 <script>
   import { ref, computed } from "vue";
-  import useFormValidation from "@/modules/useFormValidation";
+  import { useI18n } from 'vue-i18n';
+  import useFormValidation from "../../modules/useFormValidation";
 
   export default {
     setup() {
@@ -34,7 +35,7 @@
       let fee = ref(0);
 
       const { validateAmountField, errors } = useFormValidation();
-
+      const { t } = useI18n();
       const validInput = (configService) => {
 
         defaultValue.value = input.value == '' ? 0 : input.value.trim();
@@ -42,7 +43,7 @@
         return validateAmountField("amount", defaultValue.value, configService);
       };
 
-      return { input, errors, defaultValue, validInput, fee };
+      return { input, errors, defaultValue, validInput, fee, t };
     },
 
     methods: {

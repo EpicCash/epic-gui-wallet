@@ -30,14 +30,15 @@
 <script>
 
   import mixin from './mixin.js';
-  import { useI18n } from 'vue-i18n/index';
+  import { useI18n } from 'vue-i18n';
   import { ref, onUnmounted } from 'vue';
-  import { useStore } from '@/store';
-  import { useRouter } from '@/router';
-  import AsideRight from '@/components/layout/AsideRight.vue'
-  import ModalNodeBox from '@/components/layout/NodesyncedModalBox.vue'
-  import ModalFirstsyncBox from '@/components/layout/FirstsyncModalBox.vue'
-  import ModalKillBox from '@/components/layout/KillProcessModalBox.vue'
+  import { useStore } from './store';
+  import { useRouter } from './router';
+  import AsideRight from './components/layout/AsideRight.vue'
+  import ModalNodeBox from './components/layout/NodesyncedModalBox.vue'
+  import ModalFirstsyncBox from './components/layout/FirstsyncModalBox.vue'
+  import ModalKillBox from './components/layout/KillProcessModalBox.vue'
+  import { inject } from 'vue'
 
   window.nodeSynced = null;
 
@@ -54,6 +55,8 @@
 
     setup() {
 
+      const emitter = inject('emitter');
+      const configService = inject('configService');
       const { locale, t } = useI18n();
       const loggedIn = ref(false);
       const store = useStore();
@@ -85,13 +88,15 @@
         isNodeModalActive,
         isFirstscanModalActive,
         scanoutput,
-        t
+        t,
+        emitter,
+        configService
       }
     },
 
 
     async created() {
-
+      
       this.locale = await window.api.locale();
 
       window.nodeChildProcess.on('firstscan-stdout', (payload) => {
@@ -267,9 +272,9 @@
 
 
       //App main window min size
-      window.api.resize(1024, 768);
+    //  window.api.resize(1024, 768);
 
-
+      
       if(this.configService.appHasAccounts()){
         //upgrade wallet 3.0 paths to 4.0 paths
         if(await !this.configService.checkAccountsFolderStructure()){

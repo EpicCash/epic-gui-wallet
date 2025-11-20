@@ -11,12 +11,12 @@
 
             <div class="control">
                 <input :disabled="!nodeInternal" @change="changeNodeBackgroundSetting" class="switch is-success" id="walletListenSwitch" type="checkbox" v-model="node_background">
-                <label for="walletListenSwitch">{{ $t("msg.settings.node_background") }}</label>
-                <p class="help">{{ $t("msg.settings.node_background_hint") }}</p>
+                <label for="walletListenSwitch">{{ t("msg.settings.node_background") }}</label>
+                <p class="help">{{ t("msg.settings.node_background_hint") }}</p>
             </div>
           </div>
           <div class="field">
-            <label class="label">{{ $t("msg.lang.lang") }}</label>
+            <label class="label">{{ t("msg.lang.lang") }}</label>
             <div class="control">
               <div class="select is-fullwidth">
                 <select v-model="localeSelected">
@@ -27,7 +27,7 @@
           </div>
           <div class="field"></div>
           <div class="field">
-            <label class="label">{{ $t("msg.settings.epicbox_domain") }}</label>
+            <label class="label">{{ t("msg.settings.epicbox_domain") }}</label>
             <div class="control">
 
                 <input
@@ -35,23 +35,23 @@
                   type="epicbox"
                   required
                   v-model="epicboxDomain" />
-              <p class="help">{{ $t("msg.settings.epicbox_domain_hint") }}</p>
+              <p class="help">{{ t("msg.settings.epicbox_domain_hint") }}</p>
             </div>
           </div>
 
           <div class="field">
-            <label class="label">{{ $t("msg.settings.wallet_listener") }}</label>
+            <label class="label">{{ t("msg.settings.wallet_listener") }}</label>
             <div class="control">
                 <input class="switch is-success" id="nodeBackgroundSync" type="checkbox" v-model="walletlisten_on_startup">
-                <label for="nodeBackgroundSync">{{ $t("msg.settings.auto_start") }}</label>
+                <label for="nodeBackgroundSync">{{ t("msg.settings.auto_start") }}</label>
             </div>
           </div>
           <div class="field">
 
             <div class="control">
                 <input :disabled="(nodeInternal && !node_background)" class="switch is-success" id="walletListenEpicbox" type="checkbox" v-model="epicbox_background">
-                <label for="walletListenEpicbox">{{ $t("msg.settings.epicbox_background") }}</label>
-                <p class="help">{{ $t("msg.settings.epicbox_background_hint") }}</p>
+                <label for="walletListenEpicbox">{{ t("msg.settings.epicbox_background") }}</label>
+                <p class="help">{{ t("msg.settings.epicbox_background_hint") }}</p>
             </div>
           </div>
 
@@ -60,7 +60,7 @@
           <div class="field">
             <div class="control">
               <input class="switch is-success" id="advancedSettings" type="checkbox" @click="toggleAdvancedSettings" v-model="advancedSettings" >
-              <label for="advancedSettings">{{ $t("msg.advanced_settings") }}</label>
+              <label for="advancedSettings">{{ t("msg.advanced_settings") }}</label>
 
 
               </div>
@@ -72,24 +72,13 @@
                <div class="content">
 
                   <div class="field">
-                    <label class="label">{{ $t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedNgrokSettings" >
+                    <label class="label">{{ t("msg.settings.authtoken") }}<a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedNgrokSettings" >
                       <mdicon size="18" v-if="!advancedNgrokSettings" name="menu-right" />
                       <mdicon size="18" v-else name="menu-down" />
-                      {{ $t("msg.settings.howto") }}
+                      {{ t("msg.settings.howto") }}
                     </a></label>
 
-                    <div class="card" v-bind:class="{'is-hidden':!advancedNgrokSettings}" >
-                      <div class="card-content">
-                        <div class="content">
-                          <div class="field">
-                             <p>{{ $t("msg.settings.ngrok_account_hint") }}</p>
-                             <div class="control">
-                               <videoPlay width="100%" height="auto" v-bind="playerOptions" @play="onPlay" ></videoPlay>
-                             </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+
                     <div class="control">
                       <input
                         class="input"
@@ -97,7 +86,7 @@
                         required
                         v-model="ngrok" />
                         <p class="help">
-                          {{ $t("msg.settings.authtoken_hint") }}
+                          {{ t("msg.settings.authtoken_hint") }}
                         </p>
                     </div>
 
@@ -106,9 +95,9 @@
                   <div class="field">
                     <div class="control">
                         <input class="switch is-success" id="ngrokSwitch" type="checkbox" v-model="ngrok_force_start">
-                        <label for="ngrokSwitch">{{ $t("msg.settings.ngrok_force_start") }}</label>
+                        <label for="ngrokSwitch">{{ t("msg.settings.ngrok_force_start") }}</label>
                         <p class="help">
-                          {{ $t("msg.settings.ngrok_hint") }}
+                          {{ t("msg.settings.ngrok_hint") }}
                         </p>
                     </div>
                   </div>
@@ -123,7 +112,7 @@
           <div class="field">
             <div class="control">
               <p>&nbsp;</p>
-              <button class="button is-primary" @click="save" >{{ $t("msg.save") }}</button>
+              <button class="button is-primary" @click="save" >{{ t("msg.save") }}</button>
             </div>
           </div>
 
@@ -137,17 +126,17 @@
 <script>
 
 import { ref, reactive, onUnmounted } from 'vue';
-import { useStore } from '@/store';
-import NodeserverField from "@/components/form/nodeserverField";
-import useFormValidation from "@/modules/useFormValidation";
-import "vue3-video-play/dist/style.css";
-import { videoPlay } from "vue3-video-play";
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
+import NodeserverField from "./form/nodeserverField.vue";
+import useFormValidation from "../modules/useFormValidation";
+
+
 
   export default {
     name: "settings",
     components: {
       NodeserverField,
-      videoPlay,
     },
     watch: {
         'ngrok': function (newVal) {
@@ -165,6 +154,7 @@ import { videoPlay } from "vue3-video-play";
     },
     setup(){
 
+      const { t } = useI18n();
       const { resetFormErrors } = useFormValidation();
       const nodeserverField = ref('');
       const store = useStore();
@@ -180,18 +170,6 @@ import { videoPlay } from "vue3-video-play";
       const advancedSettings = ref(false);
       const advancedNgrokSettings = ref(false);
       const nodeInternal = ref(false);
-      const playerOptions = reactive({
-          // videojs options
-          autoPlay: true,
-          loop: true,
-          src: "https://github.com/EpicCash/epic-gui-wallet/blob/4.0.0-alpha/src/assets/ngrok_authtoken_1024.mov?raw=true",
-          control: false,
-
-      });
-
-      //dont remove or videoplay throws errors
-      const onPlay = (ev) => {};
-
 
 
       return{
@@ -211,7 +189,8 @@ import { videoPlay } from "vue3-video-play";
         advancedSettings,
         advancedNgrokSettings,
         onPlay,
-        nodeInternal
+        nodeInternal,
+        t
       }
     },
     async created() {
@@ -300,7 +279,7 @@ import { videoPlay } from "vue3-video-play";
           /*todo simple node restart user update wallet restart here*/
           if(updated){
             this.store.commit('nodeType', this.nodeserverField.select);
-            this.$toast.success(this.$t("msg.settings.settings_saved"));
+            this.$toast.success(this.t("msg.settings.settings_saved"));
             this.emitter.emit('app.nodeStart');
             if(this.ngrok != '' || this.ngrok_force_start){
               this.emitter.emit('app.ngrokStart');
@@ -311,7 +290,7 @@ import { videoPlay } from "vue3-video-play";
             this.emitter.emit('app.selectLocale', this.localeSelected);
 
           }else{
-            this.$toast.error(this.$t("msg.settings.error_save"));
+            this.$toast.error(this.t("msg.settings.error_save"));
           }
 
 

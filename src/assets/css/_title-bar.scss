@@ -1,18 +1,20 @@
+@use "theme-light-dark";
+
 section.section.is-title-bar {
-  padding: $default-padding;
-  border-bottom: $light-border;
+  padding: theme-light-dark.$default-padding;
+  border-bottom: theme-light-dark.$light-border;
 
   ul {
     li {
       display: inline-block;
-      padding: 0 0 0 $default-padding * .5;
-      font-size: $default-padding;
-      color: $title-bar-color;
+      padding: 0 0 0 theme-light-dark.$default-padding * .5;
+      font-size: theme-light-dark.$default-padding;
+      color: theme-light-dark.$title-bar-color;
 
       &:after {
         display: inline-block;
         content: '/';
-        padding-left: $default-padding * .5;
+        padding-left: theme-light-dark.$default-padding * .5;
       }
 
       &:first-child {
@@ -22,7 +24,7 @@ section.section.is-title-bar {
       &:last-child {
         padding-right: 0;
         font-weight: bold;
-        color: $title-bar-active-color;
+        color: theme-light-dark.$title-bar-active-color;
 
         &:after {
           display: none;

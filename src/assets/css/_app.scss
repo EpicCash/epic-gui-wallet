@@ -1,3 +1,6 @@
+@use "mixins";
+@use "theme-light-dark";
+
 html {
-  @include scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
+  @include mixins.scrollbars(theme-light-dark.$app-scrollbar-track, theme-light-dark.$app-scrollbar-thumb, theme-light-dark.$app-scrollbar-hover);
 }

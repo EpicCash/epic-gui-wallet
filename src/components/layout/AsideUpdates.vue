@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { useStore } from '@/store'
+import { useStore } from '/store'
 import { computed, watch } from 'vue'
 import AsideUpdatesItem from '@/components/layout/AsideUpdatesItem.vue'
 

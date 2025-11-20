@@ -22,13 +22,13 @@
               </div>
               <div class="level-item is-hero-content-item">
                 <div>
-                  <h1 class="title is-spaced">{{ $t('msg.headerbar.howdy') }} <b>{{ userName }}</b></h1>
+                  <h1 class="title is-spaced">{{ t('msg.headerbar.howdy') }} <b>{{ userName }}</b></h1>
                   <h3 class="subtitle">
                     <span class="is-clickable" @click="hideValues">
                       <mdicon size=20 v-if="!store.state.hideValues" name="eye-outline" />
                       <mdicon size=20 v-else name="eye-off-outline" />
                     </span>
-                    {{ $t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{ $filters.currencyFormat(store.state.summary.total, locale) }} EPIC</span>&nbsp;<span v-bind:class="{'is-hidden': store.state.hideValues }" class="is-size-7">&#x2248; ${{ $filters.currencyFormat(usdPrice, locale) }}</span>
+                    {{ t("msg.info.total") }}: <span v-bind:class="{'amount-hidden': store.state.hideValues }" style="color: #d19944;">{{ $filters.currencyFormat(store.state.summary.total, locale) }} EPIC</span>&nbsp;<span v-bind:class="{'is-hidden': store.state.hideValues }" class="is-size-7">&#x2248; ${{ $filters.currencyFormat(usdPrice, locale) }}</span>
 
                   </h3>
 
@@ -45,18 +45,18 @@
                     <span class="externalnode">
                     <mdicon class="show-pointer" v-if="store.state.nodeType == 'internal' && !nodeRestarting" size=20 name="restart" @click.prevent="restartNode" />
                     <mdicon v-if="store.state.nodeType == 'internal' && nodeRestarting" size=20 />
-                    <span v-if="!this.configService.config.nodesynced"><mdicon size=18 name="server-network" />{{ $t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
-                    <span v-if="this.configService.config.nodesynced"><mdicon size=18 name="server-network" /> {{ $t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
+                    <span v-if="!this.configService.config.nodesynced"><mdicon size=18 name="server-network" />{{ t('msg.headerbar.node') }} ({{this.nodeFallBack}})</span>
+                    <span v-if="this.configService.config.nodesynced"><mdicon size=18 name="server-network" /> {{ t('msg.headerbar.node') }} ({{store.state.nodeType}})</span>
                     </span>
                   </h3>
 
-                  <div v-if="!this.configService.config.nodesynced">{{ $t('msg.headerbar.node_sync_status') }}</div>
-                  <div>{{ $t('msg.headerbar.version') }}: {{store.state.nodeStatus.user_agent}}</div>
-                  <div>{{ $t('msg.headerbar.peers') }}: {{store.state.nodeStatus.connections}}</div>
-                  <div>{{ $t('msg.headerbar.status') }}: {{store.state.nodeStatus.sync_status}}</div>
+                  <div v-if="!this.configService.config.nodesynced">{{ t('msg.headerbar.node_sync_status') }}</div>
+                  <div>{{ t('msg.headerbar.version') }}: {{store.state.nodeStatus.user_agent}}</div>
+                  <div>{{ t('msg.headerbar.peers') }}: {{store.state.nodeStatus.connections}}</div>
+                  <div>{{ t('msg.headerbar.status') }}: {{store.state.nodeStatus.sync_status}}</div>
 
-                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">{{ $t('msg.headerbar.progress') }}: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
-                    <div v-else >{{ $t('msg.headerbar.block_height') }}: {{height}}</div>
+                    <div v-if="store.state.nodeStatus.sync_status != 'synced'">{{ t('msg.headerbar.progress') }}: {{currentHeight}}&nbsp;/&nbsp;{{highestHeight}} ({{loaded}}%)</div>
+                    <div v-else >{{ t('msg.headerbar.block_height') }}: {{height}}</div>
                   <div>
                     <progress v-if="store.state.nodeStatus.sync_status != 'synced'" style="margin-top:5px;" class="progress is-success is-small" :value="currentHeight" :max="highestHeight">0%</progress>
                     <progress v-else style="margin-top:5px;" class="progress is-success is-small" :value="100" :max="100"></progress>
@@ -77,7 +77,8 @@
 
 
 import { computed, ref } from 'vue';
-import { useStore } from '@/store';
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
 import { useRoute } from 'vue-router';
 
 export default {
@@ -96,6 +97,7 @@ export default {
   },
   setup() {
 
+    const { t } = useI18n();
     const store = useStore();
     const route = useRoute();
     const userName = computed(() => store.state.user.name)
@@ -183,11 +185,12 @@ export default {
         usdPrice,
         locale,
         nodeFallBack,
-        nodeRestarting
+        nodeRestarting,
+        t
     }
   },
   async created(){
-    this.locale = await window.api.locale();
+    //this.locale = await window.api.locale();
     this.nodeFallBack = this.configService.getNodeFallBack();
 
   },

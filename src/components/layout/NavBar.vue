@@ -33,8 +33,8 @@
       class="navbar-menu fadeIn animated faster"
       :class="{'is-active':isMenuNavBarActive, 'no-negative-margin-right':isLayoutBoxed}"
     >
-    <div class="navbar-item " v-if="store.state.walletListenerService"><span class="dotGreen mr-1"></span>{{$t('msg.app.walletonline')}}</div>
-            <div class="navbar-item" v-else><span class="dotRed mr-1"></span>{{$t('msg.app.walletoffline')}}</div>
+    <div class="navbar-item " v-if="store.state.walletListenerService"><span class="dotGreen mr-1"></span>{{t('msg.app.walletonline')}}</div>
+            <div class="navbar-item" v-else><span class="dotRed mr-1"></span>{{t('msg.app.walletoffline')}}</div>
  
       <div class="navbar-end">
 
@@ -59,36 +59,36 @@
 
               <router-link class="navbar-item" to="/account">
                 <span class="icon"><mdicon name="account" /></span>
-                <span>{{ $t("msg.menu.account") }} ({{accountName}})</span>
+                <span>{{ t("msg.menu.account") }} ({{accountName}})</span>
               </router-link>
               <router-link class="navbar-item" to="/settings">
                 <span class="icon"><mdicon name="settings" /></span>
-                <span>{{ $t("msg.menu.settings") }}</span>
+                <span>{{ t("msg.menu.settings") }}</span>
               </router-link>
               <router-link class="navbar-item" to="/recheckBalance">
                 <span class="icon"><mdicon name="sync" /></span>
-                <span>{{ $t("msg.menu.recheck") }}</span>
+                <span>{{ t("msg.menu.recheck") }}</span>
               </router-link>
               <router-link class="navbar-item" to="/mnemonic">
                 <span class="icon"><mdicon name="spellcheck" /></span>
-                <span>{{ $t("msg.menu.mnemonic") }}</span>
+                <span>{{ t("msg.menu.mnemonic") }}</span>
               </router-link>
               <router-link class="navbar-item" :to="{name:'setupwizard', params:{from:'navbar'}}" >
                 <span class="icon"><mdicon name="wizard-hat" /></span>
-                <span>{{ $t("msg.menu.run_setup") }}</span>
+                <span>{{ t("msg.menu.run_setup") }}</span>
               </router-link>
 
               <a  @click="openepichidden" class="navbar-item">
                 <span class="button__text">
                   <span class="icon"><mdicon name="folder-question" /></span>
-                  <span>{{ $t("msg.menu.openepichidden") }}</span>
+                  <span>{{ t("msg.menu.openepichidden") }}</span>
                 </span>
               </a>
               <hr class="navbar-divider">
               <a :class="{ 'button__loader': isLoading }" @click="logout" class="navbar-item">
                 <span class="button__text">
                   <span class="icon"><mdicon name="logout" /></span>
-                  <span>{{ $t("msg.menu.logout") }}</span>
+                  <span>{{ t("msg.menu.logout") }}</span>
                 </span>
               </a>
           </div>
@@ -102,7 +102,7 @@
         :class="{'is-active':isAsideRightActive}"
       >
         <span :class="{'has-update-mark':hasUpdates}" class="icon"><mdicon :class="{'animated':hasUpdates}" class="icon faa-ring " name="bell" /></span>
-        <span>{{ $t("msg.menu.updates") }}</span>
+        <span>{{ t("msg.menu.updates") }}</span>
       </a>
 
     </div>
@@ -111,9 +111,10 @@
 
 <script>
 import { computed, ref } from 'vue';
-import { useStore } from '@/store';
-import { useRouter } from '@/router';
-import NavBarMenu from '@/components/layout/NavBarMenu.vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../../store';
+import { useRouter } from '../../router';
+import NavBarMenu from './NavBarMenu.vue';
 
 export default {
   name: 'NavBar',
@@ -122,6 +123,7 @@ export default {
   },
 
   setup (props, { emit }) {
+    const { t } = useI18n();
     const isMenuNavBarActive = ref(false)
     const isExpanded = ref(true);
     const menuNavBarToggleIcon = computed(() => isMenuNavBarActive.value ? 'close' : 'dots-vertical')
@@ -202,6 +204,7 @@ export default {
       menuNavBarToggle,
       updatesToggle,
       isLoading,
+      t
       
     }
   },
@@ -223,29 +226,4 @@ export default {
   }
 }
 </script>
-<styles>
-  .dotred {
-        height: 14px;
-        width: 14px;
-        background-color: #d9534f;
-        border-radius: 50%;
-        display: inline-block;
-        vertical-align:middle;
-      }
-      .dotgreen {
-        height: 14px;
-        width: 14px;
-        background-color: #5cb85c;
-        border-radius: 50%;
-        display: inline-block;
-        vertical-align:middle;
-      }
-      .dotyellow {
-        height: 14px;
-        width: 14px;
-        background-color: #ca9f5b;
-        border-radius: 50%;
-        display: inline-block;
-        vertical-align:middle;
-      }
-</styles>
+

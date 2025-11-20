@@ -9,7 +9,7 @@
               <span class="icon">
                 <mdicon name="cloud-upload" />
               </span>
-              &nbsp;<span>{{ $t("msg.receive.dragdrop") }}</span>
+              &nbsp;<span>{{ t("msg.receive.dragdrop") }}</span>
             </p><!---->
           </header>
           <div class="card-content">
@@ -26,7 +26,7 @@
                             <mdicon name="upload" size="48" />
                           </span>
                         </p>
-                        <p>{{ $t("msg.receive.dropMsg") }}</p>
+                        <p>{{ t("msg.receive.dropMsg") }}</p>
                       </div>
                     </section>
                   </div>
@@ -39,7 +39,7 @@
             <div v-show="isSent">
 
               <div class="notification is-primary" >
-                {{ $t("msg.receive.success") }}
+                {{ t("msg.receive.success") }}
               </div>
 
             </div>
@@ -58,7 +58,8 @@ const fs = window.nodeFs;
 const path = window.nodePath;
 
 import { ref } from 'vue';
-import { useStore } from '@/store';
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
 
 export default {
   name: "receive",
@@ -68,12 +69,13 @@ export default {
     const store = useStore();
     const isDragOver =ref(false);
     const isSent =ref(false);
-
+    const { t } = useI18n();
 
     return {
       store,
       isDragOver,
-      isSent
+      isSent,
+      t
 
     }
 
@@ -108,7 +110,7 @@ export default {
               "text": e,
               "icon": "information"
             });
-            this.$toast.error(this.$t('msg.receive.error_read'));
+            this.$toast.error(this.t('msg.receive.error_read'));
             return;
           }
 
@@ -119,12 +121,12 @@ export default {
             "text": e,
             "icon": "information"
           });
-          this.$toast.error(this.$t('msg.receive.WrongFileType'));
+          this.$toast.error(this.t('msg.receive.WrongFileType'));
           return
         }
 
 
-        let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), 'finalize_' + fn.name);
+        let fn_output = await window.api.showSaveDialog(this.t('msg.save'), this.t('msg.fileSend.saveMsg'), 'finalize_' + fn.name);
 
         if(fn_output){
 
@@ -153,15 +155,15 @@ export default {
 
                 }
 
-                this.$toast.error(this.$t('msg.receive.CreateFailed'));
+                this.$toast.error(this.t('msg.receive.CreateFailed'));
               })
         }else{
 
-          this.$toast.error(this.$t('msg.receive.NoSavePlace'));
+          this.$toast.error(this.t('msg.receive.NoSavePlace'));
         }
       }
       else{
-        this.$toast.error(this.$t('msg.receive.WrongFileType'));
+        this.$toast.error(this.t('msg.receive.WrongFileType'));
 
       }
     },

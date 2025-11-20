@@ -1,4 +1,7 @@
-@charset "utf-8";
+@use "theme-light-dark";
+@use "sass:color";
+$epicCashGold: #d19944;
+
 //styles will go here
 ////////////////////////////////////////////////
 // SUPERHERO
@@ -17,13 +20,13 @@ $red: #d9534f;
 
 $primary: $orange !default;
 
-$dark: darken($grey-darker, 3);
+$dark: color.adjust($grey-darker, $lightness: 3%);
 
 $title-color: $primary;
 $title-weight: 400;
 $subtitle-strong-color: $grey-lighter;
-$subtitle-color: darken($grey-lighter, 10);
-$subtitle-strong-color: darken($grey-lighter, 10);
+$subtitle-color: color.adjust($grey-lighter, $lightness: 10%);
+$subtitle-strong-color: color.adjust($grey-lighter, $lightness: 10%);
 
 $background: $grey-dark;
 $body-background-color: $grey;
@@ -34,16 +37,16 @@ $border: $grey;
 $family-sans-serif: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 $text: $grey-lighter;
-$text-strong: darken($grey-lighter, 10);
+$text-strong: color.adjust($grey-lighter,$lightness: 10%);
 $text-light: $grey-light;
 
 $box-background-color: $background;
 
 $card-shadow: none;
-$card-background-color: darken($body-background-color, 1);
+$card-background-color: color.adjust($body-background-color,$lightness: 1%);
 $card-header-box-shadow: none;
-$card-header-background-color: darken($body-background-color, 3);
-$card-footer-background-color: darken($body-background-color, 3);
+$card-header-background-color: color.adjust($body-background-color,$lightness: 3%);
+$card-footer-background-color: color.adjust($body-background-color,$lightness: 3%);
 
 $link: $grey-light;
 $link-hover: $grey-lighter;
@@ -71,7 +74,7 @@ $table-background-color: $grey-dark;
 $table-cell-border: 1px solid $grey;
 $table-row-hover-background-color: $grey-darker;
 $table-striped-row-even-background-color: $grey-darker;
-$table-striped-row-even-hover-background-color: lighten($grey-darker, 4);
+$table-striped-row-even-hover-background-color: color.adjust($grey-darker,$lightness: 4%);
 
 $navbar-background-color: $background;
 $navbar-item-color: $text;
@@ -104,9 +107,7 @@ $progress-bar-background-color: $grey-dark;
 
 $panel-heading-background-color: $grey-dark;
 
-/*@import "~bulmaswatch/superhero/_variables.scss";*/
-@import '~bulma/bulma.sass';
-@import "~bulmaswatch/superhero/_overrides.scss";
+
 /* Define an animation behavior */
 @keyframes spinner {
   to { transform: rotate(360deg); }

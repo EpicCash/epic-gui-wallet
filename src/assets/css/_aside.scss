@@ -1,3 +1,9 @@
+//@use "~bulma/bulma";
+@use "mixins";
+@use "sass:color";
+@use "bulma/sass";
+@use "theme-light-dark";
+
 aside.aside {
   display: flex;
   flex-direction: column;
@@ -12,7 +18,7 @@ aside.aside {
   background-color: $aside-background-color;
 
   &.is-placed-right {
-    @include transition(right);
+    @include mixins.transition(right);
     width: $aside-right-width;
     left: auto;
     right: $aside-right-width * -1;
@@ -86,11 +92,11 @@ aside.aside {
   }
 
   .menu-container {
-    @include scrollbars($aside-scrollbar-track, $aside-scrollbar-thumb);
+    @include mixins.scrollbars($aside-scrollbar-track, $aside-scrollbar-thumb);
   }
 
   .aside-container {
-    @include scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
+    @include mixins.scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
   }
 
   .menu {
@@ -154,7 +160,7 @@ aside.aside {
   }
 
   li a {
-    @include icon-with-update-mark($aside-collapsed-width);
+    @include mixins.icon-with-update-mark($aside-collapsed-width);
     span.menu-item-label {
       display: none;
     }
@@ -182,10 +188,10 @@ aside.aside {
 
 @include touch {
   #app, nav.navbar {
-    @include transition(margin-left);
+    @include mixins.transition(margin-left);
   }
   aside.aside {
-    @include transition(left);
+    @include mixins.transition(left);
     height: 100vh;
 
     .menu-label {
@@ -224,7 +230,7 @@ aside.aside {
           }
         }
         a {
-          @include icon-with-update-mark($aside-icon-width);
+          @include mixins.icon-with-update-mark($aside-icon-width);
 
           span.menu-item-label {
             display: inline-block;
@@ -269,7 +275,7 @@ aside.aside {
   html {
     &.has-aside-left, &.has-aside-right {
       nav.navbar, body {
-        @include transition(padding);
+        @include mixins.transition(padding);
       }
     }
     &.has-aside-left {
@@ -358,7 +364,7 @@ aside.aside {
         display: block;
       }
       .menu-list {
-        @include icon-with-update-mark($aside-icon-width);
+        @include mixins.icon-with-update-mark($aside-icon-width);
 
         span.menu-item-label {
           display: inline-block;

@@ -1,10 +1,14 @@
+//@use "~bulma/bulma";
+@use "mixins";
+@use "theme-light-dark";
+
 .card:not(:last-child) {
-  margin-bottom: $default-padding;
+  margin-bottom: theme-light-dark.$default-padding;
 }
 
 .card {
-  border-radius: $radius-large;
-  border: $card-border;
+  border-radius: theme-light-dark.$radius-large;
+  border: theme-light-dark.$card-border;
 
   &.has-shadow {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -12,8 +16,8 @@
 
   &.is-scrollable-height-medium {
     .card-content {
-      @include scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
-      height: $card-height-medium;
+      @include mixins.scrollbars(theme-light-dark.$app-scrollbar-track, theme-light-dark.$app-scrollbar-thumb, theme-light-dark.$app-scrollbar-hover);
+      height: theme-light-dark.$card-height-medium;
       position: relative;
       overflow-y: auto;
     }
@@ -21,12 +25,12 @@
 
   &.is-card-widget, &.has-card-header-background {
     .card-header {
-      background-color: $card-header-background-color;
-      border-bottom: $card-widget-header-border;
+      background-color: theme-light-dark.$card-header-background-color;
+      border-bottom: theme-light-dark.$card-widget-header-border;
 
       p {
         font-weight: normal;
-        padding: $default-padding * .75 $default-padding * .5;
+        padding: theme-light-dark.$default-padding * .75 theme-light-dark.$default-padding * .5;
       }
     }
   }
@@ -36,21 +40,21 @@
       p {
         font-size: .85rem;
         line-height: .85rem;
-        padding: $default-padding * .33;
-        color: $grey;
+        padding: theme-light-dark.$default-padding * .33;
+        color: theme-light-dark.$grey;
       }
 
       .button {
-        margin-right: $default-padding * .33;
+        margin-right: theme-light-dark.$default-padding * .33;
 
         &:not(:hover) {
-          border-color: $white-ter;
+          border-color: theme-light-dark.$white-ter;
         }
       }
     }
 
     .card-content {
-      padding: $default-padding * .5;
+      padding: theme-light-dark.$default-padding * .5;
     }
   }
 
@@ -59,44 +63,44 @@
       padding: 0;
     }
     .b-table {
-      border-radius: $radius-large;
+      border-radius: theme-light-dark.$radius-large;
       overflow: hidden;
     }
   }
 
   .card-header {
-    border-bottom: $card-header-border;
+    border-bottom: theme-light-dark.$card-header-border;
 
     .button {
       display: inline-flex;
       align-self: center;
-      margin-right: $default-padding * .5;
+      margin-right: theme-light-dark.$default-padding * .5;
     }
   }
 
   .card-content {
     hr {
-      margin-left: $card-content-padding * -1;
-      margin-right: $card-content-padding * -1;
+      margin-left: theme-light-dark.$card-content-padding * -1;
+      margin-right: theme-light-dark.$card-content-padding * -1;
     }
     .media-list {
-      margin-left: $card-content-padding * -1;
-      margin-right: $card-content-padding * -1;
+      margin-left: theme-light-dark.$card-content-padding * -1;
+      margin-right: theme-light-dark.$card-content-padding * -1;
       .media {
-        padding-left: $card-content-padding;
-        padding-right: $card-content-padding;
+        padding-left: theme-light-dark.$card-content-padding;
+        padding-right: theme-light-dark.$card-content-padding;
       }
     }
   }
 
   .notification.is-card-toolbar {
     border-radius: 0;
-    padding-left: $default-padding * .5;
-    padding-right: $default-padding * .5;
+    padding-left: theme-light-dark.$default-padding * .5;
+    padding-right: theme-light-dark.$default-padding * .5;
     margin-bottom: 0;
 
     &.is-upper {
-      border-bottom: $card-notification-bar-border;
+      border-bottom: theme-light-dark.$card-notification-bar-border;
     }
   }
 
@@ -109,7 +113,7 @@
 
   .is-widget-label {
     .subtitle {
-      color: $grey;
+      color: theme-light-dark.$grey;
     }
   }
 }

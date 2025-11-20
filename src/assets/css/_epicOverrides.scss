@@ -1,3 +1,6 @@
+//@use "~bulma/bulma";
+@use "theme-light-dark";
+
 
 html{
 
@@ -5,12 +8,12 @@ html{
 
 		.is-state-info{
 
-			background-color: $epicCashGold !important;
-			border-color: $epicCashGold !important;
+			background-color: theme-light-dark.$epicCashGold !important;
+			border-color: theme-light-dark.$epicCashGold !important;
 			color: #fff !important;
 		}
     a.router-link-active{
-      color: $dark-mode-link-active-color;
+      color: theme-light-dark.$dark-mode-link-active-color;
     }
 
 
@@ -33,8 +36,8 @@ html{
 
 			&.is-primary{
 
-				background-color: $epicCashGold !important;
-				border-color: $epicCashGold !important;
+				background-color: theme-light-dark.$epicCashGold !important;
+				border-color: theme-light-dark.$epicCashGold !important;
 				color: #ffffff !important;
 			}
 
@@ -60,12 +63,12 @@ html{
       color: hsl(0deg, 0%, 29%);
     }
     a.panel-block:hover, label.panel-block:hover {
-        background-color: $epicCashGold;
+        background-color: theme-light-dark.$epicCashGold;
     }
     .panel-block.is-active {
         border-left-color: hsl(229deg, 53%, 53%);
         color: #ffffff;
-        background-color: $epicCashGold;
+        background-color: theme-light-dark.$epicCashGold;
     }
     .panel-block:last-child {
       border-bottom-left-radius: 0px;
@@ -73,7 +76,7 @@ html{
     }
 
     .card-footer-item:hover{
-      background-color: $epicCashGold;
+      background-color: theme-light-dark.$epicCashGold;
       color:hsl(0deg, 0%, 14%) !important;
     }
     .card-footer-item:not(:last-child){
@@ -102,7 +105,7 @@ html{
         z-index: -1;
     }
     .navbar-dropdown .navbar-item:hover{
-      color:$epicCashGold
+      color:theme-light-dark.$epicCashGold
     }
 
 
@@ -117,7 +120,7 @@ html{
       }
       a.dropdown-item:hover,
       button.dropdown-item:hover{
-        background:$epicCashGold;
+        background:theme-light-dark.$epicCashGold;
         color:#ffffff;
       }
     }
@@ -297,7 +300,7 @@ span.mnemonic-word{
   top: 1px;
 }
 span.required{
-  color:$red;
+  color:theme-light-dark.$red;
 }
 span.mdi-content-copy:hover{
   cursor: pointer;
@@ -333,8 +336,8 @@ section.hero.is-hero-bar.is-main-hero img{
 
 					a{
 
-						background-color: $epicCashGold;
-						border-color: $epicCashGold;
+						background-color: theme-light-dark.$epicCashGold;
+						border-color: theme-light-dark.$epicCashGold;
 					}
 				}
 			}
@@ -364,7 +367,7 @@ div.avatar-letter{
       line-height:2.5em;
       text-align:center;
       border-radius:50%;
-      background:$epicCashGold;
+      background:theme-light-dark.$epicCashGold;
       vertical-align:middle;
       margin-right:1em;
       color:white;
@@ -380,7 +383,7 @@ div.avatar-letter{
       line-height:2em;
       text-align:center;
       border-radius:50%;
-      background:$epicCashGold;
+      background:theme-light-dark.$epicCashGold;
       vertical-align:middle;
       margin-right:0em;
       color:white;
@@ -389,11 +392,11 @@ div.avatar-letter{
 }
 
 #headerbar{
-  background-image: linear-gradient(0deg,  $black-ter 98%, #000000 100%);
+  background-image: linear-gradient(0deg,  theme-light-dark.$black-ter 98%, #000000 100%);
 }
 
 #aside-main{
-  background-image: linear-gradient(0deg,  $black-ter 0%, #000000 100%);
+  background-image: linear-gradient(0deg,  theme-light-dark.$black-ter 0%, #000000 100%);
 }
 span.amount-hidden {
   visibility: hidden;

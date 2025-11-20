@@ -1,12 +1,14 @@
 
 import axios from 'axios';
-const Buffer = require('buffer').Buffer;
+
+
+
 const crypto = window.nodeCrypto;
 
-require('promise.prototype.finally').shim();
+
 
 const log = window.log;
-console.log = log.log;
+//console.log = log.log;
 const jsonRPCUrl = 'http://127.0.0.1:3420/v3/owner'
 const jsonRPCForeignUrl = 'http://127.0.0.1:3420/v2/foreign'
 
@@ -561,6 +563,7 @@ class WalletService {
         let args = [
           ...(network != 'mainnet' ? ['--' + network] : []),
           //'--pass', password,
+          '--offline_mode',
           '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           'init'
         ];
@@ -573,6 +576,7 @@ class WalletService {
         let args = [
           ...(network != 'mainnet' ? ['--' + network] : []),
           //'--pass', password,
+          '--offline_mode',
           '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           'init', '-r'
         ];

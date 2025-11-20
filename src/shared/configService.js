@@ -747,6 +747,7 @@ epicbox_port = 443
   appHasAccounts(){
     if (!window.nodeFs.existsSync(this.appConfigFile)) {
       //copy default config json to new wallet dir
+      console.log("here path", window.config.getResourcePath());
       let defaultAppFile = path.join(window.config.getResourcePath(), "default.app.json");
       window.nodeFs.copyFileSync(defaultAppFile, this.appConfigFile);
       this.appConfig = {'account_dirs':[]};

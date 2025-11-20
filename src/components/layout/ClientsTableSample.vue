@@ -90,7 +90,7 @@
 
 <script>
 import { computed, ref } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '/store'
 import ModalBox from '@/components/layout/ModalBox.vue'
 
 export default {

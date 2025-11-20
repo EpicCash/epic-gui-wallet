@@ -13,16 +13,16 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} {{ $t('msg.step_of', [1,3]) }}</h2>
+                    <h2 class="title" style="text-align: center;">{{ t('msg.restore.title') }} {{ t('msg.step_of', [1,3]) }}</h2>
 
                     <div class="field has-addons-fullwidth" style="margin-bottom: 24px;">
                       <div class="control">
-                        <input @keyup="keyEvent" v-on:keyup.enter="add" v-model="search" :placeholder="$t('msg.restore.search_placeholder')" type="text" class="input" style="width: 100%;">
+                        <input @keyup="keyEvent" v-on:keyup.enter="add" v-model="search" :placeholder="t('msg.restore.search_placeholder')" type="text" class="input" style="width: 100%;">
 
                       </div>
                     </div>
                     <p class="animated bounce has-text-weight-semibold has-text-warning" style="animation-iteration-count: 2; margin-bottom: 24px; text-align: center; color: #d19944!important;">
-                      {{ $t('msg.restore.addSeedsInfo') }}
+                      {{ t('msg.restore.addSeedsInfo') }}
                     </p>
                     <div style="margin-bottom:20px;">
                       <div class="tags" style="justify-content: center;">
@@ -37,14 +37,14 @@
                     </div>
 
                     <div class="buttons is-centered">
-                      <button class="button is-primary" @click="reset"><mdicon name="edo-variant" /> {{ $t("msg.reset") }}</button>
-                      <button class="button is-primary" @click="addall"><mdicon name="plus-box-multiple-outline" />{{ $t("msg.addall") }}</button>
+                      <button class="button is-primary" @click="reset"><mdicon name="edo-variant" /> {{ t("msg.reset") }}</button>
+                      <button class="button is-primary" @click="addall"><mdicon name="plus-box-multiple-outline" />{{ t("msg.addall") }}</button>
 
 
 
                     </div>
                     <p class="has-text-weight-semibold has-text-warning" style="margin-bottom: 24px; text-align: center; color: #d19944!important;">
-                      {{ $t('msg.restore.yourSeedsInfo') }} (<span v-bind:class="{'has-text-danger':seeds.length>total}" >{{seeds.length}}</span>/{{total}})
+                      {{ t('msg.restore.yourSeedsInfo') }} (<span v-bind:class="{'has-text-danger':seeds.length>total}" >{{seeds.length}}</span>/{{total}})
                     </p>
                     <div class="tags" style="justify-content: center;">
                       <span style="color:#000000" class="tag is-light is-medium is-rounded is-link" v-for="seed in seeds" :key="seed">{{seed}}</span>
@@ -53,12 +53,12 @@
                     <div class="buttons is-centered">
                       <router-link class="button is-primary" :to="{name: fromRoute}">
                         <mdicon name="arrow-left-bold-hexagon-outline" />
-                        {{ $t("msg.back") }}
+                        {{ t("msg.back") }}
                       </router-link>
-                      <button :disabled="seeds.length<=0" class="button is-primary" @click="delete_"><mdicon name="delete" />{{ $t('msg.delete') }}</button>
+                      <button :disabled="seeds.length<=0" class="button is-primary" @click="delete_"><mdicon name="delete" />{{ t('msg.delete') }}</button>
 
                       <button :disabled="!enoughSeeds" class="button is-primary" @click="page='addPassword'">
-                        <mdicon name="arrow-right-bold-hexagon-outline" />{{ $t('msg.restore.added') }}
+                        <mdicon name="arrow-right-bold-hexagon-outline" />{{ t('msg.restore.added') }}
                       </button>
                     </div>
                   </div>
@@ -75,28 +75,28 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} {{ $t('msg.step_of', [2,3]) }}</h2>
+                    <h2 class="title" style="text-align: center;">{{ t('msg.restore.title') }} {{ t('msg.step_of', [2,3]) }}</h2>
                     <p class="has-text-weight-semibold has-text-warning" style="color: #d19944!important;margin-bottom: 24px;">
-                      {{ $t('msg.restore.create_new') }}
+                      {{ t('msg.restore.create_new') }}
                     </p>
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.account.account') }}</label>
+                        <label class="label">{{ t('msg.account.account') }}</label>
                         <div class="control">
                           <AccountField ref="accountField" placeholder="default" />
-                          <p class="help">{{ $t('msg.account.only_letter') }} <!----></p>
+                          <p class="help">{{ t('msg.account.only_letter') }} <!----></p>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.restore.newPassword') }}<span class="required">*</span></label>
+                        <label class="label">{{ t('msg.restore.newPassword') }}<span class="required">*</span></label>
                         <div class="control has-icons-right">
                           <PasswordField ref="passwordField" required="true" name="password"  />
                         </div>
                     </div>
 
                     <div class="field">
-                        <label class="label">{{ $t('msg.passwordAgain') }}<span class="required">*</span></label>
+                        <label class="label">{{ t('msg.passwordAgain') }}<span class="required">*</span></label>
                         <div class="control has-icons-right">
                           <PasswordField ref="passwordField2" required="true" :repeat="passwordField ? passwordField.input : null" name="password2"  />
                         </div>
@@ -108,7 +108,7 @@
                           <a class="icon-text" style="font-size:0.8rem;" @click="toggleAdvancedSettings" >
                             <mdicon size="18" v-if="!advancedSettings" name="menu-right" />
                             <mdicon size="18" v-else name="menu-down" />
-                            {{ $t('msg.custom_settings') }}
+                            {{ t('msg.custom_settings') }}
                           </a>
                         </div>
                     </div>
@@ -118,13 +118,13 @@
                         <div class="card-content">
                          <div class="content">
                           <div class="field">
-                              <label class="label">{{ $t('msg.restore.walletLocation') }}</label>
+                              <label class="label">{{ t('msg.restore.walletLocation') }}</label>
 
                               <WalletdirField ref="walletdirField" />
 
                           </div>
                           <div class="field">
-                              <label class="label">{{ $t("msg.settings.network") }}</label>
+                              <label class="label">{{ t("msg.settings.network") }}</label>
                               <div class="control">
                                 <NetworkField ref="networkField" />
                               </div>
@@ -137,8 +137,8 @@
 
 
                     <div class="buttons is-centered">
-                        <button class="button is-primary" @click="page='addSeeds'"><mdicon name="arrow-left-bold-hexagon-outline" />{{ $t('msg.restore.change_seed') }}</button>
-                        <button class="button is-primary" @click="initR" >{{ $t('msg.restore.recover') }}</button>
+                        <button class="button is-primary" @click="page='addSeeds'"><mdicon name="arrow-left-bold-hexagon-outline" />{{ t('msg.restore.change_seed') }}</button>
+                        <button class="button is-primary" @click="initR" >{{ t('msg.restore.recover') }}</button>
                     </div>
 
                   </div>
@@ -155,14 +155,14 @@
                     <img src="../assets/img/epiccash-brand-full.png" style="width: 190px; padding: 16px 0px;">
                   </header>
                   <div id="restoreMnemonicWords" class="card-content">
-                    <h2 class="title" style="text-align: center;">{{ $t('msg.restore.title') }} {{ $t('msg.step_of', [3,3]) }}</h2>
+                    <h2 class="title" style="text-align: center;">{{ t('msg.restore.title') }} {{ t('msg.step_of', [3,3]) }}</h2>
                     <p class="has-text-weight-semibold has-text-warning" style="color: #d19944!important;margin-bottom: 24px;">
-                      {{ $t('msg.restore.wallet_recovered') }}
+                      {{ t('msg.restore.wallet_recovered') }}
                     </p>
 
                     <div class="buttons is-centered">
                       <router-link class="button is-outlined is-primary" to="/login">
-                        {{ $t("msg.login_") }}
+                        {{ t("msg.login_") }}
                       </router-link>
                     </div>
                   </div>
@@ -182,13 +182,14 @@
 
 
   import { ref, computed, onMounted } from 'vue';
-  import { useRouter } from '@/router';
+  import { useI18n } from 'vue-i18n';
+  import { useRouter } from '../router';
   import { useRoute } from 'vue-router';
-  import AccountField from "@/components/form/accountField";
-  import PasswordField from "@/components/form/passwordField";
-  import WalletdirField from "@/components/form/walletdirField";
-  import NetworkField from "@/components/form/networkField";
-  import useFormValidation from "@/modules/useFormValidation";
+  import AccountField from "./form/accountField.vue";
+  import PasswordField from "./form/passwordField.vue";
+  import WalletdirField from "./form/walletdirField.vue";
+  import NetworkField from "./form/networkField.vue";
+  import useFormValidation from "../modules/useFormValidation";
 
   export default {
     name: "restore",
@@ -199,6 +200,8 @@
       NetworkField,
     },
     setup(){
+
+      const { t } = useI18n();
       const router = useRouter();
       const route = useRoute();
       const wordList = ref([]);
@@ -233,7 +236,8 @@
         resetFormErrors,
         advancedSettings,
         networkField,
-        fromRoute
+        fromRoute,
+        t
       }
     },
     watch: {
@@ -328,11 +332,11 @@
                 //this.newseeds = recovered.msg.split(' ');
                 this.page = 'restored'
               }else{
-                this.$toast.error(this.$t('msg.restore.recover_fail', [action]), {duration:false});
+                this.$toast.error(this.t('msg.restore.recover_fail', [action]), {duration:false});
               }
 
             }else{
-              this.$toast.error(this.$t('msg.restore.fatal_app'), {duration:false});
+              this.$toast.error(this.t('msg.restore.fatal_app'), {duration:false});
             }
           }
 

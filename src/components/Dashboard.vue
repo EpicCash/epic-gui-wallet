@@ -9,10 +9,10 @@
       <div class="tabs is-toggle is-toggle-rounded">
         <ul>
           <li v-bind:class="{'is-active':transactionTab}">
-            <a @click="openTab('transactionTab')" >{{ $t('msg.dashboard.transactions') }}</a>
+            <a @click="openTab('transactionTab')" >{{ t('msg.dashboard.transactions') }}</a>
           </li>
           <li v-bind:class="{'is-active':commitTab}">
-            <a @click="openTab('commitTab')" >{{ $t('msg.dashboard.coins') }}</a>
+            <a @click="openTab('commitTab')" >{{ t('msg.dashboard.coins') }}</a>
           </li>
         </ul>
       </div>
@@ -38,10 +38,11 @@
 
 
 import { ref } from 'vue';
-import { useStore } from '@/store';
-import Transaction from '@/components/Transaction.vue'
-import Commit from '@/components/Commit.vue'
-import SummaryInfo from '@/components/SummaryInfo.vue'
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
+import Transaction from './Transaction.vue'
+import Commit from './Commit.vue'
+import SummaryInfo from './SummaryInfo.vue'
 
 export default {
   name: "dashboard",
@@ -53,7 +54,7 @@ export default {
 
   setup() {
 
-
+    const { t } = useI18n();
     const store = useStore();
     const transactionTab = ref(true);
     const commitTab = ref(false);
@@ -63,6 +64,7 @@ export default {
       store,
       transactionTab,
       commitTab,
+      t
 
     }
 

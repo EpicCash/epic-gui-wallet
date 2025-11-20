@@ -2,7 +2,7 @@
   <input
     class="input"
     type="address"
-    :placeholder="$t('msg.httpSend.address')"
+    :placeholder="t('msg.httpSend.address')"
     autocomplete="off"
     required
     v-model="input"
@@ -17,7 +17,8 @@
 
 <script>
   import { ref, computed } from "vue";
-  import useFormValidation from "@/modules/useFormValidation";
+  import { useI18n } from 'vue-i18n';
+  import useFormValidation from "../../modules/useFormValidation";
 
   export default {
     emits: ["keyup"], // <--- add this line
@@ -25,7 +26,7 @@
       let input = ref('');
 
       let defaultValue = ref(null);
-
+      const { t } = useI18n();
       const { validateAddressField, errors } = useFormValidation();
 
 
@@ -40,7 +41,7 @@
 
       };
 
-      return { input, errors, defaultValue, validInput, setValue };
+      return { input, errors, defaultValue, validInput, setValue, t };
     },
 
   };

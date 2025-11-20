@@ -63,7 +63,7 @@
 
 <script>
 import { computed, ref } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '/store'
 import FilePicker from '@/components/layout/FilePicker.vue'
 import CardComponent from '@/components/layout/CardComponent.vue'
 

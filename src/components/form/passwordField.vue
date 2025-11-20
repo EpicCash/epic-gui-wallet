@@ -20,7 +20,7 @@
 
 <script>
   import { ref, computed } from "vue";
-  import useFormValidation from "@/modules/useFormValidation";
+  import useFormValidation from "../../modules/useFormValidation";
 
   export default {
     props: ['placeholder', 'required', 'repeat', 'name'],

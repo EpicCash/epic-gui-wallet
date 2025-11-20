@@ -13,7 +13,7 @@ const qr = require("qrcode");
 const sha3_256 = require('js-sha3').sha3_256;
 const ps = require('ps-node');
 const fs = require('fs');
-const log = require('electron-log');
+//const log = require('electron-log');
 
 const homedir = os.homedir();
 const rootdir = require('app-root-dir');
@@ -25,27 +25,27 @@ export const logDir = path.join(ewalletPath, 'log')
 const resourcePath =
   !process.env.NODE_ENV || process.env.NODE_ENV === "production"
     ? process.resourcesPath // Live Mode
-    : path.join(__dirname, '../resources/'); // Dev Mode
+    : path.join(__dirname, '../../resources/'); // Dev Mode
 
 
 let logFile = `${moment(new Date()).format('YYYY_MM_D')}.log`
 let logPath = join(logDir, logFile);
 let processes = {};
-log.transports.file.file = logPath
-log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}';
-log.transports.file.maxSize = 5 * 1024 * 1024
-log.transports.file.level = 'debug';
-log.transports.file.streamConfig = {flags: 'w'};
-log.transports.console.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}'
-log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
+//log.transports.file.file = logPath
+//log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}';
+//log.transports.file.maxSize = 5 * 1024 * 1024
+//log.transports.file.level = 'debug';
+//log.transports.file.streamConfig = {flags: 'w'};
+//log.transports.console.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}'
+//log.transports.console.level = process.env.NODE_ENV === 'production' ? 'info' : 'debug'
 
 //add debug mode for production
 //user must create a file "debug" in ./epic folder
-let debug = false;//process.env.NODE_ENV !== 'production';
-if(fs.existsSync(path.join(ewalletPath, 'debug.log'))){
-  debug = true;
-  console.log = log.log;
-}
+//let debug = false;//process.env.NODE_ENV !== 'production';
+//if(fs.existsSync(path.join(ewalletPath, 'debug.log'))){
+//  debug = true;
+ // console.log = log.log;
+//}
 
 const spawn = require('child_process').spawn;
 const fork = require('child_process').fork;
@@ -511,8 +511,8 @@ contextBridge.exposeInMainWorld('nodeExec', require('child_process').exec);
 contextBridge.exposeInMainWorld('nodeExecSync', require('child_process').execSync);
 contextBridge.exposeInMainWorld('nodeExecFile', require('child_process').execFile);
 contextBridge.exposeInMainWorld('clipboard', clipboard);
-contextBridge.exposeInMainWorld('log', log);
-contextBridge.exposeInMainWorld('debug', debug);
+contextBridge.exposeInMainWorld('log', 'log');
+contextBridge.exposeInMainWorld('debug', 'debug');
 contextBridge.exposeInMainWorld('nodeFs', fs);
 contextBridge.exposeInMainWorld('nodeFsExtra', require('fs-extra'));
 contextBridge.exposeInMainWorld('nodeQr', qr);
@@ -559,6 +559,7 @@ contextBridge.exposeInMainWorld('config', {
     return response;
   },
   getResourcePath(){
+    console.log("######## resourcePath", resourcePath);
     return resourcePath;
   },
   getUserHomedir () {

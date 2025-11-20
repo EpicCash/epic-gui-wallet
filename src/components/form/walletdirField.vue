@@ -2,7 +2,7 @@
 
 
   <p class="button is-link is-success is-outlined" v-if="defaultValue"><br/><strong>{{ defaultValue }}</strong></p>
-  <a class="button is-link is-outlined" @click="selectDir">{{ $t("msg.create.select") }}</a>
+  <a class="button is-link is-outlined" @click="selectDir">{{ t("msg.create.select") }}</a>
 
   <div style="color:red;" v-if="errors.walletdir">
      {{ errors.walletdir }}
@@ -11,12 +11,13 @@
 
 <script>
   import { ref, computed } from "vue";
-  import useFormValidation from "@/modules/useFormValidation";
+  import { useI18n } from 'vue-i18n';
+  import useFormValidation from "../../modules/useFormValidation";
 
   export default {
 
     setup() {
-
+      const { t } = useI18n();
       const defaultValue = ref('');
       const selectedDir = ref('');
 
@@ -27,7 +28,7 @@
         return validateDirField("walletdir", defaultValue.value, configService);
       };
 
-      return { errors, defaultValue, validInput, selectedDir };
+      return { errors, defaultValue, validInput, selectedDir,t };
     },
     methods:{
 

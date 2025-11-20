@@ -14,15 +14,15 @@
                 </header>
                 <div class="card-content">
 
-                      <h1 class="title has-text-centered">{{ $t('msg.welcome') }}</h1>
+                      <h1 class="title has-text-centered">{{ t('msg.welcome') }}</h1>
                       <div class="buttons is-justify-content-center">
-                        <a class="button is-link is-outlined" @click="select">{{ $t("msg.new.select") }}</a>
+                        <a class="button is-link is-outlined" @click="select">{{ t("msg.new.select") }}</a>
 
                         <router-link class="button is-outlined is-primary" :to="{name:'create', params:{from:'new'}}">
-                          {{ $t("msg.new.create") }}
+                          {{ t("msg.new.create") }}
                         </router-link>
                         <router-link class="button is-outlined is-primary" :to="{name:'restore', params:{from:'new'}}">
-                          {{ $t("msg.new.restore") }}
+                          {{ t("msg.new.restore") }}
                         </router-link>
 
                       </div>
@@ -48,13 +48,15 @@
 <script>
 
 import { ref } from 'vue';
-import { useRouter } from '@/router';
-import { useStore } from '@/store';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from '../router';
+import { useStore } from '../store';
 
 export default {
   name: "new",
   setup() {
 
+    const { t } = useI18n();
     const store = useStore();
     const router = useRouter();
     const error = ref(false);
@@ -65,7 +67,8 @@ export default {
       router,
       error,
       errMsg,
-      userHomedir
+      userHomedir,
+      t
 
 
     }
@@ -87,7 +90,7 @@ export default {
 
             if(!haswallet){
               this.error = 1;
-              this.errMsg = this.$t("msg.new.selectErr");
+              this.errMsg = this.t("msg.new.selectErr");
             }else{
               this.$router.push('/login');
             }

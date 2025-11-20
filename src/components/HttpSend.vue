@@ -48,7 +48,7 @@
             <div class="field">
               <div class="control">
                   <input class="switch is-success" id="sendProofSwitch" type="checkbox" v-model="withproof" @click="addProof">
-                  <label for="sendProofSwitch">{{ $t("msg.send_proof") }}</label>
+                  <label for="sendProofSwitch">{{ t("msg.send_proof") }}</label>
                   <div v-show="withproof">
                     <ProofAddressField ref="proofAddressField" />
                   </div>
@@ -65,21 +65,21 @@
               <div class="control">
                 <AmountField ref="amountField" />
                 <input class="switch is-success" id="dandelion" type="checkbox" checked="true" ref="dandelion">
-                <label for="dandelion">{{ $t("msg.dandelion") }}</label>
-                <p class="help">{{ $t("msg.dandelion_hint") }}</p>
+                <label for="dandelion">{{ t("msg.dandelion") }}</label>
+                <p class="help">{{ t("msg.dandelion_hint") }}</p>
               </div>
             </div>
 
             <div class="field is-grouped">
               <div class="control">
                 <button class="button is-primary" :class="{ 'button__loader': isLoadingSend }" @click="send">
-                  <span class="button__text">{{ $t("msg.send") }}</span>
+                  <span class="button__text">{{ t("msg.send") }}</span>
                 </button>
 
               </div>
               <div class="control">
                 <button class="button is-primary" :class="{ 'button__loader': isLoadingSendFile }" @click="sendFile">
-                  <span class="button__text">{{ $t("msg.createofflinetx") }}</span>
+                  <span class="button__text">{{ t("msg.createofflinetx") }}</span>
                 </button>
               </div>
             </div>
@@ -98,11 +98,12 @@
 
 const fs = window.nodeFs;
 import { ref } from 'vue';
-import { useStore } from '@/store';
-import AmountField from "@/components/form/amountField";
-import ProofAddressField from "@/components/form/proofAddressField";
-import AddressField from "@/components/form/addressField";
-import useFormValidation from "@/modules/useFormValidation";
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
+import AmountField from "./form/amountField.vue";
+import ProofAddressField from "./form/proofAddressField.vue";
+import AddressField from "./form/addressField.vue";
+import useFormValidation from "../modules/useFormValidation";
 
 export default {
   name: "http-send",
@@ -127,6 +128,7 @@ export default {
   },
   setup(){
 
+    const { t } = useI18n();
     const store = useStore();
     const foundAddress = ref([]);
     const addressSelected = ref(false);
@@ -159,7 +161,8 @@ export default {
       isLoadingSend,
       isLoadingSendFile,
       address,
-      dandelion
+      dandelion,
+      t
     }
 
   },
@@ -247,7 +250,7 @@ export default {
         if(res && res.result.Ok){
           let result = res.result.Ok;
 
-          let fn_output = await window.api.showSaveDialog(this.$t('msg.save'), this.$t('msg.fileSend.saveMsg'), result.id + '.tx');
+          let fn_output = await window.api.showSaveDialog(this.t('msg.save'), this.t('msg.fileSend.saveMsg'), result.id + '.tx');
           if (fn_output.filePath){
 
             let lock = await this.$walletService.lock_outputs(result);
@@ -279,7 +282,7 @@ export default {
             }else if(lock && lock.result.error){
               this.$toast.error(lock.result.error.message);
             }else{
-              this.$toast.error(this.$t('msg.fileSend.CreateFailed'));
+              this.$toast.error(this.t('msg.fileSend.CreateFailed'));
 
             }
 
@@ -289,7 +292,7 @@ export default {
         }else if(res && res.result.error){
           this.$toast.error(res.result.error.message);
         }else{
-          this.$toast.error(this.$t('msg.fileSend.CreateFailed'));
+          this.$toast.error(this.t('msg.fileSend.CreateFailed'));
         }
 
         this.isLoadingSendFile = false;
@@ -358,7 +361,7 @@ export default {
 
             });
 
-            this.$toast.success(this.$t("msg.httpSend.success"));
+            this.$toast.success(this.t("msg.httpSend.success"));
             this.emitter.emit('app.update');
 
         }else{
@@ -370,7 +373,7 @@ export default {
                 "icon":   "information"
           });
 
-          this.$toast.error(this.$t('msg.httpSend.TxFailed'));
+          this.$toast.error(this.t('msg.httpSend.TxFailed'));
 
         }
 

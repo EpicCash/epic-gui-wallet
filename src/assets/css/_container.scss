@@ -1,5 +1,7 @@
+@use "theme-light-dark";
+
 .container.has-boxed-layout {
-  background: $white;
-  border-left: $container-boxed-border;
-  border-right: $container-boxed-border;
+  background: theme-light-dark.$white;
+  border-left: theme-light-dark.$container-boxed-border;
+  border-right: theme-light-dark.$container-boxed-border;
 }

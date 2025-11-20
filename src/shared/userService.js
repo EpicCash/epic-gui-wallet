@@ -1,9 +1,7 @@
 import { BaseService } from "./base_service";
-import { useStore } from '@/store';
+import { useStore } from '../store';
 
 class UserService extends BaseService {
-
-
 
     constructor() {
         super();

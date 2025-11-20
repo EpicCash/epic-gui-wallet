@@ -1,3 +1,5 @@
+@use "theme-light-dark";
+
 .button.is-static {
   background-color: transparent;
 }
@@ -11,19 +13,19 @@
 
   input[type=checkbox] {
     &:checked + .check {
-      border-color: $primary;
+      border-color: theme-light-dark.$primary;
       &:before {
-        background: $white;
+        background: theme-light-dark.$white;
         border: 0;
       }
     }
     + .check {
       background: transparent;
-      border: $checkbox-border;
+      border: theme-light-dark.$checkbox-border;
 
       &:before {
         background: transparent;
-        border: $checkbox-border;
+        border: theme-light-dark.$checkbox-border;
         box-shadow: none;
       }
     }

@@ -8,31 +8,31 @@
         <div class="column is-two-thirds">
           <div class="message is-info">
 
-            <div class="message-header"><p>{{ $t("msg.httpReceive.listening") }}</p></div>
+            <div class="message-header"><p>{{ t("msg.httpReceive.listening") }}</p></div>
             <div class="message-body">
 
               <p v-if="store.state.walletEpicboxService">
-                {{ $t("msg.httpReceive.epicbox_address") }}:<br/>
+                {{ t("msg.httpReceive.epicbox_address") }}:<br/>
                 <code>{{ epicboxAddress }}</code>&nbsp;<mdicon @click="copy(epicboxAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(epicboxAddress, 'epicbox')" name="qrcode-scan" size=16 />
               </p>
               <p v-else>
-                {{ $t("msg.httpReceive.epicbox_address") }}:<br/>
+                {{ t("msg.httpReceive.epicbox_address") }}:<br/>
 
-                <code v-if="this.store.state.user.epicbox_domain != ''">{{ $t("msg.httpReceive.epicbox_not_available") }}</code>
-                <code v-else>{{ $t("msg.httpReceive.epicbox_off") }}</code>
+                <code v-if="this.store.state.user.epicbox_domain != ''">{{ t("msg.httpReceive.epicbox_not_available") }}</code>
+                <code v-else>{{ t("msg.httpReceive.epicbox_off") }}</code>
 
               </p>
               <p>&nbsp;</p>
 
               <p v-if="store.state.ngrokService">
-                {{ $t("msg.httpReceive.current_ngrok_address") }}:<br/>
+                {{ t("msg.httpReceive.current_ngrok_address") }}:<br/>
                 <code>{{ ngrokAddress }}</code>&nbsp;<mdicon class="is-clickable" @click="copy(ngrokAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(ngrokAddress, 'ngrok')" name="qrcode-scan" size=16 />
               </p>
-              <p v-if="store.state.user.ngrok_force_start" class="help">{{ $t("msg.httpReceive.session_end", store.state.ngrokTunnelLifetime) }}</p>
+              <p v-if="store.state.user.ngrok_force_start" class="help">{{ t("msg.httpReceive.session_end", store.state.ngrokTunnelLifetime) }}</p>
 
               <p v-if="store.state.ngrokService">&nbsp;</p>
               <p v-else>
-                {{ $t("msg.httpReceive.local_address") }}:<br/>
+                {{ t("msg.httpReceive.local_address") }}:<br/>
                 <code>{{ localAddress }}</code>
                 &nbsp;<mdicon v-if="portIsForwarded" name="flag-checkered" style="color:hsl(141, 53%, 53%);" title="port is open" /><mdicon v-else name="flag-checkered" style="color:hsl(348, 100%, 61%);" title="port is closed" />
                 &nbsp;<mdicon class="is-clickable" @click="checkPortOpen()" name="refresh" size=16 />
@@ -42,12 +42,12 @@
               <p v-if="!store.state.ngrokService">&nbsp;</p>
 
               <p v-if="store.state.torService">
-                {{ $t("msg.httpReceive.tor_onion_address") }}:<br/>
+                {{ t("msg.httpReceive.tor_onion_address") }}:<br/>
                 <code>{{ onionAddress }}</code>&nbsp;<mdicon @click="copy(onionAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(onionAddress, 'TOR')" name="qrcode-scan" size=16 />
               </p>
               <p v-else>
-                {{ $t("msg.httpReceive.tor_onion_address") }}:<br/>
-                <code>{{ $t("msg.httpReceive.tor_not_available") }}</code>
+                {{ t("msg.httpReceive.tor_onion_address") }}:<br/>
+                <code>{{ t("msg.httpReceive.tor_not_available") }}</code>
               </p>
 
             </div>
@@ -55,7 +55,7 @@
           </div>
 
           <div class="message is-info">
-            <div class="message-header"><p>{{ $t("msg.httpReceive.proof_address") }}</p></div>
+            <div class="message-header"><p>{{ t("msg.httpReceive.proof_address") }}</p></div>
             <div class="message-body">
               <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(proofAddress, 'proof')" name="qrcode-scan" size=16 />
             </div>
@@ -67,7 +67,7 @@
         <div class="column">
           <div class="message is-info">
 
-            <div class="message-header"><p v-if="addressTypeHeader">{{ $t("msg.httpReceive.your_qrcode", [addressTypeHeader]) }}</p><p v-else>{{ $t("msg.httpReceive.click_qrcode_icon") }}</p></div>
+            <div class="message-header"><p v-if="addressTypeHeader">{{ t("msg.httpReceive.your_qrcode", [addressTypeHeader]) }}</p><p v-else>{{ t("msg.httpReceive.click_qrcode_icon") }}</p></div>
             <div v-show="addressTypeHeader"  class="message-body">
               <canvas id="qrcodeCanvas"></canvas>
             </div>
@@ -80,7 +80,7 @@
               <div class="field">
                 <div class="control">
                   <button class="button is-primary" @click="stop" :class="{ 'button__loader': isLoading }">
-                      <span class="button__text">{{ $t("msg.httpReceive.close") }}</span>
+                      <span class="button__text">{{ t("msg.httpReceive.close") }}</span>
                   </button>
                 </div>
               </div>
@@ -89,16 +89,16 @@
     </div>
     <div v-show="!store.state.walletListenerService">
       <div class="message is-warning">
-        <div class="message-header"><p>{{ $t("msg.httpReceive.attention") }}</p></div>
+        <div class="message-header"><p>{{ t("msg.httpReceive.attention") }}</p></div>
         <div class="message-body">
-          <p>{{ $t("msg.httpReceive.reachableMsg") }}</p>
+          <p>{{ t("msg.httpReceive.reachableMsg") }}</p>
         </div>
       </div>
       <div class="columns">
         <div class="column is-half">
 
             <div class="field">
-              <label class="label">{{ $t("msg.password") }}</label>
+              <label class="label">{{ t("msg.password") }}</label>
               <div class="control has-icons-right">
                 <PasswordField ref="passwordField" placeholder="********" required="true" name="password" />
               </div>
@@ -107,7 +107,7 @@
             <div class="field">
               <div class="control">
                 <button class="button is-primary" @click="start" :class="{ 'button__loader': isLoading }">
-                    <span class="button__text">{{ $t("msg.httpReceive.start") }}</span>
+                    <span class="button__text">{{ t("msg.httpReceive.start") }}</span>
                 </button>
               </div>
             </div>
@@ -128,9 +128,10 @@
 
 
 import { ref,onMounted } from 'vue';
-import { useStore } from '@/store';
-import PasswordField from "@/components/form/passwordField";
-import useFormValidation from "@/modules/useFormValidation";
+import { useI18n } from 'vue-i18n';
+import { useStore } from '../store';
+import PasswordField from "./form/passwordField.vue";
+import useFormValidation from "../modules/useFormValidation";
 
 
 const clipboard = window.clipboard;
@@ -152,7 +153,7 @@ export default {
   setup(){
 
     const store = useStore();
-
+    const { t } = useI18n();
     const localAddress = ref('');
     const onionAddress = ref('');
     const epicboxAddress = ref('');
@@ -179,7 +180,8 @@ export default {
       isLoading,
       addressTypeHeader,
       publicIp,
-      portIsForwarded
+      portIsForwarded,
+      t
 
     }
   },
@@ -210,7 +212,7 @@ export default {
   methods: {
     async checkPortOpen(){
       this.portIsForwarded = await window.config.isPortReachable(this.publicIp.ip, this.configService.walletListenerPort);
-      this.$toast.show(this.$t("msg.httpReceive.check_port_open_done"), {duration:1000});
+      this.$toast.show(this.t("msg.httpReceive.check_port_open_done"), {duration:1000});
     },
     async qrcode(text, addressType){
 
@@ -251,7 +253,7 @@ export default {
 
     copy(text){
       window.clipboard.writeText(text);
-      this.$toast.show(this.$t("msg.copy_to_clipboard"), {duration:1000});
+      this.$toast.show(this.t("msg.copy_to_clipboard"), {duration:1000});
     },
     async start(){
 
@@ -274,29 +276,29 @@ export default {
 
           this.onionAddress = await this.getOnionAndProofAddress();
           this.emitter.emit('app.ngrokStart');
-          this.$toast.success(this.$t("msg.login.listener_started"));
+          this.$toast.success(this.t("msg.login.listener_started"));
           this.store.commit('walletListenerService', true);
 
         }else if(isListen.success == false){
 
-          this.$toast.error(this.$t("msg.login.error_listener_started"));
+          this.$toast.error(this.t("msg.login.error_listener_started"));
           this.store.commit('walletListenerService', false);
         }
 
         if(isListen && isListen.tor){
-          this.$toast.success(this.$t("msg.login.tor_started"));
+          this.$toast.success(this.t("msg.login.tor_started"));
           this.store.commit('torService', true);
         }else{
-          this.$toast.error(this.$t("msg.login.error_tor_started"));
+          this.$toast.error(this.t("msg.login.error_tor_started"));
           this.store.commit('torService', false);
         }
 
         if(isEpicbox && isEpicbox.success){
           this.epicboxAddress = await this.getEpicboxAddress();
-          this.$toast.success(this.$t("msg.login.epicbox_started"));
+          this.$toast.success(this.t("msg.login.epicbox_started"));
           this.store.commit('walletEpicboxService', true);
         }else{
-          this.$toast.error(this.$t("msg.login.error_epicbox_started"));
+          this.$toast.error(this.t("msg.login.error_epicbox_started"));
           this.store.commit('walletEpicboxService', false);
         }
 
@@ -313,7 +315,7 @@ export default {
       if(killed){
         this.emitter.emit('app.ngrokStop');
         this.store.commit('walletListenerService', false);
-        this.$toast.success(this.$t("msg.httpReceive.listener_stopped"));
+        this.$toast.success(this.t("msg.httpReceive.listener_stopped"));
       }
     },
 

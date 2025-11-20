@@ -1,11 +1,13 @@
+@use "theme-light-dark";
+
 footer.footer {
-  border-top: $footer-border-top;
+  border-top: theme-light-dark.$footer-border-top;
 
   .logo {
-    height: $footer-logo-height;
+    height: theme-light-dark.$footer-logo-height;
     img, svg {
       width: auto;
-      height: $footer-logo-height;
+      height: theme-light-dark.$footer-logo-height;
     }
   }
 }

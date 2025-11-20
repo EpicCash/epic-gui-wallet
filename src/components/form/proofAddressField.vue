@@ -2,7 +2,7 @@
   <input
     class="input"
     type="proof_address"
-    :placeholder="$t('msg.recipient_proof_address')"
+    :placeholder="t('msg.recipient_proof_address')"
     autocomplete="off"
     v-model="input"
 
@@ -15,12 +15,14 @@
 
 <script>
   import { ref, computed } from "vue";
-  import useFormValidation from "@/modules/useFormValidation";
+  import { useI18n } from 'vue-i18n';
+  import useFormValidation from "../../modules/useFormValidation";
 
   export default {
     setup() {
       let input = ref('');
       let defaultValue = ref(null);
+      const { t } = useI18n();
       const { validateProofAddressField, errors } = useFormValidation();
 
       const validInput = () => {
@@ -34,7 +36,7 @@
         input.value = value;
       };
 
-      return { input, errors, defaultValue, validInput, setValue };
+      return { input, errors, defaultValue, validInput, setValue, t };
     },
 
   };

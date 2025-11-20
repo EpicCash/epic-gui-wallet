@@ -13,7 +13,7 @@
 
 <script>
 import { computed, ref, watch } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '/store'
 
 export default {
   name: 'AsideMenuItem',

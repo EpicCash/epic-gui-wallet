@@ -3,9 +3,9 @@
     <header class="card-header">
       <p class="card-header-title">
 
-        <mdicon name="hand-coin-outline" size="18" />&nbsp;{{ $t("msg.commit.coins") }}
+        <mdicon name="hand-coin-outline" size="18" />&nbsp;{{ t("msg.commit.coins") }}
       </p>
-      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getCommits()"><span class="icon"><mdicon name="refresh" /></span><span>{{ $t("msg.refresh") }}</span></button>
+      <button :disabled="isRefresh" type="button" class="button is-small" @click="this.getCommits()"><span class="icon"><mdicon name="refresh" /></span><span>{{ t("msg.refresh") }}</span></button>
 
     </header>
     <div class="notification is-card-toolbar is-upper">
@@ -13,8 +13,8 @@
         <div class="level-left">
           <div class="level-item">
             <div class="buttons has-addons">
-              <button v-bind:class="{'is-active': currentFilter == 'unspent'}" @click="filter('unspent', 0, true)" class="button">{{ $t("msg.commit.unspent") }}</button>
-              <button v-bind:class="{'is-active': currentFilter == 'unconfirmed'}" @click="filter('unconfirmed', 0, true)" class="button">{{ $t("msg.commit.unconfirmed") }}</button>
+              <button v-bind:class="{'is-active': currentFilter == 'unspent'}" @click="filter('unspent', 0, true)" class="button">{{ t("msg.commit.unspent") }}</button>
+              <button v-bind:class="{'is-active': currentFilter == 'unconfirmed'}" @click="filter('unconfirmed', 0, true)" class="button">{{ t("msg.commit.unconfirmed") }}</button>
             </div>
           </div>
         </div>
@@ -24,7 +24,7 @@
               <div class="field has-addons">
                 <div class="control">
 
-                  <input class="input" type="text" :placeholder="$t('msg.placeholder_search')" v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
+                  <input class="input" type="text" :placeholder="t('msg.placeholder_search')" v-model="keyword" @keyup.enter="search" v-bind:disabled="searched">
                 </div>
                 <div class="control">
 
@@ -47,10 +47,10 @@
             <thead>
               <tr class="th">
                 <th width="60">#</th>
-                <th>{{ $t("msg.commit.coin_id") }}</th>
-                <th>{{ $t("msg.commit.heightCreated") }}</th>
-                <th>{{ $t("msg.commit.value") }}</th>
-                <th>{{ $t("msg.commit.status") }}</th>
+                <th>{{ t("msg.commit.coin_id") }}</th>
+                <th>{{ t("msg.commit.heightCreated") }}</th>
+                <th>{{ t("msg.commit.value") }}</th>
+                <th>{{ t("msg.commit.status") }}</th>
               </tr>
             </thead>
             <tbody v-if="current_commits.length">
@@ -80,11 +80,11 @@
                       </td>
                       <td><span v-bind:class="{'amount-hidden': store.state.hideValues }" >{{ ct.value/100000000 }}</span></td>
                       <td>
-                        <span v-if="ct.status=='Unspent'" class="tag is-success is-normal">{{ $t("msg.commit.unspent") }}</span>
-                        <span v-if="ct.status=='toUnspent'" class="tag is-warning is-normal">({{ct.confirmed_count+'/10'}}) {{ $t("msg.unconfirmed") }} </span>
-                        <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-normal">{{ $t("msg.info.unfinalization") }}</span>
-                        <span v-if="ct.status=='Locked'" class="tag is-danger is-normal">{{ $t("msg.locked") }}</span>
-                        <span v-if="ct.status=='Spent'" class="tag is-warning is-normal">{{ $t("msg.commit.spent") }}</span>
+                        <span v-if="ct.status=='Unspent'" class="tag is-success is-normal">{{ t("msg.commit.unspent") }}</span>
+                        <span v-if="ct.status=='toUnspent'" class="tag is-warning is-normal">({{ct.confirmed_count+'/10'}}) {{ t("msg.unconfirmed") }} </span>
+                        <span v-if="ct.status=='Unconfirmed'" class="tag is-warning is-normal">{{ t("msg.info.unfinalization") }}</span>
+                        <span v-if="ct.status=='Locked'" class="tag is-danger is-normal">{{ t("msg.locked") }}</span>
+                        <span v-if="ct.status=='Spent'" class="tag is-warning is-normal">{{ t("msg.commit.spent") }}</span>
                       </td>
 
               </tr>
@@ -98,7 +98,7 @@
                     <p>
 
                       <span v-if="this.store.state.nodeStatus.sync_status == 'synced'" class="icon is-large"><mdicon name="circle-off-outline" size="48" /></span>
-                      <span v-else>{{ $t("msg.waiting_for_nodesync") }}</span>
+                      <span v-else>{{ t("msg.waiting_for_nodesync") }}</span>
                     </p>
 
                   </div>
@@ -133,7 +133,7 @@
           </div>
           <div class="level-right">
             <div class="level-item">
-              <small>{{ $t("msg.page_of", [current_page_index, pages_count]) }}</small>
+              <small>{{ t("msg.page_of", [current_page_index, pages_count]) }}</small>
             </div>
           </div>
         </div>
@@ -145,10 +145,12 @@
 
 <script>
 
+  import { ref, computed } from 'vue';
+  import { useStore } from '../store'
+  import { useI18n } from 'vue-i18n';
+
   const clipboard = window.clipboard
 
-  import { ref, computed } from 'vue';
-  import { useStore } from '@/store'
 
   export default {
     name: 'commit',
@@ -167,6 +169,7 @@
 
     setup(){
 
+      const { t } = useI18n();
       const store = useStore();
       const count_per_page = ref(10);
       const total_commits = computed(() => store.state.commits);
@@ -191,7 +194,8 @@
         current_page_index,
         searched,
         keyword,
-        locale
+        locale,
+        t
       }
     },
     watch: {
@@ -217,7 +221,7 @@
 
     },
     async created(){
-      this.locale = await window.api.locale();
+    //  this.locale = await window.api.locale();
     },
     data() {
       return {
@@ -240,7 +244,7 @@
       copy(index){
         let ct = this.current_commits[index]
         clipboard.writeText(ct.commit);
-        this.$toast.success(this.$t("msg.commit.copy"));
+        this.$toast.success(this.t("msg.commit.copy"));
         this.copied = index
         this.showCopy = -1
       },
