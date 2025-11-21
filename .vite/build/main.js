@@ -519,8 +519,8 @@ const createWindow = () => {
       //icon: path.join(__dirname, '../public/favicon.ico'),
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      // nodeIntegration: false,
       nodeIntegration: true,
+      webSecurity: false,
       preload: path.join(__dirname, "preload.js")
     }
   });

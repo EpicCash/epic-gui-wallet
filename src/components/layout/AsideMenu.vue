@@ -103,7 +103,7 @@ import { useStore } from '../../store'
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from 'vue'
 import { useRouter } from '../../router'
-
+import { inject } from 'vue'
 
 export default {
   name: 'AsideMenu',
@@ -115,14 +115,15 @@ export default {
     const isAsideVisible = computed(() => store.state.isAsideVisible)
     const isAsideExpanded = computed(() => store.state.isAsideExpanded)
     const isLoading = ref(false);
-
+    const emitter = inject('emitter');
 
 
     return {
       isAsideVisible,
       isAsideExpanded,
       isLoading,
-      t
+      t,
+      emitter
     }
   },
   methods: {

@@ -85,6 +85,8 @@ export default {
     const { resetFormErrors } = useFormValidation();
     const walletService = inject('walletService');
     const userService = inject('userService');
+    const configService = inject('configService');
+    const emitter = inject('emitter');
 
     return {
       store,
@@ -95,14 +97,16 @@ export default {
       resetFormErrors,
       t,
       walletService,
-      userService
+      userService,
+      configService,
+      emitter
     }
   },
   methods: {
 
-    waitForNodeStarted(emitter) {
+    waitForNodeStarted() {
       return new Promise(resolve => {
-        emitter.on('nodeStarted', (pid) => {
+        this.emitter.on('nodeStarted', (pid) => {
           resolve(pid);
         });
       });
@@ -151,9 +155,9 @@ export default {
          await new Promise(resolve => setTimeout(resolve, 5000));
        }
        await this.emitter.emit('app.nodeStart');
-       
+
         let canLogin = await this.walletService.start(this.passwordField.defaultValue, this.configService.config['firstTime']);
-        
+        console.log('canLogin', canLogin);
         if(canLogin.success){
 
           //load user account settings first

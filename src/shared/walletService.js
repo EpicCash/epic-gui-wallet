@@ -1,8 +1,4 @@
-
 import axios from 'axios';
-
-
-
 const crypto = window.nodeCrypto;
 
 
@@ -11,6 +7,7 @@ const log = window.log;
 //console.log = log.log;
 const jsonRPCUrl = 'http://127.0.0.1:3420/v3/owner'
 const jsonRPCForeignUrl = 'http://127.0.0.1:3420/v2/foreign'
+const { secretKey, publicKey } = window.nodeSecp256k1.keygen();
 
 function addQuotations(s){
     return '"' + s +'"'
@@ -40,11 +37,13 @@ class WalletService {
     async initSecure(url) {
 
       let emitter = this.emitter;
-      let secp256k1 = window.nodeSecp256k1;
+      //let secp256k1 = window.nodeSecp256k1;
+      
+     // console.log('secp256k1', secretKey);
+      //console.log('secp256k1', publicKey);
 
-
-      let privateKey = secp256k1.utils.randomPrivateKey();
-      let publicKey = secp256k1.getPublicKey(privateKey);
+      //let privateKey = secp256k1.utils.randomPrivateKey();
+      //let publicKey = secp256k1.getPublicKey(privateKey);
 
 
       const params = {
@@ -66,8 +65,8 @@ class WalletService {
             this.debug ? console.log('walletService.initSecure', error) : null;
             return false;
       });
-
-      let key = secp256k1.getSharedSecret(privateKey, response.data.result.Ok);
+      const res_privateKey = Uint8Array.from(Buffer.from(response.data.result.Ok, 'hex'));
+      let key = window.nodeSecp256k1.getSharedSecret(secretKey, res_privateKey);
       return Buffer.from(key).toString('hex').substr(2, 64);
 
     }
@@ -562,12 +561,12 @@ class WalletService {
 
         let args = [
           ...(network != 'mainnet' ? ['--' + network] : []),
-          //'--pass', password,
+          '--pass', password,
           '--offline_mode',
           '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           'init'
         ];
-        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform, password);
+        return await window.nodeChildProcess.execNew(this.configService.epicPath, args, this.configService.platform);
 
     }
 
@@ -575,8 +574,7 @@ class WalletService {
 
         let args = [
           ...(network != 'mainnet' ? ['--' + network] : []),
-          //'--pass', password,
-          '--offline_mode',
+          '--pass', password,
           '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           'init', '-r'
         ];
@@ -588,6 +586,7 @@ class WalletService {
 
         let args = [
           '--pass', password,
+          '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
           '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
           'scan', '-s', 0,
           ...(delete_unconfirmed ? ['--delete_unconfirmed'] : []),

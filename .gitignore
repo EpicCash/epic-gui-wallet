@@ -134,3 +134,4 @@ pnpm-debug.log*
 /resources/app.json
 electron-builder.yml
 out/
+.vite/

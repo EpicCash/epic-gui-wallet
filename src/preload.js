@@ -108,9 +108,6 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
 
             debug ? console.log('execNew.stdout', data) : null;
 
-            if(data.includes('Password:')){
-              createProcess.stdin.write( password+"\n");
-            }
             //start recording data
             if(data.includes('Please back-up these words in a non-digital format.') || recordData){
               recordData = true;
@@ -132,19 +129,9 @@ contextBridge.exposeInMainWorld('nodeChildProcess', {
               resolve({success: false, msg: errorData});
             }else if(newSeedData != ''){
 
-              let wordSeed = newSeedData;
-
-              //TODO replace with a preg match replace
-              wordSeed = wordSeed.replace("Your recovery phrase is:", "");
-              wordSeed = wordSeed.replace("Please back-up these words in a non-digital format.", "");
-              wordSeed = wordSeed.replace("Command 'init' completed successfully", "");
-              wordSeed = wordSeed.replace(/(\r\n|\n|\r)/gm, "");
-              wordSeed = wordSeed.replace("wallet.seed", "wallet.seed ==   ");
-              let wordSeedWithLog = wordSeed;
-              let wordSeedWithoutLog = wordSeedWithLog.substring(wordSeedWithLog.indexOf("==") +1);
-              wordSeedWithoutLog = wordSeedWithoutLog.trim();
-              wordSeedWithoutLog = wordSeedWithoutLog.replace("= ", "").trim();
-              resolve({success: true, msg: wordSeedWithoutLog});
+              let match = newSeedData.match(/Your recovery phrase is:\s*([\s\S]*?)\s*Please back-up these words in a non-digital format\./);
+              let wordSeed = match ? match[1].trim() : "";  
+              resolve({success: true, msg: wordSeed});
             }else{
               resolve({success: false, msg: 'unknow error'})
             }

@@ -168,11 +168,11 @@ export default {
     const portIsForwarded = ref(false);
     const walletService = inject('walletService');
     const ngrokService = inject('ngrokService');
+    const emitter = inject('emitter');
 
     return {
       store,
       localAddress,
-
       onionAddress,
       epicboxAddress,
       ngrokAddress,
@@ -184,7 +184,9 @@ export default {
       publicIp,
       portIsForwarded,
       t,
-      walletService
+      walletService,
+      ngrokService,
+      emitter
 
     }
   },

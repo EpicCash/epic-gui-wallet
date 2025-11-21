@@ -36,6 +36,7 @@
   import { ref, computed } from "vue";
   import { useI18n } from 'vue-i18n';
   import useFormValidation from "../../modules/useFormValidation";
+  import { inject } from 'vue'
 
   export default {
     setup() {
@@ -46,6 +47,7 @@
       let nodeInternal = ref(false);
       const { t } = useI18n();
       const { validateAddressField, errors } = useFormValidation();
+      const emitter = inject('emitter');
 
       const validInput = () => {
 
@@ -63,7 +65,16 @@
 
       };
 
-      return { input, select, nodeInternal, errors, defaultValue, validInput, t };
+      return { 
+        input, 
+        select, 
+        nodeInternal, 
+        errors, 
+        defaultValue, 
+        validInput, 
+        t,
+        emitter 
+      };
     },
     methods: {
 

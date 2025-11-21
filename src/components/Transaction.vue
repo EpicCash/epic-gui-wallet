@@ -270,6 +270,7 @@
       const isLoading = ref(false);
       const walletService = inject('walletService');
       const addressTransactionsService = inject('addressTransactionsService');
+      const emitter = inject('emitter');
 
       return{
         store,
@@ -289,7 +290,8 @@
         isLoading,
         t,
         walletService,
-        addressTransactionsService
+        addressTransactionsService,
+        emitter
       }
     },
     watch: {

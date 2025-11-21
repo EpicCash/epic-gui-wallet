@@ -171,6 +171,7 @@ import { inject } from 'vue'
       const advancedNgrokSettings = ref(false);
       const nodeInternal = ref(false);
       const userService = inject('userService');
+      const emitter = inject('emitter');
 
       return{
         store,
@@ -185,13 +186,13 @@ import { inject } from 'vue'
         epicbox_background,
         ngrok,
         ngrok_force_start,
-        playerOptions,
         advancedSettings,
         advancedNgrokSettings,
         onPlay,
         nodeInternal,
         t,
-        userService
+        userService,
+        emitter
       }
     },
     async created() {

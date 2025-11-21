@@ -91,9 +91,10 @@ const createWindow = () => {
       //icon: path.join(__dirname, '../public/favicon.ico'),
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-     // nodeIntegration: false,
       nodeIntegration: true,
-      preload: path.join(__dirname, 'preload.js')
+      webSecurity: false,
+      preload: path.join(__dirname, 'preload.js'),
+      
       
     }
   });
@@ -118,7 +119,6 @@ const createWindow = () => {
     autoUpdater.checkForUpdates();
 
   }*/
-
 
 
   if (!isDevelopment) {
@@ -334,7 +334,8 @@ const createWindow = () => {
   }else{
     console.log(win);
   }
-  //return win;
+
+
 }
 
 // This method will be called when Electron has finished
@@ -342,7 +343,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
- 
+  
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {

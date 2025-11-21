@@ -194,6 +194,7 @@
   import { useStore } from '../store';
   import { inject } from 'vue'
 
+
   export default {
     name: "setup-wizard",
     components: {
@@ -242,6 +243,9 @@
       const advancedSettings = ref(false);
       const fromRoute = route.params.from ? route.params.from : 'login';
       const userService = inject('userService');
+      const configService = inject('configService');
+      const emitter = inject('emitter');
+
 
       return{
         store,
@@ -266,7 +270,9 @@
         domain,
         epicboxDomain,
         t,
-        userService
+        userService,
+        configService,
+        emitter
 
       }
     },

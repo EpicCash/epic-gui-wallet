@@ -115,6 +115,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from '../../store';
 import { useRouter } from '../../router';
 import NavBarMenu from './NavBarMenu.vue';
+import { inject } from 'vue';
 
 export default {
   name: 'NavBar',
@@ -164,6 +165,8 @@ export default {
     const router = useRouter()
     const isLoading = ref(false);
     const accountName = ref('default');
+    const emitter = inject('emitter');
+    const configService = inject('configService');
 
     router.afterEach(() => {
       isMenuNavBarActive.value = false
@@ -204,7 +207,10 @@ export default {
       menuNavBarToggle,
       updatesToggle,
       isLoading,
-      t
+      t,
+      emitter,
+      accountName,
+      configService
       
     }
   },

@@ -222,7 +222,8 @@
       const fromRoute = route.params.from ? route.params.from : 'login';
       const walletService = inject('walletService');
       const mnemonicWords = inject('mnemonicWords');
-      
+      const emitter = inject('emitter');
+
       return{
         router,
         wordList,
@@ -241,7 +242,8 @@
         fromRoute,
         t,
         walletService,
-        mnemonicWords
+        mnemonicWords,
+        emitter
       }
     },
     watch: {

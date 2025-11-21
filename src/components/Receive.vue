@@ -72,13 +72,15 @@ export default {
     const isSent =ref(false);
     const { t } = useI18n();
     const walletService = inject('walletService');
+    const emitter = inject('emitter');
 
     return {
       store,
       isDragOver,
       isSent,
       t,
-      walletService
+      walletService,
+      emitter
 
     }
 

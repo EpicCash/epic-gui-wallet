@@ -146,7 +146,7 @@ export default {
     const walletService = inject('walletService');
     const addressBookService = inject('addressBookService');
     const addressTransactionsService = inject('addressTransactionsService');
-
+    const emitter = inject('emitter');
     const { resetFormErrors } = useFormValidation();
 
     return {
@@ -167,7 +167,8 @@ export default {
       t,
       walletService,
       addressBookService,
-      addressTransactionsService
+      addressTransactionsService,
+      emitter
     }
 
   },

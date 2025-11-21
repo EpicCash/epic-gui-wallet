@@ -103,6 +103,7 @@ export default {
     const delete_unconfirmed = ref();
     const { resetFormErrors } = useFormValidation();
     const walletService = inject('walletService');
+    const emitter = inject('emitter');
 
     return {
       passwordField,
@@ -111,7 +112,8 @@ export default {
       checkOutputs,
       delete_unconfirmed,
       t,
-      walletService
+      walletService,
+      emitter
 
 
     }

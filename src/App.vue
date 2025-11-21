@@ -96,7 +96,10 @@
         t,
         emitter,
         configService,
-        walletService
+        walletService,
+        nodeService,
+        ngrokService,
+        addressTransactionsService
       }
     },
 
@@ -278,7 +281,7 @@
 
 
       //App main window min size
-    //  window.api.resize(1024, 768);
+      window.api.resize(1024, 768);
       
       
       if(this.configService.appHasAccounts()){
@@ -388,6 +391,7 @@
           if(!this.configService.startCheckNode()){
             this.$toast.error(this.t("msg.app.error_setup_internal_node"));
           }else{
+            
             let started  = await this.nodeService.internalNodeStart();
 
             if(started){

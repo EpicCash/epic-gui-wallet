@@ -80,6 +80,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from '../store';
 import { useRoute } from 'vue-router';
+import { inject } from 'vue'
 
 export default {
   name: "headerbar",
@@ -172,6 +173,8 @@ export default {
     const locale = ref('en');
     const nodeFallBack = ref('');
     const nodeRestarting = ref(false);
+    const emitter = inject('emitter');
+    const configService = inject('configService');
 
     return{
         store,
@@ -186,7 +189,9 @@ export default {
         locale,
         nodeFallBack,
         nodeRestarting,
-        t
+        t,
+        emitter,
+        configService
     }
   },
   async created(){
