@@ -1,6 +1,6 @@
 //@use "~bulma/bulma";
 @use "theme-light-dark";
-
+@use "main-styles" as *;
 
 html{
 
@@ -8,8 +8,8 @@ html{
 
 		.is-state-info{
 
-			background-color: theme-light-dark.$epicCashGold !important;
-			border-color: theme-light-dark.$epicCashGold !important;
+			background-color: $epic-cash-gold !important;
+			border-color: $epic-cash-gold !important;
 			color: #fff !important;
 		}
     a.router-link-active{
@@ -36,8 +36,8 @@ html{
 
 			&.is-primary{
 
-				background-color: theme-light-dark.$epicCashGold !important;
-				border-color: theme-light-dark.$epicCashGold !important;
+				background-color: $epic-cash-gold !important;
+				border-color: $epic-cash-gold !important;
 				color: #ffffff !important;
 			}
 
@@ -63,12 +63,12 @@ html{
       color: hsl(0deg, 0%, 29%);
     }
     a.panel-block:hover, label.panel-block:hover {
-        background-color: theme-light-dark.$epicCashGold;
+        background-color: $epic-cash-gold;
     }
     .panel-block.is-active {
         border-left-color: hsl(229deg, 53%, 53%);
         color: #ffffff;
-        background-color: theme-light-dark.$epicCashGold;
+        background-color: $epic-cash-gold;
     }
     .panel-block:last-child {
       border-bottom-left-radius: 0px;
@@ -76,7 +76,7 @@ html{
     }
 
     .card-footer-item:hover{
-      background-color: theme-light-dark.$epicCashGold;
+      background-color: $epic-cash-gold;
       color:hsl(0deg, 0%, 14%) !important;
     }
     .card-footer-item:not(:last-child){
@@ -105,7 +105,7 @@ html{
         z-index: -1;
     }
     .navbar-dropdown .navbar-item:hover{
-      color:theme-light-dark.$epicCashGold
+      color: $epic-cash-gold
     }
 
 
@@ -120,7 +120,7 @@ html{
       }
       a.dropdown-item:hover,
       button.dropdown-item:hover{
-        background:theme-light-dark.$epicCashGold;
+        background: $epic-cash-gold;
         color:#ffffff;
       }
     }
@@ -336,8 +336,8 @@ section.hero.is-hero-bar.is-main-hero img{
 
 					a{
 
-						background-color: theme-light-dark.$epicCashGold;
-						border-color: theme-light-dark.$epicCashGold;
+						background-color: $epic-cash-gold;
+						border-color: $epic-cash-gold;
 					}
 				}
 			}
@@ -367,7 +367,7 @@ div.avatar-letter{
       line-height:2.5em;
       text-align:center;
       border-radius:50%;
-      background:theme-light-dark.$epicCashGold;
+      background: $epic-cash-gold;
       vertical-align:middle;
       margin-right:1em;
       color:white;
@@ -383,7 +383,7 @@ div.avatar-letter{
       line-height:2em;
       text-align:center;
       border-radius:50%;
-      background:theme-light-dark.$epicCashGold;
+      background: $epic-cash-gold;
       vertical-align:middle;
       margin-right:0em;
       color:white;

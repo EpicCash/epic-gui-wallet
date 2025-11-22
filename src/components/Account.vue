@@ -56,7 +56,8 @@ import { inject } from 'vue'
         textField,
         resetFormErrors,
         keybase,
-        t
+        t,
+        userService
       }
     },
 

@@ -45,7 +45,7 @@
       }
     },
     async mounted(){
-      this.version = await window.api.version();
+      //this.version = await window.api.version();
 
    
     },

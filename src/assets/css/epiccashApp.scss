@@ -1,21 +1,16 @@
 
 @use "libs/all";
 
-
-
 //theme-light-dark.$aside-width: theme-light-dark.$size-base * 16;
 /* Core Libs & Lib configs */
 
-
 /* Mixins */
 @use "mixins";
-
 /* App */
 @use "app";
-
 /* Theme components */
 @use "nav-bar";
-//@use "aside";
+@use "aside";
 @use "container";
 @use "title-bar";
 @use "hero-bar";
@@ -44,7 +39,9 @@
 //@use "~bulma/bulma";
 /* Theme style (colors & sizes) */
 @use "theme-light-dark";
-@use "main-styles";
+@use "main-styles" as *;
+
+
 
 .button__loader {
 
@@ -59,11 +56,11 @@
         left: 0;
         width: 150%;
         height: 100%;
-      //  background: repeating-linear-gradient(60deg, darken($epicCashGold, 100%), $epicCashGold 10%);
+      //  background: repeating-linear-gradient(60deg, darken($epic-cash-gold, 100%), $epic-cash-gold 10%);
         background: repeating-linear-gradient(
             60deg,
-            theme-light-dark.$epicCashGold,
-            theme-light-dark.$epicCashGold 4px,
+            $epic-cash-gold,
+            $epic-cash-gold 4px,
             theme-light-dark.$black-ter 4px,
             theme-light-dark.$black-ter 8px
           );
@@ -90,7 +87,7 @@ html.is-dark-mode-active .button__loader_success.button.is-success span {
         left: 0;
         width: 150%;
         height: 100%;
-      //  background: repeating-linear-gradient(60deg, darken($epicCashGold, 100%), $epicCashGold 10%);
+      //  background: repeating-linear-gradient(60deg, darken($epic-cash-gold, 100%), $epic-cash-gold 10%);
         background: repeating-linear-gradient(
             60deg,
             theme-light-dark.$green,

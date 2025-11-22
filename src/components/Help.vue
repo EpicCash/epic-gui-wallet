@@ -44,7 +44,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from '../store';
 import { useHelp } from '../help/help';
-
+import { inject } from 'vue'
 
 export default {
     name: "help",
@@ -57,6 +57,7 @@ export default {
       const keyword =  ref("");
       const searched = ref(false);
       const helpContent = ref([]);
+      const configService = inject('configService');
 
       return{
         helpContent,
@@ -65,7 +66,8 @@ export default {
         searchableText,
         keyword,
         searched,
-        t
+        t,
+        configService
       }
     },
     created(){

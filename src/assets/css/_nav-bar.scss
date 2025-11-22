@@ -1,16 +1,17 @@
 //@use "~bulma/bulma";
-@use "theme-light-dark";
+@use "theme-light-dark" as *;
+
 
 nav.navbar {
-  box-shadow: theme-light-dark.$navbar-box-shadow;
+  box-shadow: $navbar-box-shadow;
 
   .navbar-item {
     &.has-user-avatar {
       .is-user-avatar {
-        margin-right: theme-light-dark.$default-padding * .5;
+        margin-right: $default-padding * .5;
         display: inline-flex;
-        width: theme-light-dark.$navbar-avatar-size;
-        height: theme-light-dark.$navbar-avatar-size;
+        width: $navbar-avatar-size;
+        height: $navbar-avatar-size;
       }
     }
 
@@ -19,13 +20,13 @@ nav.navbar {
       padding-left: 0;
 
       .navbar-link {
-        padding-right: theme-light-dark.$navbar-item-h-padding;
-        padding-left: theme-light-dark.$navbar-item-h-padding;
+        padding-right: $navbar-item-h-padding;
+        padding-left: $navbar-item-h-padding;
       }
     }
 
     &.has-divider {
-      border-right: theme-light-dark.$navbar-divider-border;
+      border-right: $navbar-divider-border;
     }
 
     &.no-left-space {
@@ -39,21 +40,48 @@ nav.navbar {
 
     .control {
       .input {
-        color: theme-light-dark.$navbar-input-color;
+        color: $navbar-input-color;
         border: 0;
         box-shadow: none;
         background: transparent;
 
         &::placeholder {
-          color: theme-light-dark.$navbar-input-placeholder-color;
+          color: $navbar-input-placeholder-color;
         }
       }
     }
 
     .icon.has-update-mark:after {
-      background-color: theme-light-dark.$navbar-update-mark-color;
+      background-color: $navbar-update-mark-color;
     }
   }
 }
 
 
+
+  .navbar > .container, .container > .navbar {
+    .navbar-menu.no-negative-margin-right {
+      margin-right: 0;
+    }
+    .navbar-brand.no-negative-margin-left {
+      margin-left: 0;
+    }
+  }
+
+  nav.navbar {
+    .navbar-item {
+      padding-right: $navbar-item-h-padding;
+      padding-left: $navbar-item-h-padding;
+
+      &:not(.is-desktop-icon-only) {
+        .icon:first-child {
+          margin-right: $default-padding * .5;
+        }
+      }
+      &.is-desktop-icon-only {
+        span:not(.icon) {
+          display: none;
+        }
+      }
+    }
+  }

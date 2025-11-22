@@ -509,9 +509,9 @@ require$$3$1.protocol.registerSchemesAsPrivileged([
 ]);
 const createWindow = () => {
   win = new require$$3$1.BrowserWindow({
-    width: 1044,
+    width: 1122,
     height: 768,
-    minWidth: 1044,
+    minWidth: 1122,
     maxWidth: 1600,
     title: "Epiccash Wallet",
     //fix in index.html

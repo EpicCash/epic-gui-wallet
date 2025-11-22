@@ -7,45 +7,45 @@
 aside.aside {
   display: flex;
   flex-direction: column;
-  width: $aside-collapsed-width;
+  width: theme-light-dark.$aside-collapsed-width;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 40;
   height: 100vh;
   padding: 0;
-  box-shadow: $aside-box-shadow;
-  background-color: $aside-background-color;
+  box-shadow: theme-light-dark.$aside-box-shadow;
+  background-color: theme-light-dark.$aside-background-color;
 
   &.is-placed-right {
     @include mixins.transition(right);
-    width: $aside-right-width;
+    width: theme-light-dark.$aside-right-width;
     left: auto;
-    right: $aside-right-width * -1;
-    background: $white;
-    box-shadow: $aside-right-box-shadow;
+    right: theme-light-dark.$aside-right-width * -1;
+    background: theme-light-dark.$white;
+    box-shadow: theme-light-dark.$aside-right-box-shadow;
   }
 
   &.is-secondary {
-    background-color: $aside-secondary-background-color;
+    background-color: theme-light-dark.$aside-secondary-background-color;
 
     .aside-tools {
-      box-shadow: $aside-tools-box-shadow;
-      background-color: $aside-secondary-tools-background-color;
+      box-shadow: theme-light-dark.$aside-tools-box-shadow;
+      background-color: theme-light-dark.$aside-secondary-tools-background-color;
     }
 
     .menu-list {
       li {
         ul {
-          background-color: $aside-secondary-dropdown-background-color;
+          background-color: theme-light-dark.$aside-secondary-dropdown-background-color;
         }
       }
       a {
         &.is-active {
-          background-color: $aside-secondary-item-active-background-color;
+          background-color: theme-light-dark.$aside-secondary-item-active-background-color;
         }
         &:hover {
-          background-color: $aside-secondary-item-hover-background-color;
+          background-color: theme-light-dark.$aside-secondary-item-hover-background-color;
         }
       }
     }
@@ -56,17 +56,17 @@ aside.aside {
     flex-grow: 0;
     flex-direction: row;
     width: 100%;
-    background-color: $aside-tools-background-color;
-    color: $aside-tools-color;
-    line-height: $navbar-height;
-    height: $navbar-height;
-    padding-left: $default-padding * .5;
+    background-color: theme-light-dark.$aside-tools-background-color;
+    color: theme-light-dark.$aside-tools-color;
+    line-height: theme-light-dark.$navbar-height;
+    height: theme-light-dark.$navbar-height;
+    padding-left: theme-light-dark.$default-padding * .5;
 
     &.has-icon {
       padding-left: 0;
 
       .icon {
-        width: $aside-icon-width;
+        width: theme-light-dark.$aside-icon-width;
       }
     }
 
@@ -76,11 +76,11 @@ aside.aside {
 
     .aside-close {
       flex-grow: 0;
-      color: $aside-tools-color;
+      color: theme-light-dark.$aside-tools-color;
 
       .icon {
         width: auto;
-        margin-right: $default-padding * .5;
+        margin-right: theme-light-dark.$default-padding * .5;
       }
     }
   }
@@ -92,51 +92,51 @@ aside.aside {
   }
 
   .menu-container {
-    @include mixins.scrollbars($aside-scrollbar-track, $aside-scrollbar-thumb);
+    @include mixins.scrollbars(theme-light-dark.$aside-scrollbar-track, theme-light-dark.$aside-scrollbar-thumb);
   }
 
   .aside-container {
-    @include mixins.scrollbars($app-scrollbar-track, $app-scrollbar-thumb, $app-scrollbar-hover);
+    @include mixins.scrollbars(theme-light-dark.$app-scrollbar-track, theme-light-dark.$app-scrollbar-thumb, theme-light-dark.$app-scrollbar-hover);
   }
 
   .menu {
-    &.is-menu-bottom {
+    /*&.is-menu-bottom {
       flex-grow: 0;
       flex-shrink: 1;
       flex-basis: auto;
-    }
+    }*/
   }
 
   .menu-list {
     li {
       &.is-active {
-        box-shadow: 0 1px $base-color-light;
+        box-shadow: 0 1px theme-light-dark.$base-color-light;
         >a {
-          box-shadow: 0 1px $base-color-light;
+          box-shadow: 0 1px theme-light-dark.$base-color-light;
         }
       }
 
       a.has-submenu-icon {
         position: relative;
-        padding-right: $aside-icon-width;
+        padding-right: theme-light-dark.$aside-icon-width;
 
         .submenu-icon {
           position: absolute;
-          top: $size-base * .5;
+          top: theme-light-dark.$size-base * .5;
           right: 0;
         }
       }
       ul {
         display: none;
         border-left: 0;
-        background-color: $aside-dropdown-background-color;
+        background-color: theme-light-dark.$aside-dropdown-background-color;
         padding-left: 0;
         margin: 0;
 
         li {
           a {
-            padding: $default-padding * .5 0 $default-padding * .5 $default-padding * .5;
-            font-size: $aside-submenu-font-size;
+            padding: theme-light-dark.$default-padding * .5 0 theme-light-dark.$default-padding * .5 theme-light-dark.$default-padding * .5;
+            font-size:theme-light-dark.$aside-submenu-font-size;
 
             &.has-icon {
               padding-left: 0;
@@ -154,28 +154,28 @@ aside.aside {
 
   .menu-label {
     display: none;
-    padding: 0 $default-padding * .5;
-    margin-top: $default-padding * .5;
-    margin-bottom: $default-padding * .5;
+    padding: 0 theme-light-dark.$default-padding * .5;
+    margin-top: theme-light-dark.$default-padding * .5;
+    margin-bottom: theme-light-dark.$default-padding * .5;
   }
 
   li a {
-    @include mixins.icon-with-update-mark($aside-collapsed-width);
+    @include mixins.icon-with-update-mark(theme-light-dark.$aside-collapsed-width);
     span.menu-item-label {
       display: none;
     }
   }
 
   .media {
-    padding-left: $default-padding;
-    padding-right: $default-padding;
+    padding-left: theme-light-dark.$default-padding;
+    padding-right: theme-light-dark.$default-padding;
 
     &:first-child {
-      padding-top: $default-padding;
+      padding-top: theme-light-dark.$default-padding;
     }
 
     &:last-child {
-      padding-bottom: $default-padding;
+      padding-bottom: theme-light-dark.$default-padding;
     }
   }
 }
@@ -186,92 +186,8 @@ aside.aside {
   }
 }
 
-@include touch {
-  #app, nav.navbar {
-    @include mixins.transition(margin-left);
-  }
-  aside.aside {
-    @include mixins.transition(left);
-    height: 100vh;
 
-    .menu-label {
-      display: block;
-    }
-  }
-  html.has-aside-mobile-transition {
-    body {
-      overflow-x: hidden;
-    }
 
-    #app, nav.navbar {
-      width: 100vw;
-    }
-
-    aside.aside {
-      max-width: 100vw;
-      width: $aside-mobile-width;
-      left: $aside-mobile-width * -1;
-
-      &.is-placed-right {
-        left: auto;
-        right: $aside-mobile-width * -1 - 1.5rem;
-      }
-
-      .image {
-        img {
-          max-width: $aside-mobile-width * .33;
-        }
-      }
-
-      .menu-list {
-        li.is-active {
-          ul {
-            display: block;
-          }
-        }
-        a {
-          @include mixins.icon-with-update-mark($aside-icon-width);
-
-          span.menu-item-label {
-            display: inline-block;
-          }
-        }
-      }
-    }
-  }
-  html {
-    &.has-aside-mobile-expanded {
-      overflow: hidden;
-
-      #app, nav.navbar {
-        margin-left: $aside-mobile-width;
-      }
-      aside.aside.is-placed-left {
-        left: 0;
-
-        &.is-secondary {
-          left: 1.5rem;
-          box-shadow: $aside-secondary-box-shadow;
-          border-right: $aside-secondary-border-left-right;
-          border-left: $aside-secondary-border-left-right;
-        }
-      }
-    }
-    &.has-aside-right {
-      overflow: hidden;
-
-      aside.aside.is-placed-right {
-        right: 0;
-      }
-
-      #app, nav.navbar {
-        margin-left: $aside-right-width * -1;
-      }
-    }
-  }
-}
-
-@include desktop {
   html {
     &.has-aside-left, &.has-aside-right {
       nav.navbar, body {
@@ -281,14 +197,14 @@ aside.aside {
     &.has-aside-left {
       &.has-aside-expanded {
         nav.navbar, body {
-          padding-left: $aside-width;
+          padding-left: theme-light-dark.$aside-width;
         }
         aside.aside.is-secondary {
-          left: $aside-width;
+          left: theme-light-dark.$aside-width;
         }
       }
       nav.navbar, body {
-        padding-left: $aside-collapsed-width;
+        padding-left: theme-light-dark.$aside-collapsed-width;
       }
       /*aside.is-placed-left {
         display: flex;
@@ -298,14 +214,14 @@ aside.aside {
 
     &.has-aside-hidden-layout {
       aside.aside {
-        top: calc(1px + #{$navbar-height});
-        height: calc(100vh - #{$navbar-height} - 1px);
+        top: calc(1px + #{theme-light-dark.$navbar-height});
+        height: calc(100vh - #{theme-light-dark.$navbar-height} - 1px);
 
         &.has-secondary {
-          box-shadow: $aside-boxed-has-secondary-box-shadow;
+          box-shadow: theme-light-dark.$aside-boxed-has-secondary-box-shadow;
         }
         &.is-secondary {
-          left: $aside-width;
+          left: theme-light-dark.$aside-width;
 
           .aside-tools {
             display: flex;
@@ -333,15 +249,27 @@ aside.aside {
     z-index: 50;
 
     &.has-secondary {
-      box-shadow: $aside-has-secondary-box-shadow;
+      box-shadow: theme-light-dark.$aside-has-secondary-box-shadow;
     }
 
     &.is-secondary {
-      left: $aside-collapsed-width;
+      left: theme-light-dark.$aside-collapsed-width;
       z-index: 40;
     }
 
     &:not(.is-expanded) {
+      .is-menu-main{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+      }
+      .is-menu-bottom a{
+            justify-content: center;
+
+      }
+
+
       .menu-list li a.has-submenu-icon {
         padding-right: 0;
         .submenu-icon {
@@ -358,13 +286,13 @@ aside.aside {
     }
 
     &.is-expanded {
-      width: $aside-width;
+      width: theme-light-dark.$aside-width;
 
       .menu-label {
         display: block;
       }
       .menu-list {
-        @include mixins.icon-with-update-mark($aside-icon-width);
+        @include mixins.icon-with-update-mark(theme-light-dark.$aside-icon-width);
 
         span.menu-item-label {
           display: inline-block;
@@ -379,27 +307,19 @@ aside.aside {
     }
 
     &.is-placed-right {
-      top: $navbar-height;
-      height: calc(100vh - #{$navbar-height});
+      top: theme-light-dark.$navbar-height;
+      height: calc(100vh - #{theme-light-dark.$navbar-height});
       z-index: 25;
 
       .aside-container {
-        height: calc(100vh - #{$navbar-height});
+        height: calc(100vh - #{theme-light-dark.$navbar-height});
 
         .media {
-          padding-right: $default-padding;
+          padding-right: theme-light-dark.$default-padding;
         }
       }
     }
   }
-}
 
-@include widescreen {
-  html {
-    &.has-aside-right:not(.has-boxed-layout) {
-      body {
-        padding-right: $aside-right-width;
-      }
-    }
-  }
-}
+
+

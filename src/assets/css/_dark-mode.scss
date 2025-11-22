@@ -449,3 +449,10 @@ html.is-dark-mode-active {
 }
 
 
+  html.is-dark-mode-active {
+    .navbar-dropdown {
+      border-color:  theme-light-dark.$dark-mode-light-border-color;
+      box-shadow: 0 8px 8px rgba( theme-light-dark.$black, 0.25);
+    }
+  }
+

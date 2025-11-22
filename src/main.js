@@ -82,9 +82,9 @@ const createWindow = () => {
   // Create the browser window.
   
   win = new BrowserWindow({
-    width: 1044,
+    width: 1122,
     height: 768,
-    minWidth: 1044,
+    minWidth: 1122,
     maxWidth: 1600,
     title: "Epiccash Wallet",//fix in index.html
     webPreferences: {
@@ -98,6 +98,7 @@ const createWindow = () => {
       
     }
   });
+  
     // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
@@ -107,6 +108,7 @@ const createWindow = () => {
 
   // Open the DevTools.
   win.webContents.openDevTools();
+  //win.setMinimumSize(1130, 768);
   /*
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

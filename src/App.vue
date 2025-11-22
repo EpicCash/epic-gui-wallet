@@ -281,7 +281,7 @@
 
 
       //App main window min size
-      window.api.resize(1024, 768);
+      //window.api.resize(1024, 768);
       
       
       if(this.configService.appHasAccounts()){
