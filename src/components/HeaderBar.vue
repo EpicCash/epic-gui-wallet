@@ -1,25 +1,13 @@
 <template>
   <section>
 
-    <section class="section is-title-bar">
-        <div class="level">
-          <div class="level-left">
-            <div class="level-item">
-              <ul>
-                <li>{{ route.meta.title }}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-    </section>
+
 
     <section class="hero is-hero-bar is-main-hero">
         <div class="hero-body" id="headerbar">
-          <div class="level">
+          <div class="level" style="align-items: end;">
             <div class="level-left">
-              <div class="level-item is-hero-avatar-item">
-                  <div class="avatar-letter big" :data-letters="newAvatar"></div>
-              </div>
+             
               <div class="level-item is-hero-content-item">
                 <div>
                   <h1 class="title is-spaced">{{ t('msg.headerbar.howdy') }} <b>{{ userName }}</b></h1>
@@ -65,6 +53,17 @@
                 </div>
                 <div v-if="store.state.nodeStatus.user_agent == undefined" style="opacity:0.8;" class="is-overlay is-align-items-center is-flex is-justify-content-center " ><span style="opacity:0.8;" class="has-background-light has-text-black-bis tag">... loading</span></div>
               </div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+
+    <section class="section is-title-bar">
+        <div class="level">
+          <div class="level-left">
+            <div class="level-item">
+             {{ route.meta.title }}
             </div>
           </div>
         </div>

@@ -409,6 +409,7 @@ html.is-dark-mode-active {
     }
 
     &.section.is-title-bar {
+      border:none;
       ul li {
         color: theme-light-dark.$grey-light;
 

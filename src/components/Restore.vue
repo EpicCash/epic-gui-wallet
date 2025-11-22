@@ -223,6 +223,7 @@
       const walletService = inject('walletService');
       const mnemonicWords = inject('mnemonicWords');
       const emitter = inject('emitter');
+      const configService = inject('configService');
 
       return{
         router,
@@ -243,7 +244,8 @@
         t,
         walletService,
         mnemonicWords,
-        emitter
+        emitter,
+        configService
       }
     },
     watch: {

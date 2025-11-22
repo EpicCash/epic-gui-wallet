@@ -1,7 +1,7 @@
 @use "theme-light-dark";
 
 section.section.is-title-bar {
-  padding: theme-light-dark.$default-padding;
+  padding: 20px 20px 0px 26px;//theme-light-dark.$default-padding
   border-bottom: theme-light-dark.$light-border;
 
   ul {

@@ -2,11 +2,12 @@
 
   <router-view name="navBar" />
   <router-view name="asideMenu" />
+  
   <router-view name="headerbar" />
-
   <router-view v-slot="{ Component }">
       <component :is="Component" :key="$route.fullPath" />
   </router-view>
+  
   <aside-right />
 
   <modal-node-box
