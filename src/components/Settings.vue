@@ -6,7 +6,7 @@
       <div class="column is-half">
 
 
-          <NodeserverField ref="nodeserverField" class="is-fullwidth" />
+          <NodeserverField ref="nodeserverField" :class="is-fullwidth" />
           <div class="field">
 
             <div class="control">
@@ -172,6 +172,8 @@ import { inject } from 'vue'
       const nodeInternal = ref(false);
       const userService = inject('userService');
       const emitter = inject('emitter');
+      const configService = inject('configService');
+      
 
       return{
         store,
@@ -188,11 +190,11 @@ import { inject } from 'vue'
         ngrok_force_start,
         advancedSettings,
         advancedNgrokSettings,
-        onPlay,
         nodeInternal,
         t,
         userService,
-        emitter
+        emitter,
+        configService
       }
     },
     async created() {

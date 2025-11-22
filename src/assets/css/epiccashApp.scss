@@ -1,6 +1,9 @@
 
+/* Theme style (colors & sizes) */
+@use "theme-light-dark";
+@use "main-styles" as *;
 @use "libs/all";
-
+@use "bulma-switch-control";
 //theme-light-dark.$aside-width: theme-light-dark.$size-base * 16;
 /* Core Libs & Lib configs */
 
@@ -36,10 +39,8 @@
 
 /* Config box */
 @use "config-box";
-//@use "~bulma/bulma";
-/* Theme style (colors & sizes) */
-@use "theme-light-dark";
-@use "main-styles" as *;
+
+
 
 
 

@@ -169,6 +169,7 @@ export default {
     const walletService = inject('walletService');
     const ngrokService = inject('ngrokService');
     const emitter = inject('emitter');
+    const configService = inject('configService');
 
     return {
       store,
@@ -186,7 +187,8 @@ export default {
       t,
       walletService,
       ngrokService,
-      emitter
+      emitter,
+      configService
 
     }
   },

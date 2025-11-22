@@ -24,7 +24,8 @@
             </div>
             <div class="field">
               <div class="control">
-                  <input class="switch is-success" id="unconfirmedSwitch" type="checkbox" v-model="delete_unconfirmed">
+
+                  <input class="switch is-outlined is-rounded is-success" id="unconfirmedSwitch" type="checkbox" v-model="delete_unconfirmed">
                   <label for="unconfirmedSwitch">{{ t("msg.check.delete_unconfirmed") }}</label>
               </div>
 
@@ -168,7 +169,7 @@ export default {
       //check now requires settings
       if(!isFormAllValid.includes(false)){
         this.checking = true;
-
+        
         this.walletService.check(this.passwordField.defaultValue, this.delete_unconfirmed);
       }
     },

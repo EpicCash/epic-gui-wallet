@@ -586,7 +586,7 @@ class WalletService {
 
         let args = [
           '--pass', password,
-          '-c', this.configService.platform == "win" ? addQuotations(userhomedir) : userhomedir,
+          '-c', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
           '-t', this.configService.platform == "win" ? addQuotations(this.configService.defaultAccountWalletdir) : this.configService.defaultAccountWalletdir,
           'scan', '-s', 0,
           ...(delete_unconfirmed ? ['--delete_unconfirmed'] : []),
