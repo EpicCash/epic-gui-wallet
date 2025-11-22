@@ -1,7 +1,7 @@
 @use "theme-light-dark" as *;
 @use "sass:color";
 
-
+$epic-cash-gold: #d19944;
 //styles will go here
 ////////////////////////////////////////////////
 // SUPERHERO
@@ -31,7 +31,7 @@ $subtitle-strong-color: color.adjust($grey-lighter, $lightness: 10%);
 $background: $grey-dark;
 $body-background-color: $grey;
 $footer-background-color: $background;
-
+$black-ter: hsl(221, 14%, 14%);
 $border: $grey;
 
 $family-sans-serif: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -106,8 +106,8 @@ $file-cta-background-color: $grey-darker;
 $progress-bar-background-color: $grey-dark;
 
 $panel-heading-background-color: $grey-dark;
+$dark-mode-link-active-color:#ffffff;
 
-$epic-cash-gold: #d19944;
 /* Define an animation behavior */
 @keyframes spinner {
   to { transform: rotate(360deg); }

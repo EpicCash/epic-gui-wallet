@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "bulma/sass";
+
 
 // Scheme Hue and Saturation
 
@@ -167,7 +167,7 @@ $variables-host: ":root" !default;
 //@use "~bulma/sass/utilities/initial-variables.scss";
 
 
-$epicCashGold: #d19944;
+
 $button-background-color: $grey;
 $button-color: $grey-lighter;
 $button-border-color: $grey;
@@ -202,7 +202,7 @@ $border: $base-color-light;
 /* NavBar: Bulma override */
 $navbar-item-color: #ffffff;// $link;
 $navbar-item-hover-background-color: transparent;
-$navbar-item-active-color: $epicCashGold;//$black-ter;
+$navbar-item-active-color: $black-ter;
 $navbar-item-active-background-color: transparent;
 $navbar-dropdown-item-active-color: $base-color;
 $navbar-dropdown-item-hover-background-color: transparent;
@@ -361,8 +361,8 @@ $dark-mode-border: 1px solid $dark-mode-border-color;
 $dark-mode-light-border-color: $grey-darker;
 $dark-mode-light-border: 1px solid $dark-mode-light-border-color;
 $dark-mode-link-color: $white-ter;//$cyan;
-$dark-mode-link-active-color: $epicCashGold;//$white-ter;
-$dark-mode-link-hover-color: $epicCashGold;// $white-bis;
+$dark-mode-link-active-color: $white-ter;
+$dark-mode-link-hover-color: $white-bis;
 $dark-mode-overlay-background-color: rgba($black-ter, .75);
 $dark-mode-button-color: $white-ter;
 $dark-mode-button-hover-color: $black-ter;

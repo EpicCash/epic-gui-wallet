@@ -6,7 +6,7 @@
     <div v-show="store.state.walletListenerService">
       <div class="columns">
         <div class="column is-two-thirds">
-          <div class="message is-info">
+          <div class="message">
 
             <div class="message-header"><p>{{ t("msg.httpReceive.listening") }}</p></div>
             <div class="message-body">
@@ -54,7 +54,7 @@
 
           </div>
 
-          <div class="message is-info">
+          <div class="message">
             <div class="message-header"><p>{{ t("msg.httpReceive.proof_address") }}</p></div>
             <div class="message-body">
               <code>{{ proofAddress }}</code>&nbsp;<mdicon @click="copy(proofAddress)" name="content-copy" size=16 />&nbsp;<mdicon class="is-clickable" @click="qrcode(proofAddress, 'proof')" name="qrcode-scan" size=16 />
@@ -65,7 +65,7 @@
 
         </div>
         <div class="column">
-          <div class="message is-info">
+          <div class="message">
 
             <div class="message-header"><p v-if="addressTypeHeader">{{ t("msg.httpReceive.your_qrcode", [addressTypeHeader]) }}</p><p v-else>{{ t("msg.httpReceive.click_qrcode_icon") }}</p></div>
             <div v-show="addressTypeHeader"  class="message-body">
